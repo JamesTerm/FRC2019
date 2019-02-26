@@ -2,7 +2,7 @@
 
 #include "FRC2019_Goals.h"
 
-static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal_ac *goal, string autonSelected, string positionSelected)
+static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal, string autonSelected, string positionSelected)
 {
     bool isFound = true;
 	if (autonSelected == "DEBUG")
@@ -10,6 +10,11 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal_ac *go
 		goal->AddGoal(new Goal_VisionAlign(activeCollection, new VisionTarget(320, 20), 140.0)); //!120 sec timeout for DEBUG only
 		return true;
 	}
+    else if(autonSelected == "drive")
+    {
+        goal->AddGoal(new Goal_WaitThenDrive(activeCollection, .5, .5, 3, 5));
+        return false;
+    }
 	else if (autonSelected == "NONE")
 		return true;
 

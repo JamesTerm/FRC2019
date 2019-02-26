@@ -22,7 +22,6 @@ using namespace Configuration;
 **/
 ActiveCollection::ActiveCollection()
 {
-	m_EventMap = std::make_shared<Framework::Base::EventMap>();
 }
 
 /**

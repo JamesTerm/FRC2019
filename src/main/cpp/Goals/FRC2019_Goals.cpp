@@ -99,7 +99,7 @@ void Goal_DriveWithTimer::Terminate()
     StopDrive(m_activeCollection);
 }
 #pragma endregion
-
+#if 0
 #pragma region ControllerOverride
 /***********************Goal_ControllerOverride***********************/
 void Goal_ControllerOverride::Activate()
@@ -199,7 +199,7 @@ void Goal_ControllerOverride::SetCallbacks(bool bind)
 }
 
 #pragma endregion
-
+#endif
 #pragma region FeedbackLoopGoals
 /***********************Goal_Turn***********************/
 void Goal_Turn::Activate()

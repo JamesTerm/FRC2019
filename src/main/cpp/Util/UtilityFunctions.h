@@ -28,8 +28,6 @@ using namespace Components;
 /**********************************DRIVE METHODS**********************/
 static void SetDrive(double left, double right, ActiveCollection *activeCollection) //set left and right motor power. range: [0,1]
 {
-	//This is depreciated as we now need the ability for lua to control what kind of victors to use
-	#if 0
 	VictorSPItem *left_0 = activeCollection->GetVictor("Left_0"); //creates pointers to motor objects. This robot has three left motors and three right motors
 	VictorSPItem *left_1 = activeCollection->GetVictor("Left_1");
 	VictorSPItem *left_2 = activeCollection->GetVictor("Left_2");
@@ -46,11 +44,6 @@ static void SetDrive(double left, double right, ActiveCollection *activeCollecti
 	right_1->Set(right);
 	if (right_2)
 		right_2->Set(right);
-	#else
-	Framework::Base::EventMap &em = activeCollection->GetEventMap();
-	em.EventValue_Map["External_SetLeftVelocity"].Fire(left);
-	em.EventValue_Map["External_SetRightVelocity"].Fire(right);
-	#endif
 }
 
 static void StopDrive(ActiveCollection *activeCollection) //sets drive power to zero

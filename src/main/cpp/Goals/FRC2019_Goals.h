@@ -77,7 +77,7 @@ private:
   double m_leftSpeed, m_rightSpeed;
 };
 #pragma endregion
-
+#if 0
 #pragma region ControllerOverride
 /* Goal_ControllerOverride
  *  Test if driver or operator or both are pressing controls, if so, fail.
@@ -113,7 +113,7 @@ class Goal_ControllerOverride : public AtomicGoal
 	bool m_IsDriveInUse = false;
 };
 #pragma endregion
-
+#endif
 //Goals that use data to determine completion go here
 #pragma region FeedbackLoopGoals
 /* Goal_Turn
@@ -262,7 +262,7 @@ protected:
 /* Goal_OneHatch
     This goal is meant to score one hatch on the cargo during autonomous
     */
-class Goal_OneHatch : public CompositeGoal
+class Goal_OneHatch : public Generic_CompositeGoal
 {
 public:
   Goal_OneHatch(ActiveCollection *activeCollection, double timeOut)
@@ -280,7 +280,7 @@ private:
 /* Goal_WaitThenDrive
     * This is just a test composite goal. Unlikely it will be used IRL
     */
-class Goal_WaitThenDrive : public CompositeGoal
+class Goal_WaitThenDrive : public Generic_CompositeGoal
 {
 public:
   Goal_WaitThenDrive(ActiveCollection *activeCollection, double leftSpeed, double rightSpeed, double waitTime, double driveTime)

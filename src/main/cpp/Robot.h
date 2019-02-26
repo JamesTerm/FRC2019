@@ -20,8 +20,6 @@
 #include "Util/Log.h"
 #include "Goals/FRC2019_Goals.h"
 #include "Goals/GoalSelector.h"
-#include "Base/EventMap.h"
-#include "RobotAssem.h"
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"
@@ -52,10 +50,8 @@ class Robot : public SampleRobot
         Drive *m_drive;
         ActiveCollection *m_activeCollection; //!< Pointer to the only instantiation of the ActiveCollection Class in the program
         const string m_driveStraight = "drive";
-        MultitaskGoal_ac* m_masterGoal;
-		std::shared_ptr<Framework::Base::EventMap> m_EventMap;  //shared here to give more scope on exit
-		RobotAssem m_Robot;
-        nt::NetworkTableInstance m_inst; //!Network tables
+        MultitaskGoal* m_masterGoal;
+		nt::NetworkTableInstance m_inst; //!Network tables
         shared_ptr<NetworkTable> m_visionTable; //!Vision table
         shared_ptr<NetworkTable> m_dashboardTable;
         cs::UsbCamera camera;

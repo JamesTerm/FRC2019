@@ -24,7 +24,6 @@ Email: cooper.ryan@centaurisoftware.co
 #include "../Components/DoubleSolenoidItem.h"
 #include "../Components/DigitalInputItem.h"
 #include "../Components/NavX.h"
-#include "../Base/EventMap.h"
 
 using namespace std;
 using namespace Components;
@@ -50,12 +49,8 @@ namespace Configuration
 			int GetSize();
 			vector<NativeComponent*> GetRawComponent();
 			void Add(NativeComponent *component);
-			Framework::Base::EventMap &GetEventMap() { return *m_EventMap; }
-			//You can't share the pointer unless you offer it shared
-			std::shared_ptr<Framework::Base::EventMap> &GetEventMap_Shared() { return m_EventMap; }
 	private:
 		vector<NativeComponent*> activeCollection;
-		std::shared_ptr<Framework::Base::EventMap> m_EventMap;  //This makes it possble to fire events to anywhere that accesses this object
 	};
 }
 
