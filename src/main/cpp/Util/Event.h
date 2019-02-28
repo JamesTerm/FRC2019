@@ -6,19 +6,11 @@
 #include <memory>
 #include <iostream>
 
+#include "EventArgs.h"
+
 using namespace std;
 
 static int counter;
-
-class EventArgs
-{
-    public:
-        double GetValue() { return value; }
-        EventArgs(double value) { this->value = value; }
-
-    private:
-        double value;
-};
 
 struct EventHandlerAssignmentException : public exception
 {
@@ -33,7 +25,7 @@ class EventHandler
 
 public:
 	int id;
-	using Func = std::function<void(EventArgs)>;
+	using Func = std::function<void(EventArgs*)>;
 
 private:
 	Func _func;
@@ -46,7 +38,7 @@ public:
 
 #pragma region OPERATOR_OVERLOADS
 public:
-	void operator()(EventArgs e) { this->_func(e); }
+	void operator()(EventArgs* e) { this->_func(e); }
 	bool operator!=(nullptr_t) { return this->_func != nullptr; }
 	bool operator==(const EventHandler &del) { return this->id == del.id; }
 
@@ -86,7 +78,7 @@ private:
 			}
 	}
 
-	void notifyHandlers(EventArgs e)
+	void notifyHandlers(EventArgs* e)
 	{
 		vector<unique_ptr<EventHandler>>::iterator func = this->handlers.begin();
 		for (; func != this->handlers.end(); ++func)
@@ -96,7 +88,7 @@ private:
 
 #pragma region OPERATOR_OVERLOADS
 public:
-	void operator()(EventArgs e) { this->notifyHandlers(e); }
+	void operator()(EventArgs* e) { this->notifyHandlers(e); }
 
 	Event &operator+=(const EventHandler &handler)
 	{

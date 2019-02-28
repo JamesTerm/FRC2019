@@ -28,7 +28,7 @@ AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZo
 {
 	axis = _axis;
 	deadZone = _deadZone;
-	previousSign = 0;
+	//previousSign = 0;
 }
 
 double AxisControl::Update()
@@ -43,7 +43,7 @@ double AxisControl::Update()
 	SetToComponents(val);
 	isIdle = false;
 	currentPow = val;
-	previousSign = getSign(val);
+	//previousSign = getSign(val);
 	return val;
 }
 
@@ -51,8 +51,14 @@ int AxisControl::getSign(double val)
 {
 	if(val < 0)
 		return -1;
-	else
+	else if(val > 0)
 		return 1;
+	else if(val == 0)
+		return 0;
+	else{
+		Log::Error("Something is very broken in the getSign Method in AxisControl...");
+		return 0;
+	}
 }
 
 AxisControl::~AxisControl() { }

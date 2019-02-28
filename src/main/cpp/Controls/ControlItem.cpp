@@ -17,6 +17,25 @@ Email:	dylantrwatson@gmail.com
 using namespace std;
 using namespace Controls;
 
+#pragma region Event Handlers
+
+auto onControllerValueChanged = [&](EventArgs* e) {
+	try{
+		auto args = (TEventArgs<double, ControlItem*>*)e;
+		args->GetSender()->SetToComponents(args->GetValue());
+		delete args;
+		args = nullptr;
+	}catch(exception &e){
+		Log::Error("Known Exception Thrown in onControllerValueChanged in a Control! This can cause fatal Runtime Errors! Check your logs and XML.");
+		//TODO: Make this the append instead
+		Log::Error(e.what());
+	}catch(...){
+		Log::Error("UnknownException Thrown in onControllerValueChanged in a Control! This can cause fatal Runtime Errors! Check your XML and yell at the programmers!");
+	}
+};
+
+#pragma endregion
+
 ControlItem::ControlItem(){}
 
 ControlItem::ControlItem(Joystick *_joy, string _name, bool _reversed, double _powerMultiplier)
@@ -25,6 +44,7 @@ ControlItem::ControlItem(Joystick *_joy, string _name, bool _reversed, double _p
 	name = _name;
 	reversed = _reversed;
 	powerMultiplier = _powerMultiplier;
+	ValueChanged += onControllerValueChanged;
 }
 
 void ControlItem::AddComponent(OutputComponent *component)

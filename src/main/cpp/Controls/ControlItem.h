@@ -18,6 +18,7 @@ Email:	dylantrwatson@gmail.com
 
 #include "../util/Constants.h" 
 #include "../Components/OutputComponent.h"
+#include "../Global.h"
 
 using namespace frc;
 using namespace std;
@@ -41,6 +42,7 @@ namespace Controls
 			void AddComponent(OutputComponent *component);
 			vector<string> GetComponents();
 			string name;
+			Event ValueChanged;
 			void SetToComponents(double val);
 			virtual ~ControlItem();
 	};
