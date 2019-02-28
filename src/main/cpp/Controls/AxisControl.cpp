@@ -28,7 +28,6 @@ AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZo
 {
 	axis = _axis;
 	deadZone = _deadZone;
-	//previousSign = 0;
 }
 
 double AxisControl::Update()
@@ -39,11 +38,9 @@ double AxisControl::Update()
 
 	if(reversed)
 		val = -val;
-
-	SetToComponents(val);
-	isIdle = false;
+	if(abs(val - currentPow) <= EPSILON_MIN)
+		ValueChanged(new TEventArgs<double, AxisControl*>(val, this));
 	currentPow = val;
-	//previousSign = getSign(val);
 	return val;
 }
 

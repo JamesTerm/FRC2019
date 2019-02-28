@@ -10,13 +10,12 @@ Author(s):	Dylan Watson
 Email:	dylantrwatson@gmail.com
 \*********************************************************************/
 
-#ifndef SRC_CONTROLS_CONTROLITEM_H_
-#define SRC_CONTROLS_CONTROLITEM_H_
+#pragma once
 
 #include <frc/WPILib.h>
 #include <vector>
 
-#include "../util/Constants.h" 
+#include "../Util/Constants.h" 
 #include "../Components/OutputComponent.h"
 #include "../Global.h"
 
@@ -47,5 +46,3 @@ namespace Controls
 			virtual ~ControlItem();
 	};
 }
-
-#endif /* SRC_CONTROLS_CONTROLITEM_H_ */

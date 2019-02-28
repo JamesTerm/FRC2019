@@ -30,8 +30,6 @@ namespace Controls
 			int getSign(double val);
 			double currentPow;
 			int channel;
-			//int previousSign;
-			bool isIdle;
 
 		public:
 			AxisControl();
