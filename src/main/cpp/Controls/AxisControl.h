@@ -29,6 +29,7 @@ namespace Controls
 			double deadZone;
 			int getSign(double val);
 			double currentPow;
+			double previousPow;
 			int channel;
 
 		public:

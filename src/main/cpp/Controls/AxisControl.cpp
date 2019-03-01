@@ -33,15 +33,24 @@ AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZo
 double AxisControl::Update()
 {
 	double raw = (*joy).GetRawAxis(axis);
+	if (!(abs(raw) > deadZone))
+	{
+		if (abs(currentPow) > EPSILON_MIN)
+			ValueChanged(new TEventArgs<double, AxisControl*>(0, this));
+		currentPow = 0;
+		previousPow = currentPow;
+		return currentPow;
+	}
 	double dz = deadZone + MINIMUM_JOYSTICK_RETURN;
 	double val = ((abs(raw) - dz) * (pow(1-dz, -1)) * getSign(raw)) * powerMultiplier;
-
 	if(reversed)
 		val = -val;
-	if(abs(val - currentPow) <= EPSILON_MIN)
-		ValueChanged(new TEventArgs<double, AxisControl*>(val, this));
 	currentPow = val;
-	return val;
+	if(abs(previousPow - currentPow) < EPSILON_MIN)
+		return currentPow;
+	previousPow = currentPow;
+	ValueChanged(new TEventArgs<double, AxisControl*>(currentPow, this));
+	return currentPow;
 }
 
 int AxisControl::getSign(double val)
