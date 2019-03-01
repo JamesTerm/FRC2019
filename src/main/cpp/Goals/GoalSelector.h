@@ -1,3 +1,14 @@
+/****************************** Header ******************************\
+Class Name: none. Static Method SelectAuton
+File Name: GoalSelector.h
+Summary: Method to choose correct goal based on dashboard settings
+Project: BroncBotzFRC2019
+Copyright (c) BroncBotz.
+All rights reserved.
+
+Author(s): Chris Weeks
+Email: chrisrweeks@aol.com
+\********************************************************************/
 #pragma once
 
 #include "FRC2019_Goals.h"
