@@ -31,13 +31,102 @@ ButtonControl::ButtonControl(Joystick *_joy, string _name, int _button, bool _ac
 }
 
 double ButtonControl::Update(){
+	/*================================== FROM THE LEGACY CODE ==============================*/
+	double val = joy->GetRawButton(button);
+	double tmp = val;
+	if(!isRamp && ((!isAmpRegulated) || !(pdp->GetCurrent(powerPort) > ampLimit))){
+		if (reversed)
+			val = !val;
+		current = val * powerMultiplier;
+		if (abs(previous - current) < EPSILON_MIN) 
+			return current;
+		if (!actOnRelease && !tmp)
+			ValueChanged(new TEventArgs<double, ButtonControl*>(previous, this));
+		else
+			ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
+		previous = current;
+		return current;
+	}
+	else if(isRamp && ((!isAmpRegulated) || !(pdp->GetCurrent(powerPort) > ampLimit))){
+		if(val){
+			if(abs(abs(previous) - powerMultiplier) >= inc){
+				if(getSign(powerMultiplier) == -1){
+					current -= inc;
+					ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
+				}
+				else if(getSign(powerMultiplier) == 1){
+					current += inc;
+					ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
+				}
+				else{
+					if(abs(previous - current) > EPSILON_MIN)
+						ValueChanged(new TEventArgs<double, ButtonControl*>(0, this));
+				}
+				SetToComponents(current);
+			}
+			else if(!(abs(abs(previous) - powerMultiplier) >= inc)){
+				if(abs(previous - current) > EPSILON_MIN){
+					current = powerMultiplier;
+					ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
+				}
+			}
+			previous = current;
+			return current;
+		}
+		else if(actOnRelease && !val){
+			if(abs(previous - current) > EPSILON_MIN)
+					ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
+			previous = 0;
+			current = 0;
+			return current;
+		}
+	}
+	else if(isAmpRegulated && (pdp->GetCurrent(powerPort) > ampLimit)){
+		if(val){
+			double absPWR = abs(previous) - inc;
+			if(getSign(powerMultiplier) == -1)
+				absPWR *= -1;
+			current = absPWR;
+			ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
+			previous = current;
+			return current;
+		}
+		else if (actOnRelease && !val){
+			if(abs(previous - current) > EPSILON_MIN)
+					ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
+			previous = 0;
+			current = 0;
+			return current;
+		}
+	}
+	return current;
+
+
+
+
+
+#if 0
+
+
 	bool val = joy->GetRawButton(button);
 	bool tmp = val;
-	//IF IT IS NOT ON A RAMP UP CONTROL
+	/*
+	* Not a ramped control -> It does not speed up as you hold it down
+	* AND
+	* It is not AmpRegulated
+	* OR
+	* It is AmpRegulated but the Amp Limit has not been reached
+	*/
 	if(!isRamp && ((!isAmpRegulated) || !(pdp->GetCurrent(powerPort) > ampLimit))){
+		//Inverse the value of the controller input
 		if(reversed)
 			val = !val;
+		//Set current to the val (0 or 1) times the powerMultiplier
 		current = ((double)val) * powerMultiplier;
+		/*
+		* This control has bindings (I believe this part is deprecated, may phase out very soon)
+		* It is not a solenoid control
+		*/
 		if(components.size() > 0 && !isSolenoid){
 			if(val){
 				SetToComponents(powerMultiplier);
@@ -104,6 +193,7 @@ double ButtonControl::Update(){
 		}
 	}
 	return current;
+#endif
 }
 
 void ButtonControl::SetSolenoidDefault(){
@@ -153,7 +243,12 @@ int ButtonControl::getSign(double val){
 		return -1;
 	else if(val > 0)
 		return 1;
-	else return 0;
+	else if(val == 0)
+		return 0;
+	else{
+		Log::Error("Something is very broken in the getSign Method in AxisControl...");
+		return 0;
+	}
 }
 
 ButtonControl::~ButtonControl() {}
