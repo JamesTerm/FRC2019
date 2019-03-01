@@ -1,4 +1,3 @@
-
 /****************************** Header ******************************\
 Class Name: CompositeGoal, MultitaskGoal
 File Name: Goal.cpp
@@ -11,22 +10,65 @@ All rights reserved.
 Author(s): James Killian, Chris Weeks
 Email: chrisrweeks@aol.com
 \********************************************************************/
-#include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include <string>
 #include <list>
-#include <vector>
-#include <map>
-#include <assert.h>
-#include <string.h>
 #include "Goal.h"
 
 using namespace std;
 
+/***************************************************************************************************************/
+/*												CompositeGoal													*/
+/***************************************************************************************************************/
 
-  /***************************************************************************************************************/
- /*												MultitaskGoal												*/
+void CompositeGoal::Activate()
+{
+	m_Status = eActive;
+}
+Goal::Goal_Status CompositeGoal::Process(double dTime)
+{
+	if (m_Status == eActive)
+	{
+		Goal_Status newStatus = eFailed;
+		//remove finished goals
+		while (!m_SubGoals.empty() && (m_SubGoals.front()->GetStatus() == eCompleted || m_SubGoals.front()->GetStatus() == eFailed))
+		{
+			m_SubGoals.pop_front();
+		}
+		if (!m_SubGoals.empty())
+		{
+			//create pointer toks next goal for simplicity
+			Goal* currentGoal = m_SubGoals.front();
+			//active the next goal if it isnt already
+			if (currentGoal->GetStatus() == eInactive)
+			{
+				currentGoal->Activate();
+			}
+			newStatus = currentGoal->Process(dTime);
+
+			if(newStatus == eCompleted && m_SubGoals.size() > 1)
+			{
+				newStatus = eActive;
+			}
+		}
+		else
+		{
+			Terminate();
+		}
+		return newStatus;
+	}
+	else
+	{
+		return m_Status;
+	}
+}
+
+void CompositeGoal::Terminate()
+{
+	m_Status = eInactive;
+}
+/***************************************************************************************************************/
+/*												MultitaskGoal													*/
 /***************************************************************************************************************/
 
 MultitaskGoal::MultitaskGoal(ActiveCollection *activeCollection, bool WaitAll) : m_WaitAll(WaitAll)
@@ -53,17 +95,8 @@ void MultitaskGoal::Activate()
 {
 
 	for (GoalList::iterator it = m_GoalsToProcess.begin(); it != m_GoalsToProcess.end(); ++it)
-	{
 		(*it)->Activate();
-		//Make sure it didn't fail already
-		if ((*it)->GetStatus() == Goal::eFailed)
-		{
-			m_Status = eFailed;
-			break;
-		}
-	}
-	if (m_Status!= eFailed)
-		m_Status = eActive;
+	m_Status = eActive;
 }
 Goal::Goal_Status MultitaskGoal::Process(double dTime_s)
 {
@@ -116,76 +149,3 @@ void MultitaskGoal::Terminate()
 	RemoveAllGoals();
 	m_Status = eInactive; //make this inactive
 }
-
-
-
-
-
-
-
-//FROM COMMON
-
-
-void* Goal::operator new ( const size_t size )
-{	return malloc( size );
-}
-
-void  Goal::operator delete ( void* ptr )
-{	free( ptr );
-}
-
-void* Goal::operator new [] ( const size_t size )
-{	return malloc( size );
-}
-
-void  Goal::operator delete [] ( void* ptr )
-{	free( ptr );
-}
-
-  /***************************************************************************************************************/
- /*												CompositeGoal													*/
-/***************************************************************************************************************/
-
-void CompositeGoal::RemoveAllSubgoals()
-{
-	for (SubgoalList::iterator it = m_SubGoals.begin(); it!=m_SubGoals.end(); ++it)
-	{
-		(*it)->Terminate();
-		delete *it;
-	}
-	m_SubGoals.clear();
-}
-
-CompositeGoal::~CompositeGoal()
-{
-	RemoveAllSubgoals();
-}
-
-Goal::Goal_Status CompositeGoal::ProcessSubgoals(double dTime_s)
-{
-	Goal_Status StatusOfSubGoals;
-	//Remove all completed and failed goals from the front of the subgoal list
-	while (!m_SubGoals.empty() && (m_SubGoals.front()->GetStatus()==eCompleted || m_SubGoals.front()->GetStatus()==eFailed))
-	{
-		m_SubGoals.front()->Terminate();
-		delete m_SubGoals.front();
-		m_SubGoals.pop_front();
-	}
-	//If any subgoals remain, process the one at the front of the list
-	if (!m_SubGoals.empty())
-	{
-		//grab the status of the front-most subgoal
-		StatusOfSubGoals = m_SubGoals.front()->Process(dTime_s);
-
-		//we have to test for the special case where the front-most subgoal reports "completed" and the subgoal list contains additional goals.
-		//When this is the case, to ensure the parent keeps processing its subgoal list, the "active" status is returned.
-		if (StatusOfSubGoals == eCompleted && m_SubGoals.size() > 1)
-			StatusOfSubGoals=eActive;
-	}
-	else
-		StatusOfSubGoals=eCompleted;
-	return StatusOfSubGoals;
-}
-
-
-

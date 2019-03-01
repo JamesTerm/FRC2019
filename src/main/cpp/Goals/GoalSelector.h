@@ -7,7 +7,9 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
     bool isFound = true;
 	if (autonSelected == "DEBUG")
 	{
-		goal->AddGoal(new Goal_VisionAlign(activeCollection, new VisionTarget(320, 20), 140.0)); //!120 sec timeout for DEBUG only
+		//goal->AddGoal(new Goal_VisionAlign(activeCollection, new VisionTarget(320, 20), 140.0)); //!120 sec timeout for DEBUG only
+        goal->AddGoal(new Goal_WaitThenDrive(activeCollection, .5, .5, 3, 5));
+        cout << "selector" << endl;
 		return true;
 	}
     else if(autonSelected == "drive")
