@@ -31,13 +31,26 @@ ButtonControl::ButtonControl(Joystick *_joy, string _name, int _button, bool _ac
 }
 
 double ButtonControl::Update(){
-	/*================================== FROM THE LEGACY CODE ==============================*/
-	double val = joy->GetRawButton(button);
-	double tmp = val;
+	double val = joy->GetRawButton(button); //*< Value recieved from the button
+	double tmp = val; //*< Temporary value to consistantly hold the original value of the button -> not affected by reversing the ButtonControl
+
+	/*
+	* This is not a ramped control -> it does not speed up while the button is held down like a jet engine
+	* AND
+	* It is not regulated by ampereage
+	* OR
+	* It is regulated by ampereage but has not exceeded the ampereage limit
+	*/
 	if(!isRamp && ((!isAmpRegulated) || !(pdp->GetCurrent(powerPort) > ampLimit))){
+		/*
+		* If the control is designated reversed, reverse the recieved value of the button
+		*/
 		if (reversed)
-			val = !val;
-		current = val * powerMultiplier;
+			val = !val; //*< Set the value of the button to the inverse of the recieved value
+		current = val * powerMultiplier; //*< This is the power that will be set to the motor based upon the powerMultiplier
+		/*
+		* If the value has not changed since the last calling of the Update function, end the function
+		*/
 		if (abs(previous - current) < EPSILON_MIN) 
 			return current;
 		if (!actOnRelease && !tmp)
@@ -47,8 +60,21 @@ double ButtonControl::Update(){
 		previous = current;
 		return current;
 	}
+	/*
+	* This is a ramped control -> it will speed up while the button is held down like a jet engine
+	* AND
+	* It is not regulated by ampereage
+	* OR
+	* It is regulated by ampereage but has not exceeded the ampereage limit
+	*/
 	else if(isRamp && ((!isAmpRegulated) || !(pdp->GetCurrent(powerPort) > ampLimit))){
+		/*
+		* If the button is being pressed
+		*/
 		if(val){
+			/*
+			* If the difference between the previous value set to the motor and the powermultiplier is greater than the set increment
+			*/
 			if(abs(abs(previous) - powerMultiplier) >= inc){
 				if(getSign(powerMultiplier) == -1){
 					current -= inc;
@@ -64,6 +90,9 @@ double ButtonControl::Update(){
 				}
 				SetToComponents(current);
 			}
+			/*
+			* If the difference between the previous value set to the motor and the powermultiplier is not greater than the set increment
+			*/
 			else if(!(abs(abs(previous) - powerMultiplier) >= inc)){
 				if(abs(previous - current) > EPSILON_MIN){
 					current = powerMultiplier;
@@ -76,13 +105,16 @@ double ButtonControl::Update(){
 		else if(actOnRelease && !val){
 			if(abs(previous - current) > EPSILON_MIN)
 					ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
-					//should we add a goal
-						//if so, add it
 			previous = 0;
 			current = 0;
 			return current;
 		}
 	}
+	/*
+	* This control is ampereage regulated
+	* AND
+	* The apereage is exceeding the set limit for the component 
+	*/
 	else if(isAmpRegulated && (pdp->GetCurrent(powerPort) > ampLimit)){
 		if(val){
 			double absPWR = abs(previous) - inc;
