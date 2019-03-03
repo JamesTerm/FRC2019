@@ -14,6 +14,5 @@ Email: irobot9803@gmail.com
 
 #include "Util/Log.h"
 #include "Util/Event.h"
-#include "Util/GlobalEvents.h"
 
 using namespace Logger;

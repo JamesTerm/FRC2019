@@ -25,8 +25,6 @@ namespace Controls
 	class ToggleButtonControl : public ControlItem
 	{
 		private:
-			Joystick *joy;
-			string name;
 			int button;
 
 			bool previousState;
