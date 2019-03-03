@@ -29,12 +29,12 @@ namespace Controls
 	class ControlItem 
 	{
 		protected:
-			Joystick *joy;
 			bool reversed;
 			double powerMultiplier;
 			vector<OutputComponent*> components;
 
 		public:
+			Joystick *joy;
 			ControlItem();
 			ControlItem(Joystick *_joy, string _name, bool _reversed, double _powerMultiplier);
 			virtual double Update() = 0;

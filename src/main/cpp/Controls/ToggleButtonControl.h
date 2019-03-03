@@ -28,23 +28,14 @@ namespace Controls
 			Joystick *joy;
 			string name;
 			int button;
-			bool State;
-			bool out;
-			bool IsSwitchOnPress;
-			bool LastState;
+
+			bool previousState;
+			bool toggleOn = false;
 			double current;
-			bool IsSolenoid;
-			bool IsReversed;
 
 		public:
 			ToggleButtonControl();
-			ToggleButtonControl(Joystick *_joy, string _name, int _button, bool _IsSwitchOnPress, bool _IsReversed, double _powerMultiplier, bool _IsSolenoid);
-			void SetSolenoids(DoubleSolenoid::Value value);
-			void SetSolenoidDefalt();
-			bool ButtonDown(bool input);
-			bool ButtonUp(bool input);
-			DoubleSolenoid::Value GetSolenoidValue();
-			DoubleSolenoid::Value GetSolenoidDefaultValue();
+			ToggleButtonControl(Joystick *_joy, string _name, int _button, bool _IsReversed, double _powerMultiplier);
 			virtual ~ToggleButtonControl();
 			virtual double Update() override;
 	};

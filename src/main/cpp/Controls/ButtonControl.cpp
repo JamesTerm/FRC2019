@@ -76,6 +76,8 @@ double ButtonControl::Update(){
 		else if(actOnRelease && !val){
 			if(abs(previous - current) > EPSILON_MIN)
 					ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
+					//should we add a goal
+						//if so, add it
 			previous = 0;
 			current = 0;
 			return current;
@@ -100,100 +102,6 @@ double ButtonControl::Update(){
 		}
 	}
 	return current;
-
-
-
-
-
-#if 0
-
-
-	bool val = joy->GetRawButton(button);
-	bool tmp = val;
-	/*
-	* Not a ramped control -> It does not speed up as you hold it down
-	* AND
-	* It is not AmpRegulated
-	* OR
-	* It is AmpRegulated but the Amp Limit has not been reached
-	*/
-	if(!isRamp && ((!isAmpRegulated) || !(pdp->GetCurrent(powerPort) > ampLimit))){
-		//Inverse the value of the controller input
-		if(reversed)
-			val = !val;
-		//Set current to the val (0 or 1) times the powerMultiplier
-		current = ((double)val) * powerMultiplier;
-		/*
-		* This control has bindings (I believe this part is deprecated, may phase out very soon)
-		* It is not a solenoid control
-		*/
-		if(components.size() > 0 && !isSolenoid){
-			if(val){
-				SetToComponents(powerMultiplier);
-			}
-			else if(actOnRelease && !val){
-				SetToComponents(0);
-			}
-		}
-		else if(components.size() > 0 && isSolenoid){
-			if(val && reversed){
-				SetToSolenoids(DoubleSolenoid::Value::kReverse);
-			}
-			else if(val && !reversed){
-				SetToSolenoids(DoubleSolenoid::Value::kForward);
-			}
-			else if(!val && actOnRelease){
-				SetSolenoidDefault();
-			}
-		}
-		return current;
-	}
-	else if(isRamp && ((!isAmpRegulated) || !(pdp->GetCurrent(powerPort) > ampLimit))){
-		if(components.size() > 0){
-			if(val){
-				if(abs(abs(previous) - powerMultiplier) >= inc){
-					if(getSign(powerMultiplier) == -1)
-						current -= inc;
-					else if(getSign(powerMultiplier) == 1)
-						current += inc;
-					SetToComponents(current);
-				}
-				else if(!(abs(abs(previous) - powerMultiplier) >= inc)){
-					current = powerMultiplier;
-					SetToComponents(current);
-				}
-				previous = current;
-				return current;
-			}
-			else if(actOnRelease && !val){
-				SetToComponents(0);
-				previous = 0;
-				current = 0;
-				return current;
-			}
-		}
-	}
-	else if(isAmpRegulated && (pdp->GetCurrent(powerPort) > ampLimit)){
-		if(components.size() > 0){
-			if(val){
-				double absPWR = abs(previous) - inc;
-				if(getSign(powerMultiplier) == -1)
-					absPWR *= -1;
-				current = absPWR;
-				SetToComponents(current);
-				previous = current;
-				return current;
-			}
-			else if (actOnRelease && !val){
-				SetToComponents(0);
-				previous = 0;
-				current = 0;
-				return current;
-			}
-		}
-	}
-	return current;
-#endif
 }
 
 void ButtonControl::SetSolenoidDefault(){
