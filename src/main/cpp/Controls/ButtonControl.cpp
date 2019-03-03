@@ -31,76 +31,106 @@ ButtonControl::ButtonControl(Joystick *_joy, string _name, int _button, bool _ac
 }
 
 double ButtonControl::Update(){
-	bool val = joy->GetRawButton(button);
-	bool tmp = val;
-	//IF IT IS NOT ON A RAMP UP CONTROL
+	double val = joy->GetRawButton(button); //*< Value recieved from the button
+	double tmp = val; //*< Temporary value to consistantly hold the original value of the button -> not affected by reversing the ButtonControl
+
+	/*
+	* This is not a ramped control -> it does not speed up while the button is held down like a jet engine
+	* AND
+	* It is not regulated by ampereage
+	* OR
+	* It is regulated by ampereage but has not exceeded the ampereage limit
+	*/
 	if(!isRamp && ((!isAmpRegulated) || !(pdp->GetCurrent(powerPort) > ampLimit))){
-		if(reversed)
-			val = !val;
-		current = ((double)val) * powerMultiplier;
-		if(components.size() > 0 && !isSolenoid){
-			if(val){
-				SetToComponents(powerMultiplier);
-			}
-			else if(actOnRelease && !val){
-				SetToComponents(0);
-			}
-		}
-		else if(components.size() > 0 && isSolenoid){
-			if(val && reversed){
-				SetToSolenoids(DoubleSolenoid::Value::kReverse);
-			}
-			else if(val && !reversed){
-				SetToSolenoids(DoubleSolenoid::Value::kForward);
-			}
-			else if(!val && actOnRelease){
-				SetSolenoidDefault();
-			}
-		}
+		/*
+		* If the control is designated reversed, reverse the recieved value of the button
+		*/
+		if (reversed)
+			val = !val; //*< Set the value of the button to the inverse of the recieved value
+		current = val * powerMultiplier; //*< This is the power that will be set to the motor based upon the powerMultiplier
+		/*
+		* If the value has not changed since the last calling of the Update function, end the function
+		*/
+		if (abs(previous - current) < EPSILON_MIN) 
+			return current;
+		if (!actOnRelease && !tmp)
+			ValueChanged(new TEventArgs<double, ButtonControl*>(previous, this));
+		else
+			ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
+		previous = current;
 		return current;
 	}
+	/*
+	* This is a ramped control -> it will speed up while the button is held down like a jet engine
+	* AND
+	* It is not regulated by ampereage
+	* OR
+	* It is regulated by ampereage but has not exceeded the ampereage limit
+	*/
 	else if(isRamp && ((!isAmpRegulated) || !(pdp->GetCurrent(powerPort) > ampLimit))){
-		if(components.size() > 0){
-			if(val){
-				if(abs(abs(previous) - powerMultiplier) >= inc){
-					if(getSign(powerMultiplier) == -1)
-						current -= inc;
-					else if(getSign(powerMultiplier) == 1)
-						current += inc;
-					SetToComponents(current);
+		/*
+		* If the button is being pressed
+		*/
+		if(val){
+			/*
+			* If the difference between the previous value set to the motor and the powermultiplier is greater than the set increment
+			*/
+			if(abs(abs(previous) - powerMultiplier) >= inc){
+				if(getSign(powerMultiplier) == -1){
+					current -= inc;
+					ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
 				}
-				else if(!(abs(abs(previous) - powerMultiplier) >= inc)){
+				else if(getSign(powerMultiplier) == 1){
+					current += inc;
+					ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
+				}
+				else{
+					if(abs(previous - current) > EPSILON_MIN)
+						ValueChanged(new TEventArgs<double, ButtonControl*>(0, this));
+				}
+				SetToComponents(current);
+			}
+			/*
+			* If the difference between the previous value set to the motor and the powermultiplier is not greater than the set increment
+			*/
+			else if(!(abs(abs(previous) - powerMultiplier) >= inc)){
+				if(abs(previous - current) > EPSILON_MIN){
 					current = powerMultiplier;
-					SetToComponents(current);
+					ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
 				}
-				previous = current;
-				return current;
 			}
-			else if(actOnRelease && !val){
-				SetToComponents(0);
-				previous = 0;
-				current = 0;
-				return current;
-			}
+			previous = current;
+			return current;
+		}
+		else if(actOnRelease && !val){
+			if(abs(previous - current) > EPSILON_MIN)
+					ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
+			previous = 0;
+			current = 0;
+			return current;
 		}
 	}
+	/*
+	* This control is ampereage regulated
+	* AND
+	* The apereage is exceeding the set limit for the component 
+	*/
 	else if(isAmpRegulated && (pdp->GetCurrent(powerPort) > ampLimit)){
-		if(components.size() > 0){
-			if(val){
-				double absPWR = abs(previous) - inc;
-				if(getSign(powerMultiplier) == -1)
-					absPWR *= -1;
-				current = absPWR;
-				SetToComponents(current);
-				previous = current;
-				return current;
-			}
-			else if (actOnRelease && !val){
-				SetToComponents(0);
-				previous = 0;
-				current = 0;
-				return current;
-			}
+		if(val){
+			double absPWR = abs(previous) - inc;
+			if(getSign(powerMultiplier) == -1)
+				absPWR *= -1;
+			current = absPWR;
+			ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
+			previous = current;
+			return current;
+		}
+		else if (actOnRelease && !val){
+			if(abs(previous - current) > EPSILON_MIN)
+					ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
+			previous = 0;
+			current = 0;
+			return current;
 		}
 	}
 	return current;
@@ -153,7 +183,12 @@ int ButtonControl::getSign(double val){
 		return -1;
 	else if(val > 0)
 		return 1;
-	else return 0;
+	else if(val == 0)
+		return 0;
+	else{
+		Log::Error("Something is very broken in the getSign Method in AxisControl...");
+		return 0;
+	}
 }
 
 ButtonControl::~ButtonControl() {}

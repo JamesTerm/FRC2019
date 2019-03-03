@@ -13,5 +13,6 @@ Email: irobot9803@gmail.com
 #pragma once
 
 #include "Util/Log.h"
+#include "Util/Event.h"
 
 using namespace Logger;

@@ -10,10 +10,11 @@ Author(s): Ian Poll
 Email: irobot9803@gmail.com
 \********************************************************************/
 
+#pragma once
+
 #ifndef SRC_UTIL_LOG_H_
 #define SRC_UTIL_LOG_H_
 
-#include "../Config/ActiveCollection.h"
 #include <iostream>
 #include <fstream>
 

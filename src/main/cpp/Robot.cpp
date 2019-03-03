@@ -14,8 +14,6 @@ chrisrweeks@aol.com
 
 #include <iostream>
 #include "Robot.h"
-//TODO: Potentiometer include, VictorSPX include
-//TODO: Logging class (will assign to Ian in TFS at some point soon. Will be done in dev, does not require new branch)
 using namespace std;
 
 /**

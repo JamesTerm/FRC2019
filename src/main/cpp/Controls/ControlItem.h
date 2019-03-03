@@ -10,14 +10,14 @@ Author(s):	Dylan Watson
 Email:	dylantrwatson@gmail.com
 \*********************************************************************/
 
-#ifndef SRC_CONTROLS_CONTROLITEM_H_
-#define SRC_CONTROLS_CONTROLITEM_H_
+#pragma once
 
 #include <frc/WPILib.h>
 #include <vector>
 
-#include "../util/Constants.h" 
+#include "../Util/Constants.h" 
 #include "../Components/OutputComponent.h"
+#include "../Global.h"
 
 using namespace frc;
 using namespace std;
@@ -29,21 +29,20 @@ namespace Controls
 	class ControlItem 
 	{
 		protected:
-			Joystick *joy;
 			bool reversed;
 			double powerMultiplier;
 			vector<OutputComponent*> components;
 
 		public:
+			Joystick *joy;
 			ControlItem();
 			ControlItem(Joystick *_joy, string _name, bool _reversed, double _powerMultiplier);
 			virtual double Update() = 0;
 			void AddComponent(OutputComponent *component);
 			vector<string> GetComponents();
 			string name;
+			Event ValueChanged;
 			void SetToComponents(double val);
 			virtual ~ControlItem();
 	};
 }
-
-#endif /* SRC_CONTROLS_CONTROLITEM_H_ */

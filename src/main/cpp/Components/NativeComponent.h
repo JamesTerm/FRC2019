@@ -16,6 +16,8 @@ Email: dylantrwatson@gmail.com
 #include <string>
 #include <frc/WPILib.h>
 
+#include "../Global.h"
+
 using namespace frc;
 using namespace std;
 
