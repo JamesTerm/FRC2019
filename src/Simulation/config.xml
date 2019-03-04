@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Root of the Config -->
+<Robot>
+    <!-- Version of the current config to be printed on the console -->
+    <Version version="1" />
+    <!-- Comment on this particular config to be printed on the console -->
+    <Comment comment="A" />
+    <!-- Sets whether or not to initialize the NavX -->
+    <UseNavX value="true" />
+    <!-- Sets whether or not to initialize the camera to send back to the driver station -->
+    <!-- Contains assignments to ports and robot dimensions -->
+    <RobotConfig>
+        <!-- Region for defining VictorSP Items -->
+        <VictorSP>
+            <left_0 channel="2" reversed="false" pdbChannel="2" />
+            <left_1 channel="3" reversed="false" pdbChannel="3" />
+            <right_0 channel="0" reversed="false" pdbChannel="0" />
+            <right_1 channel="1" reversed="false" pdbChannel="1" />
+        </VictorSP>
+        <!-- Region for VictorSPX CAN Items -->
+        <VictorSPX>
+        </VictorSPX>
+        <!-- Region for TalonSRX CAN Items -->
+        <TalonSRX>
+        </TalonSRX>
+        <!-- Region for Potentiometers -->
+        <Potentiometer>
+        </Potentiometer>
+        <!-- Region for Encoders -->
+        <Encoder>
+        </Encoder>
+        <!-- Region for DoubleSolenoids -->
+        <DoubleSolenoid>
+        </DoubleSolenoid>
+        <!-- Region for DigitalInputs -->
+        <DigitalInput>
+        </DigitalInput>
+    </RobotConfig>
+
+    <!-- Root of all control definitions -->
+    <Controls>
+        <!-- Driver Controller, slot should always be 0 -->
+        <Driver slot="0">
+            <AxisControls>
+                <leftDrive axis="1" deadZone="0.08" reversed="true" powerMultiplier="0.8" bindings="left_0, left_1"/>
+                <rightDrive axis="5" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="right_0, right_1"/>
+            </AxisControls>
+        </Driver>
+    </Controls>
+</Robot>

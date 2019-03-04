@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Components">
+      <UniqueIdentifier>{96d534cd-5dd7-4242-bd98-ff59df992138}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Source Files">
+      <UniqueIdentifier>{71389e8b-3afb-42cd-98bb-667af14a6a4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Header Files">
+      <UniqueIdentifier>{aa61a41b-7597-4e91-841a-e7135731fa5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config">
+      <UniqueIdentifier>{07f17dbb-58da-49de-a09c-82697b6dbac0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controls">
+      <UniqueIdentifier>{e7247398-176c-4f40-a058-a208c4e6a774}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controls\Source Files">
+      <UniqueIdentifier>{be12a4fc-b1b4-4c51-bc60-c78a7fda3c71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controls\Header Files">
+      <UniqueIdentifier>{662eb29b-9722-4a2c-9dba-d0173ceef82f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="frc">
+      <UniqueIdentifier>{7414c6ee-9d28-49bf-b12f-aad67a0e4ffd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems">
+      <UniqueIdentifier>{5d8b740d-78c6-433d-93d1-9ae0280e6109}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Goals">
+      <UniqueIdentifier>{3874e0c1-f640-4c3f-9335-092686d16672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{60efb862-ef2c-4aca-92a9-7a5283a5e670}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Util\Units">
+      <UniqueIdentifier>{b761e367-9f90-472c-8ba2-63fd63fdded3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NetworkTables">
+      <UniqueIdentifier>{c9dc9df5-c7bf-4269-988c-b1390c4d6b3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pugi">
+      <UniqueIdentifier>{e2d14228-a433-4ed0-99b3-201be2dc9d46}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\main\cpp\Components\DigitalInputItem.cpp">
+      <Filter>Components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Components\DoubleSolenoidItem.cpp">
+      <Filter>Components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Components\EncoderItem.cpp">
+      <Filter>Components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Components\PotentiometerItem.cpp">
+      <Filter>Components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Components\TalonSRXItem.cpp">
+      <Filter>Components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Components\VictorSPItem.cpp">
+      <Filter>Components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Components\VictorSPXItem.cpp">
+      <Filter>Components\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Config\ActiveCollection.cpp">
+      <Filter>Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Config\Config.cpp">
+      <Filter>Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Controls\AxisControl.cpp">
+      <Filter>Controls\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Controls\ButtonControl.cpp">
+      <Filter>Controls\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Controls\ControlItem.cpp">
+      <Filter>Controls\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Controls\ToggleButtonControl.cpp">
+      <Filter>Controls\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="frc\Joystick.cpp">
+      <Filter>frc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Systems\Drive.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Robot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="frc\DirectInput_Joystick.cpp">
+      <Filter>frc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Goals\FRC2019_Goals.cpp">
+      <Filter>Goals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Goals\Goal.cpp">
+      <Filter>Goals</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkTables\NetworkTable.cpp">
+      <Filter>NetworkTables</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Pugi\pugixml.cpp">
+      <Filter>Pugi</Filter>
+    </ClCompile>
+    <ClCompile Include="Log.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\main\cpp\Components\DigitalInputItem.h">
+      <Filter>Components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Components\DoubleSolenoidItem.h">
+      <Filter>Components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Components\EncoderItem.h">
+      <Filter>Components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Components\InputComponent.h">
+      <Filter>Components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Components\NativeComponent.h">
+      <Filter>Components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Components\NavX.h">
+      <Filter>Components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Components\OutputComponent.h">
+      <Filter>Components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Components\PotentiometerItem.h">
+      <Filter>Components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Components\TalonSRXItem.h">
+      <Filter>Components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Components\VictorSPItem.h">
+      <Filter>Components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Components\VictorSPXItem.h">
+      <Filter>Components\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ctre\Phoenix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Config\ActiveCollection.h">
+      <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Config\Config.h">
+      <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="AHRS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Controls\AxisControl.h">
+      <Filter>Controls\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Controls\ButtonControl.h">
+      <Filter>Controls\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Controls\ControlItem.h">
+      <Filter>Controls\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Controls\ToggleButtonControl.h">
+      <Filter>Controls\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frc\WPILib.h">
+      <Filter>frc</Filter>
+    </ClInclude>
+    <ClInclude Include="frc\Joystick.h">
+      <Filter>frc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Systems\Drive.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Robot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frc\SampleRobot.h">
+      <Filter>frc</Filter>
+    </ClInclude>
+    <ClInclude Include="frc\DirectInput_Joystick.h">
+      <Filter>frc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Goals\FRC2019_Goals.h">
+      <Filter>Goals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Goals\GoalSelector.h">
+      <Filter>Goals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Util\Constants.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Util\LoopChecks.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Util\Preproc.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Util\UtilityFunctions.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Util\Units\Distances.h">
+      <Filter>Util\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkTables\NetworkTable.h">
+      <Filter>NetworkTables</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkTables\NetworkTableEntry.h">
+      <Filter>NetworkTables</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkTables\NetworkTableInstance.h">
+      <Filter>NetworkTables</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Pugi\pugiconfig.h">
+      <Filter>Pugi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Pugi\pugixml.h">
+      <Filter>Pugi</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

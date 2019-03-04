@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{E56D8C47-DA69-46F8-92CA-8F68B3E553B3}</ProjectGuid>
+    <RootNamespace>RobotLibraries</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_MBCS;_Win32;_WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(projectdir)../TeleopLibraries</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SmartDashboard\SmartDashboard.vcxproj">
+      <Project>{556fc434-d0c3-4b96-bf29-e9cf5cd24f02}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Base\Base_Includes.h" />
+    <ClInclude Include="Base\Event.h" />
+    <ClInclude Include="Base\EventMap.h" />
+    <ClInclude Include="Base\Joystick.h" />
+    <ClInclude Include="Base\JoystickBinder.h" />
+    <ClInclude Include="Base\LUA.h" />
+    <ClInclude Include="Base\Misc.h" />
+    <ClInclude Include="Base\Script.h" />
+    <ClInclude Include="Base\Time_Type.h" />
+    <ClInclude Include="Base\Vec2d.h" />
+    <ClInclude Include="Common\AI_Base_Controller.h" />
+    <ClInclude Include="Common\Calibration_Testing.h" />
+    <ClInclude Include="Common\Debug.h" />
+    <ClInclude Include="Common\Entity2D.h" />
+    <ClInclude Include="Common\Entity_Properties.h" />
+    <ClInclude Include="Common\Goal.h" />
+    <ClInclude Include="Common\InOut_Interface.h" />
+    <ClInclude Include="Common\Physics_1D.h" />
+    <ClInclude Include="Common\Physics_2D.h" />
+    <ClInclude Include="Common\PIDController.h" />
+    <ClInclude Include="Common\Poly.h" />
+    <ClInclude Include="Common\Robot_Control_Common.h" />
+    <ClInclude Include="Common\Robot_Control_Interface.h" />
+    <ClInclude Include="Common\Rotary_System.h" />
+    <ClInclude Include="Common\Servo_System.h" />
+    <ClInclude Include="Common\Ship.h" />
+    <ClInclude Include="Common\Ship_1D.h" />
+    <ClInclude Include="Common\SmartDashboard.h" />
+    <ClInclude Include="Common\UI_Controller.h" />
+    <ClInclude Include="Common\Vehicle_Drive.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Base\EventMap.cpp" />
+    <ClCompile Include="Base\JoystickBinder.cpp" />
+    <ClCompile Include="Base\LUA.cpp" />
+    <ClCompile Include="Base\Misc.cpp" />
+    <ClCompile Include="Base\Script.cpp" />
+    <ClCompile Include="Base\Time_Type.cpp" />
+    <ClCompile Include="Common\AI_Base_Controller.cpp" />
+    <ClCompile Include="Common\Calibration_Testing.cpp" />
+    <ClCompile Include="Common\Debug.cpp" />
+    <ClCompile Include="Common\Entity2D.cpp" />
+    <ClCompile Include="Common\Entity_Properties.cpp" />
+    <ClCompile Include="Common\Goal.cpp" />
+    <ClCompile Include="Common\InOut_Interface.cpp" />
+    <ClCompile Include="Common\Physics_1D.cpp" />
+    <ClCompile Include="Common\Physics_2D.cpp" />
+    <ClCompile Include="Common\PIDController.cpp" />
+    <ClCompile Include="Common\Robot_Control_Common.cpp" />
+    <ClCompile Include="Common\Rotary_System.cpp" />
+    <ClCompile Include="Common\Servo_System.cpp" />
+    <ClCompile Include="Common\Ship.cpp" />
+    <ClCompile Include="Common\Ship_1D.cpp" />
+    <ClCompile Include="Common\UI_Controller.cpp" />
+    <ClCompile Include="Common\Vehicle_Drive.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
