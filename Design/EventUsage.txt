@@ -1,0 +1,226 @@
+INTRODUCTION:
+The events contained in this repository were designed to emulated the C# event system. There are some key differences, such as the way delegates 
+function and how arguments are passed. For this walkthrough, I will only be discussing features of these events that pertain to this repositry. 
+As such, I will not be covering event passing by value, and I will only briefly touch upon the explicit definition of Event Handlers
+std::function<void(EventArgs)>, which is how EventHandlers were meant to be defined. 
+
+RECCOMENDED PREVIOUS KNOWLEDGE:
+Before reading through this tutorial, I strongly reccomend that
+the reader has a basic grasp on using lambdas to affect function parameter values, such as [], [&], [=]. I also reccomend possibly reading up on C# 
+events although that is not required to understand this tutorial. Also a knowledge of Iterators and the usage of templates as generic types for class
+member variable storage may be helpful as well. A knowledge of C++ headers and the declaration type of auto is also neccessary.
+
+AUTHORS NOTE:
+This event system was written by Ryan Cooper and documented by Dylan Watson with the help of Ryan Cooper. Some of the documentation text was taken
+from the MSDN explanation of C# Events, and other instructional articles regarding C# Events.
+
+UNDERLYING PATTERN: OBSERVATION
+The concept behind events is a Software development pattern called Observation Pattern. Observer pattern is a software development pattern in which
+there is a subject (which is just an object) which stores a list of dependents (also objects). The subject is responsible for notifying all of its 
+dependents of something, and the dependents then do something with the info passed. C#'s event system follows the Observation Pattern, and as such
+our event system also follows the Observation Pattern. There are other ways to implement events, however I believe that Observation Pattern is the
+most widely used. If you are interested in learning more about the Observation Pattern, you can learn about it here: 
+https://www.tutorialspoint.com/design_pattern/observer_pattern.htm
+
+GENERAL CONCEPT:
+An event in the loosest sense of the term is simply just something that happens. For this tutorial, we will use a real-world example. Me waking up
+in the morning is an event. My mother and father both wait for that event, and do something when it happens. When something (usually myself) has
+notified them that I am awake, my mother says "Good morning Dylan" and my father says "How did you sleep?". However, their response to the event 
+of me waking up can be affected by certain characteristics I have when I wake up. If I seem tired, my father might say "Why are you so tired? Did 
+you stay up too late?" and if I seem like I am in bad mood, my mother might leave me alone for a while. This is the general concept of events: One
+person makes something happen, and other people, who were waiting or "listening" for the event to happen act in response. We witness events every 
+single day of our lives.
+
+HOW THIS TRANSLATES TO PROGRAMMING AND DEVLEOPMENT: 
+The idea of listening for events can seem daunting at first, but really it follows the exact same logic as my aforementioned example. One class,
+which I represent in my example, is known as the Publisher. The publisher contains the Event, and is responsible for Invoking it (EX: I invoked
+the event of me waking up when I woke up). The other class is the subscriber. The subscriber is bound to the event (subscribed) and is "listening"
+for the event to be invoked. In my example, my parents were both subscribers, but technically there can be an infinite amount of subscribers to any
+one event. The publishing class contains the event object (and in c# it contains a delegate as well, to be talked about later, as in this version the
+delegate is contained within the Event itself as different delegates per event are really not a working feature as of now), and the subscribing
+class contains an EventHandler, which is the function that gets called when the event is invoked. When the publishing class invokes an event, the
+Event object then calls all of its EventHandlers that are subscribed to the event. The event passes the EventHandler a set of arguments, which in
+the case of this code is defined as a class called EventArgs. However, when discussing events as a broader topic, the arguments can be anything, from 
+a double to an int to a pointer or any combination of parameters. The only thing not yet discussed are delegates, as they didn't really fit in with 
+my example. Basically, becuase a single event must call all of its EventHandlers and sends them all the same parameters, all of the EventHandlers
+must have the same return type and accept the same arguments in the same order. This will be covered more in depth in the next section.
+
+LOOKING AT THE USE OF EVENTS IN A C# TYPE-STYLE USING SOME PSEUDO-CODE MIXED WITH REAL CODE:
+The event system can be confusing to look at at first glance, but once you break it down it is not that confusing. Here is the general basis. 
+A quick note: not all of this is perfectly accurate to how our particular event system works, but it explains the general concept. Also, for 
+simplicity I have named the subscribing class Subscriber and the publishing class Publisher. This section only covers the 
+general practice of how to use events and not how events actually work behind the scenes
+
+//Publisher.cs
+
+public class Publisher{
+    /*
+    * This is the event object itself. At its declaration, it does nothing
+    */
+    public Event MyEvent;
+    /*
+    * This is the delegate. It defines that an EventHandler must be of return type void and accept one argument of type EventArgs (a class that 
+    * we assume already exists in the codebase)
+    */
+    public delegate MyEvent void EventHandler(EventArgs e);
+    /*
+    * A method that invokes the Event
+    * In a real program, the event would be invoked when something happened inside of doStuff that warrented an event. However, for simplicity's sake,
+    * this method only serves to invoke the event.
+    */
+    public void doStuff(){
+        MyEvent.Invoke();
+    }
+}
+
+//Subscriber1.cs
+
+public class Subscriber{
+     /*
+     * Constructor
+     */
+     public Subscriber(Publisher pub){
+        /*
+        * This line subscribes the function MyEventHandler1 to MyEvent. In some event systems this would be done by
+        * saying pub.MyEvent.Subscribe(MyEventHandler1);
+        */
+        pub.MyEvent += MyEventHandler; 
+     }
+    /*
+    * EventHandler
+    */
+     public void MyEventHandler(EventArgs e){
+         //DO STUFF WHEN THIS IS FIRED
+     }
+ }
+
+ //Main.cs
+public class Main{
+    /*
+    * Main entry point of the program
+    */
+    public Main(){
+        Publisher pub = new Publisher();
+        Subscriber sub = new Subscriber(pub);
+        pub.doStuff();
+    }
+}
+
+SO WHAT?:
+Now, why is this helpful? Why use events at all? We use events in our case at least in order to do multiple things in multiple places when something
+happens. Using our config, we can dynamically set events to occur when certain things happen. The reason we can do this is because events allow us to
+use a subscribing class without the publishing class ever knowing that the subscirbing class exists. This means that all that has to be added to code 
+that already has an event is a subscriber, and the publisher does not have to be altered. We utilize this in our code in both our drive loop as well
+as our ControllerOverride goal (see goal documentation) which allows us to immediatly detect driver input while running autonomous and shut down the 
+autonomous, returning full control of the robot back to the driver.
+
+A NOTE ON DELEGATES AND EVENT ARGS:
+The main difference between my pseudo-code example above and the code we use, although there are more minor differences, is the use of delegates. In
+C#, delegates can be made and bound to events to force EventHandlers to comform to a certain standard of return type and parameters. However, due to
+the nature of C++ and the way in which our event system was built, the code effectively acts as a delegate is not contained in the publisher but in 
+the Event class itself, meaning that every EventHandler used by our code must be of return type void and accept a class of type EventArgs. However,
+that does not mean that we are too restricted in the values that we can send.
+
+A NOTE ON PUBLISHERS AND SUBSCRIBERS:
+One important thing to note is that a publisher can also be a subscriber to the same event. Basically, the class that contains the event object can 
+also contain an EventHandler that is bound to the event. An example of this is the ControlItem.h/ControlItem.cpp class in the Controls folder of this
+repository.
+
+HOW THIS IS USED IN C++:
+In C++, the syntax is slightly different. Here is more of what it would look like (compare this to the earlier code example). Keep in mind that in
+both the previous and this code example there is only one subscriber, but there could be many.
+
+//Publisher.h
+
+#include "Event.h" //It is assumed that Event.h already exists and works accordingly. See Events.txt for a description of how this works.
+class Publisher{
+    public: 
+        Event MyEvent; //The Event object
+        /*
+        * A method to invoke the event
+        */
+        void DoStuff(){
+            double arg; //The dummy argument to pass to the event handler(s)
+            /*
+            * This is the line that invokes the event. The TEventArgs is a templated class that can hold two values: an argument to send and the
+            * publisher object that invoked the event. The reason for this is so that any value can be sent to the EventHandler and so that the 
+            * subscriber can have access to the instance of the publisher that fired the event. Keep in mind that this only works one way: the
+            * subscriber can directly access the publisher but the publisher cannot directly access the subscriber. If you are interested in how 
+            * the templating of TEventArgs works, see Events.txt 
+            */
+            MyEvent(new TEventArgs<double, Publisher*>(arg, this)) 
+            /*
+            * The line above is an example of some of the syntactical niceties that was written into V2.0 of this event system. This is logically the 
+            * same as saying MyEvent.Invoke(new TEventArgs<double, Publisher*>(args*, this));
+            */
+
+        }
+};
+
+//Subscriber.h
+
+#include "Publisher.h"
+class Subscriber{
+    public: 
+        Subscriber(); //Constructor declaration
+    private:
+        Publisher *pblshr; //Pointer member variable declaration
+};
+
+//Subscriber.cpp
+#include "Subscriber.h"
+
+/*
+* This EventHandler uses the auto keyword in its declaration because the FRC compiler recognizes the issue between c++ std::function and the lambda
+* as an error. See Events.txt if you want more details, but the important thing to note is that this neccessitates the use of a *.cpp file, and it
+* is neccessary to use auto. Additionally, the [&] is a lambda statement that implies that EventArgs is being captured by reference as opposed to
+* value. We will only use [&] in FRC.
+*/
+auto myEventHandler[&](EventArgs *e){ // This accepts EventArgs because TEventArgs is a subclass (child) of EventArgs
+    auto args = (TEventArgs<double, Publisher*>*)e;
+    cout << args.GetValue() << endl;
+}
+
+Subscriber::Subscriber(){
+    pblshr = new Publisher();
+    pblshr->MyEvent += myEventHandler;
+    pblshr->doStuff();
+}
+
+PUBLISHER AS A SUBSCRIBER: A publisher that is also a subscriber would look like this
+
+//Pubscriber.h
+
+class Pubscriber{
+    public: 
+        Event MyEvent;
+        Pubscriber();
+        void DoStuff(){
+            double args = 0.5;
+            MyEvent(new TEventArgs<double, *Pubscriber>(args, this));
+        }
+};
+
+//Pubscriber.cpp
+
+auto MyEventHandler = [&](EventArgs *e){
+    auto args = (TEventArgs<double, Pubscriber*>*)e;
+    cout << args.GetValue() << endl;
+}
+
+Subscriber::Subscriber(){
+    MyEvent += MyEventHandler;
+    DoStuff();
+}
+
+A NOTE ON INHERITANCE: Many of the things contained in the last example are quite redundant, such as the addition of the sender into the TEventArgs, 
+as the sender is also the reciever. In addition, in the example before the last example, there was already a pointer to Publisher, so the sending of
+another pointer to the same object was redundant. However, this becomes important when the class that contains the event and the event handler(a 
+publisher in the storage sense, but a subcriber in the invoking sense) is a superclass of the invoker (a publsher in the invoking sense) and a 
+method of the invoking subclass needs to be accessed. For an example of this, see line 25 of ControlItem.cpp in the folder named Controls.
+
+CLOSING THOUGHTS: If you are interested in how the events actually work (what the Event and EventArgs/TEventArgs objects actually are and the logic 
+behind them, please read Events.txt). If you are interested in how events are utilized in how we use events in our drive loop please read 
+EventDriveUsage.txt and if you want to learn more about how events are used to help combine Operator-Controlled and Autonomous functions, please 
+read the Goal and TimeSlice documentation and then read EventsWithGoals.txt. Keep in mind that if you cannot find some of the aforementioned
+documentation, then it has probably not been written yet, so check back later.
