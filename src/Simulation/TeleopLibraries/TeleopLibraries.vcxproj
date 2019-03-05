@@ -45,9 +45,9 @@
     <ClCompile Include="..\..\main\cpp\Pugi\pugixml.cpp" />
     <ClCompile Include="..\..\main\cpp\Robot.cpp" />
     <ClCompile Include="..\..\main\cpp\Systems\Drive.cpp" />
-    <ClCompile Include="..\..\main\cpp\Util\Log.cpp" />
     <ClCompile Include="frc\DirectInput_Joystick.cpp" />
     <ClCompile Include="frc\Joystick.cpp" />
+    <ClCompile Include="Log.cpp" />
     <ClCompile Include="NetworkTables\NetworkTable.cpp" />
   </ItemGroup>
   <ItemGroup>

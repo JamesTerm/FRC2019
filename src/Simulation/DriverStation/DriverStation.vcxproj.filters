@@ -33,12 +33,6 @@
     <ClInclude Include="Keyboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\main\cpp\FRC2019_Robot.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\main\cpp\RobotAssem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -47,16 +41,10 @@
     <ClCompile Include="DriverStation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\main\cpp\FRC2019_Robot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\RobotTester_Internal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Keyboard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\main\cpp\RobotAssem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -489,15 +489,13 @@ void Config::AllocateDriverControls(xml_node &controls){
 				bool reversed = button.attribute("reversed").as_bool();
 				double multiply;
 				xml_attribute multiply_xml = button.attribute("powerMultiplier");
-				bool isSwitchOnPress = button.attribute("isSwitchOnPress").as_bool();
-				bool isSolenoid = button.attribute("isSolenoid").as_bool();
 				if(!multiply_xml){
 					cout << "No Power Multiplier detected for ToggleButtonControl " << name << ". Defaulting to 1.0. This may cause driving errors!" << endl;
 					multiply = 1.0;
 				}
 				else
 					multiply = multiply_xml.as_double();
-				ToggleButtonControl *tmp = new ToggleButtonControl(m_driveJoy, name, channel.as_int(), isSwitchOnPress, reversed, multiply, isSolenoid);
+				ToggleButtonControl *tmp = new ToggleButtonControl(m_driveJoy, name, channel.as_int(), reversed, multiply);
 				m_drive->AddControlDrive(tmp);
 				xml_attribute bindings = button.attribute("bindings");
 				if(bindings){
@@ -633,15 +631,13 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				bool reversed = button.attribute("reversed").as_bool();
 				double multiply;
 				xml_attribute multiply_xml = button.attribute("powerMultiplier");
-				bool isSwitchOnPress = button.attribute("isSwitchOnPress").as_bool();
-				bool isSolenoid = button.attribute("isSolenoid").as_bool();
 				if(!multiply_xml){
 					cout << "No Power Multiplier detected for ToggleButtonControl " << name << ". Defaulting to 1.0. This may cause driving errors!" << endl;
 					multiply = 1.0;
 				}
 				else
 					multiply = multiply_xml.as_double();
-				ToggleButtonControl *tmp = new ToggleButtonControl(m_operatorJoy, name, channel.as_int(), isSwitchOnPress, reversed, multiply, isSolenoid);
+				ToggleButtonControl *tmp = new ToggleButtonControl(m_operatorJoy, name, channel.as_int(), reversed, multiply);
 				m_drive->AddControlOperate(tmp);
 				xml_attribute bindings = button.attribute("bindings");
 				if(bindings){
@@ -664,39 +660,6 @@ void Config::AllocateOperatorControls(xml_node &controls){
 
 	#pragma endregion ToggleButtonControl
 }
-
-//! DEPRECATED: Here only for reference
-void Config::AllocateComponentsDep(){
-	VictorSPItem *left_0 = new VictorSPItem("Left_0", 2, true);
-	VictorSPItem *left_1 = new VictorSPItem("Left_1", 3, true);
-	VictorSPItem *right_0 = new VictorSPItem("Right_0", 0, false);
-	VictorSPItem *right_1 = new VictorSPItem("Right_1", 1, false);
-	DoubleSolenoidItem *SolenoidTest = new DoubleSolenoidItem("SolenoidToggle", 1, 0, DoubleSolenoid::Value::kReverse, false);
-
-	m_activeCollection->Add(left_0);
-	m_activeCollection->Add(left_1);
-	m_activeCollection->Add(right_0);
-	m_activeCollection->Add(right_1);
-	m_activeCollection->Add(SolenoidTest);
-
-	NavX *navx = new NavX();
-	m_activeCollection->Add(navx);
-
-	AxisControl *leftDrive = new AxisControl(m_driveJoy, "LeftDrive", 1, 0.07, true, 0.70);
-	AxisControl *rightDrive = new AxisControl(m_driveJoy, "RightDrive", 5, 0.07, true, 0.70);
-	ToggleButtonControl *ToggleTest = new ToggleButtonControl(m_driveJoy, "ToggleTest", 3, true, false, 0.3, true);
-
-	m_drive->AddControlDrive(leftDrive);
-	m_drive->AddControlDrive(rightDrive);
-	m_drive->AddControlDrive(ToggleTest);
-
-	leftDrive->AddComponent(left_0);
-	leftDrive->AddComponent(left_1);
-	rightDrive->AddComponent(right_0);
-	rightDrive->AddComponent(right_1);
-	ToggleTest->AddComponent(SolenoidTest);
-}
-
 vector<string> Config::getBindingStringList(string bindings){
 	vector<char*> tmp;
 	vector<string> ret;

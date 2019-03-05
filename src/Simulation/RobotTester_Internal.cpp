@@ -2,7 +2,7 @@
 #include "Robot_Tester.h"
 
 #include "../main/cpp/Config/ActiveCollection.h"
-#include "../main/cpp/RobotAssem.h"
+//#include "../main/cpp/RobotAssem.h"
 
 void SetCommandPromptCallback(std::function<std::string(void)> callback);  //allow this code to manipulate the command prompt
 std::string DefaultCommandPrompt();  //set back for proper closing
@@ -19,7 +19,7 @@ const char * const csz_GameMode_Enum[] =
 	"Auton","TeleOp","Test"
 };
 
-void SetParentBindCallback(std::function<void(RobotAssem *,bool)> callback);
+//void SetParentBindCallback(std::function<void(RobotAssem *,bool)> callback);
 
 class RobotTester_Internal
 {
@@ -52,21 +52,21 @@ public:
 		{
 			return m_DisplayControls;
 		});
-		SetParentBindCallback(
-			[&](RobotAssem *instance, bool PropertiesBound)
-		{
-			//call parent first if available
-			if (m_ParentBind)
-				m_ParentBind(instance,PropertiesBound);
-			if (PropertiesBound)
-			{
-				m_pRobotAssem = instance;
-				if (m_pRobotAssem == nullptr)
-					m_HookSamples = false;  //unhook if we are being destroyed (pedantic)
-				HookSampleGoals(m_HookSamples);
-			}
-		}
-		);
+		//SetParentBindCallback(
+		//	[&](RobotAssem *instance, bool PropertiesBound)
+		//{
+		//	//call parent first if available
+		//	if (m_ParentBind)
+		//		m_ParentBind(instance,PropertiesBound);
+		//	if (PropertiesBound)
+		//	{
+		//		m_pRobotAssem = instance;
+		//		if (m_pRobotAssem == nullptr)
+		//			m_HookSamples = false;  //unhook if we are being destroyed (pedantic)
+		//		HookSampleGoals(m_HookSamples);
+		//	}
+		//}
+		//);
 	}
 	~RobotTester_Internal()
 	{

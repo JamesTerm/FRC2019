@@ -145,8 +145,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\main\cpp\FRC2019_Robot.h" />
-    <ClInclude Include="..\..\main\cpp\RobotAssem.h" />
     <ClInclude Include="..\Robot_Tester.h" />
     <ClInclude Include="DriverStation.h" />
     <ClInclude Include="Keyboard.h" />
@@ -155,12 +153,6 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\main\cpp\RobotAssem.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\..\main\cpp\FRC2019_Robot.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="..\RobotTester_Internal.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -181,9 +173,6 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RobotLibraries\RobotLibraries.vcxproj">
-      <Project>{e56d8c47-da69-46f8-92ca-8f68b3e553b3}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\SmartDashboard\SmartDashboard.vcxproj">
       <Project>{556fc434-d0c3-4b96-bf29-e9cf5cd24f02}</Project>
     </ProjectReference>

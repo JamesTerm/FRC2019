@@ -29,14 +29,14 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 #include <timeapi.h>
 #include <shlwapi.h>
 #include "../Robot_Tester.h"
-#include "../../main/cpp/Base/Base_Includes.h"
-#include "../../main/cpp/Base/Vec2d.h"
-#include "../../main/cpp/Base/Misc.h"
-#include "../../main/cpp/Base/Event.h"
-#include "../../main/cpp/Base/EventMap.h"
-#include "../../main/cpp/Base/Script.h"
-#include "../../main/cpp/Base/Joystick.h"
-#include "../../main/cpp/Base/JoystickBinder.h"
+#include "../RobotLibraries/Base/Base_Includes.h"
+#include "../RobotLibraries/Base/Vec2d.h"
+#include "../RobotLibraries/Base/Misc.h"
+#include "../RobotLibraries/Base/Event.h"
+#include "../RobotLibraries/Base/EventMap.h"
+#include "../RobotLibraries/Base/Script.h"
+#include "../RobotLibraries/Base/Joystick.h"
+#include "../RobotLibraries/Base/JoystickBinder.h"
 #include "Keyboard.h"
 
 //Since the lambda cannot capture, we must give it access to the robot here
@@ -255,17 +255,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
 //To bind the keyboard we'll need to access RobotAssem and Eventmap
-#include "../../main/cpp/Common/Entity_Properties.h"
-#include "../../main/cpp/Common/Physics_1D.h"
-#include "../../main/cpp/Common/Physics_2D.h"
-#include "../../main/cpp/Common/Entity2D.h"
-#include "../../main/cpp/Common/Goal.h"
-#include "../../main/cpp/Common/Ship_1D.h"
-#include "../../main/cpp/Common/Ship.h"
+#include "../RobotLibraries/Common/Entity_Properties.h"
+#include "../RobotLibraries/Common/Physics_1D.h"
+#include "../RobotLibraries/Common/Physics_2D.h"
+#include "../RobotLibraries/Common/Entity2D.h"
+#include "../RobotLibraries/Common/Goal.h"
+#include "../RobotLibraries/Common/Ship_1D.h"
+#include "../RobotLibraries/Common/Ship.h"
 
 #include "../../main/cpp/Config/ActiveCollection.h"
-#include "../../main/cpp/RobotAssem.h"
-#include "../../main/cpp/Common/SmartDashboard.h"
+//#include "../../main/cpp/RobotAssem.h"
+#include "../RobotLibraries/Common/SmartDashboard.h"
 RobotAssem *s_RobotContainer=nullptr;
 Keyboard *s_StagedKeyboard = nullptr;
 
@@ -291,8 +291,9 @@ void BindKeyboard()
 			assert(false);  //recoverable but need to see use-case
 			delete s_Keyboard;
 		}
-		RobotCommon *_pRobot = s_RobotContainer->GetRobot();
-		s_StagedKeyboard->SetEventMap(_pRobot->GetEventMap());
+		//TODO see how to do this 
+		//RobotCommon *_pRobot = s_RobotContainer->GetRobot();
+		//s_StagedKeyboard->SetEventMap(_pRobot->GetEventMap());
 		s_Keyboard = s_StagedKeyboard;
 		s_StagedKeyboard = nullptr;
 	}

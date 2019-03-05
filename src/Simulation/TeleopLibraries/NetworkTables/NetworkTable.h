@@ -1,5 +1,5 @@
 #pragma once
-#include "../../main/cpp/Common/SmartDashboard.h"
+#include "../../RobotLibraries/Common/SmartDashboard.h"
 
 class NetworkTable
 {

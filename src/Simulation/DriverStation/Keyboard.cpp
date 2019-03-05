@@ -1,11 +1,11 @@
 #include "stdafx.h"
 //all binding magic defined here
-#include "../../main/cpp/Base/Base_Includes.h"
-#include "../../main/cpp/Base/Vec2d.h"
-#include "../../main/cpp/Base/Misc.h"
-#include "../../main/cpp/Base/Event.h"
-#include "../../main/cpp/Base/EventMap.h"
-#include "../../main/cpp/Base/Script.h"
+#include "../RobotLibraries/Base/Base_Includes.h"
+#include "../RobotLibraries/Base/Vec2d.h"
+#include "../RobotLibraries/Base/Misc.h"
+#include "../RobotLibraries/Base/Event.h"
+#include "../RobotLibraries/Base/EventMap.h"
+#include "../RobotLibraries/Base/Script.h"
 #include "Keyboard.h"
 
 using namespace Framework::Base;

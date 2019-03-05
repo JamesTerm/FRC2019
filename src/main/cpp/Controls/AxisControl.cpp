@@ -28,31 +28,43 @@ AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZo
 {
 	axis = _axis;
 	deadZone = _deadZone;
-	previousSign = 0;
 }
 
 double AxisControl::Update()
 {
 	double raw = (*joy).GetRawAxis(axis);
+	if (!(abs(raw) > deadZone))
+	{
+		if (abs(currentPow) > EPSILON_MIN)
+			ValueChanged(new TEventArgs<double, AxisControl*>(0, this));
+		currentPow = 0;
+		previousPow = currentPow;
+		return currentPow;
+	}
 	double dz = deadZone + MINIMUM_JOYSTICK_RETURN;
 	double val = ((abs(raw) - dz) * (pow(1-dz, -1)) * getSign(raw)) * powerMultiplier;
-
 	if(reversed)
 		val = -val;
-
-	SetToComponents(val);
-	isIdle = false;
 	currentPow = val;
-	previousSign = getSign(val);
-	return val;
+	if(abs(previousPow - currentPow) < EPSILON_MIN)
+		return currentPow;
+	previousPow = currentPow;
+	ValueChanged(new TEventArgs<double, AxisControl*>(currentPow, this));
+	return currentPow;
 }
 
 int AxisControl::getSign(double val)
 {
 	if(val < 0)
 		return -1;
-	else
+	else if(val > 0)
 		return 1;
+	else if(val == 0)
+		return 0;
+	else{
+		Log::Error("Something is very broken in the getSign Method in AxisControl...");
+		return 0;
+	}
 }
 
 AxisControl::~AxisControl() { }

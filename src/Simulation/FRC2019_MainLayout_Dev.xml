@@ -1,5 +1,11 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="PID_Right_EO" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
+		<location x="510" y="408"/>
+	</widget>
+	<widget field="PID_left_EO" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
+		<location x="281" y="403"/>
+	</widget>
 	<widget field="LimitElevatorMin" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
 		<location x="47" y="236"/>
 	</widget>
@@ -59,7 +65,7 @@
 	<widget field="AutoPilot" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
 		<location x="610" y="169"/>
 	</widget>
-	<widget field="AutonTest" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+	<widget field="AutonTest" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="734" y="266"/>
 		<width>93</width>
 	</widget>
@@ -116,16 +122,16 @@
 		<height>30</height>
 		<property name="Foreground" value="51.153.255.255"/>
 		<property name="Background" value="0.0.102.255"/>
-		<property name="Maximum" value="3.844"/>
-		<property name="Minimum" value="-3.844"/>
+		<property name="Maximum" value="5.38"/>
+		<property name="Minimum" value="-5.38"/>
 	</widget>
 	<widget field="RightEncoder" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.ProgressBar">
 		<location x="512" y="260"/>
 		<width>115</width>
 		<property name="Foreground" value="51.153.255.255"/>
 		<property name="Background" value="0.0.102.255"/>
-		<property name="Maximum" value="3.844"/>
-		<property name="Minimum" value="-3.844"/>
+		<property name="Maximum" value="5.38"/>
+		<property name="Minimum" value="-5.38"/>
 	</widget>
 	<widget field="Y_ft " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
 		<location x="556" y="121"/>

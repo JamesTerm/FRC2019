@@ -117,72 +117,66 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\main\cpp\Base\EventMap.cpp" />
-    <ClCompile Include="..\..\main\cpp\Base\JoystickBinder.cpp" />
-    <ClCompile Include="..\..\main\cpp\Base\LUA.cpp" />
-    <ClCompile Include="..\..\main\cpp\Base\Misc.cpp">
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="..\..\main\cpp\Base\Script.cpp" />
-    <ClCompile Include="..\..\main\cpp\Base\Time_Type.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\AI_Base_Controller.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\Calibration_Testing.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\Debug.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\Entity2D.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\Entity_Properties.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\Goal.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\InOut_Interface.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\Physics_1D.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\Physics_2D.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\PIDController.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\Robot_Control_Common.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\Rotary_System.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\Servo_System.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\Ship.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\Ship_1D.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\UI_Controller.cpp" />
-    <ClCompile Include="..\..\main\cpp\Common\Vehicle_Drive.cpp" />
-    <ClCompile Include="..\..\main\cpp\TankDrive\Tank_Robot.cpp" />
-    <ClCompile Include="..\..\main\cpp\TankDrive\Tank_Robot2.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\main\cpp\Base\Base_Includes.h" />
-    <ClInclude Include="..\..\main\cpp\Base\Event.h" />
-    <ClInclude Include="..\..\main\cpp\Base\EventMap.h" />
-    <ClInclude Include="..\..\main\cpp\Base\Joystick.h" />
-    <ClInclude Include="..\..\main\cpp\Base\JoystickBinder.h" />
-    <ClInclude Include="..\..\main\cpp\Base\LUA.h" />
-    <ClInclude Include="..\..\main\cpp\Base\Misc.h" />
-    <ClInclude Include="..\..\main\cpp\Base\Script.h" />
-    <ClInclude Include="..\..\main\cpp\Base\Time_Type.h" />
-    <ClInclude Include="..\..\main\cpp\Base\Vec2d.h" />
-    <ClInclude Include="..\..\main\cpp\Common\AI_Base_Controller.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Calibration_Testing.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Debug.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Entity2D.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Entity_Properties.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Goal.h" />
-    <ClInclude Include="..\..\main\cpp\Common\InOut_Interface.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Physics_1D.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Physics_2D.h" />
-    <ClInclude Include="..\..\main\cpp\Common\PIDController.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Poly.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Robot_Control_Common.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Robot_Control_Interface.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Rotary_System.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Servo_System.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Ship.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Ship_1D.h" />
-    <ClInclude Include="..\..\main\cpp\Common\SmartDashboard.h" />
-    <ClInclude Include="..\..\main\cpp\Common\UI_Controller.h" />
-    <ClInclude Include="..\..\main\cpp\Common\Vehicle_Drive.h" />
-    <ClInclude Include="..\..\main\cpp\TankDrive\Tank_Robot.h" />
-    <ClInclude Include="..\..\main\cpp\TankDrive\Tank_Robot2.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\SmartDashboard\SmartDashboard.vcxproj">
       <Project>{556fc434-d0c3-4b96-bf29-e9cf5cd24f02}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Base\Base_Includes.h" />
+    <ClInclude Include="Base\Event.h" />
+    <ClInclude Include="Base\EventMap.h" />
+    <ClInclude Include="Base\Joystick.h" />
+    <ClInclude Include="Base\JoystickBinder.h" />
+    <ClInclude Include="Base\LUA.h" />
+    <ClInclude Include="Base\Misc.h" />
+    <ClInclude Include="Base\Script.h" />
+    <ClInclude Include="Base\Time_Type.h" />
+    <ClInclude Include="Base\Vec2d.h" />
+    <ClInclude Include="Common\AI_Base_Controller.h" />
+    <ClInclude Include="Common\Calibration_Testing.h" />
+    <ClInclude Include="Common\Debug.h" />
+    <ClInclude Include="Common\Entity2D.h" />
+    <ClInclude Include="Common\Entity_Properties.h" />
+    <ClInclude Include="Common\Goal.h" />
+    <ClInclude Include="Common\InOut_Interface.h" />
+    <ClInclude Include="Common\Physics_1D.h" />
+    <ClInclude Include="Common\Physics_2D.h" />
+    <ClInclude Include="Common\PIDController.h" />
+    <ClInclude Include="Common\Poly.h" />
+    <ClInclude Include="Common\Robot_Control_Common.h" />
+    <ClInclude Include="Common\Robot_Control_Interface.h" />
+    <ClInclude Include="Common\Rotary_System.h" />
+    <ClInclude Include="Common\Servo_System.h" />
+    <ClInclude Include="Common\Ship.h" />
+    <ClInclude Include="Common\Ship_1D.h" />
+    <ClInclude Include="Common\SmartDashboard.h" />
+    <ClInclude Include="Common\UI_Controller.h" />
+    <ClInclude Include="Common\Vehicle_Drive.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Base\EventMap.cpp" />
+    <ClCompile Include="Base\JoystickBinder.cpp" />
+    <ClCompile Include="Base\LUA.cpp" />
+    <ClCompile Include="Base\Misc.cpp" />
+    <ClCompile Include="Base\Script.cpp" />
+    <ClCompile Include="Base\Time_Type.cpp" />
+    <ClCompile Include="Common\AI_Base_Controller.cpp" />
+    <ClCompile Include="Common\Calibration_Testing.cpp" />
+    <ClCompile Include="Common\Debug.cpp" />
+    <ClCompile Include="Common\Entity2D.cpp" />
+    <ClCompile Include="Common\Entity_Properties.cpp" />
+    <ClCompile Include="Common\Goal.cpp" />
+    <ClCompile Include="Common\InOut_Interface.cpp" />
+    <ClCompile Include="Common\Physics_1D.cpp" />
+    <ClCompile Include="Common\Physics_2D.cpp" />
+    <ClCompile Include="Common\PIDController.cpp" />
+    <ClCompile Include="Common\Robot_Control_Common.cpp" />
+    <ClCompile Include="Common\Rotary_System.cpp" />
+    <ClCompile Include="Common\Servo_System.cpp" />
+    <ClCompile Include="Common\Ship.cpp" />
+    <ClCompile Include="Common\Ship_1D.cpp" />
+    <ClCompile Include="Common\UI_Controller.cpp" />
+    <ClCompile Include="Common\Vehicle_Drive.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

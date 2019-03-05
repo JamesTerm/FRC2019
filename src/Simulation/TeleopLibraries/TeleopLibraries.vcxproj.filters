@@ -113,11 +113,11 @@
     <ClCompile Include="NetworkTables\NetworkTable.cpp">
       <Filter>NetworkTables</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\main\cpp\Util\Log.cpp">
-      <Filter>Util</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\main\cpp\Pugi\pugixml.cpp">
       <Filter>Pugi</Filter>
+    </ClCompile>
+    <ClCompile Include="Log.cpp">
+      <Filter>Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

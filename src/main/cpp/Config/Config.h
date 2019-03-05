@@ -37,7 +37,6 @@ public:
 	void AllocateComponents(xml_node &root);
 	void AllocateDriverControls(xml_node &controls);
 	void AllocateOperatorControls(xml_node &controls);
-	void AllocateComponentsDep();
 	virtual ~Config();
 private:
 	Joystick *m_driveJoy;

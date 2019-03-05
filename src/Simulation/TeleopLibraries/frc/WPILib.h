@@ -4,13 +4,13 @@
 
 //as a start we'll include the same controls used in the robot libraries
 #define COMMON_API
-#include "../../../main/cpp/Base/Base_Includes.h"
-#include "../../../main/cpp/Base/Script.h"
+#include "../../RobotLibraries/Base/Base_Includes.h"
+#include "../../RobotLibraries/Base/Script.h"
 //#include "../../../main/cpp/Base/Time_Type.h"
 
-#include "../../../main/cpp/Common/Robot_Control_Common.h"
+#include "../../RobotLibraries/Common/Robot_Control_Common.h"
 #include <frc/Joystick.h>
-#include "../../../main/cpp/Common/SmartDashboard.h"
+#include "../..//RobotLibraries/Common/SmartDashboard.h"
 
 namespace frc
 {
