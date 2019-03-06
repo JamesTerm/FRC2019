@@ -114,6 +114,34 @@ class Goal_ControllerOverride : public AtomicGoal
 };
 #pragma endregion
 #endif
+
+class Goal_ElevatorControl : public AtomicGoal
+{
+  public:
+    Goal_ElevatorControl(ActiveCollection* activeCollection, double target)
+    {
+      m_activeCollection = activeCollection;
+      m_target = target;
+      m_Status = eInactive;
+      m_potientiometer = activeCollection->GetPotentiometer(); //TODO this
+    }
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    virtual void Terminate();
+
+  private:
+    double m_target;
+    double m_currentPos;
+    double m_power;
+    ActiveCollection* m_activeCollection;
+    PotentiometerItem* m_potientiometer;
+
+    int kp = 0, ki = 0, kd = 0;
+    int bias = 0; //bias is a constant that is added to the output.
+    double error, integ, deriv;
+    double errorPrior;
+
+};
 //Goals that use data to determine completion go here
 #pragma region FeedbackLoopGoals
 /* Goal_Turn
@@ -123,7 +151,10 @@ class Goal_ControllerOverride : public AtomicGoal
 class Goal_Turn : public Goal_Wait_ac
 {
 public:
-  Goal_Turn(ActiveCollection *activeCollection, double angle, double timeOut = 3.0) : Goal_Wait_ac(activeCollection, timeOut) {}
+  Goal_Turn(ActiveCollection *activeCollection, double angle, double timeOut = 3.0) : Goal_Wait_ac(activeCollection, timeOut) 
+  {
+    m_navx = activeCollection->GetNavX();
+  }
   virtual void Activate();
   virtual Goal::Goal_Status Process(double dTime);
   virtual void Terminate();

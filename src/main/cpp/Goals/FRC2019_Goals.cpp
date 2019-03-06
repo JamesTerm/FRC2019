@@ -200,6 +200,39 @@ void Goal_ControllerOverride::SetCallbacks(bool bind)
 
 #pragma endregion
 #endif
+
+void Goal_ElevatorControl::Activate()
+{
+    m_Status = eActive;
+}
+
+Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
+{
+    ActivateIfInactive(); //this goal will always be active
+    if(m_Status == eActive)
+    {
+        //TODO: buttons can set target to specific value and joystick can increase/decrease target
+        m_currentPos = m_potientiometer->Get();
+        error = (m_target - m_currentPos) / m_target;
+        integ += error * dTime;               //Right Riemann Sum integral
+        deriv = (error - errorPrior) / dTime; // rise/run slope
+        errorPrior = error;               //set errorPrior for next process call
+
+        m_power = bias + (kp * error) + (ki * integ) + (kd * deriv); //power is equal to P,I,D * k-values + bias
+
+        SetElevator(m_power,m_activeCollection); //TODO this
+        return m_Status = eActive;
+    }
+    else
+    {
+        return m_Status;
+    }
+}
+
+void Goal_ElevatorControl::Terminate()
+{
+    StopElevator(); //TODO this
+}
 #pragma region FeedbackLoopGoals
 /***********************Goal_Turn***********************/
 void Goal_Turn::Activate()
@@ -216,7 +249,7 @@ Goal::Goal_Status Goal_Turn::Process(double dTime)
         if (m_currentTime > m_timeOut)
         {
             Terminate();
-            cout << "no target" << endl;
+            //cout << "no target" << endl;
             //return m_Status = eFailed; //set m_Status to failed and return m_Status in one line
         }
 
