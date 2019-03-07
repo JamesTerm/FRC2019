@@ -206,11 +206,20 @@ void Goal_ControllerOverride::Activate()
 
 Goal::Goal_Status Goal_ControllerOverride::Process(double dTime)
 {
-    if(m_Status == eActive)
+    if(eActive)
     {
-        //TODO: check the controllers
+		if (m_controller == 0)
+			TestDriver();
+		else if (m_controller == 1)
+			TestOperator();
+        else
+        {
+			TestDriver();
+			if (m_Status==eActive)
+				TestOperator();
+        }
     }
-    return m_Status;
+	return m_Status;
 }
 
 void Goal_ControllerOverride::Terminate()
@@ -238,7 +247,24 @@ void Goal_ControllerOverride::TestOperator()
 
 void Goal_ControllerOverride::SetCallbacks(bool bind)
 {
-    //TODO: this
+    auto onValueChanged = [&](EventArgs* e) {
+        try{
+            auto args = (TEventArgs<double, Controls::ControlItem*>*)e;
+            if(args->GetSender()->joy->GetPort() == 0){
+                m_IsDriveInUse = true;
+            }
+            if(args->GetSender->joy->GetPort() == 1){
+                m_IsOperatorInUse = true;
+            }
+            delete args;
+            args = nullptr;
+        }catch(exception &e){
+            Log::Error("Known Exception Thrown in onValueChanged in a ControllerOverride! This can cause fatal Runtime Errors! Check your logs and XML.");
+            Log::Error(e.what());
+        }catch(...){
+            Log::Error("UnknownException Thrown in onValueChanged in ControllerOverride! This can cause fatal Runtime Errors! Check your XML and yell at the programmers!");
+	}
+};
 }
 #pragma endregion
 
