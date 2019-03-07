@@ -23,6 +23,7 @@ auto onControllerValueChanged = [&](EventArgs* e) {
 	try{
 		auto args = (TEventArgs<double, ControlItem*>*)e;
 		args->GetSender()->SetToComponents(args->GetValue());
+		SmartDashboard::PutNumber(args->GetSender()->name, args->GetValue());
 		delete args;
 		args = nullptr;
 	}catch(exception &e){
