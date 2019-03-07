@@ -107,5 +107,11 @@ public:
 		this->removeHandler(handler);
 		return *this;
 	}
+
+	Event &operator-=(const EventHandler::Func &handler)
+	{
+		this->removeHandler(EventHandler{ handler });
+		return *this;
+	}
 #pragma endregion
 };

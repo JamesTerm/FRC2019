@@ -125,6 +125,7 @@ class Goal_ControllerOverride : public AtomicGoal
     {
       m_activeCollection = activeCollection;
       m_controller = controller;
+      SetCallbacks(true);
     }
     virtual void Activate();
     virtual Goal::Goal_Status Process(double dTime);

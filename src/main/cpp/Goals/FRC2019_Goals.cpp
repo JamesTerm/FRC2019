@@ -224,7 +224,7 @@ Goal::Goal_Status Goal_ControllerOverride::Process(double dTime)
 
 void Goal_ControllerOverride::Terminate()
 {
-    //thinking emoji
+    SetCallbacks(false);
 }
 
 void Goal_ControllerOverride::TestDriver()
@@ -253,7 +253,7 @@ void Goal_ControllerOverride::SetCallbacks(bool bind)
             if(args->GetSender()->joy->GetPort() == 0){
                 m_IsDriveInUse = true;
             }
-            if(args->GetSender->joy->GetPort() == 1){
+            if(args->GetSender()->joy->GetPort() == 1){
                 m_IsOperatorInUse = true;
             }
             delete args;
@@ -263,8 +263,16 @@ void Goal_ControllerOverride::SetCallbacks(bool bind)
             Log::Error(e.what());
         }catch(...){
             Log::Error("UnknownException Thrown in onValueChanged in ControllerOverride! This can cause fatal Runtime Errors! Check your XML and yell at the programmers!");
-	}
-};
+	    }
+    };
+
+    if(bind){
+        for(Event *e : m_activeCollection->EventMap)
+            *e += onValueChanged;
+    }else{
+        for(Event *e : m_activeCollection->EventMap)
+            *e -= onValueChanged;
+    }
 }
 #pragma endregion
 
