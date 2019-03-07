@@ -421,6 +421,11 @@ void Config::AllocateDriverControls(xml_node &controls){
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
 				}
+				xml_attribute bind_event_xml = axis.attribute("bindEvent");
+				bool bind_event = bind_event_xml.as_bool(); 
+				if(!bind_event_xml || bind_event){
+					m_activeCollection->AddEvent(&(tmp->ValueChanged));
+				}
 			}
 			else{
 				cout << "Failed to load AxisControl " << name << ". This may cause a fatal runtime error!" << endl;
@@ -466,6 +471,11 @@ void Config::AllocateDriverControls(xml_node &controls){
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
 				}
+				xml_attribute bind_event_xml = button.attribute("bindEvent");
+				bool bind_event = bind_event_xml.as_bool(); 
+				if(!bind_event_xml || bind_event){
+					m_activeCollection->AddEvent(&(tmp->ValueChanged));
+				}
 			}
 			else{
 				cout << "Failed to load ButtonControl " << name << ". This may cause a fatal runtime error!" << endl;
@@ -505,6 +515,11 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
+				}
+				xml_attribute bind_event_xml = button.attribute("bindEvent");
+				bool bind_event = bind_event_xml.as_bool(); 
+				if(!bind_event_xml || bind_event){
+					m_activeCollection->AddEvent(&(tmp->ValueChanged));
 				}
 			}
 			else{
@@ -565,6 +580,11 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
 				}
+				xml_attribute bind_event_xml = axis.attribute("bindEvent");
+				bool bind_event = bind_event_xml.as_bool(); 
+				if(!bind_event_xml || bind_event){
+					m_activeCollection->AddEvent(&(tmp->ValueChanged));
+				}
 			}
 			else{
 				cout << "Failed to load AxisControl " << name << ". This may cause a fatal runtime error!" << endl;
@@ -608,6 +628,11 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
 				}
+				xml_attribute bind_event_xml = button.attribute("bindEvent");
+				bool bind_event = bind_event_xml.as_bool(); 
+				if(!bind_event_xml || bind_event){
+					m_activeCollection->AddEvent(&(tmp->ValueChanged));
+				}
 			}
 			else{
 				cout << "Failed to load ButtonControl " << name << ". This may cause a fatal runtime error!" << endl;
@@ -647,6 +672,11 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				}
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
+				}
+				xml_attribute bind_event_xml = button.attribute("bindEvent");
+				bool bind_event = bind_event_xml.as_bool(); 
+				if(!bind_event_xml || bind_event){
+					m_activeCollection->AddEvent(&(tmp->ValueChanged));
 				}
 			}
 			else{

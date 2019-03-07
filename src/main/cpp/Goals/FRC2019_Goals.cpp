@@ -99,8 +99,9 @@ void Goal_DriveWithTimer::Terminate()
     StopDrive(m_activeCollection);
 }
 #pragma endregion
-#if 0
+
 #pragma region ControllerOverride
+#if 0
 /***********************Goal_ControllerOverride***********************/
 void Goal_ControllerOverride::Activate()
 {
@@ -197,9 +198,50 @@ void Goal_ControllerOverride::SetCallbacks(bool bind)
 		m_EventMap.EventOnOff_Map["Robot_CloseDoor"].Remove(this);
 	}
 }
-
-#pragma endregion
 #endif
+void Goal_ControllerOverride::Activate()
+{
+    m_Status = eActive;
+}
+
+Goal::Goal_Status Goal_ControllerOverride::Process(double dTime)
+{
+    if(m_Status == eActive)
+    {
+        //TODO: check the controllers
+    }
+    return m_Status;
+}
+
+void Goal_ControllerOverride::Terminate()
+{
+    //thinking emoji
+}
+
+void Goal_ControllerOverride::TestDriver()
+{
+    if (m_IsDriveInUse)
+	{
+		DriverValueChanged(new SenderEventArgs<Goal_ControllerOverride*>(this));  
+		m_Status = eFailed;
+	}
+}
+
+void Goal_ControllerOverride::TestOperator()
+{
+	if (m_IsOperatorInUse)
+	{
+		OperatorValueChanged(new SenderEventArgs<Goal_ControllerOverride*>(this));
+		m_Status = eFailed;
+	}
+}
+
+void Goal_ControllerOverride::SetCallbacks(bool bind)
+{
+    //TODO: this
+}
+#pragma endregion
+
 #pragma region FeedbackLoopGoals
 /***********************Goal_Turn***********************/
 void Goal_Turn::Activate()

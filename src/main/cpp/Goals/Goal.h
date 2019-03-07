@@ -17,6 +17,7 @@ Email: chrisrweeks@aol.com
 
 #include "../Config/ActiveCollection.h"
 #include "../Util/UtilityFunctions.h"
+#include "../Global.h"
 
 
 using namespace std;

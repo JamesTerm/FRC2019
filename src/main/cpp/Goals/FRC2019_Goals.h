@@ -114,6 +114,30 @@ class Goal_ControllerOverride : public AtomicGoal
 };
 #pragma endregion
 #endif
+class Goal_ControllerOverride : public AtomicGoal
+{
+  public:
+    Event DriverValueChanged;
+    Event OperatorValueChanged;
+    bool m_IsDriveInUse;
+    bool m_IsOperatorInUse;
+    Goal_ControllerOverride(ActiveCollection *activeCollection, int controller = 2)
+    {
+      m_activeCollection = activeCollection;
+      m_controller = controller;
+    }
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    virtual void Terminate();
+
+    virtual void SetCallbacks(bool bind);
+  private:
+    virtual void TestDriver();
+    virtual void TestOperator();
+    int m_controller;
+    ActiveCollection *m_activeCollection;
+};
+
 //Goals that use data to determine completion go here
 #pragma region FeedbackLoopGoals
 /* Goal_Turn
@@ -220,6 +244,17 @@ private:
   VisionTarget *m_target;
   VisionTarget *m_currentTarget;
 };
+
+// /* Goal_ElevatorPosition
+//  * Positions: 0, 1, 2, 3
+//  * 0 = all the way down, 3 = all the way up
+//  * Offset: small increase in height for cargo intake on rocket
+//  */
+// class Goal_ElevatorPosition
+// {
+//   public:
+
+// };
 #pragma endregion
 
 #pragma region UtilGoals
