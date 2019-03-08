@@ -1,3 +1,14 @@
+/****************************** Header ******************************\
+Class Name: none. Static Method SelectAuton
+File Name: GoalSelector.h
+Summary: Method to choose correct goal based on dashboard settings
+Project: BroncBotzFRC2019
+Copyright (c) BroncBotz.
+All rights reserved.
+
+Author(s): Chris Weeks
+Email: chrisrweeks@aol.com
+\********************************************************************/
 #pragma once
 
 #include "FRC2019_Goals.h"
@@ -7,7 +18,9 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
     bool isFound = true;
 	if (autonSelected == "DEBUG")
 	{
-		goal->AddGoal(new Goal_VisionAlign(activeCollection, new VisionTarget(320, 20), 140.0)); //!120 sec timeout for DEBUG only
+		//goal->AddGoal(new Goal_VisionAlign(activeCollection, new VisionTarget(320, 20), 140.0)); //!120 sec timeout for DEBUG only
+        goal->AddGoal(new Goal_WaitThenDrive(activeCollection, .5, .5, 3, 5));
+        cout << "selector" << endl;
 		return true;
 	}
 

@@ -36,10 +36,10 @@ class Goal_Wait_ac : public AtomicGoal
 public:
   Goal_Wait_ac(ActiveCollection *activeCollection, double timeOut)
   {
-
+    m_Status = eInactive;
     m_activeCollection = activeCollection;
     m_currentTime = 0;
-	m_timeOut = timeOut;
+    m_timeOut = timeOut;
   }
   virtual void Activate();
   virtual Goal::Goal_Status Process(double dTime);
@@ -227,12 +227,12 @@ public:
 private:
   void updateVision()
   {
-    m_currentTarget->setX((int)m_visionTable->GetNumber("X", 0));
-    m_currentTarget->setY((int)m_visionTable->GetNumber("Y", 0));
-    m_currentTarget->setRadius((int)m_visionTable->GetNumber("RADIUS", 0));
+    m_currentTarget->setX(m_visionTable->GetNumber("X", 0));
+    m_currentTarget->setY(m_visionTable->GetNumber("Y", 0));
+    m_currentTarget->setRadius(m_visionTable->GetNumber("RADIUS", 0));
     //Area = m_visionTable->GetNumber("AREA", 0);
-    Height = (int)m_visionTable->GetNumber("HEIGHT", 0);
-    Width = (int)m_visionTable->GetNumber("WIDTH", 0);
+    Height = m_visionTable->GetNumber("HEIGHT", 0);
+    Width = m_visionTable->GetNumber("WIDTH", 0);
     HasTarget = m_visionTable->GetBoolean("HASTARGET", false);
   }
   int Height, Width;
@@ -300,7 +300,7 @@ protected:
 /* Goal_OneHatch
     This goal is meant to score one hatch on the cargo during autonomous
     */
-class Goal_OneHatch : public Generic_CompositeGoal
+class Goal_OneHatch : public CompositeGoal
 {
 public:
   Goal_OneHatch(ActiveCollection *activeCollection, string position = "none") : Generic_CompositeGoal(false)
@@ -317,7 +317,7 @@ private:
 /* Goal_WaitThenDrive
     * This is just a test composite goal. Unlikely it will be used IRL
     */
-class Goal_WaitThenDrive : public Generic_CompositeGoal
+class Goal_WaitThenDrive : public CompositeGoal
 {
 public:
   Goal_WaitThenDrive(ActiveCollection *activeCollection, double leftSpeed, double rightSpeed, double waitTime, double driveTime)

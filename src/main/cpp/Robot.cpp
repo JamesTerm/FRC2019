@@ -64,6 +64,11 @@ void Robot::RobotInit()
 	m_visionTable->PutNumber("MinA",1112);
 	m_visionTable->PutNumber("MaxA",82763);
 	m_visionTable->PutNumber("MaxO",62);
+	//know how computer graphics cordinate system works when editing these
+	m_visionTable->PutNumber("UPPER_BOUND",0); //top Y bound
+	m_visionTable->PutNumber("LOWER_BOUND",1000); //bottom Y bound
+	m_visionTable->PutNumber("LEFT_BOUND",0); //left X bound
+	m_visionTable->PutNumber("RIGHT_BOUND",1000); //right X bound
 }
 
 /*
