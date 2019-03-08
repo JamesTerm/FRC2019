@@ -34,10 +34,10 @@ class Goal_Wait_ac : public AtomicGoal
 public:
   Goal_Wait_ac(ActiveCollection *activeCollection, double timeOut)
   {
-
+    m_Status = eInactive;
     m_activeCollection = activeCollection;
     m_currentTime = 0;
-	m_timeOut = timeOut;
+    m_timeOut = timeOut;
   }
   virtual void Activate();
   virtual Goal::Goal_Status Process(double dTime);
@@ -77,43 +77,7 @@ private:
   double m_leftSpeed, m_rightSpeed;
 };
 #pragma endregion
-#if 0
-#pragma region ControllerOverride
-/* Goal_ControllerOverride
- *  Test if driver or operator or both are pressing controls, if so, fail.
- *  0 = driver, 1 = operator, 2 = both
- * 
- * This Goal will mostly be added into multitask goals to check if failed while other goals are also running.
- */
-class Goal_ControllerOverride : public AtomicGoal
-{
-  public:
-    void SetCallbacks(bool bind);
-    Goal_ControllerOverride(Framework::Base::EventMap &em) : m_EventMap(em)
-    {	m_controller = 2;
-		SetCallbacks(true);
-    }
-    //0 = driver, 1 = operator, 2 = both
-    Goal_ControllerOverride(Framework::Base::EventMap &em,int controller) : m_EventMap(em)
-    {	m_controller = controller;
-		SetCallbacks(true);
-    }
-	~Goal_ControllerOverride()
-	{	SetCallbacks(false);
-	}
-    virtual void Activate();
-    virtual Goal::Goal_Status Process(double dTime);
-    //virtual void Terminate();
-  private:
-	void TestDriver();
-	void TestOperator();
-	Framework::Base::EventMap &m_EventMap;
-    int m_controller;
-	bool m_IsOperatorInUse = false;
-	bool m_IsDriveInUse = false;
-};
-#pragma endregion
-#endif
+
 //Goals that use data to determine completion go here
 #pragma region FeedbackLoopGoals
 /* Goal_Turn
@@ -200,12 +164,12 @@ public:
 private:
   void updateVision()
   {
-    m_currentTarget->setX((int)m_visionTable->GetNumber("X", 0));
-    m_currentTarget->setY((int)m_visionTable->GetNumber("Y", 0));
-    m_currentTarget->setRadius((int)m_visionTable->GetNumber("RADIUS", 0));
+    m_currentTarget->setX(m_visionTable->GetNumber("X", 0));
+    m_currentTarget->setY(m_visionTable->GetNumber("Y", 0));
+    m_currentTarget->setRadius(m_visionTable->GetNumber("RADIUS", 0));
     //Area = m_visionTable->GetNumber("AREA", 0);
-    Height = (int)m_visionTable->GetNumber("HEIGHT", 0);
-    Width = (int)m_visionTable->GetNumber("WIDTH", 0);
+    Height = m_visionTable->GetNumber("HEIGHT", 0);
+    Width = m_visionTable->GetNumber("WIDTH", 0);
     HasTarget = m_visionTable->GetBoolean("HASTARGET", false);
   }
   int Height, Width;
@@ -262,7 +226,7 @@ protected:
 /* Goal_OneHatch
     This goal is meant to score one hatch on the cargo during autonomous
     */
-class Goal_OneHatch : public Generic_CompositeGoal
+class Goal_OneHatch : public CompositeGoal
 {
 public:
   Goal_OneHatch(ActiveCollection *activeCollection, double timeOut)
@@ -280,7 +244,7 @@ private:
 /* Goal_WaitThenDrive
     * This is just a test composite goal. Unlikely it will be used IRL
     */
-class Goal_WaitThenDrive : public Generic_CompositeGoal
+class Goal_WaitThenDrive : public CompositeGoal
 {
 public:
   Goal_WaitThenDrive(ActiveCollection *activeCollection, double leftSpeed, double rightSpeed, double waitTime, double driveTime)

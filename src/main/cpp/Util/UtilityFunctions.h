@@ -28,12 +28,12 @@ using namespace Components;
 /**********************************DRIVE METHODS**********************/
 static void SetDrive(double left, double right, ActiveCollection *activeCollection) //set left and right motor power. range: [0,1]
 {
-	VictorSPItem *left_0 = activeCollection->GetVictor("Left_0"); //creates pointers to motor objects. This robot has three left motors and three right motors
-	VictorSPItem *left_1 = activeCollection->GetVictor("Left_1");
-	VictorSPItem *left_2 = activeCollection->GetVictor("Left_2");
-	VictorSPItem *right_0 = activeCollection->GetVictor("Right_0");
-	VictorSPItem *right_1 = activeCollection->GetVictor("Right_1");
-	VictorSPItem *right_2 = activeCollection->GetVictor("Right_2");
+	VictorSPItem *left_0 = activeCollection->GetVictor("left_0"); //creates pointers to motor objects. This robot has three left motors and three right motors
+	VictorSPItem *left_1 = activeCollection->GetVictor("left_1");
+	VictorSPItem *left_2 = activeCollection->GetVictor("left_2");
+	VictorSPItem *right_0 = activeCollection->GetVictor("right_0");
+	VictorSPItem *right_1 = activeCollection->GetVictor("right_1");
+	VictorSPItem *right_2 = activeCollection->GetVictor("right_2");
 	
 
 	left_0->Set(left); //sets left and right motors to desired power
