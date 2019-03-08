@@ -265,14 +265,14 @@ private:
 /* Goal_Hatch
     This goal is meant to manipulate the mechanisms that would result in outtaking the hatch (this will need adjusting)
     */
-class Goal_Hatch : public AtomicGoal
+class Goal_Hatch : public Goal_Wait_ac
 {
 public:
-  Goal_Hatch(ActiveCollection *activeCollection, double timeOut)
+  Goal_Hatch(ActiveCollection *activeCollection, double timeOut) : Goal_Wait_ac(activeCollection, 1)
   {
     m_Status = eActive;
     m_timeOut = timeOut;
-    m_currentTime = 0;
+    m_currentTime = 0; ///////////////////////////////////////////////////////////////////////////////////////////////////
   }
   virtual void Activate();
   virtual Goal::Goal_Status Process(double dTime);
@@ -280,8 +280,6 @@ public:
 
 protected:
   ActiveCollection *m_activeCollection;
-  double m_currentTime;
-  double m_timeOut;
 };
 #pragma endregion
 #pragma endregion
@@ -300,18 +298,21 @@ protected:
 /* Goal_OneHatch
     This goal is meant to score one hatch on the cargo during autonomous
     */
-class Goal_OneHatch : public CompositeGoal
+class Goal_OneHatchFrontShip : public CompositeGoal
 {
 public:
-  Goal_OneHatch(ActiveCollection *activeCollection, string position = "none")
+  Goal_OneHatchFrontShip(ActiveCollection *activeCollection, string position = "none")
   {
+    m_activeCollection = activeCollection;
     m_position = position;
+    m_Status = eInactive;
   }
 
   virtual void Activate();
 
 private:
   string m_position;
+  ActiveCollection* m_activeCollection;
 };
 
 /* Goal_WaitThenDrive
@@ -327,6 +328,7 @@ public:
     m_rightSpeed = rightSpeed;
     m_waitTime = waitTime;
     m_driveTime = driveTime;
+    m_Status = eInactive;
   }
   virtual void Activate();
 
