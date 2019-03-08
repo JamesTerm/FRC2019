@@ -303,7 +303,7 @@ protected:
 class Goal_OneHatch : public CompositeGoal
 {
 public:
-  Goal_OneHatch(ActiveCollection *activeCollection, string position = "none") : Generic_CompositeGoal(false)
+  Goal_OneHatch(ActiveCollection *activeCollection, string position = "none")
   {
     m_position = position;
   }

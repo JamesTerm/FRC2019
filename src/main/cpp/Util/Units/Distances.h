@@ -11,6 +11,7 @@ Author(s): Ryan Cooper, Dylan Watson, Chris Weeks
 Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com, 
 chrisrweeks@aol.com
 \********************************************************************/
+#pragma once
 #include "../Constants.h"
 using namespace Util;
 class Distance
