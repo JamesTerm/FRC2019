@@ -17,8 +17,10 @@ Email: chrisrweeks@aol.com
 #include "../Util/VisionTarget.h"
 #include "../Util/Units/Distances.h"
 
-//?HINT ctrl+k then ctrl+0 will collapse all regions
-//?ctrl+k then ctrl+j will uncollapse all regions
+//?HINT: ctrl+k then ctrl+0 will collapse all regions
+//?HINT: ctrl+k then ctrl+[ will collapse all regions within the current scope of the cursor
+//?HINT: ctrl+k then ctrl+] will uncollapse all regions within the current scope of the cursor
+//?HINT: ctrl+k then ctrl+j will uncollapse all regions
 
 //Atomic Goals go in this region
 #pragma region AtomicGoals
