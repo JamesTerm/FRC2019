@@ -371,7 +371,6 @@ Goal::Goal_Status Goal_DriveStraight::Process(double dTime)
 
         m_encLeft->Reset();
         m_encRight->Reset();
-		return m_Status;
     }
     else
     {
@@ -476,10 +475,7 @@ void Goal_WaitThenDrive::Activate()
 /***********************Goal_OneHatch***********************/
 void Goal_OneHatch::Activate()
 {
-    AddSubgoal(new Goal_DriveStraight(m_activeCollection, 100, 100));
-    AddSubgoal(new Goal_Turn(m_activeCollection, 90));
-    AddSubgoal(new Goal_DriveStraight(m_activeCollection, 100, 100));
-    AddSubgoal(new Goal_Hatch(m_activeCollection, m_timeOut));
+
     m_Status = eActive;
 }
 #pragma endregion

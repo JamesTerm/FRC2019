@@ -17,8 +17,10 @@ Email: chrisrweeks@aol.com
 #include "../Util/VisionTarget.h"
 #include "../Util/Units/Distances.h"
 
-//?HINT ctrl+k then ctrl+0 will collapse all regions
-//?ctrl+k then ctrl+j will uncollapse all regions
+//?HINT: ctrl+k then ctrl+0 will collapse all regions
+//?HINT: ctrl+k then ctrl+[ will collapse all regions within the current scope of the cursor
+//?HINT: ctrl+k then ctrl+] will uncollapse all regions within the current scope of the cursor
+//?HINT: ctrl+k then ctrl+j will uncollapse all regions
 
 //Atomic Goals go in this region
 #pragma region AtomicGoals
@@ -34,10 +36,10 @@ class Goal_Wait_ac : public AtomicGoal
 public:
   Goal_Wait_ac(ActiveCollection *activeCollection, double timeOut)
   {
-
+    m_Status = eInactive;
     m_activeCollection = activeCollection;
     m_currentTime = 0;
-	m_timeOut = timeOut;
+    m_timeOut = timeOut;
   }
   virtual void Activate();
   virtual Goal::Goal_Status Process(double dTime);
@@ -225,12 +227,12 @@ public:
 private:
   void updateVision()
   {
-    m_currentTarget->setX((int)m_visionTable->GetNumber("X", 0));
-    m_currentTarget->setY((int)m_visionTable->GetNumber("Y", 0));
-    m_currentTarget->setRadius((int)m_visionTable->GetNumber("RADIUS", 0));
+    m_currentTarget->setX(m_visionTable->GetNumber("X", 0));
+    m_currentTarget->setY(m_visionTable->GetNumber("Y", 0));
+    m_currentTarget->setRadius(m_visionTable->GetNumber("RADIUS", 0));
     //Area = m_visionTable->GetNumber("AREA", 0);
-    Height = (int)m_visionTable->GetNumber("HEIGHT", 0);
-    Width = (int)m_visionTable->GetNumber("WIDTH", 0);
+    Height = m_visionTable->GetNumber("HEIGHT", 0);
+    Width = m_visionTable->GetNumber("WIDTH", 0);
     HasTarget = m_visionTable->GetBoolean("HASTARGET", false);
   }
   int Height, Width;
@@ -298,25 +300,24 @@ protected:
 /* Goal_OneHatch
     This goal is meant to score one hatch on the cargo during autonomous
     */
-class Goal_OneHatch : public Generic_CompositeGoal
+class Goal_OneHatch : public CompositeGoal
 {
 public:
-  Goal_OneHatch(ActiveCollection *activeCollection, double timeOut)
+  Goal_OneHatch(ActiveCollection *activeCollection, string position = "none")
   {
-    m_timeOut = timeOut;
+    m_position = position;
   }
 
   virtual void Activate();
 
 private:
-  ActiveCollection *m_activeCollection;
-  double m_timeOut;
+  string m_position;
 };
 
 /* Goal_WaitThenDrive
     * This is just a test composite goal. Unlikely it will be used IRL
     */
-class Goal_WaitThenDrive : public Generic_CompositeGoal
+class Goal_WaitThenDrive : public CompositeGoal
 {
 public:
   Goal_WaitThenDrive(ActiveCollection *activeCollection, double leftSpeed, double rightSpeed, double waitTime, double driveTime)

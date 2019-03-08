@@ -64,6 +64,11 @@ void Robot::RobotInit()
 	m_visionTable->PutNumber("MinA",1112);
 	m_visionTable->PutNumber("MaxA",82763);
 	m_visionTable->PutNumber("MaxO",62);
+	//know how computer graphics cordinate system works when editing these
+	m_visionTable->PutNumber("UPPER_BOUND",0); //top Y bound
+	m_visionTable->PutNumber("LOWER_BOUND",1000); //bottom Y bound
+	m_visionTable->PutNumber("LEFT_BOUND",0); //left X bound
+	m_visionTable->PutNumber("RIGHT_BOUND",1000); //right X bound
 }
 
 /*
@@ -82,20 +87,25 @@ void Robot::Autonomous()
 	string autoSelected = m_dashboardTable->GetString("AUTON_SELECTION", m_driveStraight);
 	string positionSelected = m_dashboardTable->GetString("POSITION_SELECTION", "NONE"); //if it is none, then just drive straight
 	cout << autoSelected << endl;
-	if (!SelectAuton(m_activeCollection, m_masterGoal, autoSelected, positionSelected))
+	if (!SelectAuton(m_activeCollection, m_masterGoal, autoSelected, positionSelected)) //!SELECTION
 	{
 		m_dashboardTable->PutString("AUTON_FOUND", "UNDEFINED AUTON OR POSITION SELECTED");
 	}
 	m_masterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15.0));
-	//m_masterGoal->AddGoal(new Goal_ControllerOverride(*m_EventMap));
+	m_masterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
 	m_masterGoal->Activate();
 	double dTime = 0.010;
 	double current_time = 0.0;
 	while (m_masterGoal->GetStatus() == Goal::eActive && _IsAutononomous() && !IsDisabled())
 	{
+		m_drive->Update();
 		m_masterGoal->Process(dTime);
 		current_time += dTime;
-		//m_Robot.Update(dTime);
+		Wait(dTime);
+	}
+	while(_IsAutononomous() && !IsDisabled())
+	{
+		m_drive->Update();
 		Wait(dTime);
 	}
 	m_masterGoal->~MultitaskGoal();
