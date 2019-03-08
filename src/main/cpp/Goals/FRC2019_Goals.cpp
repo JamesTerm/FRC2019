@@ -268,10 +268,10 @@ void Goal_ControllerOverride::SetCallbacks(bool bind)
 
     if(bind){
         for(Event *e : m_activeCollection->EventMap)
-            *e += onValueChanged;
+            (*e).subscribeFirstPriority(onValueChanged);
     }else{
         for(Event *e : m_activeCollection->EventMap)
-            *e -= onValueChanged;
+            (*e).unsubscribeFirstPriority();
     }
 }
 #pragma endregion
