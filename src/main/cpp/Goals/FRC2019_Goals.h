@@ -303,16 +303,15 @@ protected:
 class Goal_OneHatch : public Generic_CompositeGoal
 {
 public:
-  Goal_OneHatch(ActiveCollection *activeCollection, double timeOut)
+  Goal_OneHatch(ActiveCollection *activeCollection, string position = "none") : Generic_CompositeGoal(false)
   {
-    m_timeOut = timeOut;
+    m_position = position;
   }
 
   virtual void Activate();
 
 private:
-  ActiveCollection *m_activeCollection;
-  double m_timeOut;
+  string m_position;
 };
 
 /* Goal_WaitThenDrive
