@@ -14,8 +14,8 @@
         <VictorSP>
             <left_0 channel="2" reversed="false" pdbChannel="2" />
             <left_1 channel="3" reversed="false" pdbChannel="3" />
-            <right_0 channel="0" reversed="false" pdbChannel="0" />
-            <right_1 channel="1" reversed="false" pdbChannel="1" />
+            <right_0 channel="0" reversed="true" pdbChannel="0" />
+            <right_1 channel="1" reversed="true" pdbChannel="1" />
         </VictorSP>
         <!-- Region for VictorSPX CAN Items -->
         <VictorSPX>
@@ -42,7 +42,7 @@
         <!-- Driver Controller, slot should always be 0 -->
         <Driver slot="0">
             <AxisControls>
-                <leftDrive axis="1" deadZone="0.08" reversed="true" powerMultiplier="0.8" bindings="left_0, left_1"/>
+                <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="left_0, left_1"/>
                 <rightDrive axis="5" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="right_0, right_1"/>
             </AxisControls>
         </Driver>

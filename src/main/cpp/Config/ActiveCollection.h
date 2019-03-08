@@ -49,6 +49,8 @@ namespace Configuration
 			int GetSize();
 			vector<NativeComponent*> GetRawComponent();
 			void Add(NativeComponent *component);
+			void AddEvent(Event *event);
+			vector<Event*> EventMap;
 	private:
 		vector<NativeComponent*> activeCollection;
 	};

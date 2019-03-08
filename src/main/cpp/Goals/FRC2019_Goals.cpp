@@ -99,8 +99,9 @@ void Goal_DriveWithTimer::Terminate()
     StopDrive(m_activeCollection);
 }
 #pragma endregion
-#if 0
+
 #pragma region ControllerOverride
+#if 0
 /***********************Goal_ControllerOverride***********************/
 void Goal_ControllerOverride::Activate()
 {
@@ -197,9 +198,83 @@ void Goal_ControllerOverride::SetCallbacks(bool bind)
 		m_EventMap.EventOnOff_Map["Robot_CloseDoor"].Remove(this);
 	}
 }
-
-#pragma endregion
 #endif
+void Goal_ControllerOverride::Activate()
+{
+    m_Status = eActive;
+}
+
+Goal::Goal_Status Goal_ControllerOverride::Process(double dTime)
+{
+    if(eActive)
+    {
+		if (m_controller == 0)
+			TestDriver();
+		else if (m_controller == 1)
+			TestOperator();
+        else
+        {
+			TestDriver();
+			if (m_Status==eActive)
+				TestOperator();
+        }
+    }
+	return m_Status;
+}
+
+void Goal_ControllerOverride::Terminate()
+{
+    SetCallbacks(false);
+}
+
+void Goal_ControllerOverride::TestDriver()
+{
+    if (m_IsDriveInUse)
+	{
+		DriverValueChanged(new SenderEventArgs<Goal_ControllerOverride*>(this));  
+		m_Status = eFailed;
+	}
+}
+
+void Goal_ControllerOverride::TestOperator()
+{
+	if (m_IsOperatorInUse)
+	{
+		OperatorValueChanged(new SenderEventArgs<Goal_ControllerOverride*>(this));
+		m_Status = eFailed;
+	}
+}
+
+void Goal_ControllerOverride::SetCallbacks(bool bind)
+{
+    auto onValueChanged = [&](EventArgs* e) {
+        try{
+            auto args = (TEventArgs<double, Controls::ControlItem*>*)e;
+            if(args->GetSender()->joy->GetPort() == 0){
+                m_IsDriveInUse = true;
+            }
+            if(args->GetSender()->joy->GetPort() == 1){
+                m_IsOperatorInUse = true;
+            }
+            delete args;
+            args = nullptr;
+        }catch(exception &e){
+            Log::Error("Known Exception Thrown in onValueChanged in a ControllerOverride! This can cause fatal Runtime Errors! Check your logs and XML.");
+            Log::Error(e.what());
+        }catch(...){
+            Log::Error("UnknownException Thrown in onValueChanged in ControllerOverride! This can cause fatal Runtime Errors! Check your XML and yell at the programmers!");
+	    }
+    };
+
+    if(bind){
+        for(Event *e : m_activeCollection->EventMap)
+            *e += onValueChanged;
+    }else{
+        for(Event *e : m_activeCollection->EventMap)
+            *e -= onValueChanged;
+    }
+}
+#pragma endregion
 
 void Goal_ElevatorControl::Activate()
 {
@@ -328,7 +403,6 @@ Goal::Goal_Status Goal_DriveStraight::Process(double dTime)
 
         m_encLeft->Reset();
         m_encRight->Reset();
-		return m_Status;
     }
     else
     {
@@ -433,10 +507,7 @@ void Goal_WaitThenDrive::Activate()
 /***********************Goal_OneHatch***********************/
 void Goal_OneHatch::Activate()
 {
-    AddSubgoal(new Goal_DriveStraight(m_activeCollection, 100, 100));
-    AddSubgoal(new Goal_Turn(m_activeCollection, 90));
-    AddSubgoal(new Goal_DriveStraight(m_activeCollection, 100, 100));
-    AddSubgoal(new Goal_Hatch(m_activeCollection, m_timeOut));
+
     m_Status = eActive;
 }
 #pragma endregion

@@ -145,3 +145,7 @@ void ActiveCollection::Add(NativeComponent *component){
 vector<NativeComponent*> ActiveCollection::GetRawComponent(){
 	return activeCollection;
 }
+
+void ActiveCollection::AddEvent(Event *event){
+	EventMap.push_back(event);
+}
