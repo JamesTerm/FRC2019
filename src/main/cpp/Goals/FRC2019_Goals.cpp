@@ -479,6 +479,7 @@ void Goal_VisionAlign::Terminate()
 #pragma endregion
 
 #pragma region UtilGoals
+#if 0
 /***********************Goal_Hatch***********************/
 void Goal_Hatch::Activate()
 {
@@ -493,6 +494,7 @@ void Goal_Hatch::Terminate()
 {
 	//TODO: Yeet o this
 }
+#endif
 #endif
 #pragma endregion
 #pragma endregion
