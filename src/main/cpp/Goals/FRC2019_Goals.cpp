@@ -455,7 +455,7 @@ void Goal_Hatch::Activate()
 
 Goal::Goal_Status Goal_Hatch::Process(double dTime)
 {
-    return eCompleted;
+    
 }
 void Goal_Hatch::Terminate()
 {
@@ -475,10 +475,47 @@ void Goal_WaitThenDrive::Activate()
 }
 
 /***********************Goal_OneHatch***********************/
-void Goal_OneHatch::Activate()
+void Goal_OneHatchFrontShip::Activate()
 {
-
     m_Status = eActive;
+    if(m_position == "Level 1 Left")
+    {
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(5.0), .75));
+        AddSubgoal(new Goal_Turn(m_activeCollection, 90));
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(3.0), .75));
+        AddSubgoal(new Goal_Turn(m_activeCollection, -90));
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(2.0), .5));
+        //GOAL DEPLOY HATCH
+    }
+    else if(m_position == "Level 1 Center")
+    {
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(7.0), .75));
+        //deploy hatch
+    }
+    else if(m_position == "Level 1 Right")
+    {
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(5.0), .75));
+        AddSubgoal(new Goal_Turn(m_activeCollection, -90));
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(3.0), .75));
+        AddSubgoal(new Goal_Turn(m_activeCollection, 90));
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(2.0), .5));
+        //GOAL DEPLOY HATCH
+    }
+    else if(m_position == "Level 2 Left")
+    {
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(5.0), .75));
+        AddSubgoal(new Goal_OneHatchFrontShip(m_activeCollection, "Level 1 Left"));
+    }
+    else if(m_position == "Level 2 Right")
+    {
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(5.0), .75));
+        AddSubgoal(new Goal_OneHatchFrontShip(m_activeCollection, "Level 1 Right"));
+    }
+    else
+    {
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(10.0), .75));
+    }
+    
 }
 #pragma endregion
 
