@@ -147,7 +147,29 @@ void Robot::OperatorControl()
  */
 void Robot::Test()
 {
-	
+
+	m_masterGoal = new MultitaskGoal(m_activeCollection, false);
+
+	cout << "Test Started." << endl;
+	m_masterGoal->AddGoal(new Goal_DriveStraight(m_activeCollection, new Feet(10.0), 0.75));
+	m_masterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
+	m_masterGoal->Activate();
+	double dTime = 0.010;
+	double current_time = 0.0;
+	while (m_masterGoal->GetStatus() == Goal::eActive && _IsAutononomous() && !IsDisabled())
+	{
+		m_drive->Update();
+		m_masterGoal->Process(dTime);
+		current_time += dTime;
+		Wait(dTime);
+	}
+	while (_IsAutononomous() && !IsDisabled())
+	{
+		m_drive->Update();
+		Wait(dTime);
+	}
+	m_masterGoal->~MultitaskGoal();
+	cout << "goal loop complete" << endl;
 }
 
 START_ROBOT_CLASS(Robot) //!< This identifies Robot as the main Robot starting class
