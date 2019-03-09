@@ -348,6 +348,7 @@ Goal::Goal_Status Goal_DriveStraight::Process(double dTime)
 {
     if (m_Status = eActive)
     {
+		SmartDashboard::PutBoolean("DRIVE STRAIGHT STATUS", true);
         m_currentTime += dTime;
         if (m_currentTime > m_timeOut)
             return m_Status = eFailed;
@@ -374,6 +375,7 @@ Goal::Goal_Status Goal_DriveStraight::Process(double dTime)
     }
     else
     {
+		SmartDashboard::PutBoolean("DRIVE STRAIGHT STATUS", true);
         return m_Status;
     }
 }

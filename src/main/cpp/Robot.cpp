@@ -156,7 +156,7 @@ void Robot::Test()
 	m_masterGoal->Activate();
 	double dTime = 0.010;
 	double current_time = 0.0;
-	while (m_masterGoal->GetStatus() == Goal::eActive && _IsAutononomous() && !IsDisabled())
+	while (m_masterGoal->GetStatus() == Goal::eActive && !IsDisabled())
 	{
 		m_drive->Update();
 		m_masterGoal->Process(dTime);
