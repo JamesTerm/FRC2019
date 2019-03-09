@@ -380,6 +380,7 @@ Goal::Goal_Status Goal_DriveStraight::Process(double dTime)
 {
     if (m_Status = eActive)
     {
+		SmartDashboard::PutBoolean("DRIVE STRAIGHT STATUS", true);
         m_currentTime += dTime;
         if (m_currentTime > m_timeOut)
             return m_Status = eFailed;
@@ -406,6 +407,7 @@ Goal::Goal_Status Goal_DriveStraight::Process(double dTime)
     }
     else
     {
+		SmartDashboard::PutBoolean("DRIVE STRAIGHT STATUS", true);
         return m_Status;
     }
 }
@@ -482,15 +484,16 @@ void Goal_Hatch::Activate()
 {
     m_Status = eActive;
 }
-
+#if 0
 Goal::Goal_Status Goal_Hatch::Process(double dTime)
 {
-    
+    //TODO: Yeet on this
 }
 void Goal_Hatch::Terminate()
 {
+	//TODO: Yeet o this
 }
-
+#endif
 #pragma endregion
 #pragma endregion
 

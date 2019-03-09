@@ -25,7 +25,7 @@ auto onControllerValueChanged = [&](EventArgs* e) {
 		auto args = (TEventArgs<double, ControlItem*>*)e;
 		args->GetSender()->SetToComponents(args->GetValue());
 		Log::General("OnValueChanged called for: " + args->GetSender()->name + " with the arguments: " + to_string(args->GetValue()), true);
-		//SmartDashboard::PutNumber(args->GetSender()->name, args->GetValue());
+		SmartDashboard::PutNumber(args->GetSender()->name, args->GetValue());
 		delete args;
 		args = nullptr;
 	}catch(exception &e){
