@@ -7,9 +7,10 @@
 #include <iostream>
 
 #include "EventArgs.h"
-#include "Log.cpp"
+#include "Log.h"
 
 using namespace std;
+using namespace Logger;
 
 static int counter;
 
