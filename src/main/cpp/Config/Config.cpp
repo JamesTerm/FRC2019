@@ -469,6 +469,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 				xml_attribute multiply_xml = button.attribute("powerMultiplier");
 				bool actOnRelease = button.attribute("actOnRelease").as_bool();
 				bool isSolenoid = button.attribute("isSolenoid").as_bool();
+				bool isAmpLimited = button.attribute("isAmpLimited").as_bool();
 				if(!multiply_xml){
 					cout << "No Power Multiplier detected for ButtonControl " << name << ". Defaulting to 1.0. This may cause driving errors!" << endl;
 					multiply = 1.0;
@@ -487,6 +488,9 @@ void Config::AllocateDriverControls(xml_node &controls){
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
 				}
+				if(isAmpLimited)
+					tmp->SetAmpRegulation(11, 30);
+				//TODO: make this work lol
 				xml_attribute bind_event_xml = button.attribute("bindEvent");
 				bool bind_event = bind_event_xml.as_bool(); 
 				if(!bind_event_xml || bind_event){
@@ -627,6 +631,8 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				xml_attribute multiply_xml = button.attribute("powerMultiplier");
 				bool actOnRelease = button.attribute("actOnRelease").as_bool();
 				bool isSolenoid = button.attribute("isSolenoid").as_bool();
+				bool isAmpLimited = button.attribute("isAmpLimited").as_bool();
+				bool isRamp = button.attribute("isRamp").as_bool();
 				if(!multiply_xml){
 					cout << "No Power Multiplier detected for ButtonControl " << name << ". Defaulting to 1.0. This may cause driving errors!" << endl;
 					multiply = 1.0;
@@ -644,6 +650,10 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
 				}
+				if(isAmpLimited)
+					tmp->SetAmpRegulation(11, 30);
+				if(isRamp)
+					tmp->SetRamp(0.1);
 				xml_attribute bind_event_xml = button.attribute("bindEvent");
 				bool bind_event = bind_event_xml.as_bool(); 
 				if(!bind_event_xml || bind_event){
