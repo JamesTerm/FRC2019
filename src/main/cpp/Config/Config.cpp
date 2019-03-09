@@ -11,6 +11,8 @@ Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com
 \********************************************************************/
 
 #include "Config.h"
+#include <string.h>
+#include <stdio.h>
 
 using namespace std;
 using namespace System;
@@ -329,7 +331,7 @@ void Config::AllocateComponents(xml_node &root){
 			xml_attribute rChannel = solenoid.attribute("rChannel");
 			bool reversed = solenoid.attribute("reversed");
 			xml_attribute _default = solenoid.attribute("default");
-			DoubleSolenoid::Value _def = _default ? _default.as_string() == "reverse" ? DoubleSolenoid::Value::kReverse : _default.as_string() == "forward" ? DoubleSolenoid::Value::kForward : DoubleSolenoid::Value::kOff : DoubleSolenoid::Value::kOff;
+			DoubleSolenoid::Value _def = _default ? (strcmp(_default.as_string(),"reverse") == 0) ? DoubleSolenoid::Value::kReverse : (strcmp(_default.as_string(),"forward") == 0) ? DoubleSolenoid::Value::kForward : DoubleSolenoid::Value::kOff : DoubleSolenoid::Value::kOff;
 
 			if(fChannel && rChannel){
 				DoubleSolenoidItem *tmp = new DoubleSolenoidItem(name , fChannel.as_int(), rChannel.as_int(), _def, reversed);

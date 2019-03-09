@@ -452,15 +452,16 @@ void Goal_Hatch::Activate()
 {
     m_Status = eActive;
 }
-
+#if 0
 Goal::Goal_Status Goal_Hatch::Process(double dTime)
 {
-    
+    //TODO: Yeet on this
 }
 void Goal_Hatch::Terminate()
 {
+	//TODO: Yeet o this
 }
-
+#endif
 #pragma endregion
 #pragma endregion
 

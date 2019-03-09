@@ -27,11 +27,12 @@
         <Potentiometer>
         </Potentiometer>
         <!-- Region for Encoders -->
-        <Encoder>
-        </Encoder>
+      <Encoder>
+      </Encoder>
         <!-- Region for DoubleSolenoids -->
-        <DoubleSolenoid>
-        </DoubleSolenoid>
+      <DoubleSolenoid>
+        <sol fChannel="0" rChannel="1" default="reverse"/>
+      </DoubleSolenoid>
         <!-- Region for DigitalInputs -->
         <DigitalInput>
         </DigitalInput>
@@ -43,7 +44,7 @@
         <Driver slot="0">
             <AxisControls>
                 <leftDrive axis="1" deadZone="0.08" reversed="true" powerMultiplier="0.8" bindings="left_0, left_1"/>
-                <rightDrive axis="5" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="right_0, right_1"/>
+                <rightDrive axis="4" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="right_0, right_1"/>
             </AxisControls>
         </Driver>
     </Controls>
