@@ -13,6 +13,7 @@ Email:	dylantrwatson@gmail.com
 #include <iostream>
 
 #include "ControlItem.h"
+#include "../Util/SmartDashboard.h"
 
 using namespace std;
 using namespace Controls;
@@ -23,6 +24,8 @@ auto onControllerValueChanged = [&](EventArgs* e) {
 	try{
 		auto args = (TEventArgs<double, ControlItem*>*)e;
 		args->GetSender()->SetToComponents(args->GetValue());
+		Log::General("OnValueChanged called for: " + args->GetSender()->name + " with the arguments: " + to_string(args->GetValue()), true);
+		//SmartDashboard::PutNumber(args->GetSender()->name, args->GetValue());
 		delete args;
 		args = nullptr;
 	}catch(exception &e){
