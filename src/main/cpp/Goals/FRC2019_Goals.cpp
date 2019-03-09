@@ -295,7 +295,7 @@ Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
 
         m_power = bias + (kp * error) + (ki * integ) + (kd * deriv); //power is equal to P,I,D * k-values + bias
 
-        SetElevator(m_power,m_activeCollection); //TODO this
+        //SetElevator(m_power,m_activeCollection); //TODO this
         return m_Status = eActive;
     }
     else
@@ -306,7 +306,7 @@ Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
 
 void Goal_ElevatorControl::Terminate()
 {
-    StopElevator(); //TODO this
+    //StopElevator(); //TODO this
 }
 #pragma region FeedbackLoopGoals
 /***********************Goal_Turn***********************/

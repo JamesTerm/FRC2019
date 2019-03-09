@@ -11,6 +11,8 @@ Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com
 \********************************************************************/
 
 #include "Config.h"
+#include <string.h>
+#include <stdio.h>
 
 using namespace std;
 using namespace System;
@@ -59,6 +61,7 @@ Config::Config(ActiveCollection *_activeCollection, Drive *_drive) {
 		assert(false);  
 		#endif
 		cout << "XML Config parsed with errors" << endl;
+		cout << "ERROR YEET: " << result.status << endl;
 		cout << "Error description: " << result.description() << endl;
 		cout << "Error offset: " << result.offset << endl;;
 		cout << "No config available, returning to Robot.cpp\nTHIS IS A BIG ERROR!" << endl;
@@ -327,10 +330,23 @@ void Config::AllocateComponents(xml_node &root){
 			string name = solenoid.name();
 			xml_attribute fChannel = solenoid.attribute("fChannel");
 			xml_attribute rChannel = solenoid.attribute("rChannel");
-			bool reversed = solenoid.attribute("reversed");
+			bool reversed = solenoid.attribute("reversed").as_bool();
 			xml_attribute _default = solenoid.attribute("default");
-			DoubleSolenoid::Value _def = _default ? _default.as_string() == "reverse" ? DoubleSolenoid::Value::kReverse : _default.as_string() == "forward" ? DoubleSolenoid::Value::kForward : DoubleSolenoid::Value::kOff : DoubleSolenoid::Value::kOff;
-
+			DoubleSolenoid::Value _def;
+			if(_default){
+				cout << "DEFAULT FOUND" << endl;
+				cout << "DEFAULT: " << _default.as_string() << endl;
+				if(strcmp(_default.as_string(),"reverse") == 0)
+					_def = DoubleSolenoid::Value::kReverse;
+				else if(strcmp(_default.as_string(),"forward") == 0)
+					_def = DoubleSolenoid::Value::kForward;
+				else{
+					cout << "OFF" << endl;
+					_def = DoubleSolenoid::Value::kOff;
+				}
+			}else{
+				_def = DoubleSolenoid::Value::kOff;
+			}
 			if(fChannel && rChannel){
 				DoubleSolenoidItem *tmp = new DoubleSolenoidItem(name , fChannel.as_int(), rChannel.as_int(), _def, reversed);
 				m_activeCollection->Add(tmp);

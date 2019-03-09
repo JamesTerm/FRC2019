@@ -147,7 +147,7 @@ class Goal_ElevatorControl : public AtomicGoal
       m_activeCollection = activeCollection;
       m_target = target;
       m_Status = eInactive;
-      m_potientiometer = (PotentiometerItem*)activeCollection->Get("pot"); //TODO this
+      m_potientiometer = (PotentiometerItem*)activeCollection->Get("elevatorPot"); //TODO this
     }
     virtual void Activate();
     virtual Goal::Goal_Status Process(double dTime);
