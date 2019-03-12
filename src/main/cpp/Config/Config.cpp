@@ -413,6 +413,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 				double multiply;
 				xml_attribute deadZone_xml = axis.attribute("deadZone");
 				xml_attribute multiply_xml = axis.attribute("powerMultiplier");
+				bool isLift = axis.attribute("isLift").as_bool();
 				if(!deadZone_xml){
 					cout << "No DeadZone detected for AxisControl " << name << ". Defaulting to 0.085. This may cause driving errors!" << endl;
 					deadZone = 0.085;
@@ -437,6 +438,8 @@ void Config::AllocateDriverControls(xml_node &controls){
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
 				}
+				if(isLift)
+					tmp->SetLift(3.0, m_activeCollection);
 				xml_attribute bind_event_xml = axis.attribute("bindEvent");
 				bool bind_event = bind_event_xml.as_bool(); 
 				if(!bind_event_xml || bind_event){

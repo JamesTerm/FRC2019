@@ -20,6 +20,7 @@ Email:	dylantrwatson@gmail.com
 using namespace std;
 using namespace Util;
 using namespace Controls;
+using namespace Components;
 
 AxisControl::AxisControl() { }
 
@@ -28,6 +29,7 @@ AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZo
 {
 	axis = _axis;
 	deadZone = _deadZone;
+	isLift = false;
 }
 
 double AxisControl::Update()
@@ -35,11 +37,28 @@ double AxisControl::Update()
 	double raw = (*joy).GetRawAxis(axis);
 	if (!(abs(raw) > deadZone))
 	{
-		if (abs(currentPow) > EPSILON_MIN)
-			ValueChanged(new TEventArgs<double, AxisControl*>(0, this));
-		currentPow = 0;
-		previousPow = currentPow;
-		return currentPow;
+		if(!isLift){
+			if (abs(currentPow) > EPSILON_MIN)
+				ValueChanged(new TEventArgs<double, AxisControl*>(0, this));
+			currentPow = 0;
+			previousPow = currentPow;
+			return currentPow;
+		}
+		else{
+			double currentVal = ((PotentiometerItem*)m_activeCollection->Get("pot"))->Get();
+			if(!isIdle){
+				targetVal = currentVal;
+				isIdle = true;
+				return currentPow;
+			}
+			double err = (targetVal - currentVal)/targetVal;
+			currentPow = err * gane;
+			SetToComponents(currentPow);
+			return currentPow;
+		}
+	}
+	else{
+		isIdle = true;
 	}
 	double dz = deadZone + MINIMUM_JOYSTICK_RETURN;
 	double val = ((abs(raw) - dz) * (pow(1-dz, -1)) * getSign(raw)) * powerMultiplier;
@@ -65,6 +84,12 @@ int AxisControl::getSign(double val)
 		Log::Error("Something is very broken in the getSign Method in AxisControl...");
 		return 0;
 	}
+}
+
+void AxisControl::SetLift(double _gane, ActiveCollection* activeCollection){
+	gane = _gane;
+	isLift = true;
+	m_activeCollection = activeCollection;
 }
 
 AxisControl::~AxisControl() { }
