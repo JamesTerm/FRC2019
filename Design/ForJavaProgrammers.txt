@@ -1,0 +1,125 @@
+This document goes out to all students (or anyone) who has come from a Java background and may be a little intimidated to learn c++.  The good news is that both languages are mostly similar, and I'm going to address what I believe has been the biggest learning curve for learning c++, pointers.
+
+I'm really going to explain this in such a way, that was explained to me when I first started learning, so my apologies in advance for those who are a bit more advanced.
+
+Imagine if you will your neighborhood where it consists of many houses, and we can for the moment say this is like computer memory.  Now let's say that I am the mail man in your neighborhood.  With these things, I'm going to give the computer terms relative:
+
+House = Byte
+Address = Address
+Main man = instruction pointer
+
+When you "run" your code, it's like telling the mail man to start... but this mail man does something a bit different... he starts at the first house, knocks on the door, and asks the person at the house what he should do.  The person may say the following:
+
+1.  Give this letter to my friend   <-- moving data to a register
+2.  You have a letter for me?       <--- moving data from a register
+3.  Go to my friends house and ask him what to do next   <--- goto, gosub, jump etc..
+4.  Do any of the above things if...   <-- known as branching
+
+This is very much how assembly language works... this is a human readable language that is translated to machine language... the instruction pointer advances much like the mail man from one address to the next and reading the bytes from that memory... it interprets the memory as an instruction, and acts on it.
+
+Let's talk about the house,  if someone is home then that means the mailman can do his job... someone must be home everywhere he goes.   An example of someone not home is things like bad memory, or graphic data, versus instruction memory.  In old school assembly they put bounds on certain regions of memory... a code segment is where the instruction pointer should be, and it can read data from the data segment.  The data can be anything from strings, to music, to graphics.  If the mailman goes to where he's not suppose to... his boss will let you know and stop him... (a crash or exception).  His boss is the operating system, which keeps track of instructions and has a general since of when instructions are no longer valid.
+
+So to understand pointers is a simple as understanding a house and its address.  A pointer is the address, and it is pointing to something, as an address represents a house.
+
+Ok not so fast... there is one more thing we should talk about... and that is the mailman's stack... it's his clipboard where he "stacks" his notes when people tell him stuff.  We'll need to know this to know how local variables work.  One other thing, someone being home, is the same as saying that address has some instruction code in it and part of the code segment.  Some one may tell the mail man to go to an address not in the coded segment and pickup (or drop off) the mail.  In this case the mailman can drive by and pickup whatever is in their mailbox, but he can't stop there for any instruction, for that he'll have to go back to the house where he left off and move to the next house.  If a person tells the mailman to goto an address, he can only do so for a house that has a person to give him the next instruction, or else he will crash.
+
+char *James="A check for 3,481 dollars";      <----First House let's call this Michael's house 
+
+So let's start with this.  The asterisk defines "James" as a pointer.  "James" is a variable name, so the mail man stops at Michael's house, and Michael is home, and gives him an instruction like this.  The mailman takes a note, the note has James's name on it... what kind of type is James? it's a pointer, so under James's name the mail man jots down a strange address.  Why?
+
+Because James is a pointer, and when the mailman goes to this strange address, he'll know what to expect there 'char'.  Really what James is pointing to doesn't matter much, it's just a heads up for the mailman to know how big it will be if he gets what is at that address.  
+
+So then "A check for 3,481 dollars" is at a strange address in the data segment of the memory, to make this rememberable let's suppose the address is the shrieking shack from Harry Potter.  No one goes there, no one lives there... there is nothing special about this address, but we know the check is at some address... and it turns out the compiler decided to put the check at this address.
+
+Michael says... James = Shrieking Shack Address....   So the mailman writes down on a Paper James, and the address for this is somewhere further away we'll say this address is at 49152, and Michael's house is at address 148.  So if you were debug this line of code you can pull the addresses and see these numbers, but they don't really matter, and you really wouldn't need to see them unless there was something wrong with the code.  So you would see James = 49152, and if you were to display the memory at 49152 you would see the check there.
+
+Let's review... the mail man started at Michael's house, and noted an Address being assigned to James, which is a pointer, so the clipboard has James's name with the 49152 address, and in that mailbox is a check.
+
+So then the mailman moves on to next house:
+char *Gabe= James;
+
+What do you think will happen here?
+Gabe is also a pointer, so the mailman has a new sheet of paper with Gabe's name on it and guess what the address he is assigned to is?  Looks like Gabe is going to point to that check as well.  Can Gabe and James both point to the same address?  Yes.
+
+Let's review:
+char *James="A check for 3,481 dollars";  <--Michael's house  148
+char *Gabe= James;   <--- Michael's neighbor at 149
+Guess where the mailman is going now?
+Yup 150
+
+The mailman always advances to the next instruction unless he is told to go somewhere else.
+So let's see what is next:
+
+char *Jose= new char[1024];
+*Jose=*Gabe;
+
+What just happened here!!
+
+Well Jose is also a pointer, so now the mailman has a 3rd piece of paper... if we were to examine his clipboard:
+[2] Jose  (some new address)
+[1] Gabe  49152
+[0] James 49152
+
+The mailman sees a "new" address and asks his boss where that is... the "call"  means the mailman will have to travel to the OS and in there will find instructions on how to get the new address, once he has the new address he will return to address 150, and finish the instruction.  The new returns this address... it's address 65536.
+
+[2] Jose 65536
+
+By the way, for those more advanced users.. the clipboard is the stack pointer.  So this list is what is on the stack.
+
+Now what about this:
+*Jose=*Gabe;
+
+Both Jose and Gabe are being "dereferenced", being dereferenced is like saying what are they pointing at.  Gabe is still pointing at the check, Jose is pointing at new memory... when they are dereferenced that is saying that 65536 will have the same contents as 49152.  Let's look at this a little closer:
+
+49152:   'A', ' ', 'c', 'h', 'e', 'c', 'k'
+So at 49152 it is the char... the char is 'A', at 49153 it is ' ', and at 49154 it is 'c'... etc
+
+So really that statement is only assigning the contents of one char to the other address, so 
+
+65536:  'A', '?' , '?', '?'
+
+Where '?' is unwritten memory, we don't know what it is yet, because it's new, and we should write something to it.
+
+So that last statement Jose still points to 65536, but now he has the first letter of the string.
+Let's change that line...
+void main()
+{
+    char *James="A check for 3,481 dollars";
+    char *Gabe=James;
+    char *Jose=new char[1024];
+    char *index=Jose;
+    while (*Gabe!=0)
+    {
+        *index++=*Gabe++;
+    } 
+    Gabe=James;  //have Gabe point back where he was
+    //Now we all have a check, but Jose has a different copy of it
+}
+
+Ok I'll end this document with this example let's look at this line:
+        *index++=*Gabe++;
+In c++ the ++ means to increment... how much does it increment? It increments by the size of what it is pointing to... so a char is only one byte so the address's will increment by one byte at a time.
+
+So it will start with giving the contents at 49152 to 65536, then increment both.
+The mailman has 4 papers 
+[3] index 65536
+[2] Jose  65536
+[1] Gabe  49152
+[0] James 49152
+
+After they both increment
+[3] index 65537
+[2] Jose  65536
+[1] Gabe  49153
+[0] James 49152
+
+Gabe and the index increment then the while() evaluates what Gabe is pointing at... at 49153 it is ' ', so the loop continues:
+index and Gabe keep coping the contents of the string one character at a time, until the end.  All strings in c++ are zero terminated meaning after the string the last character will be a zero, so we know to stop.
+
+65536:   'A', ' ', 'c', 'h', 'e', 'c', 'k'
+
+So now Jose points to 65536, but this memory has the same contents as 49152
+
+So the key to understanding pointers is to understand the idea of addresses in memory and being able to read and write to them, this is the gist of it that can help you get started, hopefully with this you can read other documentation and have some sense as to build from these simpler ideas to the ones they convey.  Try this code out and step through it line by line watching the variables.  It will really help to see what is going on.
+Good Luck!
+
