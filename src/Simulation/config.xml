@@ -12,13 +12,19 @@
     <RobotConfig>
         <!-- Region for defining VictorSP Items -->
         <VictorSP>
-            <left_0 channel="2" reversed="false" pdbChannel="2" />
-            <left_1 channel="3" reversed="false" pdbChannel="3" />
-            <right_0 channel="0" reversed="false" pdbChannel="0" />
-            <right_1 channel="1" reversed="false" pdbChannel="1" />
+            <intake channel="8" reversed="false"/>
         </VictorSP>
         <!-- Region for VictorSPX CAN Items -->
         <VictorSPX>
+            <left_0 channel="2" reversed="false" />
+            <left_1 channel="3" reversed="false" />
+            <right_0 channel="0" reversed="true" />
+            <right_1 channel="1" reversed="true" />
+		
+			<elevator_0 channel="4" reversed="false" />
+            <elevator_1 channel="5" reversed="false" />
+            <elevator_2 channel="6" reversed="true" />
+            <elevator_3 channel="7" reversed="true" />
         </VictorSPX>
         <!-- Region for TalonSRX CAN Items -->
         <TalonSRX>
@@ -27,12 +33,14 @@
         <Potentiometer>
         </Potentiometer>
         <!-- Region for Encoders -->
-      <Encoder>
-      </Encoder>
+        <Encoder>
+        </Encoder>
         <!-- Region for DoubleSolenoids -->
-      <DoubleSolenoid>
-        <sol fChannel="0" rChannel="1" default="reverse"/>
-      </DoubleSolenoid>
+        <DoubleSolenoid>
+            <hatch_open fChannel="0" rChannel="1" default="reverse"/>
+            <wrist fChannel="2" rChannel="3" default="reverse"/>
+			<hatch_push fChannel="4" rChannel="5" default="reverse"/>
+		</DoubleSolenoid>
         <!-- Region for DigitalInputs -->
         <DigitalInput>
         </DigitalInput>
@@ -41,11 +49,25 @@
     <!-- Root of all control definitions -->
     <Controls>
         <!-- Driver Controller, slot should always be 0 -->
-        <Driver slot="0">
+        <Driver slot="1">
             <AxisControls>
-                <leftDrive axis="1" deadZone="0.08" reversed="true" powerMultiplier="0.8" bindings="left_0, left_1"/>
-                <rightDrive axis="4" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="right_0, right_1"/>
+                <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="left_0, left_1"/>
+                <rightDrive axis="5" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="right_0, right_1"/>
             </AxisControls>
         </Driver>
+		<Operator slot="0">
+			<AxisControls>
+				<outtake_control axis="5" deadZone="0.08" reversed="true" powerMultiplier="1.0" bindings="intake"/>
+				<elevator_control axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.75" bindings="elevator_0, elevator_1, elevator_2, elevator_3"/>
+			</AxisControls>
+			<ButtonControls>
+				<intakeButton button="4" powerMultiplier="0.8" isRamp="true" isAmpLimited="true" actOnRelease="true"/>
+			</ButtonControls>
+			<ToggleButtonControls>
+				<hatch_push_control button="0" powerMultiplier="1.0" bindings="hatch_push"/>
+				<hatch_open_control button="1" powerMultiplier="1.0" bindings="hatch_open"/>
+				<wrist_control button="3" powerMultiplier="1.0" bindings="wrist"/>
+			</ToggleButtonControls>
+		</Operator>
     </Controls>
 </Robot>

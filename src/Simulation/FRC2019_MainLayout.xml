@@ -1,5 +1,20 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="wrist_control" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
+		<location x="176" y="307"/>
+		<width>99</width>
+	</widget>
+	<widget field="hatch_push_control" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
+		<location x="21" y="306"/>
+		<width>126</width>
+	</widget>
+	<widget field="hatch_open_control" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
+		<location x="301" y="310"/>
+		<width>130</width>
+	</widget>
+	<widget field="intakeButton" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="38" y="135"/>
+	</widget>
 	<widget field="PID_Right_EO" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
 		<location x="510" y="408"/>
 	</widget>
@@ -11,9 +26,6 @@
 	</widget>
 	<widget field="LimitElevatorMax" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
 		<location x="183" y="236"/>
-	</widget>
-	<widget field="HatchGrip" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="111" y="310"/>
 	</widget>
 	<widget field="Show_Controls" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.CheckBox">
 		<location x="531" y="352"/>
@@ -42,17 +54,6 @@
 	</widget>
 	<widget field="DevMode" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.CheckBox">
 		<location x="14" y="348"/>
-	</widget>
-	<widget field="TestRotate" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="738" y="326"/>
-		<width>96</width>
-	</widget>
-	<widget field="TestMove" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="738" y="295"/>
-		<width>96</width>
-	</widget>
-	<widget field="FieldCentricDrive_Mode" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="302" y="174"/>
 	</widget>
 	<widget field="Timer" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
 		<location x="734" y="181"/>
@@ -89,15 +90,9 @@
 		<location x="803" y="134"/>
 	</widget>
 	<widget field="Wedge" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="242" y="311"/>
+		<location x="222" y="45"/>
 	</widget>
-	<widget field="Hatch" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="50" y="310"/>
-	</widget>
-	<widget field="Intake" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="186" y="310"/>
-	</widget>
-	<widget field="RollerVoltage" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.ProgressBar">
+	<widget field="outtake_control" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.ProgressBar">
 		<location x="53" y="259"/>
 		<height>30</height>
 		<property name="Foreground" value="0.102.0.255"/>
@@ -105,7 +100,7 @@
 		<property name="Maximum" value="1.0"/>
 		<property name="Minimum" value="-1.0"/>
 	</widget>
-	<widget field="ArmVoltage" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.ProgressBar">
+	<widget field="elevator_control" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.ProgressBar">
 		<location x="48" y="203"/>
 		<property name="Foreground" value="0.102.0.255"/>
 		<property name="Background" value="0.0.102.255"/>
@@ -142,14 +137,6 @@
 		<width>79</width>
 		<height>21</height>
 	</widget>
-	<widget field="Heading" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.SimpleDial">
-		<location x="407" y="185"/>
-		<width>94</width>
-		<height>65</height>
-		<property name="Upper Limit" value="180.0"/>
-		<property name="Lower Limit" value="-180.0"/>
-		<property name="Tick Interval" value="45.0"/>
-	</widget>
 	<widget field="Rotation Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.ProgressBar">
 		<location x="412" y="264"/>
 		<width>89</width>
@@ -176,16 +163,15 @@
 		<property name="Maximum" value="1.0"/>
 		<property name="Minimum" value="-1.0"/>
 	</widget>
-	<widget field="Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.SimpleDial">
-		<location x="296" y="23"/>
-		<property name="Upper Limit" value="14.0"/>
-		<property name="Lower Limit" value="-14.0"/>
-		<property name="Tick Interval" value="2.8"/>
-	</widget>
 	<widget field="SafetyLock_Arm" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.CheckBox">
 		<location x="120" y="215"/>
 	</widget>
 </dashboard>
 <live-window>
 </live-window>
+	<hidden field="FieldCentricDrive_Mode"/>
+	<hidden field="Heading"/>
+	<hidden field="Velocity"/>
+	<hidden field="TestRotate"/>
+	<hidden field="TestMove"/>
 </xml>
