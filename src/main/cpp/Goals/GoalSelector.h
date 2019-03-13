@@ -23,19 +23,12 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
         cout << "selector" << endl;
 		return true;
 	}
-    else if(autonSelected == "drive")
-    {
-        goal->AddGoal(new Goal_WaitThenDrive(activeCollection, .5, .5, 3, 5));
-        return false;
-    }
-	else if (autonSelected == "NONE")
-		return true;
 
     if(positionSelected == "Level 1 Left")
     {
         if(autonSelected == "DriveStraight")
         {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(10.0),.75));
+            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(6.0),.75));
         }
         else if(autonSelected == "OneHatchAuto")
         {
@@ -43,7 +36,7 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
         }
         else
         {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(10.0),.75));
+            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(6.0),.75));
             isFound = false;
         }
     }
@@ -51,7 +44,7 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
     {
         if(autonSelected == "DriveStraight")
         {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(10.0),.75));
+            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(6.0),.75));
         }
         else if(autonSelected == "OneHatchAuto")
         {
@@ -59,7 +52,7 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
         }
         else
         {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(10.0),.75));
+            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(6.0),.75));
             isFound = false;
         }
     }
@@ -67,7 +60,7 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
     {
         if(autonSelected == "DriveStraight")
         {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(10.0),.75));
+            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(6.0),.75));
         }
         else if(autonSelected == "OneHatchAuto")
         {
@@ -75,7 +68,7 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
         }
         else
         {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(10.0),.75));
+            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(6.0),.75));
             isFound = false;
         }
     }

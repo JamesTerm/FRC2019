@@ -14,5 +14,6 @@ Email: irobot9803@gmail.com
 
 #include "Util/Log.h"
 #include "Util/Event.h"
+#include "Util/Units/Distances.h"
 
 using namespace Logger;

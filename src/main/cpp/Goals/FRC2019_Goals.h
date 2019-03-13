@@ -17,8 +17,10 @@ Email: chrisrweeks@aol.com
 #include "../Util/VisionTarget.h"
 #include "../Util/Units/Distances.h"
 
-//?HINT ctrl+k then ctrl+0 will collapse all regions
-//?ctrl+k then ctrl+j will uncollapse all regions
+//?HINT: ctrl+k then ctrl+0 will collapse all regions
+//?HINT: ctrl+k then ctrl+[ will collapse all regions within the current scope of the cursor
+//?HINT: ctrl+k then ctrl+] will uncollapse all regions within the current scope of the cursor
+//?HINT: ctrl+k then ctrl+j will uncollapse all regions
 
 //Atomic Goals go in this region
 #pragma region AtomicGoals
@@ -77,6 +79,93 @@ private:
   double m_leftSpeed, m_rightSpeed;
 };
 #pragma endregion
+#if 0
+#pragma region ControllerOverride
+/* Goal_ControllerOverride
+ *  Test if driver or operator or both are pressing controls, if so, fail.
+ *  0 = driver, 1 = operator, 2 = both
+ * 
+ * This Goal will mostly be added into multitask goals to check if failed while other goals are also running.
+ */
+class Goal_ControllerOverride : public AtomicGoal
+{
+  public:
+    void SetCallbacks(bool bind);
+    Goal_ControllerOverride(Framework::Base::EventMap &em) : m_EventMap(em)
+    {	m_controller = 2;
+		SetCallbacks(true);
+    }
+    //0 = driver, 1 = operator, 2 = both
+    Goal_ControllerOverride(Framework::Base::EventMap &em,int controller) : m_EventMap(em)
+    {	m_controller = controller;
+		SetCallbacks(true);
+    }
+	~Goal_ControllerOverride()
+	{	SetCallbacks(false);
+	}
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    //virtual void Terminate();
+  private:
+	void TestDriver();
+	void TestOperator();
+	Framework::Base::EventMap &m_EventMap;
+    int m_controller;
+	bool m_IsOperatorInUse = false;
+	bool m_IsDriveInUse = false;
+};
+#pragma endregion
+#endif
+class Goal_ControllerOverride : public AtomicGoal
+{
+  public:
+    Event DriverValueChanged;
+    Event OperatorValueChanged;
+    bool m_IsDriveInUse;
+    bool m_IsOperatorInUse;
+    Goal_ControllerOverride(ActiveCollection *activeCollection, int controller = 2)
+    {
+      m_activeCollection = activeCollection;
+      m_controller = controller;
+      SetCallbacks(true);
+    }
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    virtual void Terminate();
+    virtual void SetCallbacks(bool bind);
+  private:
+    virtual void TestDriver();
+    virtual void TestOperator();
+    int m_controller;
+    ActiveCollection *m_activeCollection;
+};
+class Goal_ElevatorControl : public AtomicGoal
+{
+  public:
+    Goal_ElevatorControl(ActiveCollection* activeCollection, double target)
+    {
+      m_activeCollection = activeCollection;
+      m_target = target;
+      m_Status = eInactive;
+      m_potientiometer = (PotentiometerItem*)activeCollection->Get("elevatorPot"); //TODO this
+    }
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    virtual void Terminate();
+  private:
+    double m_target;
+    double m_currentPos;
+    double m_power;
+    ActiveCollection* m_activeCollection;
+    PotentiometerItem* m_potientiometer;
+
+    int kp = 0, ki = 0, kd = 0;
+    int bias = 0; //bias is a constant that is added to the output.
+    double error, integ, deriv;
+    double errorPrior;
+
+};
+    
 
 //Goals that use data to determine completion go here
 #pragma region FeedbackLoopGoals
@@ -87,7 +176,10 @@ private:
 class Goal_Turn : public Goal_Wait_ac
 {
 public:
-  Goal_Turn(ActiveCollection *activeCollection, double angle, double timeOut = 3.0) : Goal_Wait_ac(activeCollection, timeOut) {}
+  Goal_Turn(ActiveCollection *activeCollection, double angle, double timeOut = 3.0) : Goal_Wait_ac(activeCollection, timeOut) 
+  {
+    m_navx = activeCollection->GetNavX();
+  }
   virtual void Activate();
   virtual Goal::Goal_Status Process(double dTime);
   virtual void Terminate();
@@ -184,6 +276,17 @@ private:
   VisionTarget *m_target;
   VisionTarget *m_currentTarget;
 };
+
+// /* Goal_ElevatorPosition
+//  * Positions: 0, 1, 2, 3
+//  * 0 = all the way down, 3 = all the way up
+//  * Offset: small increase in height for cargo intake on rocket
+//  */
+// class Goal_ElevatorPosition
+// {
+//   public:
+
+// };
 #pragma endregion
 
 #pragma region UtilGoals
@@ -191,14 +294,14 @@ private:
 /* Goal_Hatch
     This goal is meant to manipulate the mechanisms that would result in outtaking the hatch (this will need adjusting)
     */
-class Goal_Hatch : public AtomicGoal
+class Goal_Hatch : public Goal_Wait_ac
 {
 public:
-  Goal_Hatch(ActiveCollection *activeCollection, double timeOut)
+  Goal_Hatch(ActiveCollection *activeCollection, double timeOut) : Goal_Wait_ac(activeCollection, 1)
   {
     m_Status = eActive;
     m_timeOut = timeOut;
-    m_currentTime = 0;
+    m_currentTime = 0; ///////////////////////////////////////////////////////////////////////////////////////////////////
   }
   virtual void Activate();
   virtual Goal::Goal_Status Process(double dTime);
@@ -206,8 +309,6 @@ public:
 
 protected:
   ActiveCollection *m_activeCollection;
-  double m_currentTime;
-  double m_timeOut;
 };
 #pragma endregion
 #pragma endregion
@@ -226,19 +327,21 @@ protected:
 /* Goal_OneHatch
     This goal is meant to score one hatch on the cargo during autonomous
     */
-class Goal_OneHatch : public CompositeGoal
+class Goal_OneHatchFrontShip : public CompositeGoal
 {
 public:
-  Goal_OneHatch(ActiveCollection *activeCollection, double timeOut)
+  Goal_OneHatchFrontShip(ActiveCollection *activeCollection, string position = "none")
   {
-    m_timeOut = timeOut;
+    m_activeCollection = activeCollection;
+    m_position = position;
+    m_Status = eInactive;
   }
 
   virtual void Activate();
 
 private:
-  ActiveCollection *m_activeCollection;
-  double m_timeOut;
+  string m_position;
+  ActiveCollection* m_activeCollection;
 };
 
 /* Goal_WaitThenDrive
@@ -254,6 +357,7 @@ public:
     m_rightSpeed = rightSpeed;
     m_waitTime = waitTime;
     m_driveTime = driveTime;
+    m_Status = eInactive;
   }
   virtual void Activate();
 

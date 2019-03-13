@@ -44,9 +44,9 @@ void Robot::RobotInit()
 {
 	Log::restartfile();
 	cout << "Program Version: " << VERSION << " Revision: " << REVISION << endl;
-	//CameraServer::GetInstance()->StartAutomaticCapture(0);
 	Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
 	//Must have this for smartdashboard to work properly
+	CameraServer::GetInstance()->StartAutomaticCapture(0);
 	SmartDashboard::init();
 	m_inst = nt::NetworkTableInstance::GetDefault();		  //!Network tables
 	m_visionTable = m_inst.GetTable("VISION_2019");			  //!Vision network table
@@ -80,31 +80,59 @@ void Robot::RobotInit()
 void Robot::Autonomous()
 {
 
-
-	m_masterGoal = new MultitaskGoal(m_activeCollection, false);
+	/*m_masterGoal = new MultitaskGoal(m_activeCollection, false);
 
 	cout << "Autonomous Started." << endl;
 	string autoSelected = m_dashboardTable->GetString("AUTON_SELECTION", m_driveStraight);
 	string positionSelected = m_dashboardTable->GetString("POSITION_SELECTION", "NONE"); //if it is none, then just drive straight
 	cout << autoSelected << endl;
-	if (!SelectAuton(m_activeCollection, m_masterGoal, autoSelected, positionSelected))
+	if (!SelectAuton(m_activeCollection, m_masterGoal, autoSelected, positionSelected)) //!SELECTION
 	{
 		m_dashboardTable->PutString("AUTON_FOUND", "UNDEFINED AUTON OR POSITION SELECTED");
 	}
 	m_masterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15.0));
-	//m_masterGoal->AddGoal(new Goal_ControllerOverride(*m_EventMap));
+	m_masterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
 	m_masterGoal->Activate();
 	double dTime = 0.010;
 	double current_time = 0.0;
 	while (m_masterGoal->GetStatus() == Goal::eActive && _IsAutononomous() && !IsDisabled())
 	{
+		m_drive->Update();
 		m_masterGoal->Process(dTime);
 		current_time += dTime;
-		//m_Robot.Update(dTime);
+		Wait(dTime);
+	}
+	while(_IsAutononomous() && !IsDisabled())
+	{
+		m_drive->Update();
 		Wait(dTime);
 	}
 	m_masterGoal->~MultitaskGoal();
-	cout << "goal loop complete" << endl;
+	cout << "goal loop complete" << endl;*/
+
+		//TODO: Talk to Ian about this
+	Log::restartfile();
+	cout << "Auton Started." << endl;
+	//double LastTime = GetTime();
+	//We can test teleop auton goals here a bit later
+	while (_IsAutononomous() && !IsDisabled())
+	{
+		/*
+		const double CurrentTime = GetTime();
+		#ifndef _Win32
+		const double DeltaTime = CurrentTime - LastTime;
+		#else
+		const double DeltaTime=0.01;  //It's best to use sythetic time for simulation to step through code
+		#endif
+		LastTime = CurrentTime;
+		if (DeltaTime == 0.0) continue;  //never send 0 time
+		//printf("DeltaTime=%.2f\n",DeltaTime);
+		m_Robot.Update(DeltaTime);
+		//Depreciated
+		*/
+		m_drive->Update();
+		Wait(0.010);
+	}
 }
 
 /*
@@ -112,6 +140,7 @@ void Robot::Autonomous()
  */
 void Robot::OperatorControl()
 {
+	CameraServer::GetInstance()->RemoveCamera("USB Camera 0");
 	//TODO: Talk to Ian about this
 	Log::restartfile();
 	cout << "Teleoperation Started." << endl;
@@ -142,7 +171,10 @@ void Robot::OperatorControl()
  */
 void Robot::Test()
 {
-	
+	while(!IsDisabled()){
+		PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
+		cout << "POT: " << pot->Get() << endl;
+	}
 }
 
 START_ROBOT_CLASS(Robot) //!< This identifies Robot as the main Robot starting class

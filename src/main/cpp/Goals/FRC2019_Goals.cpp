@@ -100,6 +100,214 @@ void Goal_DriveWithTimer::Terminate()
 }
 #pragma endregion
 
+#pragma region ControllerOverride
+#if 0
+/***********************Goal_ControllerOverride***********************/
+void Goal_ControllerOverride::Activate()
+{
+    m_Status = eActive;
+}
+
+void Goal_ControllerOverride::TestDriver()
+{
+	if (m_IsDriveInUse)
+	{
+		//since we listened to just one event this is a bit redundant added for consistency
+		m_EventMap.Event_Map["DriverDetected"].Fire();  
+		m_Status = eCompleted;
+	}
+}
+
+void Goal_ControllerOverride::TestOperator()
+{
+	if (m_IsOperatorInUse)
+	{
+		m_EventMap.Event_Map["OperatorDetected"].Fire();
+		m_Status = eCompleted;
+	}
+}
+
+//Setup to remain active until an override is detected... in which case it can fire an event and change to completed status
+Goal::Goal_Status Goal_ControllerOverride::Process(double dTime)
+{
+    if(eActive)
+    {
+		if (m_controller == 0)
+			TestDriver();
+		else if (m_controller == 1)
+			TestOperator();
+        else
+        {
+			TestDriver();
+			if (m_Status==eActive)
+				TestOperator();
+        }
+    }
+	return m_Status;
+}
+
+
+void Goal_ControllerOverride::SetCallbacks(bool bind)
+{
+	std::function<void()> oe = [&] 
+	{
+		m_IsOperatorInUse=true; 
+	};
+	std::function<void(bool)> oe_on_off = [&](bool on)
+	{
+		m_IsOperatorInUse = true;
+	};
+	std::function<void(double)> oe_val = [&](double val)
+	{
+		if (val>0.0)
+			m_IsOperatorInUse = true;
+	};
+
+	std::function<void(bool)> de_on_off = [&](bool on)
+	{
+		m_IsDriveInUse = on;
+	};
+
+	if (bind)
+	{
+		m_EventMap.EventOnOff_Map["IsDriverMoving"].Subscribe(this, de_on_off);
+		m_EventMap.Event_Map["Arm_SetPosRest"].Subscribe(this,oe);
+		m_EventMap.Event_Map["Arm_SetPosCargo1"].Subscribe(this, oe);
+		m_EventMap.Event_Map["Arm_SetPosCargo2"].Subscribe(this, oe);
+		m_EventMap.Event_Map["Arm_SetPosCargo3"].Subscribe(this, oe);
+		m_EventMap.EventValue_Map["Arm_SetCurrentVelocity"].Subscribe(this, oe_val);
+		m_EventMap.EventOnOff_Map["Arm_IntakeDeploy"].Subscribe(this, oe_on_off);
+		//note skipping keyboard, but could indeed listen to them as well
+		m_EventMap.EventValue_Map["Claw_SetCurrentVelocity"].Subscribe(this, oe_val);
+		m_EventMap.EventOnOff_Map["Arm_HatchDeploy"].Subscribe(this, oe_on_off);
+		m_EventMap.EventOnOff_Map["Arm_HatchGrabDeploy"].Subscribe(this, oe_on_off);
+		m_EventMap.EventOnOff_Map["Robot_CloseDoor"].Subscribe(this, oe_on_off);
+	}
+	else
+	{
+		m_EventMap.EventOnOff_Map["IsDriverMoving"].Remove(this);
+		m_EventMap.Event_Map["Arm_SetPosRest"].Remove(this);
+		m_EventMap.Event_Map["Arm_SetPosCargo1"].Remove(this);
+		m_EventMap.Event_Map["Arm_SetPosCargo2"].Remove(this);
+		m_EventMap.Event_Map["Arm_SetPosCargo3"].Remove(this);
+		m_EventMap.EventValue_Map["Arm_SetCurrentVelocity"].Remove(this);
+		m_EventMap.EventOnOff_Map["Arm_IntakeDeploy"].Remove(this);
+		m_EventMap.EventValue_Map["Claw_SetCurrentVelocity"].Remove(this);
+		m_EventMap.EventOnOff_Map["Arm_HatchDeploy"].Remove(this);
+		m_EventMap.EventOnOff_Map["Arm_HatchGrabDeploy"].Remove(this);
+		m_EventMap.EventOnOff_Map["Robot_CloseDoor"].Remove(this);
+	}
+}
+#endif
+void Goal_ControllerOverride::Activate()
+{
+    m_Status = eActive;
+}
+
+Goal::Goal_Status Goal_ControllerOverride::Process(double dTime)
+{
+    if(eActive)
+    {
+		if (m_controller == 0)
+			TestDriver();
+		else if (m_controller == 1)
+			TestOperator();
+        else
+        {
+			TestDriver();
+			if (m_Status==eActive)
+				TestOperator();
+        }
+    }
+	return m_Status;
+}
+
+void Goal_ControllerOverride::Terminate()
+{
+    SetCallbacks(false);
+}
+
+void Goal_ControllerOverride::TestDriver()
+{
+    if (m_IsDriveInUse)
+	{
+		DriverValueChanged(new SenderEventArgs<Goal_ControllerOverride*>(this));  
+		m_Status = eFailed;
+	}
+}
+
+void Goal_ControllerOverride::TestOperator()
+{
+	if (m_IsOperatorInUse)
+	{
+		OperatorValueChanged(new SenderEventArgs<Goal_ControllerOverride*>(this));
+		m_Status = eFailed;
+	}
+}
+
+void Goal_ControllerOverride::SetCallbacks(bool bind)
+{
+    auto onValueChanged = [&](EventArgs* e) {
+        try{
+            auto args = (TEventArgs<double, Controls::ControlItem*>*)e;
+            if(args->GetSender()->joy->GetPort() == 0){
+                m_IsDriveInUse = true;
+            }
+            if(args->GetSender()->joy->GetPort() == 1){
+                m_IsOperatorInUse = true;
+            }
+            delete args;
+            args = nullptr;
+        }catch(exception &e){
+            Log::Error("Known Exception Thrown in onValueChanged in a ControllerOverride! This can cause fatal Runtime Errors! Check your logs and XML.");
+            Log::Error(e.what());
+        }catch(...){
+            Log::Error("UnknownException Thrown in onValueChanged in ControllerOverride! This can cause fatal Runtime Errors! Check your XML and yell at the programmers!");
+	    }
+    };
+
+    if(bind){
+        for(Event *e : m_activeCollection->EventMap)
+            (*e).subscribeFirstPriority(onValueChanged);
+    }else{
+        for(Event *e : m_activeCollection->EventMap)
+            (*e).unsubscribeFirstPriority();
+    }
+}
+#pragma endregion
+
+void Goal_ElevatorControl::Activate()
+{
+    m_Status = eActive;
+}
+
+Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
+{
+    ActivateIfInactive(); //this goal will always be active
+    if(m_Status == eActive)
+    {
+        //TODO: buttons can set target to specific value and joystick can increase/decrease target
+        m_currentPos = m_potientiometer->Get();
+        error = (m_target - m_currentPos) / m_target;
+        integ += error * dTime;               //Right Riemann Sum integral
+        deriv = (error - errorPrior) / dTime; // rise/run slope
+        errorPrior = error;               //set errorPrior for next process call
+
+        m_power = bias + (kp * error) + (ki * integ) + (kd * deriv); //power is equal to P,I,D * k-values + bias
+
+        //SetElevator(m_power,m_activeCollection); //TODO this
+        return m_Status = eActive;
+    }
+    else
+    {
+        return m_Status;
+    }
+}
+
+void Goal_ElevatorControl::Terminate()
+{
+    //StopElevator(); //TODO this
+}
 #pragma region FeedbackLoopGoals
 /***********************Goal_Turn***********************/
 void Goal_Turn::Activate()
@@ -116,7 +324,7 @@ Goal::Goal_Status Goal_Turn::Process(double dTime)
         if (m_currentTime > m_timeOut)
         {
             Terminate();
-            cout << "no target" << endl;
+            //cout << "no target" << endl;
             //return m_Status = eFailed; //set m_Status to failed and return m_Status in one line
         }
 
@@ -172,6 +380,7 @@ Goal::Goal_Status Goal_DriveStraight::Process(double dTime)
 {
     if (m_Status = eActive)
     {
+		SmartDashboard::PutBoolean("DRIVE STRAIGHT STATUS", true);
         m_currentTime += dTime;
         if (m_currentTime > m_timeOut)
             return m_Status = eFailed;
@@ -198,6 +407,7 @@ Goal::Goal_Status Goal_DriveStraight::Process(double dTime)
     }
     else
     {
+		SmartDashboard::PutBoolean("DRIVE STRAIGHT STATUS", true);
         return m_Status;
     }
 }
@@ -269,20 +479,23 @@ void Goal_VisionAlign::Terminate()
 #pragma endregion
 
 #pragma region UtilGoals
+#if 0
 /***********************Goal_Hatch***********************/
 void Goal_Hatch::Activate()
 {
     m_Status = eActive;
 }
-
+#if 0
 Goal::Goal_Status Goal_Hatch::Process(double dTime)
 {
-    return eCompleted;
+    //TODO: Yeet on this
 }
 void Goal_Hatch::Terminate()
 {
+	//TODO: Yeet o this
 }
-
+#endif
+#endif
 #pragma endregion
 #pragma endregion
 
@@ -297,13 +510,47 @@ void Goal_WaitThenDrive::Activate()
 }
 
 /***********************Goal_OneHatch***********************/
-void Goal_OneHatch::Activate()
+void Goal_OneHatchFrontShip::Activate()
 {
-    AddSubgoal(new Goal_DriveStraight(m_activeCollection, 100, 100));
-    AddSubgoal(new Goal_Turn(m_activeCollection, 90));
-    AddSubgoal(new Goal_DriveStraight(m_activeCollection, 100, 100));
-    AddSubgoal(new Goal_Hatch(m_activeCollection, m_timeOut));
     m_Status = eActive;
+    if(m_position == "Level 1 Left")
+    {
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(5.0), .75));
+        AddSubgoal(new Goal_Turn(m_activeCollection, 90));
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(3.0), .75));
+        AddSubgoal(new Goal_Turn(m_activeCollection, -90));
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(2.0), .5));
+        //GOAL DEPLOY HATCH
+    }
+    else if(m_position == "Level 1 Center")
+    {
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(7.0), .75));
+        //deploy hatch
+    }
+    else if(m_position == "Level 1 Right")
+    {
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(5.0), .75));
+        AddSubgoal(new Goal_Turn(m_activeCollection, -90));
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(3.0), .75));
+        AddSubgoal(new Goal_Turn(m_activeCollection, 90));
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(2.0), .5));
+        //GOAL DEPLOY HATCH
+    }
+    else if(m_position == "Level 2 Left")
+    {
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(5.0), .75));
+        AddSubgoal(new Goal_OneHatchFrontShip(m_activeCollection, "Level 1 Left"));
+    }
+    else if(m_position == "Level 2 Right")
+    {
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(5.0), .75));
+        AddSubgoal(new Goal_OneHatchFrontShip(m_activeCollection, "Level 1 Right"));
+    }
+    else
+    {
+        AddSubgoal(new Goal_DriveStraight(m_activeCollection, new Feet(10.0), .75));
+    }
+    
 }
 #pragma endregion
 

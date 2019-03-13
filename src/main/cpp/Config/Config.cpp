@@ -11,6 +11,8 @@ Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com
 \********************************************************************/
 
 #include "Config.h"
+#include <string.h>
+#include <stdio.h>
 
 using namespace std;
 using namespace System;
@@ -59,6 +61,7 @@ Config::Config(ActiveCollection *_activeCollection, Drive *_drive) {
 		assert(false);  
 		#endif
 		cout << "XML Config parsed with errors" << endl;
+		cout << "ERROR YEET: " << result.status << endl;
 		cout << "Error description: " << result.description() << endl;
 		cout << "Error offset: " << result.offset << endl;;
 		cout << "No config available, returning to Robot.cpp\nTHIS IS A BIG ERROR!" << endl;
@@ -327,10 +330,23 @@ void Config::AllocateComponents(xml_node &root){
 			string name = solenoid.name();
 			xml_attribute fChannel = solenoid.attribute("fChannel");
 			xml_attribute rChannel = solenoid.attribute("rChannel");
-			bool reversed = solenoid.attribute("reversed");
+			bool reversed = solenoid.attribute("reversed").as_bool();
 			xml_attribute _default = solenoid.attribute("default");
-			DoubleSolenoid::Value _def = _default ? _default.as_string() == "reverse" ? DoubleSolenoid::Value::kReverse : _default.as_string() == "forward" ? DoubleSolenoid::Value::kForward : DoubleSolenoid::Value::kOff : DoubleSolenoid::Value::kOff;
-
+			DoubleSolenoid::Value _def;
+			if(_default){
+				cout << "DEFAULT FOUND" << endl;
+				cout << "DEFAULT: " << _default.as_string() << endl;
+				if(strcmp(_default.as_string(),"reverse") == 0)
+					_def = DoubleSolenoid::Value::kReverse;
+				else if(strcmp(_default.as_string(),"forward") == 0)
+					_def = DoubleSolenoid::Value::kForward;
+				else{
+					cout << "OFF" << endl;
+					_def = DoubleSolenoid::Value::kOff;
+				}
+			}else{
+				_def = DoubleSolenoid::Value::kOff;
+			}
 			if(fChannel && rChannel){
 				DoubleSolenoidItem *tmp = new DoubleSolenoidItem(name , fChannel.as_int(), rChannel.as_int(), _def, reversed);
 				m_activeCollection->Add(tmp);
@@ -397,6 +413,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 				double multiply;
 				xml_attribute deadZone_xml = axis.attribute("deadZone");
 				xml_attribute multiply_xml = axis.attribute("powerMultiplier");
+				bool isLift = axis.attribute("isLift").as_bool();
 				if(!deadZone_xml){
 					cout << "No DeadZone detected for AxisControl " << name << ". Defaulting to 0.085. This may cause driving errors!" << endl;
 					deadZone = 0.085;
@@ -420,6 +437,13 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
+				}
+				if(isLift)
+					tmp->SetLift(3.0, m_activeCollection);
+				xml_attribute bind_event_xml = axis.attribute("bindEvent");
+				bool bind_event = bind_event_xml.as_bool(); 
+				if(!bind_event_xml || bind_event){
+					m_activeCollection->AddEvent(&(tmp->ValueChanged));
 				}
 			}
 			else{
@@ -448,6 +472,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 				xml_attribute multiply_xml = button.attribute("powerMultiplier");
 				bool actOnRelease = button.attribute("actOnRelease").as_bool();
 				bool isSolenoid = button.attribute("isSolenoid").as_bool();
+				bool isAmpLimited = button.attribute("isAmpLimited").as_bool();
 				if(!multiply_xml){
 					cout << "No Power Multiplier detected for ButtonControl " << name << ". Defaulting to 1.0. This may cause driving errors!" << endl;
 					multiply = 1.0;
@@ -465,6 +490,14 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
+				}
+				if(isAmpLimited)
+					tmp->SetAmpRegulation(11, 30);
+				//TODO: make this work lol
+				xml_attribute bind_event_xml = button.attribute("bindEvent");
+				bool bind_event = bind_event_xml.as_bool(); 
+				if(!bind_event_xml || bind_event){
+					m_activeCollection->AddEvent(&(tmp->ValueChanged));
 				}
 			}
 			else{
@@ -505,6 +538,11 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
+				}
+				xml_attribute bind_event_xml = button.attribute("bindEvent");
+				bool bind_event = bind_event_xml.as_bool(); 
+				if(!bind_event_xml || bind_event){
+					m_activeCollection->AddEvent(&(tmp->ValueChanged));
 				}
 			}
 			else{
@@ -565,6 +603,11 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
 				}
+				xml_attribute bind_event_xml = axis.attribute("bindEvent");
+				bool bind_event = bind_event_xml.as_bool(); 
+				if(!bind_event_xml || bind_event){
+					m_activeCollection->AddEvent(&(tmp->ValueChanged));
+				}
 			}
 			else{
 				cout << "Failed to load AxisControl " << name << ". This may cause a fatal runtime error!" << endl;
@@ -591,6 +634,8 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				xml_attribute multiply_xml = button.attribute("powerMultiplier");
 				bool actOnRelease = button.attribute("actOnRelease").as_bool();
 				bool isSolenoid = button.attribute("isSolenoid").as_bool();
+				bool isAmpLimited = button.attribute("isAmpLimited").as_bool();
+				bool isRamp = button.attribute("isRamp").as_bool();
 				if(!multiply_xml){
 					cout << "No Power Multiplier detected for ButtonControl " << name << ". Defaulting to 1.0. This may cause driving errors!" << endl;
 					multiply = 1.0;
@@ -607,6 +652,15 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				}
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
+				}
+				if(isAmpLimited)
+					tmp->SetAmpRegulation(11, 30);
+				if(isRamp)
+					tmp->SetRamp(0.1);
+				xml_attribute bind_event_xml = button.attribute("bindEvent");
+				bool bind_event = bind_event_xml.as_bool(); 
+				if(!bind_event_xml || bind_event){
+					m_activeCollection->AddEvent(&(tmp->ValueChanged));
 				}
 			}
 			else{
@@ -647,6 +701,11 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				}
 				else{
 					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
+				}
+				xml_attribute bind_event_xml = button.attribute("bindEvent");
+				bool bind_event = bind_event_xml.as_bool(); 
+				if(!bind_event_xml || bind_event){
+					m_activeCollection->AddEvent(&(tmp->ValueChanged));
 				}
 			}
 			else{
