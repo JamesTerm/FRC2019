@@ -58,7 +58,7 @@ double AxisControl::Update()
 		}
 	}
 	else{
-		isIdle = true;
+		isIdle = false;
 	}
 	double dz = deadZone + MINIMUM_JOYSTICK_RETURN;
 	double val = ((abs(raw) - dz) * (pow(1-dz, -1)) * getSign(raw)) * powerMultiplier;
