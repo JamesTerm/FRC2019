@@ -51,7 +51,7 @@ Config::Config(ActiveCollection *_activeCollection, Drive *_drive) {
 	m_drive = _drive;
 	if (result)
 	{
-		cout << "XML Config parsed without errors\n" << endl;
+		Log::General("XML Config parsed without errors");
 		LoadValues(doc);
 	}
 	else
@@ -60,11 +60,11 @@ Config::Config(ActiveCollection *_activeCollection, Drive *_drive) {
 		#ifdef _Win32
 		assert(false);  
 		#endif
-		cout << "XML Config parsed with errors" << endl;
-		cout << "ERROR YEET: " << result.status << endl;
-		cout << "Error description: " << result.description() << endl;
-		cout << "Error offset: " << result.offset << endl;;
-		cout << "No config available, returning to Robot.cpp\nTHIS IS A BIG ERROR!" << endl;
+		Log::Error("XML Config parsed with errors");
+		string desc = result.description();
+		Log::Error("Error description: " + desc);
+		Log::Error("Error offset: " + result.offset);
+		Log::Error("No config available, returning to Robot.cpp\nTHIS IS A BIG ERROR!");
 	}
 }
 
@@ -72,10 +72,10 @@ void Config::LoadValues(xml_document &doc){
 	xml_node root = doc.child("Robot");
 	
 	if(root){
-		cout << "Config Root found" << endl;
+		Log::General("Config Root found");
 	}
 	else{
-		cout << "Robot was not found in Config! I hope you didn't intend to configure anything! Returning to Robot.cpp" << endl;
+		Log::General("Robot was not found in Config! I hope you didn't intend to configure anything! Returning to Robot.cpp");
 		return;
 	}
 
@@ -85,19 +85,21 @@ void Config::LoadValues(xml_document &doc){
 
 	xml_attribute version = root.child("Version").attribute("version");
 	if(version)
-		cout << "Config Version: " << version.as_int() << endl;
+		Log::General("Config Version: " + version.as_int(), true);
 	else
-		cout << "Version not found" << endl;
+		Log::Error("Config Version not found");
 
 	#pragma endregion Version
 
 	#pragma region Comment
 
 	xml_attribute comment = root.child("Comment").attribute("comment");
-	if(comment)
-		cout << "Comment: " << comment.as_string() << endl;
+	if(comment){
+		string comm = comment.as_string();
+		Log::General("Comment: " + comm, true);
+	}
 	else
-		cout << "Comment not found" << endl;
+		Log::Error("Comment not found");
 
 	#pragma endregion Comment
 
@@ -108,14 +110,14 @@ void Config::LoadValues(xml_document &doc){
 	if(useNavX){
 		if(useNavX.as_bool()){
 			m_activeCollection->Add(new NavX());
-			cout << "NavX detected" << endl;
+			Log::General("NavX detected");
 		}
 		else
-			cout << "Failed to load the NavX: Disabling NavX by default" << endl;
+			Log::General("Failed to load the NavX: Disabling NavX by default");
 			
 	}
 	else
-		cout << "UseNavX not found. Disabling by default" << endl;
+		Log::Error("UseNavX not found. Disabling by default");
 
 	#pragma endregion NavX
 
@@ -129,27 +131,27 @@ void Config::LoadValues(xml_document &doc){
 			cs::UsbCamera cam = CameraServer::GetInstance()->StartAutomaticCapture();
 			if(enableSecondaryCamera.attribute("autoExposure").as_bool()){
 				cam.SetExposureAuto();
-				cout << "SecondaryCameraServer AutoExposure enabled" << endl;
+				Log::General("SecondaryCameraServer AutoExposure enabled");
 			}
 			if(enableSecondaryCamera.attribute("width") && enableSecondaryCamera.attribute("height")){
 				cam.SetResolution(enableSecondaryCamera.attribute("width").as_int(), enableSecondaryCamera.attribute("height").as_int());
 			}
 			else{
 				//TODO: Make stuff like this log-only (ie. not console) unless verbose output. Will assign to Ian.
-				cout << "No width/height for SecondaryCameraServer found!" << endl;
+				Log::Error("No width/height for SecondaryCameraServer found!");
 			}
 			if(enableSecondaryCamera.attribute("fps"))
 				cam.SetFPS(enableSecondaryCamera.attribute("fps").as_int());
 			else
-				cout << "No FPS for SecondaryCameraServer found!" << endl;
-			cout << R"(Secondary camera server started, you can access the stream at http://10.34.81.2:1181)";
+				Log::Error("No FPS for SecondaryCameraServer found!");
+			Log::General(R"(Secondary camera server started, you can access the stream at http://10.34.81.2:1181)", true);
 		}
 		else{
-			cout << "EnableSecondaryCameraServer value not found. Disabling by default" << endl;
+			Log::Error("EnableSecondaryCameraServer value not found. Disabling by default");
 		}
 	}
 	else
-		cout << "EnableSecondaryCameraServer not found. Disabling by default" << endl;
+		Log::Error("EnableSecondaryCameraServer not found. Disabling by default");
 
 	#pragma endregion SecondaryCameraServer
 
@@ -160,10 +162,10 @@ void Config::LoadValues(xml_document &doc){
 	xml_node controls = root.child("Controls");
 
 	if(controls){
-		cout << "Controls tag found" << endl;
+		Log::General("Controls tag found");
 	}
 	else{
-		cout << "Control definitions were not found in Config! Returning to Robot.cpp" << endl;\
+		Log::Error("Control definitions were not found in Config! Returning to Robot.cpp");
 		return;
 	}
 
@@ -174,7 +176,7 @@ void Config::LoadValues(xml_document &doc){
 void Config::AllocateComponents(xml_node &root){
 	xml_node robot = root.child("RobotConfig");
 	if(!robot){
-		cout << "RobotConfig was not found in Config! I hope you didn't intend to allocate any components! Returning to Config::LoadValues()" << endl;
+		Log::General("RobotConfig was not found in Config! I hope you didn't intend to allocate any components! Returning to Config::LoadValues()");
 		return;
 	}
 
@@ -194,19 +196,22 @@ void Config::AllocateComponents(xml_node &root){
 			if(channel){
 				VictorSPItem *tmp = new VictorSPItem(name, channel.as_int(), reversed);
 				m_activeCollection->Add(tmp);
-				cout << "Added VictorSP " << name << ", Channel: " << channel << ", Reversed: " << reversed << endl;
+				string channel_print = channel.as_string();
+				string reversed_print = reversed ? "true" : "false" ;
+				Log::General("Added VictorSP " + name + ", Channel: " + channel_print + ", Reversed: " + reversed_print);
 				if(pdbChannel != -1){
-					cout << "Allocated PDBChannel " << pdbChannel << " for VictorSP " << name << endl;
+					string pdbChannel_print = to_string(pdbChannel);
+					Log::General("Allocated PDBChannel " + pdbChannel_print + " for VictorSP " + name);
 					tmp->SetPDBChannel(pdbChannel);
 				}
 			}
 			else{
-				cout << "Failed to load VictorSP " << name << ". This may cause a fatal runtime error!" << endl;
+				Log::Error("Failed to load VictorSP " + name + ". This may cause a fatal runtime error!");
 			}
 		}
 	}
 	else{
-		cout << "VictorSP definitions not found in config, skipping..." << endl;
+		Log::Error("VictorSP definitions not found in config, skipping...");
 	}
 
 	#pragma endregion VictorSP
@@ -223,21 +228,22 @@ void Config::AllocateComponents(xml_node &root){
 			if(channel){
 				VictorSPXItem *tmp = new VictorSPXItem(channel.as_int(), name, reversed);
 				m_activeCollection->Add(tmp);
-				cout << "Added VictorSPX " << name << ", Channel: " << channel << ", Reversed: " << reversed << endl;
+				string reversed_print = reversed ? "true" : "false";
+				Log::General("Added VictorSPX " + name + ", Channel: " + to_string(channel.as_int()) + ", Reversed: " + reversed_print);
 				if(pdbChannel != -1){
-					cout << "Allocated PDBChannel " << pdbChannel << " for VictorSPX " << name << endl;
+					Log::General("Allocated PDBChannel " + to_string(pdbChannel) + " for VictorSPX " + name);
 					tmp->SetPDBChannel(pdbChannel);
 				}
 			}
 			else{
-				cout << "Failed to load VictorSPX " << name << ". This may cause a fatal runtime error!" << endl;
+				Log::Error("Failed to load VictorSPX " + name + ". This may cause a fatal runtime error!");
 			}
 
 
 		}
 	}
 	else{
-		cout << "VictorSPX definitions not found in config, skipping..." << endl;
+		Log::Error("VictorSPX definitions not found in config, skipping...");
 	}
 
 #pragma endregion VictorSPX
@@ -255,21 +261,23 @@ void Config::AllocateComponents(xml_node &root){
 			if(channel){
 				TalonSRXItem *tmp = new TalonSRXItem(channel.as_int(), name, reversed, enableEncoder);
 				m_activeCollection->Add(tmp);
-				cout << "Added TalonSRX " << name << ", Channel: " << channel << ", Reversed: " << reversed << ", EnableEncoder: " << enableEncoder << endl;
+				string reversed_print = reversed ? "true" : "false" ;
+				string enableEncoder_print = enableEncoder ? "true" : "false" ;
+				Log::General("Added TalonSRX " + name + ", Channel: " + to_string(channel.as_int()) + ", Reversed: " + reversed_print + ", EnableEncoder: " + enableEncoder_print);
 				if(pdbChannel != -1){
-					cout << "Allocated PDBChannel " << pdbChannel << " for TalonSRX " << name << endl;
+					Log::General("Allocated PDBChannel " + to_string(pdbChannel) + " for TalonSRX " + name);
 					tmp->SetPDBChannel(pdbChannel);
 				}
 			}
 			else{
-				cout << "Failed to load TalonSRX " << name << ". This may cause a fatal runtime error!" << endl;
+				Log::Error("Failed to load TalonSRX " + name + ". This may cause a fatal runtime error!");
 			}
 
 
 		}
 	}
 	else{
-		cout << "TalonSRX definitions not found in config, skipping..." << endl;
+		Log::Error("TalonSRX definitions not found in config, skipping...");
 	}
 
 #pragma endregion TalonSRX
@@ -284,15 +292,15 @@ void Config::AllocateComponents(xml_node &root){
 			if(channel){
 				PotentiometerItem *tmp = new PotentiometerItem(channel.as_int(), name);
 				m_activeCollection->Add(tmp);
-				cout << "Added Potentiometer " << name << ", Channel: " << channel << endl;
+				Log::General("Added Potentiometer " + name + ", Channel: " + to_string(channel.as_int()));
 			}
 			else{
-				cout << "Failed to load Potentiometer " << name << ". This may cause a fatal runtime error!" << endl;
+				Log::Error("Failed to load Potentiometer " + name + ". This may cause a fatal runtime error!");
 			}
 		}
 	}
 	else{
-		cout << "Potentiometer definitions not found in config, skipping..." << endl;
+		Log::Error("Potentiometer definitions not found in config, skipping...");
 	}
 
 #pragma endregion Potentiometer
@@ -309,15 +317,16 @@ void Config::AllocateComponents(xml_node &root){
 			if(aChannel && bChannel){
 				EncoderItem *tmp = new EncoderItem(name, aChannel.as_int(), bChannel.as_int(), reversed);
 				m_activeCollection->Add(tmp);
-				cout << "Added Encoder " << name << ", A-Channel: " << aChannel << ", B-Channel: " << bChannel << ", Reversed: " << reversed << endl;
+				string reversed_print = reversed ? "true" : "false" ;
+				Log::General("Added Encoder " + name + ", A-Channel: " + to_string(aChannel.as_int()) + ", B-Channel: " + to_string(bChannel.as_int()) + ", Reversed: " + reversed_print);
 			}
 			else{
-				cout << "Failed to load Encoder " << name << ". This may cause a fatal runtime error!" << endl;
+				Log::General("Failed to load Encoder " + name + ". This may cause a fatal runtime error!");
 			}
 		}
 	}
 	else{
-		cout << "Encoder definitions not found in config, skipping..." << endl;
+		Log::Error("Encoder definitions not found in config, skipping...");
 	}
 
 #pragma endregion Encoder
@@ -334,33 +343,31 @@ void Config::AllocateComponents(xml_node &root){
 			xml_attribute _default = solenoid.attribute("default");
 			DoubleSolenoid::Value _def;
 			if(_default){
-				cout << "DEFAULT FOUND" << endl;
-				cout << "DEFAULT: " << _default.as_string() << endl;
 				if(strcmp(_default.as_string(),"reverse") == 0)
 					_def = DoubleSolenoid::Value::kReverse;
 				else if(strcmp(_default.as_string(),"forward") == 0)
 					_def = DoubleSolenoid::Value::kForward;
 				else{
-					cout << "OFF" << endl;
 					_def = DoubleSolenoid::Value::kOff;
 				}
 			}else{
 				_def = DoubleSolenoid::Value::kOff;
 			}
+			string reversed_print = reversed ? "true" : "false";
 			if(fChannel && rChannel){
 				DoubleSolenoidItem *tmp = new DoubleSolenoidItem(name , fChannel.as_int(), rChannel.as_int(), _def, reversed);
 				m_activeCollection->Add(tmp);
-				cout << "Added DoubleSolenoid " << name << ", F-Channel: " << fChannel << ", R-Channel: " << rChannel << ", Default: " << _def << ", Reversed: " << reversed << endl;
+				Log::General("Added DoubleSolenoid " + name + ", F-Channel: " + to_string(fChannel.as_int()) + ", R-Channel: " + to_string(rChannel.as_int()) + ", Default: " + to_string(_def) + ", Reversed: " + reversed_print);
 			}
 			else{
-				cout << "Failed to load DoubleSolenoid " << name << ". This may cause a fatal runtime error!" << endl;
+				Log::Error("Failed to load DoubleSolenoid " + name + ". This may cause a fatal runtime error!");
 			}
 
 
 		}
 	}
 	else{
-		cout << "DoubleSolenoid definitions not found in config, skipping..." << endl;
+		Log::Error("DoubleSolenoid definitions not found in config, skipping...");
 	}
 
 #pragma endregion DoubleSolenoid
@@ -375,15 +382,15 @@ void Config::AllocateComponents(xml_node &root){
 			if(channel){
 				DigitalInputItem *tmp = new DigitalInputItem(channel.as_int(), name);
 				m_activeCollection->Add(tmp);
-				cout << "Added DigitalInput " << name << ", Channel: " << channel << endl;
+				Log::General("Added DigitalInput " + name + ", Channel: " + to_string(channel.as_int()));
 			}
 			else{
-				cout << "Failed to load DigitalInput " << name << ". This may cause a fatal runtime error!" << endl;
+				Log::Error("Failed to load DigitalInput " + name + ". This may cause a fatal runtime error!");
 			}
 		}
 	}
 	else{
-		cout << "DigitalInput definitions not found in config, skipping..." << endl;
+		Log::Error("DigitalInput definitions not found in config, skipping...");
 	}
 
 #pragma endregion DigitalInput
@@ -393,11 +400,11 @@ void Config::AllocateComponents(xml_node &root){
 void Config::AllocateDriverControls(xml_node &controls){
 	xml_node drive = controls.child("Driver");
 	if(!drive){
-		cout << "Drive Control definitions not found in config! Skipping..." << endl;
+		Log::Error("Drive Control definitions not found in config! Skipping...");
 		return;
 	}
 	int slot = drive.attribute("slot").as_int();
-	cout << "Configured Driver Joystick at slot " << slot << endl;
+	Log::General("Configured Driver Joystick at slot " + slot, true);
 	m_driveJoy = new Joystick(slot);
 
 	#pragma region AxisControl
@@ -415,20 +422,21 @@ void Config::AllocateDriverControls(xml_node &controls){
 				xml_attribute multiply_xml = axis.attribute("powerMultiplier");
 				bool isLift = axis.attribute("isLift").as_bool();
 				if(!deadZone_xml){
-					cout << "No DeadZone detected for AxisControl " << name << ". Defaulting to 0.085. This may cause driving errors!" << endl;
+					Log::Error("No DeadZone detected for AxisControl " + name + ". Defaulting to 0.085. This may cause driving errors!");
 					deadZone = 0.085;
 				}
 				else 
 					deadZone = deadZone_xml.as_double();
 				if(!multiply_xml){
-					cout << "No Power Multiplier detected for AxisControl " << name << ". Defaulting to 1.0. This may cause driving errors!" << endl;
+					Log::Error("No Power Multiplier detected for AxisControl " + name + ". Defaulting to 1.0. This may cause driving errors!");
 					multiply = 1.0;
 				}
 				else
 					multiply = multiply_xml.as_double();
 				AxisControl *tmp = new AxisControl(m_driveJoy, name, channel.as_int(), deadZone, reversed, multiply);
 				m_drive->AddControlDrive(tmp);
-				cout << "Added AxisControl " << name << ", Axis: " << channel << ", DeadZone: " << deadZone << ", Reversed: " << reversed << ", Power Multiplier: " << multiply << endl;
+				string reversed_print = reversed ? "true" : "false" ;
+				Log::General("Added AxisControl " + name + ", Axis: " + to_string(channel.as_int()) + ", DeadZone: " + to_string(deadZone) + ", Reversed: " + reversed_print + ", Power Multiplier: " + to_string(multiply));
 				xml_attribute bindings = axis.attribute("bindings");
 				if(bindings){
 					string bind_string = bindings.as_string();
@@ -436,7 +444,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 					setBindingsToControl(bind_vector, tmp);
 				}
 				else{
-					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
+					Log::Error("Control bindings not found for " + name + ". Did you intend to bind this control to anything?");
 				}
 				if(isLift)
 					tmp->SetLift(3.0, m_activeCollection);
@@ -447,12 +455,12 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 			}
 			else{
-				cout << "Failed to load AxisControl " << name << ". This may cause a fatal runtime error!" << endl;
+				Log::Error("Failed to load AxisControl " + name + ". This may cause a fatal runtime error!");
 			}
 		}
 	}
 	else{
-		cout << "Axis Control Driver definitions not found! Skipping..." << endl;
+		Log::Error("Axis Control Driver definitions not found! Skipping...");
 	}
 		
 
@@ -474,14 +482,17 @@ void Config::AllocateDriverControls(xml_node &controls){
 				bool isSolenoid = button.attribute("isSolenoid").as_bool();
 				bool isAmpLimited = button.attribute("isAmpLimited").as_bool();
 				if(!multiply_xml){
-					cout << "No Power Multiplier detected for ButtonControl " << name << ". Defaulting to 1.0. This may cause driving errors!" << endl;
+					Log::Error("No Power Multiplier detected for ButtonControl " + name + ". Defaulting to 1.0. This may cause driving errors!");
 					multiply = 1.0;
 				}
 				else
 					multiply = multiply_xml.as_double();
 				ButtonControl *tmp = new ButtonControl(m_driveJoy, name, channel.as_int(), actOnRelease, reversed, multiply, isSolenoid);
 				m_drive->AddControlDrive(tmp);
-				cout << "Added Button Control " << name << ", Button: " << channel << ", ActOnRelease: " << actOnRelease << ", Reversed: " << reversed << ", PowerMultiplier: " << multiply << ", IsSolenoid: " << isSolenoid << endl;
+				string actOnRelease_print = actOnRelease ? "true" : "false";
+				string reversed_print = reversed ? "true" : "false";
+				string isSolenoid_print = isSolenoid ? "true" : "false";
+				Log::General("Added Button Control " + name + ", Button: " + to_string(channel.as_int()) + ", ActOnRelease: " + actOnRelease_print + ", Reversed: " + reversed_print + ", PowerMultiplier: " + to_string(multiply) + ", IsSolenoid: " + isSolenoid_print);
 				xml_attribute bindings = button.attribute("bindings");
 				if(bindings){
 					string bind_string = bindings.as_string();
@@ -489,7 +500,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 					setBindingsToControl(bind_vector, tmp);
 				}
 				else{
-					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
+					Log::Error("Control bindings not found for " + name + ". Did you intend to bind this control to anything?");
 				}
 				if(isAmpLimited)
 					tmp->SetAmpRegulation(11, 30);
@@ -501,12 +512,12 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 			}
 			else{
-				cout << "Failed to load ButtonControl " << name << ". This may cause a fatal runtime error!" << endl;
+				Log::Error("Failed to load ButtonControl " + name + ". This may cause a fatal runtime error!");
 			}
 		}
 	}
 	else{
-		cout << "Button Control Driver definitions not found! Skipping..." << endl;
+		Log::Error("Button Control Driver definitions not found! Skipping...");
 	}
 
 	#pragma endregion ButtonControl 
@@ -523,7 +534,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 				double multiply;
 				xml_attribute multiply_xml = button.attribute("powerMultiplier");
 				if(!multiply_xml){
-					cout << "No Power Multiplier detected for ToggleButtonControl " << name << ". Defaulting to 1.0. This may cause driving errors!" << endl;
+					Log::Error("No Power Multiplier detected for ToggleButtonControl " + name + ". Defaulting to 1.0. This may cause driving errors!");
 					multiply = 1.0;
 				}
 				else
@@ -537,7 +548,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 					setBindingsToControl(bind_vector, tmp);
 				}
 				else{
-					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
+					Log::Error("Control bindings not found for " + name + ". Did you intend to bind this control to anything?");
 				}
 				xml_attribute bind_event_xml = button.attribute("bindEvent");
 				bool bind_event = bind_event_xml.as_bool(); 
@@ -546,12 +557,12 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 			}
 			else{
-				cout << "Failed to load ToggleButtonControl " << name << ". This may cause a fatal runtime error!" << endl;
+				Log::Error("Failed to load ToggleButtonControl " + name + ". This may cause a fatal runtime error!");
 			}
 		}
 	}
 	else{
-		cout << "Toggle Button Control Driver definitions not found! Skipping..." << endl;
+		Log::Error("Toggle Button Control Driver definitions not found! Skipping...");
 	}	
 
 	#pragma endregion ToggleButtonControl
@@ -560,11 +571,11 @@ void Config::AllocateDriverControls(xml_node &controls){
 void Config::AllocateOperatorControls(xml_node &controls){
 	xml_node _operator = controls.child("Operator");
 	if(!_operator){
-		cout << "Operator Control definitions not found in config! Skipping..." << endl;
+		Log::Error("Operator Control definitions not found in config! Skipping...");
 		return;
 	}
 	int slot = _operator.attribute("slot").as_int();
-	cout << "Configured Operator Joystick at slot " << slot << endl;
+	Log::General("Configured Operator Joystick at slot " + to_string(slot), true);
 	m_operatorJoy = new Joystick(slot);
 
 	#pragma region AxisControl
@@ -581,13 +592,13 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				xml_attribute deadZone_xml = axis.attribute("deadZone");
 				xml_attribute multiply_xml = axis.attribute("powerMultiplier");
 				if(!deadZone_xml){
-					cout << "No DeadZone detected for AxisControl " << name << ". Defaulting to 0.085. This may cause driving errors!" << endl;
+					Log::Error("No DeadZone detected for AxisControl " + name + ". Defaulting to 0.085. This may cause driving errors!");
 					deadZone = 0.085;
 				}
 				else 
 					deadZone = deadZone_xml.as_double();
 				if(!multiply_xml){
-					cout << "No Power Multiplier detected for AxisControl " << name << ". Defaulting to 1.0. This may cause driving errors!" << endl;
+					Log::Error("No Power Multiplier detected for AxisControl " + name + ". Defaulting to 1.0. This may cause driving errors!");
 					multiply = 1.0;
 				}
 				else
@@ -601,7 +612,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 					setBindingsToControl(bind_vector, tmp);
 				}
 				else{
-					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
+					Log::Error("Control bindings not found for " + name + ". Did you intend to bind this control to anything?");
 				}
 				xml_attribute bind_event_xml = axis.attribute("bindEvent");
 				bool bind_event = bind_event_xml.as_bool(); 
@@ -610,12 +621,12 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				}
 			}
 			else{
-				cout << "Failed to load AxisControl " << name << ". This may cause a fatal runtime error!" << endl;
+				Log::Error("Failed to load AxisControl " + name + ". This may cause a fatal runtime error!");
 			}
 		}
 	}
 	else{
-		cout << "Axis Control Operator definitions not found! Skipping..." << endl;
+		Log::Error("Axis Control Operator definitions not found! Skipping...");
 	}
 		
 
@@ -637,7 +648,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				bool isAmpLimited = button.attribute("isAmpLimited").as_bool();
 				bool isRamp = button.attribute("isRamp").as_bool();
 				if(!multiply_xml){
-					cout << "No Power Multiplier detected for ButtonControl " << name << ". Defaulting to 1.0. This may cause driving errors!" << endl;
+					Log::Error("No Power Multiplier detected for ButtonControl " + name + ". Defaulting to 1.0. This may cause driving errors!");
 					multiply = 1.0;
 				}
 				else
@@ -651,7 +662,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 					setBindingsToControl(bind_vector, tmp);
 				}
 				else{
-					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
+					Log::Error("Control bindings not found for " + name + ". Did you intend to bind this control to anything?");
 				}
 				if(isAmpLimited)
 					tmp->SetAmpRegulation(11, 30);
@@ -664,12 +675,12 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				}
 			}
 			else{
-				cout << "Failed to load ButtonControl " << name << ". This may cause a fatal runtime error!" << endl;
+				Log::Error("Failed to load ButtonControl " + name + ". This may cause a fatal runtime error!");
 			}
 		}
 	}
 	else{
-		cout << "Button Control Operator definitions not found! Skipping..." << endl;
+		Log::Error("Button Control Operator definitions not found! Skipping...");
 	}
 
 	#pragma endregion ButtonControl 
@@ -686,7 +697,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				double multiply;
 				xml_attribute multiply_xml = button.attribute("powerMultiplier");
 				if(!multiply_xml){
-					cout << "No Power Multiplier detected for ToggleButtonControl " << name << ". Defaulting to 1.0. This may cause driving errors!" << endl;
+					Log::Error("No Power Multiplier detected for ToggleButtonControl " + name + ". Defaulting to 1.0. This may cause driving errors!");
 					multiply = 1.0;
 				}
 				else
@@ -700,7 +711,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 					setBindingsToControl(bind_vector, tmp);
 				}
 				else{
-					cout << "Control bindings not found for " << name << ". Did you intend to bind this control to anything?" << endl;
+					Log::Error("Control bindings not found for " + name + ". Did you intend to bind this control to anything?");
 				}
 				xml_attribute bind_event_xml = button.attribute("bindEvent");
 				bool bind_event = bind_event_xml.as_bool(); 
@@ -709,12 +720,12 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				}
 			}
 			else{
-				cout << "Failed to load ToggleButtonControl " << name << ". This may cause a fatal runtime error!" << endl;
+				Log::Error("Failed to load ToggleButtonControl " + name + ". This may cause a fatal runtime error!");
 			}
 		}
 	}
 	else{
-		cout << "Toggle Button Control Driver definitions not found! Skipping..." << endl;
+		Log::Error("Toggle Button Control Driver definitions not found! Skipping...");
 	}	
 
 	#pragma endregion ToggleButtonControl
@@ -745,15 +756,15 @@ bool Config::setBindingsToControl(vector<string> bindings, ControlItem *control)
 		try{
 			component = (OutputComponent*)(m_activeCollection->Get(binding));
 			control->AddComponent(component);
-			cout << "Allocated Component " << binding << " to Control " << control->name << endl;
+			Log::General("Allocated Component " + binding + " to Control " + control->name);
 		}
 		catch(...){
-			cout << "Failed to bind component " << binding << " to the control " << control->name << ". This can cause fatal runtime errors!" << endl;
+			Log::Error("Failed to bind component " + binding + " to the control " + control->name + ". This can cause fatal runtime errors!");
 			success = false;
 		}
 	}
 	if(!success)
-		cout << "One or more bindings failed to allocate for control " << control->name << ". Please check the Config!" << endl;
+		Log::Error("One or more bindings failed to allocate for control " + control->name + ". Please check the Config!");
 	return success;
 }
 

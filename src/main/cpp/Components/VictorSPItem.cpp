@@ -69,10 +69,10 @@ void VictorSPItem::SetPDBChannel(int val){
 
 void VictorSPItem::DefaultSet()
 {
-	cout << "WHY DID YOU CALL THE DEFAULT SET FOR A MOTOR RETARD" << endl;
+	Log::Error("WHY DID YOU CALL THE DEFAULT SET FOR A MOTOR?!? Yell at your programmers!");
 }
 
 void VictorSPItem::Set(DoubleSolenoid::Value value)
 {
-	cout << "WHY DID YOU CALL THE SOLENOID SET FOR A MOTOR RETARD" << endl;
+	Log::Error("WHY DID YOU CALL THE DEFAULT SET FOR A MOTOR?!? Yell at your programmers!");
 }

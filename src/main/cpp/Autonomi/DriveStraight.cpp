@@ -23,7 +23,7 @@ DriveStraight::DriveStraight(ActiveCollection *_activeCollection)
 
 void DriveStraight::Start()
 {
-	cout << "drive straight" << endl;
+	Log::General("drive straight");
 	//DriveForward(500, .75, activeCollection);
 	DriveWithTimer(.5,.5,2,activeCollection);
 }

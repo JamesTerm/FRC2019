@@ -72,7 +72,7 @@ void ControlItem::SetToComponents(double val)
 	}
 	catch(...)
 	{
-		cout << "Error setting value to binding for " << name << " control!" << endl;
+		Log::Error("Error setting value to binding for " + name + " control!");
 	}
 }
 

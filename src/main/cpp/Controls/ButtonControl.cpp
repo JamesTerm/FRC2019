@@ -143,7 +143,7 @@ void ButtonControl::SetSolenoidDefault(){
 			(*components[i]).DefaultSet();
 		}
 		catch(...){
-			cout << "Error setting default value to binding for " << name << " control!\nYOU MAY HAVE SET A SOLENOID THING TO A MOTOR THING ON BUTTON!" << endl;
+			Log::Error("Error setting default value to binding for " + name + " control!\nYOU MAY HAVE SET A SOLENOID THING TO A MOTOR THING ON BUTTON!");
 		}
 }
 
@@ -153,14 +153,13 @@ void ButtonControl::SetToSolenoids(DoubleSolenoid::Value value){
 			(*components[i]).Set(value);
 	}
 	catch(...){
-		cout << "Error setting value to binding for " << name << " control!\nYOU MAY HAVE SET A SOLENOID THING TO A MOTOR THING ON BUTTON!" << endl;
+		Log::Error("Error setting value to binding for " + name + " control!\nYOU MAY HAVE SET A SOLENOID THING TO A MOTOR THING ON BUTTON!");
 	}
 }
 
 void ButtonControl::SetRamp(double _inc){
 	if(isSolenoid){
-		cout << "WHY DID YOU SET A RAMP TO A SOLENOID" << endl;
-		cerr << "WHY DID YOU SET A RAMP TO A SOLENOID" << endl;
+		Log::Error("WHY DID YOU SET A RAMP TO A SOLENOID");
 		return;
 	}
 	isRamp = true;
@@ -169,8 +168,7 @@ void ButtonControl::SetRamp(double _inc){
 
 void ButtonControl::SetAmpRegulation(int _powerPort, double _ampLimit){
 	if(isSolenoid){
-		cout << "WHY DID YOU SET AMP REGULATION TO A SOLENOID" << endl;
-		cerr << "WHY DID YOU SET AMP REGULATION TO A SOLENOID" << endl;
+		Log::Error("WHY DID YOU SET AMP REGULATION TO A SOLENOID");
 		return;
 	}
 	isAmpRegulated = true;

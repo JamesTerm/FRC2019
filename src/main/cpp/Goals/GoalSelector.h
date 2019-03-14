@@ -20,7 +20,7 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
 	{
 		//goal->AddGoal(new Goal_VisionAlign(activeCollection, new VisionTarget(320, 20), 140.0)); //!120 sec timeout for DEBUG only
         goal->AddGoal(new Goal_WaitThenDrive(activeCollection, .5, .5, 3, 5));
-        cout << "selector" << endl;
+        Log::General("selector");
 		return true;
 	}
 

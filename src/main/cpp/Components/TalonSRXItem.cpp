@@ -65,11 +65,11 @@ void TalonSRXItem::SetPDBChannel(int val){
 }
 
 void TalonSRXItem::DefaultSet(){
-	cout << "WHY DID YOU CALL THE DEFAULT SET FOR A MOTOR RETARD" << endl;
+	Log::Error("WHY DID YOU CALL THE DEFAULT SET FOR A MOTOR?!? Yell at your programmers!");
 }
 
 void TalonSRXItem::Set(DoubleSolenoid::Value value){
-	cout << "WHY DID YOU CALL THE SOLENOID SET FOR A MOTOR RETARD" << endl;
+	Log::Error("WHY DID YOU CALL THE DEFAULT SET FOR A MOTOR?!? Yell at your programmers!");
 }
 
 TalonSRXItem::~TalonSRXItem() {}

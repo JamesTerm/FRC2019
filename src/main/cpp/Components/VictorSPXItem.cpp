@@ -54,11 +54,11 @@ void VictorSPXItem::SetPDBChannel(int val){
 }
 
 void VictorSPXItem::DefaultSet(){
-	cout << "WHY DID YOU CALL THE DEFAULT SET FOR A MOTOR RETARD -Watson" << endl;
+	Log::Error("WHY DID YOU CALL THE DEFAULT SET FOR A MOTOR?!? Yell at your programmers!");
 }
 
 void VictorSPXItem::Set(DoubleSolenoid::Value value){
-	cout << "WHY DID YOU CALL THE SOLENOID SET FOR A MOTOR RETARD -Watson" << endl;
+	Log::Error("WHY DID YOU CALL THE DEFAULT SET FOR A MOTOR?!? Yell at your programmers!");
 }
 
 VictorSPXItem::~VictorSPXItem() {}

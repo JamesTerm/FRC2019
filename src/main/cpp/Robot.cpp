@@ -43,7 +43,7 @@ Robot::~Robot()
 void Robot::RobotInit()
 {
 	Log::restartfile();
-	cout << "Program Version: " << VERSION << " Revision: " << REVISION << endl;
+	Log::General("Program Version: " + to_string(VERSION) + " Revision: " + REVISION, true);
 	Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
 	//Must have this for smartdashboard to work properly
 	CameraServer::GetInstance()->StartAutomaticCapture(0);
@@ -112,7 +112,7 @@ void Robot::Autonomous()
 
 		//TODO: Talk to Ian about this
 	Log::restartfile();
-	cout << "Auton Started." << endl;
+	Log::General("Auton Started.");
 	//double LastTime = GetTime();
 	//We can test teleop auton goals here a bit later
 	while (_IsAutononomous() && !IsDisabled())
@@ -143,7 +143,7 @@ void Robot::OperatorControl()
 	CameraServer::GetInstance()->RemoveCamera("USB Camera 0");
 	//TODO: Talk to Ian about this
 	Log::restartfile();
-	cout << "Teleoperation Started." << endl;
+	Log::General("Teleoperation Started.");
 	//double LastTime = GetTime();
 	//We can test teleop auton goals here a bit later
 	while (IsOperatorControl() && !IsDisabled())
@@ -173,7 +173,7 @@ void Robot::Test()
 {
 	while(!IsDisabled()){
 		PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
-		cout << "POT: " << pot->Get() << endl;
+		Log::General("POT: " + to_string(pot->Get()), true);
 	}
 }
 

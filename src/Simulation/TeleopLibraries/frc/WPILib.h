@@ -211,7 +211,7 @@ namespace frc {
 		//cs::VideoSink GetServer();
 		//cs::VideoSink GetServer(const wpi::Twine& name);
 		//void AddCamera(const cs::VideoSource& camera);
-		//void RemoveCamera(const wpi::Twine& name);
+		void RemoveCamera(std::string name) {}
 		void SetSize(int size);
 
 	private:

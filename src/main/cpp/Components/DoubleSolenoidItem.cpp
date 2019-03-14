@@ -100,7 +100,7 @@ void DoubleSolenoidItem::Set(double value){
 		}
 		else
 		{
-			cout << "The valid arguments for DoubleSolenoid " << name << " is Reverse, Off, and Forward (-1, 0, 1). I can't tell you who sent the screwy command, because C++ doesn't do object sender..." << endl;
+			Log::Error("The valid arguments for DoubleSolenoid " + name + " is Reverse, Off, and Forward (-1, 0, 1). I can't tell you who sent the screwy command, because C++ doesn't do object sender...");
 		}
 		inUse = false;
 	}

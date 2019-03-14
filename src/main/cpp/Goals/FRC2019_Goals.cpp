@@ -419,7 +419,7 @@ void Goal_DriveStraight::Terminate()
 /***********************Goal_VisionAlign***********************/
 void Goal_VisionAlign::Activate()
 {
-    cout << "goal active" << endl;
+    Log::General("vision goal active");
     m_Status = eActive;
     updateVision();
 }
@@ -429,38 +429,38 @@ Goal::Goal_Status Goal_VisionAlign::Process(double dTime)
     m_currentTime += dTime;
     if(m_currentTime > m_timeOut)
     {
-        cout << "time out" << endl;
+        Log::General("time out");
         Terminate();
         return m_Status = eFailed;
     }
     updateVision();
-    cout << m_currentTarget->getX() << " " << m_currentTarget->getY() << " " << m_currentTarget->getRadius() << " " << Height << " " << Width << HasTarget << endl;
+    Log::General( m_currentTarget->getX() + " " + m_currentTarget->getY() + " " + m_currentTarget->getRadius() + " " + Height + " " + Width + HasTarget);
     if(!HasTarget) 
     {
-        cout << "no target" << endl;
+        Log::General("no target");
         StopDrive(m_activeCollection);
         return m_Status = eActive; //!return failed for real thing or search
     }
     if(m_target->compareX(m_currentTarget) < -20) 
     {
-        cout << "turn left" << endl;
+        Log::General("turn left");
         SetDrive(m_target->compareX(m_currentTarget) * TURN_KP,-(m_target->compareX(m_currentTarget) * TURN_KP),m_activeCollection);
     }
     else if(m_target->compareX(m_currentTarget) > 20)
     {
-        cout << "turn right" << endl;
+        Log::General("turn right");
         SetDrive(m_target->compareX(m_currentTarget) * TURN_KP,-(m_target->compareX(m_currentTarget) * TURN_KP),m_activeCollection);
     }
     else
     {
         if(m_target->compareRadius(m_currentTarget) < -2 || m_target->compareRadius(m_currentTarget) > 2)
         {
-            cout << "drive" << endl;
+            Log::General("drive");
             SetDrive(m_target->compareRadius(m_currentTarget) * STRAIGHT_KP,(m_target->compareRadius(m_currentTarget) * STRAIGHT_KP),m_activeCollection);
         }
         else
         {
-            cout << "aligned" << endl;
+            Log::General("aligned");
             Terminate();
             //return m_Status = eCompleted;
         }
