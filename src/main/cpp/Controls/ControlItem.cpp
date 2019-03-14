@@ -26,8 +26,6 @@ auto onControllerValueChanged = [&](EventArgs* e) {
 		args->GetSender()->SetToComponents(args->GetValue());
 		Log::General("OnValueChanged called for: " + args->GetSender()->name + " with the arguments: " + to_string(args->GetValue()), true);
 		SmartDashboard::PutNumber(args->GetSender()->name, args->GetValue());
-		delete args;
-		args = nullptr;
 	}catch(exception &e){
 		Log::Error("Known Exception Thrown in onControllerValueChanged in a Control! This can cause fatal Runtime Errors! Check your logs and XML.");
 		//TODO: Make this the append instead

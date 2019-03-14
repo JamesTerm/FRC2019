@@ -80,9 +80,10 @@ void Robot::RobotInit()
 void Robot::Autonomous()
 {
 
-	/*m_masterGoal = new MultitaskGoal(m_activeCollection, false);
+	m_masterGoal = new MultitaskGoal(m_activeCollection, false);
 
 	cout << "Autonomous Started." << endl;
+#ifndef _Win32
 	string autoSelected = m_dashboardTable->GetString("AUTON_SELECTION", m_driveStraight);
 	string positionSelected = m_dashboardTable->GetString("POSITION_SELECTION", "NONE"); //if it is none, then just drive straight
 	cout << autoSelected << endl;
@@ -90,6 +91,7 @@ void Robot::Autonomous()
 	{
 		m_dashboardTable->PutString("AUTON_FOUND", "UNDEFINED AUTON OR POSITION SELECTED");
 	}
+#endif
 	m_masterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15.0));
 	m_masterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
 	m_masterGoal->Activate();
@@ -100,39 +102,22 @@ void Robot::Autonomous()
 		m_drive->Update();
 		m_masterGoal->Process(dTime);
 		current_time += dTime;
+#ifdef _Win32
+		SmartDashboard::PutNumber("DELTA TIME", current_time);
+		SmartDashboard::PutString("AUTONOMOUS", "RUNNING");
+#endif		
 		Wait(dTime);
 	}
 	while(_IsAutononomous() && !IsDisabled())
 	{
+#ifdef _Win32
+		SmartDashboard::PutString("AUTONOMOUS", "OVERRIDEN!");
+#endif
 		m_drive->Update();
 		Wait(dTime);
 	}
 	m_masterGoal->~MultitaskGoal();
-	cout << "goal loop complete" << endl;*/
-
-		//TODO: Talk to Ian about this
-	Log::restartfile();
-	Log::General("Auton Started.");
-	//double LastTime = GetTime();
-	//We can test teleop auton goals here a bit later
-	while (_IsAutononomous() && !IsDisabled())
-	{
-		/*
-		const double CurrentTime = GetTime();
-		#ifndef _Win32
-		const double DeltaTime = CurrentTime - LastTime;
-		#else
-		const double DeltaTime=0.01;  //It's best to use sythetic time for simulation to step through code
-		#endif
-		LastTime = CurrentTime;
-		if (DeltaTime == 0.0) continue;  //never send 0 time
-		//printf("DeltaTime=%.2f\n",DeltaTime);
-		m_Robot.Update(DeltaTime);
-		//Depreciated
-		*/
-		m_drive->Update();
-		Wait(0.010);
-	}
+	cout << "goal loop complete" << endl;
 }
 
 /*

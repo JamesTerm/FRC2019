@@ -49,24 +49,28 @@
     <!-- Root of all control definitions -->
     <Controls>
         <!-- Driver Controller, slot should always be 0 -->
-        <Driver slot="1">
+        <Driver slot="0">
             <AxisControls>
                 <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="left_0, left_1"/>
-                <rightDrive axis="5" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="right_0, right_1"/>
+                <rightDrive axis="4" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="right_0, right_1"/>
+                <outtakeControl axis="2" deadZone="0.08" reversed="false" powerMultiplier="-0.8" bindings="intake"/>
             </AxisControls>
+          <ButtonControls>
+            <intakeButton button="0" powerMultiplier="0.8" isRamp="true" isAmpLimited="true" actOnRelease="true" bindings="intake"/>
+          </ButtonControls>
         </Driver>
-		<Operator slot="0">
+		<Operator slot="1">
 			<AxisControls>
-				<outtake_control axis="5" deadZone="0.08" reversed="true" powerMultiplier="1.0" bindings="intake"/>
-				<elevator_control axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.75" bindings="elevator_0, elevator_1, elevator_2, elevator_3"/>
+        <!--outtake_control axis="5" deadZone="0.08" reversed="true" powerMultiplier="1.0" bindings="intake"/>
+				<elevator_control axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.75" bindings="elevator_0, elevator_1, elevator_2, elevator_3"/-->
 			</AxisControls>
 			<ButtonControls>
-				<intakeButton button="4" powerMultiplier="0.8" isRamp="true" isAmpLimited="true" actOnRelease="true"/>
+        <!--intakeButton button="4" powerMultiplier="0.8" isRamp="true" isAmpLimited="true" actOnRelease="true"/-->
 			</ButtonControls>
 			<ToggleButtonControls>
-				<hatch_push_control button="0" powerMultiplier="1.0" bindings="hatch_push"/>
+        <!--hatch_push_control button="0" powerMultiplier="1.0" bindings="hatch_push"/>
 				<hatch_open_control button="1" powerMultiplier="1.0" bindings="hatch_open"/>
-				<wrist_control button="3" powerMultiplier="1.0" bindings="wrist"/>
+				<wrist_control button="3" powerMultiplier="1.0" bindings="wrist"/-->
 			</ToggleButtonControls>
 		</Operator>
     </Controls>

@@ -101,6 +101,8 @@ class Event
 		for (; func != this->handlers.end(); ++func)
 			if (*func != nullptr && (*func)->id != 0)
 				(*(*func))(e);
+		delete e;
+		e = nullptr;
 	}
 
 #pragma region OPERATOR_OVERLOADS

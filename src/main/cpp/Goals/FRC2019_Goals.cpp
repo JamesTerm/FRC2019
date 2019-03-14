@@ -256,8 +256,6 @@ void Goal_ControllerOverride::SetCallbacks(bool bind)
             if(args->GetSender()->joy->GetPort() == 1){
                 m_IsOperatorInUse = true;
             }
-            delete args;
-            args = nullptr;
         }catch(exception &e){
             Log::Error("Known Exception Thrown in onValueChanged in a ControllerOverride! This can cause fatal Runtime Errors! Check your logs and XML.");
             Log::Error(e.what());
@@ -434,7 +432,7 @@ Goal::Goal_Status Goal_VisionAlign::Process(double dTime)
         return m_Status = eFailed;
     }
     updateVision();
-    Log::General( m_currentTarget->getX() + " " + m_currentTarget->getY() + " " + m_currentTarget->getRadius() + " " + Height + " " + Width + HasTarget);
+    Log::General( to_string(m_currentTarget->getX()) + " " + to_string(m_currentTarget->getY()) + " " + to_string(m_currentTarget->getRadius()) + " " + to_string(Height) + " " + to_string(Width) + to_string(HasTarget));
     if(!HasTarget) 
     {
         Log::General("no target");
