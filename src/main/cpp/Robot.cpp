@@ -21,8 +21,8 @@ using namespace std;
  */
 Robot::Robot() 
 {
-	m_drive = new Drive();
 	m_activeCollection = new ActiveCollection();
+	m_drive = new Drive(m_activeCollection);
 	//extend the life of the active region's copy by adding a reference to this variable
 	//TODO: Events
 }

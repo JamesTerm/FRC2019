@@ -10,6 +10,8 @@ Author(s): Ryan Cooper
 Email: cooper.ryan@centaurisoftware.co
 \********************************************************************/
 
+#pragma once
+
 #ifndef SRC_CONFIG_ACTIVECOLLECTION_H_
 #define SRC_CONFIG_ACTIVECOLLECTION_H_
 

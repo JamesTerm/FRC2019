@@ -16,7 +16,10 @@ Email:	cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com
 using namespace std;
 using namespace System;
 
-Drive::Drive() { }
+Drive::Drive(ActiveCollection* activeCollection) { 
+	m_activeCollection = activeCollection;
+	m_teleOpGoal = new MultitaskGoal(m_activeCollection);
+}
 
 void Drive::AddControlDrive(ControlItem *control)
 {

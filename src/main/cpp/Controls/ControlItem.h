@@ -18,16 +18,22 @@ Email:	dylantrwatson@gmail.com
 #include "../Util/Constants.h" 
 #include "../Components/OutputComponent.h"
 #include "../Global.h"
+#include "../Config/ActiveCollection.h"
+#include "../Util/SmartDashboard.h"
 
 using namespace frc;
 using namespace std;
 using namespace Util;
 using namespace Components;
+using namespace Configuration;
 
 namespace Controls
 {
 	class ControlItem 
 	{
+		private:
+			ActiveCollection* m_activeCollection;
+
 		protected:
 			bool reversed;
 			double powerMultiplier;
@@ -36,7 +42,7 @@ namespace Controls
 		public:
 			Joystick *joy;
 			ControlItem();
-			ControlItem(Joystick *_joy, string _name, bool _reversed, double _powerMultiplier);
+			ControlItem(Joystick *_joy, string _name, bool _reversed, double _powerMultiplier, ActiveCollection* activeCollection);
 			virtual double Update() = 0;
 			void AddComponent(OutputComponent *component);
 			vector<string> GetComponents();

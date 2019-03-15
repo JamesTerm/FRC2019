@@ -9,12 +9,16 @@ All rights reserved.
 Author(s):	Ryan Cooper, Dylan Watson
 Email:	cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com
 \*********************************************************************/
+
+#pragma once
+
 #ifndef SYSTEMS_DRIVE_H_
 #define SYSTEMS_DRIVE_H_
 
 #include <frc/WPILib.h>
 #include "../util/LoopChecks.h"
 #include "../Controls/ControlItem.h"
+#include "../Goals/FRC2019_Goals.h"
 
 using namespace frc;
 using namespace std;
@@ -27,6 +31,7 @@ namespace System
     {
         public:
 	        Drive();
+			Drive(ActiveCollection* activeCollection);
 	        void Update();
 	        void AddControlDrive(ControlItem *control);
 	        void AddControlOperate(ControlItem *control);
@@ -35,6 +40,8 @@ namespace System
 	private:
 			bool m_DisableDrive=false;
 			bool m_DisableOperator=false;
+			MultitaskGoal* m_teleOpGoal;
+			ActiveCollection* m_activeCollection;
 			vector<ControlItem*> m_driveControlCollection;
 			vector<ControlItem*> m_operateControlCollection;
 	};

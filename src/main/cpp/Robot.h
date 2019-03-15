@@ -51,6 +51,10 @@ class Robot : public SampleRobot
         ActiveCollection *m_activeCollection; //!< Pointer to the only instantiation of the ActiveCollection Class in the program
         const string m_driveStraight = "drive";
         MultitaskGoal* m_masterGoal;
+        //so what im thinking is that we put the "teleopmastergoal" here and then pass it around and basically add and remove stuff from it when needed
+        //is it possible to remove stuff from goals?
+//no but i dont see why you would need to remove something. The goals will be removed when they complete/fail        
+//they will? does the multitask automatically do that?
 		nt::NetworkTableInstance m_inst; //!Network tables
         shared_ptr<NetworkTable> m_visionTable; //!Vision table
         shared_ptr<NetworkTable> m_dashboardTable;

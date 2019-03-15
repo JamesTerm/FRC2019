@@ -24,8 +24,8 @@ using namespace Components;
 
 AxisControl::AxisControl() { }
 
-AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZone, bool _reversed, double _powerMultiplier)
-	: ControlItem(_joy, _name, _reversed, _powerMultiplier)
+AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZone, bool _reversed, double _powerMultiplier, ActiveCollection* ac)
+	: ControlItem(_joy, _name, _reversed, _powerMultiplier, ac)
 {
 	axis = _axis;
 	deadZone = _deadZone;

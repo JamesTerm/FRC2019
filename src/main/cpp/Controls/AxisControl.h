@@ -16,7 +16,6 @@ Email:	dylantrwatson@gmail.com
 
 #include <frc/WPILib.h>
 #include "ControlItem.h"
-#include "../Config/ActiveCollection.h"
 #include "../Components/PotentiometerItem.h"
 
 using namespace frc;
@@ -43,7 +42,7 @@ namespace Controls
 
 		public:
 			AxisControl();
-			AxisControl(Joystick *_joy, string _name, int _axis, double _deadZone, bool _reversed, double _powerMultiplier);
+			AxisControl(Joystick *_joy, string _name, int _axis, double _deadZone, bool _reversed, double _powerMultiplier, ActiveCollection* ac);
 			virtual double Update() override;
 			void SetLift(double _gane, ActiveCollection *activeCollection);
 			virtual ~AxisControl();

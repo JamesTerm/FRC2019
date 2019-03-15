@@ -17,7 +17,7 @@ using namespace Controls;
 
 ToggleButtonControl::ToggleButtonControl() { }
 
-ToggleButtonControl::ToggleButtonControl(Joystick *_joy, string _name, int _button, bool _IsReversed, double _powerMultiplier): ControlItem(_joy, _name, _IsReversed, _powerMultiplier)
+ToggleButtonControl::ToggleButtonControl(Joystick *_joy, string _name, int _button, bool _IsReversed, double _powerMultiplier, ActiveCollection* ac): ControlItem(_joy, _name, _IsReversed, _powerMultiplier, ac)
 {
 	button = _button;
 }

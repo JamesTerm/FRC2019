@@ -18,8 +18,8 @@ using namespace Controls;
 
 ButtonControl::ButtonControl() {}
 
-ButtonControl::ButtonControl(Joystick *_joy, string _name, int _button, bool _actOnRelease, bool _reversed, double _powerMultiplier, bool _isSolenoid)
-	: ControlItem(_joy, _name, _reversed, _powerMultiplier) {
+ButtonControl::ButtonControl(Joystick *_joy, string _name, int _button, bool _actOnRelease, bool _reversed, double _powerMultiplier, bool _isSolenoid, ActiveCollection* ac)
+	: ControlItem(_joy, _name, _reversed, _powerMultiplier, ac) {
 	button = _button;
 	actOnRelease = _actOnRelease;
 	isSolenoid = _isSolenoid;

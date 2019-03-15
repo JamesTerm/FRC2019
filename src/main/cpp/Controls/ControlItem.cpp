@@ -13,7 +13,6 @@ Email:	dylantrwatson@gmail.com
 #include <iostream>
 
 #include "ControlItem.h"
-#include "../Util/SmartDashboard.h"
 
 using namespace std;
 using namespace Controls;
@@ -39,8 +38,9 @@ auto onControllerValueChanged = [&](EventArgs* e) {
 
 ControlItem::ControlItem(){}
 
-ControlItem::ControlItem(Joystick *_joy, string _name, bool _reversed, double _powerMultiplier)
+ControlItem::ControlItem(Joystick *_joy, string _name, bool _reversed, double _powerMultiplier, ActiveCollection* activeCollection)
 {
+	m_activeCollection = activeCollection;
 	joy = _joy;
 	name = _name;
 	reversed = _reversed;

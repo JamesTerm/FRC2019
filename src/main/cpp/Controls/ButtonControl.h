@@ -34,7 +34,7 @@ private:
 
 public:
 	ButtonControl();
-	ButtonControl(Joystick *_joy, string _name, int _button, bool _actOnRelease, bool _reversed, double _powerMultiplier, bool _isSolenoid);
+	ButtonControl(Joystick *_joy, string _name, int _button, bool _actOnRelease, bool _reversed, double _powerMultiplier, bool _isSolenoid, ActiveCollection* ac);
 	void SetToSolenoids(DoubleSolenoid::Value value);
 	void SetSolenoidDefault();
 	void SetRamp(double _inc);

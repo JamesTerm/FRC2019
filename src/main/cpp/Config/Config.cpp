@@ -433,7 +433,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 				else
 					multiply = multiply_xml.as_double();
-				AxisControl *tmp = new AxisControl(m_driveJoy, name, channel.as_int(), deadZone, reversed, multiply);
+				AxisControl *tmp = new AxisControl(m_driveJoy, name, channel.as_int(), deadZone, reversed, multiply, m_activeCollection);
 				m_drive->AddControlDrive(tmp);
 				string reversed_print = reversed ? "true" : "false" ;
 				Log::General("Added AxisControl " + name + ", Axis: " + to_string(channel.as_int()) + ", DeadZone: " + to_string(deadZone) + ", Reversed: " + reversed_print + ", Power Multiplier: " + to_string(multiply));
@@ -487,7 +487,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 				else
 					multiply = multiply_xml.as_double();
-				ButtonControl *tmp = new ButtonControl(m_driveJoy, name, channel.as_int(), actOnRelease, reversed, multiply, isSolenoid);
+				ButtonControl *tmp = new ButtonControl(m_driveJoy, name, channel.as_int(), actOnRelease, reversed, multiply, isSolenoid, m_activeCollection);
 				m_drive->AddControlDrive(tmp);
 				string actOnRelease_print = actOnRelease ? "true" : "false";
 				string reversed_print = reversed ? "true" : "false";
@@ -539,7 +539,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 				else
 					multiply = multiply_xml.as_double();
-				ToggleButtonControl *tmp = new ToggleButtonControl(m_driveJoy, name, channel.as_int(), reversed, multiply);
+				ToggleButtonControl *tmp = new ToggleButtonControl(m_driveJoy, name, channel.as_int(), reversed, multiply, m_activeCollection);
 				m_drive->AddControlDrive(tmp);
 				xml_attribute bindings = button.attribute("bindings");
 				if(bindings){
@@ -603,7 +603,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				}
 				else
 					multiply = multiply_xml.as_double();
-				AxisControl *tmp = new AxisControl(m_operatorJoy, name, channel.as_int(), deadZone, reversed, multiply);
+				AxisControl *tmp = new AxisControl(m_operatorJoy, name, channel.as_int(), deadZone, reversed, multiply, m_activeCollection);
 				m_drive->AddControlOperate(tmp);
 				xml_attribute bindings = axis.attribute("bindings");
 				if(bindings){
@@ -653,7 +653,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				}
 				else
 					multiply = multiply_xml.as_double();
-				ButtonControl *tmp = new ButtonControl(m_operatorJoy, name, channel.as_int(), actOnRelease, reversed, multiply, isSolenoid);
+				ButtonControl *tmp = new ButtonControl(m_operatorJoy, name, channel.as_int(), actOnRelease, reversed, multiply, isSolenoid, m_activeCollection);
 				m_drive->AddControlOperate(tmp);
 				xml_attribute bindings = button.attribute("bindings");
 				if(bindings){
@@ -702,7 +702,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				}
 				else
 					multiply = multiply_xml.as_double();
-				ToggleButtonControl *tmp = new ToggleButtonControl(m_operatorJoy, name, channel.as_int(), reversed, multiply);
+				ToggleButtonControl *tmp = new ToggleButtonControl(m_operatorJoy, name, channel.as_int(), reversed, multiply, m_activeCollection);
 				m_drive->AddControlOperate(tmp);
 				xml_attribute bindings = button.attribute("bindings");
 				if(bindings){
