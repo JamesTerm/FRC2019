@@ -125,10 +125,11 @@ void Robot::Autonomous()
  */
 void Robot::OperatorControl()
 {
-	MultitaskGoal* goal = new MultitaskGoal(m_activeCollection, true);
-	goal->AddGoal(new Goal_TimeOut(m_activeCollection, 180));
+	MultitaskGoal* goal = new MultitaskGoal(m_activeCollection, false);
+	goal->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
+	goal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
 	m_activeCollection->SetActiveGoal(goal);
-
+	m_activeCollection->GetActiveGoal()->Activate();
 	CameraServer::GetInstance()->RemoveCamera("USB Camera 0");
 	//TODO: Talk to Ian about this
 	Log::restartfile();
@@ -151,11 +152,18 @@ void Robot::OperatorControl()
 		//Depreciated
 		*/
 		m_drive->Update();
-		m_activeCollection->GetActiveGoal()->Process(0.010);
+		if (m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive) {
+			m_activeCollection->GetActiveGoal()->Process(0.010);
+			SmartDashboard::PutBoolean("TeleOpGoalActive", true);
+		}
+		else {
+			//TODO: find a way to make this only fire once
+			m_activeCollection->GetActiveGoal()->Terminate();
+			SmartDashboard::PutBoolean("TeleOpGoalActive", false);
+		}
 		Wait(0.010);
 	}
 }
-
 /*
  * Called when the Test period starts
  */
