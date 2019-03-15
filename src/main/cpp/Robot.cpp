@@ -125,6 +125,10 @@ void Robot::Autonomous()
  */
 void Robot::OperatorControl()
 {
+	MultitaskGoal* goal = new MultitaskGoal(m_activeCollection, true);
+	goal->AddGoal(new Goal_TimeOut(m_activeCollection, 180));
+	m_activeCollection->SetActiveGoal(goal);
+
 	CameraServer::GetInstance()->RemoveCamera("USB Camera 0");
 	//TODO: Talk to Ian about this
 	Log::restartfile();
@@ -147,6 +151,7 @@ void Robot::OperatorControl()
 		//Depreciated
 		*/
 		m_drive->Update();
+		m_activeCollection->GetActiveGoal()->Process(0.010);
 		Wait(0.010);
 	}
 }

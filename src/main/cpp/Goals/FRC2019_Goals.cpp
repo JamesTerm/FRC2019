@@ -57,6 +57,7 @@ Goal::Goal_Status Goal_TimeOut::Process(double dTime)
     if (m_Status == eActive)
     {
         m_currentTime += dTime;
+        SmartDashboard::PutNumber("timeOut",m_currentTime);
         if (m_currentTime >= m_timeOut)
         {
             Terminate();

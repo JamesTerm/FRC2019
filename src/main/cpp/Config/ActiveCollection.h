@@ -27,6 +27,8 @@ Email: cooper.ryan@centaurisoftware.co
 #include "../Components/DigitalInputItem.h"
 #include "../Components/NavX.h"
 
+class Goal;
+
 using namespace std;
 using namespace Components;
 
@@ -53,8 +55,12 @@ namespace Configuration
 			void Add(NativeComponent *component);
 			void AddEvent(Event *event);
 			vector<Event*> EventMap;
+
+			void SetActiveGoal(Goal* g) {activeGoal = g;}
+			Goal* GetActiveGoal() {return activeGoal;}
 	private:
 		vector<NativeComponent*> activeCollection;
+		Goal* activeGoal;
 	};
 }
 
