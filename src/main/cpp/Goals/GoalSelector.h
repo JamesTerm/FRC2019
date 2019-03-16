@@ -13,6 +13,10 @@ Email: chrisrweeks@aol.com
 
 #include "FRC2019_Goals.h"
 
+enum TeleOpGoal{
+    ElevatorControl
+};
+
 static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal, string autonSelected, string positionSelected)
 {
     bool isFound = true;
@@ -111,4 +115,9 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
     }
     
     return isFound;
+}
+
+static Goal* SelectTeleOpGoal(ActiveCollection* activeCollection, TeleOpGoal goalSelected, double params){
+    if(goalSelected == TeleOpGoal::ElevatorControl)
+        return new Goal_ElevatorControl(activeCollection, params);
 }

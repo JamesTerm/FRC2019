@@ -13,6 +13,9 @@ Email:	dylantrwatson@gmail.com
 #include <iostream>
 
 #include "ControlItem.h"
+#include "GoalButtonControl.h"
+#include "../Goals/GoalSelector.h"
+#include "../Goals/FRC2019_Goals.h"
 
 using namespace std;
 using namespace Controls;
@@ -22,15 +25,30 @@ using namespace Controls;
 auto onControllerValueChanged = [&](EventArgs* e) {
 	try{
 		auto args = (TEventArgs<double, ControlItem*>*)e;
+		if(typeid(args->GetSender()) == typeid(GoalButtonControl)){
+			TeleOpGoal goal = ((GoalButtonControl*)(args->GetSender()))->m_goal;
+			SmartDashboard::PutString("GoalButtonControl Status", "Control Found");
+			Goal* goalToAdd = SelectTeleOpGoal(args->GetSender()->m_activeCollection, goal, args->GetValue());
+			MultitaskGoal* teleOpMasterGoal = args->GetSender()->m_activeCollection->GetActiveGoal();
+			teleOpMasterGoal->AddGoal(new Goal_TimeOut(args->GetSender()->m_activeCollection, 15));
+			teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(args->GetSender()->m_activeCollection));
+			teleOpMasterGoal->AddGoal(goalToAdd);
+			args->GetSender()->m_activeCollection->SetActiveGoal(teleOpMasterGoal);
+			args->GetSender()->m_activeCollection->GetActiveGoal()->Activate();
+			((GoalButtonControl*)(args->GetSender()))->m_goalSet = true;
+			SmartDashboard::PutString("GoalButtonControl Status", "GoalActivated");
+			return;
+		}
 		args->GetSender()->SetToComponents(args->GetValue());
-		Log::General("OnValueChanged called for: " + args->GetSender()->name + " with the arguments: " + to_string(args->GetValue()), true);
 		SmartDashboard::PutNumber(args->GetSender()->name, args->GetValue());
 	}catch(exception &e){
 		Log::Error("Known Exception Thrown in onControllerValueChanged in a Control! This can cause fatal Runtime Errors! Check your logs and XML.");
+		SmartDashboard::PutString("OnValueChangedStatus", "Error");
 		//TODO: Make this the append instead
 		Log::Error(e.what());
 	}catch(...){
 		Log::Error("UnknownException Thrown in onControllerValueChanged in a Control! This can cause fatal Runtime Errors! Check your XML and yell at the programmers!");
+		SmartDashboard::PutString("OnValueChangedStatus", "Error");
 	}
 };
 

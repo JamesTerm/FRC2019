@@ -30,7 +30,7 @@ ButtonControl::ButtonControl(Joystick *_joy, string _name, int _button, bool _ac
 	pdp = new PowerDistributionPanel();
 }
 
-double ButtonControl::Update(){
+double ButtonControl::Update(double _dTime){
 	double val = joy->GetRawButton(button); //*< Value recieved from the button
 	double tmp = val; //*< Temporary value to consistantly hold the original value of the button -> not affected by reversing the ButtonControl
 

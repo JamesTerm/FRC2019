@@ -32,7 +32,7 @@ AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZo
 	isLift = false;
 }
 
-double AxisControl::Update()
+double AxisControl::Update(double _dTime)
 {
 	double raw = (*joy).GetRawAxis(axis);
 	if (!(abs(raw) > deadZone))

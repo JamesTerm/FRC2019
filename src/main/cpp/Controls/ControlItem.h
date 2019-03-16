@@ -31,19 +31,17 @@ namespace Controls
 {
 	class ControlItem 
 	{
-		private:
-			ActiveCollection* m_activeCollection;
-
 		protected:
 			bool reversed;
 			double powerMultiplier;
 			vector<OutputComponent*> components;
 
 		public:
+			ActiveCollection* m_activeCollection;
 			Joystick *joy;
 			ControlItem();
 			ControlItem(Joystick *_joy, string _name, bool _reversed, double _powerMultiplier, ActiveCollection* activeCollection);
-			virtual double Update() = 0;
+			virtual double Update(double _dTime) = 0;
 			void AddComponent(OutputComponent *component);
 			vector<string> GetComponents();
 			string name;

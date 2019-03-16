@@ -22,7 +22,7 @@ ToggleButtonControl::ToggleButtonControl(Joystick *_joy, string _name, int _butt
 	button = _button;
 }
 
-double ToggleButtonControl::Update()
+double ToggleButtonControl::Update(double _dTime)
 {
 	bool val = joy->GetRawButton(button);
 	if (val == previousState) return val * powerMultiplier;

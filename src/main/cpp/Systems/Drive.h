@@ -32,7 +32,7 @@ namespace System
         public:
 	        Drive();
 			Drive(ActiveCollection* activeCollection);
-	        void Update();
+	        void Update(double deltaTime);
 	        void AddControlDrive(ControlItem *control);
 	        void AddControlOperate(ControlItem *control);
 			void SetUseDrive(bool enable) { m_DisableDrive = !enable; }

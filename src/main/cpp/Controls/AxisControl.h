@@ -43,7 +43,7 @@ namespace Controls
 		public:
 			AxisControl();
 			AxisControl(Joystick *_joy, string _name, int _axis, double _deadZone, bool _reversed, double _powerMultiplier, ActiveCollection* ac);
-			virtual double Update() override;
+			virtual double Update(double _dTime) override;
 			void SetLift(double _gane, ActiveCollection *activeCollection);
 			virtual ~AxisControl();
 	};

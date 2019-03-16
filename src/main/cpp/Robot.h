@@ -45,12 +45,14 @@ class Robot : public SampleRobot
         void Autonomous() override;
         void OperatorControl() override;
         void Test() override;
+		void Disabled() override;
 
       private:
         Drive *m_drive;
         ActiveCollection *m_activeCollection; //!< Pointer to the only instantiation of the ActiveCollection Class in the program
         const string m_driveStraight = "drive";
         MultitaskGoal* m_masterGoal;
+        MultitaskGoal* m_teleOpMasterGoal;
         //so what im thinking is that we put the "teleopmastergoal" here and then pass it around and basically add and remove stuff from it when needed
         //is it possible to remove stuff from goals?
 //no but i dont see why you would need to remove something. The goals will be removed when they complete/fail        

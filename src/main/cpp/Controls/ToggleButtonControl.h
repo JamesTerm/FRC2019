@@ -35,7 +35,7 @@ namespace Controls
 			ToggleButtonControl();
 			ToggleButtonControl(Joystick *_joy, string _name, int _button, bool _IsReversed, double _powerMultiplier, ActiveCollection* ac);
 			virtual ~ToggleButtonControl();
-			virtual double Update() override;
+			virtual double Update(double _dTime) override;
 	};
 }
 

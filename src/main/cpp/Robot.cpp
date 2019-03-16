@@ -99,7 +99,7 @@ void Robot::Autonomous()
 	double current_time = 0.0;
 	while (m_masterGoal->GetStatus() == Goal::eActive && _IsAutononomous() && !IsDisabled())
 	{
-		m_drive->Update();
+		m_drive->Update(dTime);
 		m_masterGoal->Process(dTime);
 		current_time += dTime;
 #ifdef _Win32
@@ -113,7 +113,7 @@ void Robot::Autonomous()
 #ifdef _Win32
 		SmartDashboard::PutString("AUTONOMOUS", "OVERRIDEN!");
 #endif
-		m_drive->Update();
+		m_drive->Update(dTime);
 		Wait(dTime);
 	}
 	m_masterGoal->~MultitaskGoal();
@@ -125,20 +125,22 @@ void Robot::Autonomous()
  */
 void Robot::OperatorControl()
 {
-	MultitaskGoal* goal = new MultitaskGoal(m_activeCollection, false);
-	goal->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
-	goal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
-	m_activeCollection->SetActiveGoal(goal);
+	if(m_activeCollection->GetActiveGoal() != NULL)
+		m_activeCollection->GetActiveGoal()->~MultitaskGoal();
+	m_teleOpMasterGoal = new MultitaskGoal(m_activeCollection, false);
+	m_teleOpMasterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
+	m_teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
+	m_activeCollection->SetActiveGoal(m_teleOpMasterGoal);
 	m_activeCollection->GetActiveGoal()->Activate();
 	CameraServer::GetInstance()->RemoveCamera("USB Camera 0");
 	//TODO: Talk to Ian about this
 	Log::restartfile();
 	Log::General("Teleoperation Started.");
-	//double LastTime = GetTime();
+	double LastTime = GetTime();
 	//We can test teleop auton goals here a bit later
 	while (IsOperatorControl() && !IsDisabled())
 	{
-		/*
+		
 		const double CurrentTime = GetTime();
 		#ifndef _Win32
 		const double DeltaTime = CurrentTime - LastTime;
@@ -147,21 +149,19 @@ void Robot::OperatorControl()
 		#endif
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
-		//printf("DeltaTime=%.2f\n",DeltaTime);
-		m_Robot.Update(DeltaTime);
-		//Depreciated
-		*/
-		m_drive->Update();
+		m_drive->Update(DeltaTime);
 		if (m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive) {
 			m_activeCollection->GetActiveGoal()->Process(0.010);
 			SmartDashboard::PutBoolean("TeleOpGoalActive", true);
 		}
 		else {
-			//TODO: find a way to make this only fire once
-			m_activeCollection->GetActiveGoal()->Terminate();
+			m_activeCollection->GetActiveGoal()->Reset();
 			SmartDashboard::PutBoolean("TeleOpGoalActive", false);
+			m_activeCollection->GetActiveGoal()->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
+			m_activeCollection->GetActiveGoal()->AddGoal(new Goal_ControllerOverride(m_activeCollection));
+			m_activeCollection->GetActiveGoal()->Activate();
 		}
-		Wait(0.010);
+		Wait(0.010); 
 	}
 }
 /*
@@ -173,6 +173,11 @@ void Robot::Test()
 		PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
 		Log::General("POT: " + to_string(pot->Get()), true);
 	}
+}
+
+void Robot::Disabled() {
+	m_activeCollection->GetActiveGoal()->Reset();
+	m_activeCollection->SetActiveGoal(new MultitaskGoal(m_activeCollection, false));
 }
 
 START_ROBOT_CLASS(Robot) //!< This identifies Robot as the main Robot starting class

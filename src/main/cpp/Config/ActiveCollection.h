@@ -27,7 +27,7 @@ Email: cooper.ryan@centaurisoftware.co
 #include "../Components/DigitalInputItem.h"
 #include "../Components/NavX.h"
 
-class Goal;
+class MultitaskGoal;
 
 using namespace std;
 using namespace Components;
@@ -56,11 +56,11 @@ namespace Configuration
 			void AddEvent(Event *event);
 			vector<Event*> EventMap;
 
-			void SetActiveGoal(Goal* g) {activeGoal = g;}
-			Goal* GetActiveGoal() {return activeGoal;}
+			void SetActiveGoal(MultitaskGoal* g) {activeGoal = g;}
+			MultitaskGoal* GetActiveGoal() {return activeGoal;}
 	private:
 		vector<NativeComponent*> activeCollection;
-		Goal* activeGoal;
+		MultitaskGoal* activeGoal;
 	};
 }
 

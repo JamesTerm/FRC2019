@@ -102,6 +102,7 @@ class  MultitaskGoal : public Goal
 		void Activate();
 		Goal &AsGoal() {return *this;}
 		virtual Goal_Status Process(double dTime);
+		void Reset();
 	protected:  //from Goal
 		
 		virtual void Terminate();
