@@ -128,10 +128,10 @@ void Robot::OperatorControl()
 	if(m_activeCollection->GetActiveGoal() != NULL)
 		m_activeCollection->GetActiveGoal()->~MultitaskGoal();
 	m_teleOpMasterGoal = new MultitaskGoal(m_activeCollection, false);
-	m_teleOpMasterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
-	m_teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
+	//m_teleOpMasterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
+	//m_teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
 	m_activeCollection->SetActiveGoal(m_teleOpMasterGoal);
-	m_activeCollection->GetActiveGoal()->Activate();
+	//m_activeCollection->GetActiveGoal()->Activate();
 	CameraServer::GetInstance()->RemoveCamera("USB Camera 0");
 	//TODO: Talk to Ian about this
 	Log::restartfile();
@@ -150,7 +150,7 @@ void Robot::OperatorControl()
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
 		m_drive->Update(DeltaTime);
-		if (m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive) {
+/*		if (m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive) {
 			m_activeCollection->GetActiveGoal()->Process(0.010);
 			SmartDashboard::PutBoolean("TeleOpGoalActive", true);
 		}
@@ -160,7 +160,7 @@ void Robot::OperatorControl()
 			m_activeCollection->GetActiveGoal()->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
 			m_activeCollection->GetActiveGoal()->AddGoal(new Goal_ControllerOverride(m_activeCollection));
 			m_activeCollection->GetActiveGoal()->Activate();
-		}
+		}*/
 		Wait(0.010); 
 	}
 }
