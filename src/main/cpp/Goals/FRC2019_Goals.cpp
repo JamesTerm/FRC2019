@@ -282,30 +282,50 @@ void Goal_ElevatorControl::Activate()
 
 Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
 {
-    ActivateIfInactive(); //this goal will always be active
     if(m_Status == eActive)
     {
-        //TODO: buttons can set target to specific value and joystick can increase/decrease target
-        m_currentPos = m_potientiometer->Get();
-        error = (m_target - m_currentPos) / m_target;
-        integ += error * dTime;               //Right Riemann Sum integral
-        deriv = (error - errorPrior) / dTime; // rise/run slope
-        errorPrior = error;               //set errorPrior for next process call
-
-        m_power = bias + (kp * error) + (ki * integ) + (kd * deriv); //power is equal to P,I,D * k-values + bias
-
-        //SetElevator(m_power,m_activeCollection); //TODO this
-        return m_Status = eActive;
+        m_timeElapsed += dTime;
+        if(((m_pot->Get() > m_target && m_goingUp) || (m_pot->Get() < m_target && !m_goingUp)))
+        {
+            Terminate();
+            return m_Status = eCompleted;
+        }
+        else
+        {
+            if(m_goingUp)
+            {
+                if(m_timeElapsed < .25)
+                {
+                    SetElevator(2.0 * m_timeElapsed + .25, m_activeCollection);
+                }
+                else if(m_timeElapsed > .25 && m_timeElapsed < moveTime)
+                {
+                    SetElevator(MAX_POWER, m_activeCollection);
+                }
+                else if(m_timeElapsed > moveTime && m_timeElapsed < moveTime + .25)
+                {
+                    SetElevator((-MAX_POWER/.25)*(m_timeElapsed - moveTime - .25), m_activeCollection);
+                }
+                else
+                {
+                    Terminate();
+                    return m_Status = eCompleted;
+                }
+                
+                
+            }
+        }
     }
     else
     {
         return m_Status;
     }
+    
 }
 
 void Goal_ElevatorControl::Terminate()
 {
-    //StopElevator(); //TODO this
+    StopElevator(m_activeCollection);
 }
 #pragma region FeedbackLoopGoals
 /***********************Goal_Turn***********************/

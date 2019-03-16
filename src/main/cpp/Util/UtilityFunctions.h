@@ -55,7 +55,17 @@ static void DriveWithTimer(double left, double right, double sec, ActiveCollecti
 
 /***********************OPERATOR METHODS************************/
 
-//we dont have any yet because robot doesn't exist yet...
+static void SetElevator(double power, ActiveCollection* activeCollection)
+{
+	((VictorSPXItem*)activeCollection->Get("elevator_0"))->Set(power);
+	((VictorSPXItem*)activeCollection->Get("elevator_1"))->Set(power);
+	((VictorSPXItem*)activeCollection->Get("elevator_2"))->Set(power);
+	((VictorSPXItem*)activeCollection->Get("elevator_3"))->Set(power);
+}
+static void StopElevator(ActiveCollection* activeCollection)
+{
+	SetElevator(0, activeCollection);
+}
 
 /********************************AUTON METHODS********************************/
 static void SlowStop(double left, double right, ActiveCollection *activeCollection) //sets motor power and decreases it over time until robot comes to a stop

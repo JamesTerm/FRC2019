@@ -141,29 +141,42 @@ class Goal_ControllerOverride : public AtomicGoal
 };
 class Goal_ElevatorControl : public AtomicGoal
 {
+  //for right now, straight up trapezoidal profile that tries to approx the correct distance.
+  //pot will only stop if it goes over/under (depending on direction) target
   public:
     Goal_ElevatorControl(ActiveCollection* activeCollection, double target)
     {
       m_activeCollection = activeCollection;
+      m_pot = (PotentiometerItem*)m_activeCollection->Get("pot");
       m_target = target;
-      m_Status = eInactive;
-      m_potientiometer = (PotentiometerItem*)activeCollection->Get("elevatorPot"); //TODO this
+      m_timeElapsed = 0;
+
+      if(target > m_pot->Get())
+      {
+        m_goingUp = true;
+        moveTime = (target - m_pot->Get()) * UP_TIME_SCALAR;
+      }
+      else
+      {
+        m_goingUp = false;
+        moveTime = (m_pot->Get() - target) * DOWN_TIME_SCALAR;
+      }
+      
     }
     virtual void Activate();
     virtual Goal::Goal_Status Process(double dTime);
     virtual void Terminate();
   private:
-    double m_target;
-    double m_currentPos;
-    double m_power;
     ActiveCollection* m_activeCollection;
-    PotentiometerItem* m_potientiometer;
+    PotentiometerItem* m_pot;
+    double m_target;
+    double m_timeElapsed;
+    double moveTime;
+    bool m_goingUp;
 
-    int kp = 0, ki = 0, kd = 0;
-    int bias = 0; //bias is a constant that is added to the output.
-    double error, integ, deriv;
-    double errorPrior;
-
+    const double MAX_POWER = .75;
+    const double UP_TIME_SCALAR = .1; //idk what these really are
+    const double DOWN_TIME_SCALAR = .1;
 };
     
 
