@@ -32,7 +32,7 @@ double GoalButtonControl::Update(double _dTime){
 	if (!val)
 		ValueChanged(new TEventArgs<double, GoalButtonControl*>(m_target, this));
 	if(m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive && m_goalSet){
-		
+		m_activeCollection->GetActiveGoal()->Process(0.010);
 	}
 	m_previous = m_current;
 	return m_current;

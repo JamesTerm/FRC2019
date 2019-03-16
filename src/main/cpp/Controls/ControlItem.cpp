@@ -30,7 +30,7 @@ auto onControllerValueChanged = [&](EventArgs* e) {
 			SmartDashboard::PutString("GoalButtonControl Status", "Control Found");
 			Goal* goalToAdd = SelectTeleOpGoal(args->GetSender()->m_activeCollection, goal, args->GetValue());
 			MultitaskGoal* teleOpMasterGoal = args->GetSender()->m_activeCollection->GetActiveGoal();
-			teleOpMasterGoal->AddGoal(new Goal_TimeOut(args->GetSender()->m_activeCollection, 15));
+			teleOpMasterGoal->AddGoal(new Goal_TimeOut(args->GetSender()->m_activeCollection, 7));
 			teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(args->GetSender()->m_activeCollection));
 			teleOpMasterGoal->AddGoal(goalToAdd);
 			args->GetSender()->m_activeCollection->SetActiveGoal(teleOpMasterGoal);
