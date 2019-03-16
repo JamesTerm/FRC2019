@@ -123,6 +123,7 @@ void Robot::Autonomous()
 /*
  * Called when teleop starts
  */
+#if 1 //test method doesnt work in rio for some reason...
 void Robot::OperatorControl()
 {
 	if(m_activeCollection->GetActiveGoal() != NULL)
@@ -164,6 +165,16 @@ void Robot::OperatorControl()
 		Wait(0.010); 
 	}
 }
+#else
+void Robot::OperatorControl()
+{
+	while(!IsDisabled()){
+		PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
+		Log::General("POT: " + to_string(pot->Get()), true);
+	}
+}
+#endif
+
 /*
  * Called when the Test period starts
  */

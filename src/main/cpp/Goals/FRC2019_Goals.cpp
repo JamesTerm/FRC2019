@@ -292,11 +292,12 @@ Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
         }
         else
         {
+            //look at elevator trapezoid in design folder
             if(m_goingUp)
             {
                 if(m_timeElapsed < .25)
                 {
-                    SetElevator(2.0 * m_timeElapsed + .25, m_activeCollection);
+                    SetElevator((MAX_POWER-MIN_POWER)/.25 * m_timeElapsed + MIN_POWER, m_activeCollection);
                 }
                 else if(m_timeElapsed > .25 && m_timeElapsed < moveTime)
                 {
@@ -304,7 +305,7 @@ Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
                 }
                 else if(m_timeElapsed > moveTime && m_timeElapsed < moveTime + .25)
                 {
-                    SetElevator((-MAX_POWER/.25)*(m_timeElapsed - moveTime - .25), m_activeCollection);
+                    SetElevator(((MIN_POWER-MAX_POWER)/.25)*(m_timeElapsed - moveTime - .25) + MAX_POWER, m_activeCollection);
                 }
                 else
                 {
@@ -313,6 +314,27 @@ Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
                 }
                 
                 
+            }
+            else
+            {
+                //exact same math as above but with a negative in front
+                if(m_timeElapsed < .25)
+                {
+                    SetElevator(-((MAX_POWER-MIN_POWER)/.25 * m_timeElapsed + MIN_POWER), m_activeCollection);
+                }
+                else if(m_timeElapsed > .25 && m_timeElapsed < moveTime)
+                {
+                    SetElevator(-MAX_POWER, m_activeCollection);
+                }
+                else if(m_timeElapsed > moveTime && m_timeElapsed < moveTime + .25)
+                {
+                    SetElevator(-(((MIN_POWER-MAX_POWER)/.25)*(m_timeElapsed - moveTime - .25) + MAX_POWER), m_activeCollection);
+                }
+                else
+                {
+                    Terminate();
+                    return m_Status = eCompleted;
+                }
             }
         }
     }

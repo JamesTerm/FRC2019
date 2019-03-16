@@ -175,6 +175,7 @@ class Goal_ElevatorControl : public AtomicGoal
     bool m_goingUp;
 
     const double MAX_POWER = .75;
+    const double MIN_POWER = .2;
     const double UP_TIME_SCALAR = .1; //idk what these really are
     const double DOWN_TIME_SCALAR = .1;
 };
