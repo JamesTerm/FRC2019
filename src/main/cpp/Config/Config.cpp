@@ -566,6 +566,44 @@ void Config::AllocateDriverControls(xml_node &controls){
 	}	
 
 	#pragma endregion ToggleButtonControl
+
+	#pragma region GoalButtonControl
+	
+	xml_node GoalButtonControls = drive.child("GoalButtonControls");
+	if(GoalButtonControls){
+		for(xml_node button = GoalButtonControls.first_child(); button; button = button.next_sibling()){
+			string name = button.name();
+			xml_attribute channel = button.attribute("button");
+			if(channel){
+				xml_attribute goal = button.attribute("goal");
+				xml_attribute params = button.attribute("params");
+				if(goal && params){
+					TeleOpGoal goalToAdd = getTeleOpGoal(goal.as_string());
+					if(goalToAdd != TeleOpGoal::None){
+						GoalButtonControl* tmp = new GoalButtonControl(m_driveJoy, name, channel.as_int(), m_activeCollection, goalToAdd, params.as_double());
+						m_drive->AddControlDrive(tmp);
+						Log::General("Added GoalButtonControl " + name + ", Button: " + to_string(channel.as_int()) + ", Goal: " + goal.as_string() + ", Params: " + params.as_string());
+						xml_attribute bind_event_xml = button.attribute("bindEvent");
+						bool bind_event = bind_event_xml.as_bool(); 
+						if(!bind_event_xml || bind_event){
+							m_activeCollection->AddEvent(&(tmp->ValueChanged));
+						}
+					}
+				}
+				else{
+					Log::Error("Failed to load GoalButtonControl " + name + ". This may cause a fatal runtime eror!");
+				}
+			}
+			else{
+				Log::Error("Failed to load GoalButtonControl " + name + ". This may cause a fatal runtime eror!");
+			}
+		}
+	}
+	else{
+		Log::Error("Goal Button Control Driver definitions not found! Skipping...");
+	}
+
+	#pragma endregion
 }
 
 void Config::AllocateOperatorControls(xml_node &controls){
@@ -729,6 +767,45 @@ void Config::AllocateOperatorControls(xml_node &controls){
 	}	
 
 	#pragma endregion ToggleButtonControl
+
+	#pragma region GoalButtonControl
+	
+	xml_node GoalButtonControls = _operator.child("GoalButtonControls");
+	if(GoalButtonControls){
+		for(xml_node button = GoalButtonControls.first_child(); button; button = button.next_sibling()){
+			string name = button.name();
+			xml_attribute channel = button.attribute("button");
+			if(channel){
+				xml_attribute goal = button.attribute("goal");
+				xml_attribute params = button.attribute("params");
+				if(goal && params){
+					TeleOpGoal goalToAdd = getTeleOpGoal(goal.as_string());
+					if(goalToAdd != TeleOpGoal::None){
+						GoalButtonControl* tmp = new GoalButtonControl(m_operatorJoy, name, channel.as_int(), m_activeCollection, goalToAdd, params.as_double());
+						m_drive->AddControlOperate(tmp);
+						Log::General("Added GoalButtonControl " + name + ", Button: " + to_string(channel.as_int()) + ", Goal: " + goal.as_string() + ", Params: " + params.as_string());
+						xml_attribute bind_event_xml = button.attribute("bindEvent");
+						bool bind_event = bind_event_xml.as_bool(); 
+						if(!bind_event_xml || bind_event){
+							m_activeCollection->AddEvent(&(tmp->ValueChanged));
+						}
+					}
+				}
+				else{
+					Log::Error("Failed to load GoalButtonControl " + name + ". This may cause a fatal runtime eror!");
+				}
+			}
+			else{
+				Log::Error("Failed to load GoalButtonControl " + name + ". This may cause a fatal runtime eror!");
+			}
+		}
+	}
+	else{
+		Log::Error("Goal Button Control Driver definitions not found! Skipping...");
+	}
+
+	#pragma endregion
+
 }
 vector<string> Config::getBindingStringList(string bindings){
 	vector<char*> tmp;
@@ -766,6 +843,16 @@ bool Config::setBindingsToControl(vector<string> bindings, ControlItem *control)
 	if(!success)
 		Log::Error("One or more bindings failed to allocate for control " + control->name + ". Please check the Config!");
 	return success;
+}
+
+TeleOpGoal Config::getTeleOpGoal(string goalString){
+	if(goalString.compare("ElevatorControl") == 0){
+		return TeleOpGoal::ElevatorControl;
+	}
+	else{
+		Log::Error("Error registering teleop goal " + goalString + ". Skipping this control...");
+		return TeleOpGoal::None;
+	}
 }
 
 Config::~Config(){}

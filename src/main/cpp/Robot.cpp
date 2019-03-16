@@ -175,9 +175,4 @@ void Robot::Test()
 	}
 }
 
-void Robot::Disabled() {
-	m_activeCollection->GetActiveGoal()->Reset();
-	m_activeCollection->SetActiveGoal(new MultitaskGoal(m_activeCollection, false));
-}
-
 START_ROBOT_CLASS(Robot) //!< This identifies Robot as the main Robot starting class

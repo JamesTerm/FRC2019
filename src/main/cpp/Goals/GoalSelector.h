@@ -14,7 +14,8 @@ Email: chrisrweeks@aol.com
 #include "FRC2019_Goals.h"
 
 enum TeleOpGoal{
-    ElevatorControl
+    ElevatorControl,
+    None
 };
 
 static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal, string autonSelected, string positionSelected)

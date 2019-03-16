@@ -45,7 +45,6 @@ class Robot : public SampleRobot
         void Autonomous() override;
         void OperatorControl() override;
         void Test() override;
-		void Disabled() override;
 
       private:
         Drive *m_drive;
