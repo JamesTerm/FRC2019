@@ -25,7 +25,8 @@ using namespace Controls;
 auto onControllerValueChanged = [&](EventArgs* e) {
 	try{
 		auto args = (TEventArgs<double, ControlItem*>*)e;
-		if(typeid(args->GetSender()) == typeid(GoalButtonControl)){
+		if (dynamic_cast<GoalButtonControl*>(args->GetSender())) {
+			args->GetSender()->m_activeCollection->GetActiveGoal()->Reset();
 			TeleOpGoal goal = ((GoalButtonControl*)(args->GetSender()))->m_goal;
 			SmartDashboard::PutString("GoalButtonControl Status", "Control Found");
 			Goal* goalToAdd = SelectTeleOpGoal(args->GetSender()->m_activeCollection, goal, args->GetValue());

@@ -72,6 +72,7 @@ double ButtonControl::Update(double _dTime){
 		* If the button is being pressed
 		*/
 		if(val){
+
 			/*
 			* If the difference between the previous value set to the motor and the powermultiplier is greater than the set increment
 			*/
@@ -103,6 +104,7 @@ double ButtonControl::Update(double _dTime){
 			return current;
 		}
 		else if(actOnRelease && !val){
+			current = 0.0;
 			if(abs(previous - current) > EPSILON_MIN)
 					ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
 			previous = 0;

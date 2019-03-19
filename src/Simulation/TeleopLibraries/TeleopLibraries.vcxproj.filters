@@ -119,6 +119,9 @@
     <ClCompile Include="Log.cpp">
       <Filter>Util</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\main\cpp\Controls\GoalButtonControl.cpp">
+      <Filter>Controls\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\main\cpp\Components\DigitalInputItem.h">
@@ -231,6 +234,9 @@
     </ClInclude>
     <ClInclude Include="..\..\main\cpp\Pugi\pugixml.h">
       <Filter>Pugi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\main\cpp\Controls\GoalButtonControl.h">
+      <Filter>Controls\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

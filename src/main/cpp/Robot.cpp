@@ -126,8 +126,7 @@ void Robot::Autonomous()
 #if 1 //test method doesnt work in rio for some reason...
 void Robot::OperatorControl()
 {
-	if(m_activeCollection->GetActiveGoal() != NULL)
-		m_activeCollection->GetActiveGoal()->~MultitaskGoal();
+	m_activeCollection->GetActiveGoal()->~MultitaskGoal();
 	m_teleOpMasterGoal = new MultitaskGoal(m_activeCollection, false);
 	//m_teleOpMasterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
 	//m_teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection));

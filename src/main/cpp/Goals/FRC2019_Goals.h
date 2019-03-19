@@ -121,8 +121,8 @@ class Goal_ControllerOverride : public AtomicGoal
   public:
     Event DriverValueChanged;
     Event OperatorValueChanged;
-    bool m_IsDriveInUse;
-    bool m_IsOperatorInUse;
+    bool m_IsDriveInUse = false;
+    bool m_IsOperatorInUse = false;
     Goal_ControllerOverride(ActiveCollection *activeCollection, int controller = 2)
     {
       m_activeCollection = activeCollection;
