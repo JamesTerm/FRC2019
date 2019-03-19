@@ -57,10 +57,7 @@ protected:
 class Goal_TimeOut : public Goal_Wait_ac
 {
 public:
-  Goal_TimeOut(ActiveCollection *activeCollection, double timeOut) : Goal_Wait_ac(activeCollection, timeOut) {
-    Log::Error("TIMER CREATED WITH TIMEOUT: " + to_string(timeOut));
-    SmartDashboard::PutNumber("Timeout Goal", timeOut);
-  }
+  Goal_TimeOut(ActiveCollection *activeCollection, double timeOut) : Goal_Wait_ac(activeCollection, timeOut) {}
   virtual Goal::Goal_Status Process(double dTime);
   void Terminate();
 };
