@@ -13,6 +13,7 @@ Email: cooper.ryan@centaurisoftware.co
 #include <iostream>
 
 #include "ActiveCollection.h"
+#include "../Goals/Goal.h"
 
 using namespace std;
 using namespace Configuration;
@@ -22,6 +23,7 @@ using namespace Configuration;
 **/
 ActiveCollection::ActiveCollection()
 {
+	activeGoal = new MultitaskGoal(this, false);
 }
 
 /**

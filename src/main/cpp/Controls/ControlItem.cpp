@@ -25,18 +25,22 @@ using namespace Controls;
 auto onControllerValueChanged = [&](EventArgs* e) {
 	try{
 		auto args = (TEventArgs<double, ControlItem*>*)e;
-		if(typeid(args->GetSender()) == typeid(GoalButtonControl)){
+		Log::Warning("Value changed called by::" + args->GetSender()->name);
+		if (dynamic_cast<GoalButtonControl*>(args->GetSender())) {
+			args->GetSender()->m_activeCollection->GetActiveGoal()->Reset();
 			TeleOpGoal goal = ((GoalButtonControl*)(args->GetSender()))->m_goal;
 			SmartDashboard::PutString("GoalButtonControl Status", "Control Found");
 			Goal* goalToAdd = SelectTeleOpGoal(args->GetSender()->m_activeCollection, goal, args->GetValue());
 			MultitaskGoal* teleOpMasterGoal = args->GetSender()->m_activeCollection->GetActiveGoal();
-			teleOpMasterGoal->AddGoal(new Goal_TimeOut(args->GetSender()->m_activeCollection, 7));
+			//TODO: CHANGE THIS BACK
+	//		teleOpMasterGoal->AddGoal(new Goal_TimeOut(args->GetSender()->m_activeCollection, 7));
 			teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(args->GetSender()->m_activeCollection));
 			teleOpMasterGoal->AddGoal(goalToAdd);
 			args->GetSender()->m_activeCollection->SetActiveGoal(teleOpMasterGoal);
 			args->GetSender()->m_activeCollection->GetActiveGoal()->Activate();
 			((GoalButtonControl*)(args->GetSender()))->m_goalSet = true;
 			SmartDashboard::PutString("GoalButtonControl Status", "GoalActivated");
+			cout << "ADDED THE GOAL" << endl;
 			return;
 		}
 		args->GetSender()->SetToComponents(args->GetValue());

@@ -57,7 +57,10 @@ protected:
 class Goal_TimeOut : public Goal_Wait_ac
 {
 public:
-  Goal_TimeOut(ActiveCollection *activeCollection, double timeOut) : Goal_Wait_ac(activeCollection, timeOut) {}
+  Goal_TimeOut(ActiveCollection *activeCollection, double timeOut) : Goal_Wait_ac(activeCollection, timeOut) {
+    Log::Error("TIMER CREATED WITH TIMEOUT: " + to_string(timeOut));
+    SmartDashboard::PutNumber("Timeout Goal", timeOut);
+  }
   virtual Goal::Goal_Status Process(double dTime);
   void Terminate();
 };
@@ -121,8 +124,8 @@ class Goal_ControllerOverride : public AtomicGoal
   public:
     Event DriverValueChanged;
     Event OperatorValueChanged;
-    bool m_IsDriveInUse;
-    bool m_IsOperatorInUse;
+    bool m_IsDriveInUse = false;
+    bool m_IsOperatorInUse = false;
     Goal_ControllerOverride(ActiveCollection *activeCollection, int controller = 2)
     {
       m_activeCollection = activeCollection;

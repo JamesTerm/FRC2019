@@ -481,6 +481,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 				bool actOnRelease = button.attribute("actOnRelease").as_bool();
 				bool isSolenoid = button.attribute("isSolenoid").as_bool();
 				bool isAmpLimited = button.attribute("isAmpLimited").as_bool();
+				bool isRamp = button.attribute("isRamp").as_bool();
 				if(!multiply_xml){
 					Log::Error("No Power Multiplier detected for ButtonControl " + name + ". Defaulting to 1.0. This may cause driving errors!");
 					multiply = 1.0;
@@ -504,6 +505,8 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 				if(isAmpLimited)
 					tmp->SetAmpRegulation(11, 30);
+				if (isRamp)
+					tmp->SetRamp(0.1);
 				//TODO: make this work lol
 				xml_attribute bind_event_xml = button.attribute("bindEvent");
 				bool bind_event = bind_event_xml.as_bool(); 
@@ -588,6 +591,9 @@ void Config::AllocateDriverControls(xml_node &controls){
 						if(!bind_event_xml || bind_event){
 							m_activeCollection->AddEvent(&(tmp->ValueChanged));
 						}
+					}
+					else {
+						Log::Error("Failed to load GoalButtonControl " + name + ". This may cause a fatal runtime eror!");
 					}
 				}
 				else{
@@ -790,6 +796,9 @@ void Config::AllocateOperatorControls(xml_node &controls){
 							m_activeCollection->AddEvent(&(tmp->ValueChanged));
 						}
 					}
+					else {
+						Log::Error("Failed to load GoalButtonControl " + name + ". This may cause a fatal runtime eror!");
+					}
 				}
 				else{
 					Log::Error("Failed to load GoalButtonControl " + name + ". This may cause a fatal runtime eror!");
@@ -801,7 +810,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 		}
 	}
 	else{
-		Log::Error("Goal Button Control Driver definitions not found! Skipping...");
+		Log::Error("Goal Button Control Operator definitions not found! Skipping...");
 	}
 
 	#pragma endregion
@@ -848,6 +857,9 @@ bool Config::setBindingsToControl(vector<string> bindings, ControlItem *control)
 TeleOpGoal Config::getTeleOpGoal(string goalString){
 	if(goalString.compare("ElevatorControl") == 0){
 		return TeleOpGoal::ElevatorControl;
+	}
+	else if (goalString.compare("Timer") == 0) {
+		return TeleOpGoal::Timer;
 	}
 	else{
 		Log::Error("Error registering teleop goal " + goalString + ". Skipping this control...");

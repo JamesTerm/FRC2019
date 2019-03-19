@@ -23,8 +23,8 @@ namespace Controls{
 class GoalButtonControl : public ControlItem {
 private:
 	int m_button;
-	double m_current;
-	double m_previous;
+	double m_current = 0;
+	double m_previous = 0;
 
 public:
 	GoalButtonControl();
