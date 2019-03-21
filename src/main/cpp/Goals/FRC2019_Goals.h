@@ -139,6 +139,7 @@ class Goal_ControllerOverride : public AtomicGoal
     int m_controller;
     ActiveCollection *m_activeCollection;
 };
+#if 0
 class Goal_ElevatorControl : public AtomicGoal
 {
   //for right now, straight up trapezoidal profile that tries to approx the correct distance.
@@ -174,11 +175,34 @@ class Goal_ElevatorControl : public AtomicGoal
     double moveTime;
     bool m_goingUp;
 
-    const double MAX_POWER = .75;
+    const double MAX_POWER = .5;
     const double MIN_POWER = .2;
     const double UP_TIME_SCALAR = .1; //idk what these really are
-    const double DOWN_TIME_SCALAR = .1;
+    const double DOWN_TIME_SCALAR = 1.1;
 };
+#else
+class Goal_ElevatorControl : public AtomicGoal
+{
+  public:
+    Goal_ElevatorControl(ActiveCollection* activeCollection, double target) : m_activeCollection(activeCollection) , m_target(target)
+    {
+      m_pot = (PotentiometerItem*)activeCollection->Get("pot");
+    }
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    virtual void Terminate();
+  private:
+    ActiveCollection* m_activeCollection;
+    PotentiometerItem* m_pot;
+    double m_target;
+
+    double m_currentPos;
+    double error, errorPrior = 0, integ, deriv;
+    const double bias = 0, kp = 4, ki = 0, kd = 0;
+    const double MAX_POWER = .3;
+    const double FREEDOM = 0.02;
+};
+#endif
     
 
 //Goals that use data to determine completion go here

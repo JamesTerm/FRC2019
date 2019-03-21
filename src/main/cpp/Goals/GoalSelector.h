@@ -16,6 +16,7 @@ Email: chrisrweeks@aol.com
 enum TeleOpGoal{
     ElevatorControl,
 	Timer,
+    eDriveWithTimer,
     None
 };
 
@@ -122,7 +123,9 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
 static Goal* SelectTeleOpGoal(ActiveCollection* activeCollection, TeleOpGoal goalSelected, double params){
 	if (goalSelected == TeleOpGoal::ElevatorControl)
 		return new Goal_ElevatorControl(activeCollection, params);
-	else if (goalSelected = TeleOpGoal::Timer)
+	else if (goalSelected == TeleOpGoal::Timer)
 		return new Goal_TimeOut(activeCollection, params);
+    else if(goalSelected == TeleOpGoal::eDriveWithTimer)
+        return new Goal_DriveWithTimer(activeCollection, .5, .5, params);
 	return new Goal_TimeOut(activeCollection, params);
 }

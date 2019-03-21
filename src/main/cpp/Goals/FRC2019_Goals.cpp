@@ -56,6 +56,7 @@ Goal::Goal_Status Goal_TimeOut::Process(double dTime)
 {
     if (m_Status == eActive)
     {
+        Log::General("timeOutProcess");
         m_currentTime += dTime;
         SmartDashboard::PutNumber("timeOut",m_currentTime);
         if (m_currentTime >= m_timeOut)
@@ -77,8 +78,10 @@ void Goal_TimeOut::Terminate()
 /***********************Goal_DriveWithTimer***********************/
 Goal::Goal_Status Goal_DriveWithTimer::Process(double dTime)
 {
+    Log::General("b4");
     if (m_Status == eActive)
     {
+        Log::General("processing");
         m_currentTime += dTime;
         SetDrive(m_leftSpeed, m_rightSpeed, m_activeCollection);
         if (m_currentTime >= m_timeOut)
@@ -102,104 +105,7 @@ void Goal_DriveWithTimer::Terminate()
 #pragma endregion
 
 #pragma region ControllerOverride
-#if 0
-/***********************Goal_ControllerOverride***********************/
-void Goal_ControllerOverride::Activate()
-{
-    m_Status = eActive;
-}
 
-void Goal_ControllerOverride::TestDriver()
-{
-	if (m_IsDriveInUse)
-	{
-		//since we listened to just one event this is a bit redundant added for consistency
-		m_EventMap.Event_Map["DriverDetected"].Fire();  
-		m_Status = eCompleted;
-	}
-}
-
-void Goal_ControllerOverride::TestOperator()
-{
-	if (m_IsOperatorInUse)
-	{
-		m_EventMap.Event_Map["OperatorDetected"].Fire();
-		m_Status = eCompleted;
-	}
-}
-
-//Setup to remain active until an override is detected... in which case it can fire an event and change to completed status
-Goal::Goal_Status Goal_ControllerOverride::Process(double dTime)
-{
-    if(eActive)
-    {
-		if (m_controller == 0)
-			TestDriver();
-		else if (m_controller == 1)
-			TestOperator();
-        else
-        {
-			TestDriver();
-			if (m_Status==eActive)
-				TestOperator();
-        }
-    }
-	return m_Status;
-}
-
-
-void Goal_ControllerOverride::SetCallbacks(bool bind)
-{
-	std::function<void()> oe = [&] 
-	{
-		m_IsOperatorInUse=true; 
-	};
-	std::function<void(bool)> oe_on_off = [&](bool on)
-	{
-		m_IsOperatorInUse = true;
-	};
-	std::function<void(double)> oe_val = [&](double val)
-	{
-		if (val>0.0)
-			m_IsOperatorInUse = true;
-	};
-
-	std::function<void(bool)> de_on_off = [&](bool on)
-	{
-		m_IsDriveInUse = on;
-	};
-
-	if (bind)
-	{
-		m_EventMap.EventOnOff_Map["IsDriverMoving"].Subscribe(this, de_on_off);
-		m_EventMap.Event_Map["Arm_SetPosRest"].Subscribe(this,oe);
-		m_EventMap.Event_Map["Arm_SetPosCargo1"].Subscribe(this, oe);
-		m_EventMap.Event_Map["Arm_SetPosCargo2"].Subscribe(this, oe);
-		m_EventMap.Event_Map["Arm_SetPosCargo3"].Subscribe(this, oe);
-		m_EventMap.EventValue_Map["Arm_SetCurrentVelocity"].Subscribe(this, oe_val);
-		m_EventMap.EventOnOff_Map["Arm_IntakeDeploy"].Subscribe(this, oe_on_off);
-		//note skipping keyboard, but could indeed listen to them as well
-		m_EventMap.EventValue_Map["Claw_SetCurrentVelocity"].Subscribe(this, oe_val);
-		m_EventMap.EventOnOff_Map["Arm_HatchDeploy"].Subscribe(this, oe_on_off);
-		m_EventMap.EventOnOff_Map["Arm_HatchGrabDeploy"].Subscribe(this, oe_on_off);
-		m_EventMap.EventOnOff_Map["Robot_CloseDoor"].Subscribe(this, oe_on_off);
-	}
-	else
-	{
-		m_EventMap.EventOnOff_Map["IsDriverMoving"].Remove(this);
-		m_EventMap.Event_Map["Arm_SetPosRest"].Remove(this);
-		m_EventMap.Event_Map["Arm_SetPosCargo1"].Remove(this);
-		m_EventMap.Event_Map["Arm_SetPosCargo2"].Remove(this);
-		m_EventMap.Event_Map["Arm_SetPosCargo3"].Remove(this);
-		m_EventMap.EventValue_Map["Arm_SetCurrentVelocity"].Remove(this);
-		m_EventMap.EventOnOff_Map["Arm_IntakeDeploy"].Remove(this);
-		m_EventMap.EventValue_Map["Claw_SetCurrentVelocity"].Remove(this);
-		m_EventMap.EventOnOff_Map["Arm_HatchDeploy"].Remove(this);
-		m_EventMap.EventOnOff_Map["Arm_HatchGrabDeploy"].Remove(this);
-		m_EventMap.EventOnOff_Map["Robot_CloseDoor"].Remove(this);
-	}
-}
-#endif
 void Goal_ControllerOverride::Activate()
 {
     m_Status = eActive;
@@ -280,6 +186,7 @@ void Goal_ElevatorControl::Activate()
     m_Status = eActive;
 }
 
+#if 0
 Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
 {
     if(m_Status == eActive)
@@ -303,7 +210,7 @@ Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
                 {
                     SetElevator(MAX_POWER, m_activeCollection);
                 }
-                else if(m_timeElapsed > moveTime && m_timeElapsed < moveTime + .25)
+                else if(m_timeElapsed > moveTime && m_timeElapsed < moveTime + .75)
                 {
                     SetElevator(((MIN_POWER-MAX_POWER)/.25)*(m_timeElapsed - moveTime - .25) + MAX_POWER, m_activeCollection);
                 }
@@ -344,6 +251,35 @@ Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
     }
     
 }
+#else 
+Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
+{
+    if(m_Status == eActive)
+    {
+        Log::General("ele");
+        m_currentPos = m_pot->Get();
+        if(m_currentPos >= m_target - FREEDOM && m_currentPos <= m_target + FREEDOM)
+        {
+            Terminate();
+            nt::NetworkTableInstance::GetDefault().GetTable("DASHBOARD_TABLE")->PutNumber("pot",m_currentPos);
+            return eCompleted;
+        }
+        error = m_target - m_currentPos;
+        integ += error * dTime;
+        deriv = (error - errorPrior) / dTime;
+
+        double power = MAX_POWER * (kp * error + ki + integ + kd * deriv);
+        SetElevator(power, m_activeCollection);
+        return eActive;
+
+    }
+    else
+    {
+        return m_Status;
+    }
+    
+}
+#endif
 
 void Goal_ElevatorControl::Terminate()
 {

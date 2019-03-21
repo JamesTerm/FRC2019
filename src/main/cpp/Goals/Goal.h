@@ -113,25 +113,3 @@ class  MultitaskGoal : public Goal
 		bool m_WaitAll;
 };
 
-//this is wherever we want to add the goal, lets say an elevator setpoint:
-/*
-MultaskGoal* temp = new MultitaskGoal(activeCollection, false); <- will not wait for all
-temp.add(new Goal_Elevator(activeCollection, whatever other params));
-temp.add(new Goal_ControllerOverride(...));
-
-masterGoal.add(temp);
-
-so now theres nested multitask goals
-
-buttons fire (i believe) when they are pressed. We need these goals to be actOnRelease. Because otherwise
-if the operator presses the setpoint button it will begin to run, but when he takes his finger off of it a 
-millisecond later, it will fire controlleroverride :/
-
-does that make sense?
-
-yeah so basically without act on release it is this:
-button pressed, goal added, button released, CO fires and fails goal.
-
-with act on release its this:
-button pressed, button released, goal added <- yeet
-*/

@@ -861,6 +861,10 @@ TeleOpGoal Config::getTeleOpGoal(string goalString){
 	else if (goalString.compare("Timer") == 0) {
 		return TeleOpGoal::Timer;
 	}
+	else if(goalString.compare("DriveWithTimer") == 0)
+	{
+		return TeleOpGoal::eDriveWithTimer;
+	}
 	else{
 		Log::Error("Error registering teleop goal " + goalString + ". Skipping this control...");
 		return TeleOpGoal::None;
