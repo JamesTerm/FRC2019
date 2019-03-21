@@ -65,7 +65,7 @@
 		<Operator slot="1">
 			<AxisControls>
         <outtake_control axis="5" deadZone="0.08" reversed="true" powerMultiplier="1.0" bindings="intake"/>
-				<elevator_control axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.75" bindings="elevator_0, elevator_1, elevator_2, elevator_3"/>
+				<elevator_control axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.75" bindings="elevator_0, elevator_1, elevator_2, elevator_3" isLift="true"/>
 			</AxisControls>
 			<ButtonControls>
         <intakeButton button="4" powerMultiplier="0.8" isRamp="true" isAmpLimited="true" actOnRelease="true"/>

@@ -44,7 +44,8 @@ double AxisControl::Update(double _dTime)
 			previousPow = currentPow;
 			return currentPow;
 		}
-		else{
+		else if(!m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive){
+			Log::General("Got it in the bag");
 			double currentVal = ((PotentiometerItem*)m_activeCollection->Get("pot"))->Get();
 			if(!isIdle){
 				targetVal = currentVal;

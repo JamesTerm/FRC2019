@@ -436,7 +436,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 				AxisControl *tmp = new AxisControl(m_driveJoy, name, channel.as_int(), deadZone, reversed, multiply, m_activeCollection);
 				m_drive->AddControlDrive(tmp);
 				string reversed_print = reversed ? "true" : "false" ;
-				Log::General("Added AxisControl " + name + ", Axis: " + to_string(channel.as_int()) + ", DeadZone: " + to_string(deadZone) + ", Reversed: " + reversed_print + ", Power Multiplier: " + to_string(multiply));
+				Log::General("Added AxisControl " + name + ", Axis: " + to_string(channel.as_int()) + ", DeadZone: " + to_string(deadZone) + ", Reversed: " + reversed_print + ", Power Multiplier: " + to_string(multiply) + "Is Lift: " + to_string(isLift));
 				xml_attribute bindings = axis.attribute("bindings");
 				if(bindings){
 					string bind_string = bindings.as_string();
@@ -447,7 +447,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 					Log::Error("Control bindings not found for " + name + ". Did you intend to bind this control to anything?");
 				}
 				if(isLift)
-					tmp->SetLift(3.0, m_activeCollection);
+					tmp->SetLift(1.5, m_activeCollection);
 				xml_attribute bind_event_xml = axis.attribute("bindEvent");
 				bool bind_event = bind_event_xml.as_bool(); 
 				if(!bind_event_xml || bind_event){
@@ -635,6 +635,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				double multiply;
 				xml_attribute deadZone_xml = axis.attribute("deadZone");
 				xml_attribute multiply_xml = axis.attribute("powerMultiplier");
+				bool isLift = axis.attribute("isLift").as_bool();
 				if(!deadZone_xml){
 					Log::Error("No DeadZone detected for AxisControl " + name + ". Defaulting to 0.085. This may cause driving errors!");
 					deadZone = 0.085;
@@ -662,6 +663,10 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				bool bind_event = bind_event_xml.as_bool(); 
 				if(!bind_event_xml || bind_event){
 					m_activeCollection->AddEvent(&(tmp->ValueChanged));
+				}
+				if(isLift){
+					tmp->SetLift(1.5, m_activeCollection);
+					Log::General("SET LIFT");
 				}
 			}
 			else{
