@@ -665,7 +665,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 					m_activeCollection->AddEvent(&(tmp->ValueChanged));
 				}
 				if(isLift){
-					tmp->SetLift(1.5, m_activeCollection);
+					tmp->SetLift(6.9, m_activeCollection);
 					Log::General("SET LIFT");
 				}
 			}

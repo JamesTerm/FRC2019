@@ -38,7 +38,7 @@ namespace Controls
 			bool isLift;
 			ActiveCollection *m_activeCollection;
 			//TODO: downVal
-			bool isIdle = true;
+			bool isIdle = false;
 			double targetVal;
 
 		public:

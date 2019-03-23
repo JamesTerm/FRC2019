@@ -32,7 +32,7 @@ auto onControllerValueChanged = [&](EventArgs* e) {
 			Goal* goalToAdd = SelectTeleOpGoal(args->GetSender()->m_activeCollection, goal, args->GetValue());
 			MultitaskGoal* teleOpMasterGoal = args->GetSender()->m_activeCollection->GetActiveGoal();
 			teleOpMasterGoal->AddGoal(new Goal_TimeOut(args->GetSender()->m_activeCollection, 7));
-			teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(args->GetSender()->m_activeCollection));
+			teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(args->GetSender()->m_activeCollection, 1));
 			teleOpMasterGoal->AddGoal(goalToAdd);
 			args->GetSender()->m_activeCollection->SetActiveGoal(teleOpMasterGoal);
 			args->GetSender()->m_activeCollection->GetActiveGoal()->Activate();

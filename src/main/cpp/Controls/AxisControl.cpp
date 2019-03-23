@@ -34,6 +34,7 @@ AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZo
 
 double AxisControl::Update(double _dTime)
 {
+	SmartDashboard::PutBoolean("IS IDLE", isIdle);
 	double raw = (*joy).GetRawAxis(axis);
 	if (!(abs(raw) > deadZone))
 	{
@@ -51,9 +52,13 @@ double AxisControl::Update(double _dTime)
 				targetVal = currentVal;
 				isIdle = true;
 				return currentPow;
+				Log::General("!isIdle", true);
+				SmartDashboard::PutBoolean("IS WORKING", true);
 			}
-			double err = (targetVal - currentVal)/targetVal;
+			double err = (targetVal - currentVal);
+			Log::General("error: " + to_string(err));
 			currentPow = err * gane;
+			Log::General("SETTING CURRENT POW: " + to_string(currentPow));
 			SetToComponents(currentPow);
 			return currentPow;
 		}
