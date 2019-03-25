@@ -46,7 +46,9 @@ void Robot::RobotInit()
 	Log::General("Program Version: " + to_string(VERSION) + " Revision: " + REVISION, true);
 	Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
 	//Must have this for smartdashboard to work properly
-	CameraServer::GetInstance()->StartAutomaticCapture(0);
+	camera =  CameraServer::GetInstance()->StartAutomaticCapture(0);
+	camera.SetResolution(160,120);
+	camera.SetFPS(15);
 	SmartDashboard::init();
 	m_inst = nt::NetworkTableInstance::GetDefault();		  //!Network tables
 	m_visionTable = m_inst.GetTable("VISION_2019");			  //!Vision network table
@@ -94,7 +96,7 @@ void Robot::Autonomous()
 #endif
 	m_masterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15.0));
 	m_masterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
-	m_masterGoal->Activate();
+	//m_masterGoal->Activate();
 	double dTime = 0.010;
 	double current_time = 0.0;
 	while (m_masterGoal->GetStatus() == Goal::eActive && _IsAutononomous() && !IsDisabled())

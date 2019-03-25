@@ -65,7 +65,7 @@
         </Driver>
 		<Operator slot="1">
 			<AxisControls>
-        <outtake_control axis="2" deadZone="0.08" reversed="false" powerMultiplier="1.0" bindings="intake"/>
+                <outtake_control axis="2" deadZone="0.08" reversed="false" powerMultiplier="1.0" bindings="intake"/>
 				<elevator_control axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.75" bindings="elevator_0, elevator_1, elevator_2, elevator_3" isLift="true"/>
                 <intake_control axis="3" deadZone="0.08" reversed="true" powerMultiplier="1.0" bindings="intake"/>
 			</AxisControls>
@@ -73,14 +73,14 @@
         <intakeButton button="4" powerMultiplier="0.8" isRamp="true" isAmpLimited="false" actOnRelease="true"/>
 			</ButtonControls>
             <GoalButtonControls>
-            <!--Elevator pot settings 3/21/19 0: .12, 1: .30, 2: .66, 3: .97 -->
+                <!--Elevator pot settings 3/21/19 0: .12, 1: .30, 2: .66, 3: .97 -->
                 <elePreset_0 button="1" goal="ElevatorControl" params=".12"/>
                 <elePreset_1 button="3" goal="ElevatorControl" params=".30"/>
                 <elePreset_2 button="4" goal="ElevatorControl" params=".66"/>
                 <elePreset_3 button="2" goal="ElevatorControl" params=".97"/>
-          </GoalButtonControls>
+            </GoalButtonControls>
 			<ToggleButtonControls>
-        <hatch_push_control button="5" powerMultiplier="1.0" bindings="hatch_push"/>
+                <hatch_push_control button="5" powerMultiplier="1.0" bindings="hatch_push"/>
 				<hatch_open_control button="6" powerMultiplier="1.0" bindings="hatch_open"/>
 				<wrist_control button="10" powerMultiplier="1.0" bindings="wrist"/>
 			</ToggleButtonControls>

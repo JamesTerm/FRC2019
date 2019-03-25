@@ -34,7 +34,6 @@ AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZo
 
 double AxisControl::Update(double _dTime)
 {
-	SmartDashboard::PutBoolean("IS IDLE", isIdle);
 	double raw = (*joy).GetRawAxis(axis);
 	if (!(abs(raw) > deadZone))
 	{
@@ -46,8 +45,9 @@ double AxisControl::Update(double _dTime)
 			return currentPow;
 		}
 		else if(!m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive){
-			Log::General("Got it in the bag");
 			double currentVal = ((PotentiometerItem*)m_activeCollection->Get("pot"))->Get();
+			//TODO: use PID. this is a gross temp fix
+			#if 0
 			if(!isIdle){
 				targetVal = currentVal;
 				isIdle = true;
@@ -59,7 +59,8 @@ double AxisControl::Update(double _dTime)
 			Log::General("error: " + to_string(err));
 			currentPow = err * gane;
 			Log::General("SETTING CURRENT POW: " + to_string(currentPow));
-			SetToComponents(currentPow);
+			#endif
+			SetToComponents(bias);
 			return currentPow;
 		}
 	}

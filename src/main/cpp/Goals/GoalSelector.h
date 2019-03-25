@@ -23,6 +23,9 @@ enum TeleOpGoal{
 static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal, string autonSelected, string positionSelected)
 {
     bool isFound = true;
+    #if 1
+    if(autonSelected == "NONE") return true;
+    
 	if (autonSelected == "DEBUG")
 	{
 		//goal->AddGoal(new Goal_VisionAlign(activeCollection, new VisionTarget(320, 20), 140.0)); //!120 sec timeout for DEBUG only
@@ -116,6 +119,7 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
         goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(10.0),.75));
         isFound = false;
     }
+    #endif
     
     return isFound;
 }
