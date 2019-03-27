@@ -49,6 +49,7 @@ void Robot::RobotInit()
 	camera =  CameraServer::GetInstance()->StartAutomaticCapture(0);
 	camera.SetResolution(160,120);
 	camera.SetFPS(15);
+	camera.SetVideoMode(cs::VideoMode::kMJPEG,160,120,24);
 	SmartDashboard::init();
 	m_inst = nt::NetworkTableInstance::GetDefault();		  //!Network tables
 	m_visionTable = m_inst.GetTable("VISION_2019");			  //!Vision network table
