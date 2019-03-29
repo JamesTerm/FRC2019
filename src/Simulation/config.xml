@@ -52,10 +52,10 @@
         <Driver slot="0">
             <AxisControls>
                 <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="left_0, left_1"/>
-                <rightDrive axis="5" deadZone="0.08" reversed="true" powerMultiplier="0.8" bindings="right_0, right_1"/>
+                <rightDrive axis="4" deadZone="0.08" reversed="true" powerMultiplier="0.8" bindings="right_0, right_1"/>
             </AxisControls>
           <ButtonControls>
-                <overdrive button="6" powerMultiplier="1.0" isRamp="false" isAmpLimited="false" actOnRelease="false" isOverdrive="true"/>
+                <overdrive button="5" powerMultiplier="1.0" isRamp="false" isAmpLimited="false" actOnRelease="false" isOverdrive="true"/>
           </ButtonControls>
           <GoalButtonControls>
           </GoalButtonControls>

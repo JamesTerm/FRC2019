@@ -36,6 +36,14 @@ double ButtonControl::Update(double _dTime){
 	double val = joy->GetRawButton(button); //*< Value recieved from the button
 	double tmp = val; //*< Temporary value to consistantly hold the original value of the button -> not affected by reversing the ButtonControl
 
+	if(isOverdrive)
+		{
+			bool over = !(val < EPSILON_MIN);
+			SmartDashboard::PutBoolean("overdrive",over);
+			SmartDashboard::PutNumber("overbtn",val);
+			m_activeCollection->SetOverdrive(over);
+		}
+
 	/*
 	* This is not a ramped control -> it does not speed up while the button is held down like a jet engine
 	* AND
@@ -51,10 +59,7 @@ double ButtonControl::Update(double _dTime){
 			val = !val; //*< Set the value of the button to the inverse of the recieved value
 		current = val * powerMultiplier; //*< This is the power that will be set to the motor based upon the powerMultiplier
 
-		if(isOverdrive)
-		{
-			m_activeCollection->SetOverdrive(val == 1);
-		}
+		
 
 		/*
 		* If the value has not changed since the last calling of the Update function, end the function

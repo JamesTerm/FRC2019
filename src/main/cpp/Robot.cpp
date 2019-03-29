@@ -47,13 +47,8 @@ void Robot::RobotInit()
 	Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
 	//Must have this for smartdashboard to work properly
 	camera =  CameraServer::GetInstance()->StartAutomaticCapture(0);
-#ifndef _Win32 
-	camera.SetResolution(160, 120);
+	camera.SetResolution(160,120);
 	camera.SetFPS(15);
-	camera.SetVideoMode(cs::VideoMode::kMJPEG, 160, 120, 24);
-#endif // !_Win32 
-
-	
 	SmartDashboard::init();
 	m_inst = nt::NetworkTableInstance::GetDefault();		  //!Network tables
 	m_visionTable = m_inst.GetTable("VISION_2019");			  //!Vision network table
@@ -102,6 +97,7 @@ void Robot::Autonomous()
 	m_masterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15.0));
 	m_masterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
 	//m_masterGoal->Activate();
+	m_activeCollection->SetActiveGoal(m_masterGoal);
 	double dTime = 0.010;
 	double current_time = 0.0;
 	while (m_masterGoal->GetStatus() == Goal::eActive && _IsAutononomous() && !IsDisabled())
@@ -124,7 +120,7 @@ void Robot::Autonomous()
 		Wait(dTime);
 	}
 	m_masterGoal->~MultitaskGoal();
-	cout << "goal loop complete" << endl;
+	Log::General("goal loop complete");
 }
 
 /*
@@ -138,8 +134,8 @@ void Robot::OperatorControl()
 	//m_teleOpMasterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
 	//m_teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
 	m_activeCollection->SetActiveGoal(m_teleOpMasterGoal);
-	//m_activeCollection->GetActiveGoal()->Activate();
-	CameraServer::GetInstance()->RemoveCamera("USB Camera 0");
+	m_activeCollection->GetActiveGoal()->AddGoal(new Goal_TimeOut(m_activeCollection, 3000));
+	m_activeCollection->GetActiveGoal()->Activate();
 	//TODO: Talk to Ian about this
 	Log::restartfile();
 	Log::General("Teleoperation Started.");

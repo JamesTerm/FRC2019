@@ -30,6 +30,7 @@ AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZo
 	axis = _axis;
 	deadZone = _deadZone;
 	isLift = false;
+	m_activeCollection = ac;
 }
 
 double AxisControl::Update(double _dTime)
@@ -71,19 +72,28 @@ double AxisControl::Update(double _dTime)
 	double val = ((abs(raw) - dz) * (pow(1-dz, -1)) * getSign(raw)) * powerMultiplier;
 
 	bool overdrive = m_activeCollection->GetOverdrive();
-	if(overdrive && raw > .95 && previousPow <= 1)
+	if(overdrive && abs(raw) > .95)
 	{
-		overdriveModifier += .05;
+		overdriveModifier += .01;
+		if(overdriveModifier > 1.0 - powerMultiplier) overdriveModifier = 1.0 - powerMultiplier;
 	}
 	else
 	{
-		overdriveModifier = 0;
+		if(overdriveModifier > 0)
+			overdriveModifier -= .01;
+		if(overdriveModifier < 0)
+			overdriveModifier = 0;
 	}
+	double signedOverdriveModifier = overdriveModifier * getSign(raw);
 	
 	
 	if(reversed)
+	{
 		val = -val;
-	currentPow = val + overdriveModifier;
+		signedOverdriveModifier = -signedOverdriveModifier;
+	}
+		
+	currentPow = val + signedOverdriveModifier;
 	if(abs(previousPow - currentPow) < EPSILON_MIN)
 		return currentPow;
 	previousPow = currentPow;
