@@ -43,6 +43,8 @@ namespace Controls
 
 			double bias = -.05;
 
+			double overdriveModifier = 0;
+
 		public:
 			AxisControl();
 			AxisControl(Joystick *_joy, string _name, int _axis, double _deadZone, bool _reversed, double _powerMultiplier, ActiveCollection* ac);

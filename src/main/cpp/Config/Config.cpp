@@ -482,18 +482,20 @@ void Config::AllocateDriverControls(xml_node &controls){
 				bool isSolenoid = button.attribute("isSolenoid").as_bool();
 				bool isAmpLimited = button.attribute("isAmpLimited").as_bool();
 				bool isRamp = button.attribute("isRamp").as_bool();
+				bool isOverdrive = button.attribute("isOverdrive").as_bool();
 				if(!multiply_xml){
 					Log::Error("No Power Multiplier detected for ButtonControl " + name + ". Defaulting to 1.0. This may cause driving errors!");
 					multiply = 1.0;
 				}
 				else
 					multiply = multiply_xml.as_double();
-				ButtonControl *tmp = new ButtonControl(m_driveJoy, name, channel.as_int(), actOnRelease, reversed, multiply, isSolenoid, m_activeCollection);
+				ButtonControl *tmp = new ButtonControl(m_driveJoy, name, channel.as_int(), actOnRelease, reversed, multiply, isSolenoid, m_activeCollection, isOverdrive);
 				m_drive->AddControlDrive(tmp);
 				string actOnRelease_print = actOnRelease ? "true" : "false";
 				string reversed_print = reversed ? "true" : "false";
 				string isSolenoid_print = isSolenoid ? "true" : "false";
-				Log::General("Added Button Control " + name + ", Button: " + to_string(channel.as_int()) + ", ActOnRelease: " + actOnRelease_print + ", Reversed: " + reversed_print + ", PowerMultiplier: " + to_string(multiply) + ", IsSolenoid: " + isSolenoid_print);
+				string isOverdrive_print = isOverdrive ? "true" : "false";
+				Log::General("Added Button Control " + name + ", Button: " + to_string(channel.as_int()) + ", ActOnRelease: " + actOnRelease_print + ", Reversed: " + reversed_print + ", PowerMultiplier: " + to_string(multiply) + ", IsSolenoid: " + isSolenoid_print + ", IsOverdrive: " + isOverdrive_print);
 				xml_attribute bindings = button.attribute("bindings");
 				if(bindings){
 					string bind_string = bindings.as_string();

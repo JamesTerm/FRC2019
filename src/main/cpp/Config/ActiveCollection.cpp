@@ -24,6 +24,7 @@ using namespace Configuration;
 ActiveCollection::ActiveCollection()
 {
 	activeGoal = new MultitaskGoal(this, false);
+	overdrive = false;
 }
 
 /**

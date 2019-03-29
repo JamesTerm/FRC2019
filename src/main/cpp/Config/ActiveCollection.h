@@ -58,9 +58,14 @@ namespace Configuration
 
 			void SetActiveGoal(MultitaskGoal* g) {activeGoal = g;}
 			MultitaskGoal* GetActiveGoal() {return activeGoal;}
+
+			void SetOverdrive(bool o) {overdrive = o;}
+			bool GetOverdrive() {return overdrive;}
+			
 	private:
 		vector<NativeComponent*> activeCollection;
 		MultitaskGoal* activeGoal;
+		bool overdrive;
 	};
 }
 

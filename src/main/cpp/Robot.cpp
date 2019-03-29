@@ -47,9 +47,13 @@ void Robot::RobotInit()
 	Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
 	//Must have this for smartdashboard to work properly
 	camera =  CameraServer::GetInstance()->StartAutomaticCapture(0);
-	camera.SetResolution(160,120);
+#ifndef _Win32 
+	camera.SetResolution(160, 120);
 	camera.SetFPS(15);
-	camera.SetVideoMode(cs::VideoMode::kMJPEG,160,120,24);
+	camera.SetVideoMode(cs::VideoMode::kMJPEG, 160, 120, 24);
+#endif // !_Win32 
+
+	
 	SmartDashboard::init();
 	m_inst = nt::NetworkTableInstance::GetDefault();		  //!Network tables
 	m_visionTable = m_inst.GetTable("VISION_2019");			  //!Vision network table

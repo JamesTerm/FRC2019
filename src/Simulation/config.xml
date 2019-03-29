@@ -55,10 +55,9 @@
                 <rightDrive axis="5" deadZone="0.08" reversed="true" powerMultiplier="0.8" bindings="right_0, right_1"/>
             </AxisControls>
           <ButtonControls>
+                <overdrive button="6" powerMultiplier="1.0" isRamp="false" isAmpLimited="false" actOnRelease="false" isOverdrive="true"/>
           </ButtonControls>
           <GoalButtonControls>
-            <goal_test button="1" goal="Timer" params="7.0"/>
-            <goal_test button="2" goal="Timer" params="9.0"/>
           </GoalButtonControls>
         </Driver>
 		<Operator slot="1">

@@ -18,7 +18,7 @@ using namespace Controls;
 
 ButtonControl::ButtonControl() {}
 
-ButtonControl::ButtonControl(Joystick *_joy, string _name, int _button, bool _actOnRelease, bool _reversed, double _powerMultiplier, bool _isSolenoid, ActiveCollection* ac)
+ButtonControl::ButtonControl(Joystick *_joy, string _name, int _button, bool _actOnRelease, bool _reversed, double _powerMultiplier, bool _isSolenoid, ActiveCollection* ac, bool _isOverdrive)
 	: ControlItem(_joy, _name, _reversed, _powerMultiplier, ac) {
 	button = _button;
 	actOnRelease = _actOnRelease;
@@ -28,6 +28,8 @@ ButtonControl::ButtonControl(Joystick *_joy, string _name, int _button, bool _ac
 	isAmpRegulated = false;
 	powerPort = 20;
 	pdp = new PowerDistributionPanel();
+
+	isOverdrive = _isOverdrive;
 }
 
 double ButtonControl::Update(double _dTime){
@@ -48,6 +50,12 @@ double ButtonControl::Update(double _dTime){
 		if (reversed)
 			val = !val; //*< Set the value of the button to the inverse of the recieved value
 		current = val * powerMultiplier; //*< This is the power that will be set to the motor based upon the powerMultiplier
+
+		if(isOverdrive)
+		{
+			m_activeCollection->SetOverdrive(val == 1);
+		}
+
 		/*
 		* If the value has not changed since the last calling of the Update function, end the function
 		*/

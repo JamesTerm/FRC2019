@@ -69,9 +69,21 @@ double AxisControl::Update(double _dTime)
 	}
 	double dz = deadZone + MINIMUM_JOYSTICK_RETURN;
 	double val = ((abs(raw) - dz) * (pow(1-dz, -1)) * getSign(raw)) * powerMultiplier;
+
+	bool overdrive = m_activeCollection->GetOverdrive();
+	if(overdrive && raw > .95 && previousPow <= 1)
+	{
+		overdriveModifier += .05;
+	}
+	else
+	{
+		overdriveModifier = 0;
+	}
+	
+	
 	if(reversed)
 		val = -val;
-	currentPow = val;
+	currentPow = val + overdriveModifier;
 	if(abs(previousPow - currentPow) < EPSILON_MIN)
 		return currentPow;
 	previousPow = currentPow;
