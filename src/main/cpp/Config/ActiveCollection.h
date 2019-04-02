@@ -10,6 +10,8 @@ Author(s): Ryan Cooper
 Email: cooper.ryan@centaurisoftware.co
 \********************************************************************/
 
+#pragma once
+
 #ifndef SRC_CONFIG_ACTIVECOLLECTION_H_
 #define SRC_CONFIG_ACTIVECOLLECTION_H_
 
@@ -24,6 +26,8 @@ Email: cooper.ryan@centaurisoftware.co
 #include "../Components/DoubleSolenoidItem.h"
 #include "../Components/DigitalInputItem.h"
 #include "../Components/NavX.h"
+
+class MultitaskGoal;
 
 using namespace std;
 using namespace Components;
@@ -51,8 +55,17 @@ namespace Configuration
 			void Add(NativeComponent *component);
 			void AddEvent(Event *event);
 			vector<Event*> EventMap;
+
+			void SetActiveGoal(MultitaskGoal* g) {activeGoal = g;}
+			MultitaskGoal* GetActiveGoal() {return activeGoal;}
+
+			void SetOverdrive(bool o) {overdrive = o;}
+			bool GetOverdrive() {return overdrive;}
+			
 	private:
 		vector<NativeComponent*> activeCollection;
+		MultitaskGoal* activeGoal;
+		bool overdrive;
 	};
 }
 

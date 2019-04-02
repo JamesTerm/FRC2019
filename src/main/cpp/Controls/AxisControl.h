@@ -16,8 +16,8 @@ Email:	dylantrwatson@gmail.com
 
 #include <frc/WPILib.h>
 #include "ControlItem.h"
-#include "../Config/ActiveCollection.h"
 #include "../Components/PotentiometerItem.h"
+#include "../Goals/FRC2019_Goals.h"
 
 using namespace frc;
 using namespace std;
@@ -38,13 +38,20 @@ namespace Controls
 			bool isLift;
 			ActiveCollection *m_activeCollection;
 			//TODO: downVal
-			bool isIdle = true;
+			bool isIdle = false;
 			double targetVal;
+
+			double bias = -.05;
+
+			//this var is for overdrive, if it is being used
+			double overdriveModifier = 0;
+			//this var is assigned when axis is configure. decides wehter overdrive is to be used or not
+			bool useOverdrive;
 
 		public:
 			AxisControl();
-			AxisControl(Joystick *_joy, string _name, int _axis, double _deadZone, bool _reversed, double _powerMultiplier);
-			virtual double Update() override;
+			AxisControl(Joystick *_joy, string _name, int _axis, double _deadZone, bool _reversed, double _powerMultiplier, ActiveCollection* ac, bool _useOverdrive = false);
+			virtual double Update(double _dTime) override;
 			void SetLift(double _gane, ActiveCollection *activeCollection);
 			virtual ~AxisControl();
 	};

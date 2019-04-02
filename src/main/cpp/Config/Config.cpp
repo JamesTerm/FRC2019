@@ -416,6 +416,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 			xml_attribute channel = axis.attribute("axis");
 			if(channel){
 				bool reversed = axis.attribute("reversed").as_bool();
+				bool useOverdrive = axis.attribute("useOverdrive").as_bool();
 				double deadZone;
 				double multiply;
 				xml_attribute deadZone_xml = axis.attribute("deadZone");
@@ -433,10 +434,10 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 				else
 					multiply = multiply_xml.as_double();
-				AxisControl *tmp = new AxisControl(m_driveJoy, name, channel.as_int(), deadZone, reversed, multiply);
+				AxisControl *tmp = new AxisControl(m_driveJoy, name, channel.as_int(), deadZone, reversed, multiply, m_activeCollection, useOverdrive);
 				m_drive->AddControlDrive(tmp);
 				string reversed_print = reversed ? "true" : "false" ;
-				Log::General("Added AxisControl " + name + ", Axis: " + to_string(channel.as_int()) + ", DeadZone: " + to_string(deadZone) + ", Reversed: " + reversed_print + ", Power Multiplier: " + to_string(multiply));
+				Log::General("Added AxisControl " + name + ", Axis: " + to_string(channel.as_int()) + ", DeadZone: " + to_string(deadZone) + ", Reversed: " + reversed_print + ", Power Multiplier: " + to_string(multiply) + "Is Lift: " + to_string(isLift));
 				xml_attribute bindings = axis.attribute("bindings");
 				if(bindings){
 					string bind_string = bindings.as_string();
@@ -447,7 +448,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 					Log::Error("Control bindings not found for " + name + ". Did you intend to bind this control to anything?");
 				}
 				if(isLift)
-					tmp->SetLift(3.0, m_activeCollection);
+					tmp->SetLift(1.5, m_activeCollection);
 				xml_attribute bind_event_xml = axis.attribute("bindEvent");
 				bool bind_event = bind_event_xml.as_bool(); 
 				if(!bind_event_xml || bind_event){
@@ -481,18 +482,21 @@ void Config::AllocateDriverControls(xml_node &controls){
 				bool actOnRelease = button.attribute("actOnRelease").as_bool();
 				bool isSolenoid = button.attribute("isSolenoid").as_bool();
 				bool isAmpLimited = button.attribute("isAmpLimited").as_bool();
+				bool isRamp = button.attribute("isRamp").as_bool();
+				bool isOverdrive = button.attribute("isOverdrive").as_bool();
 				if(!multiply_xml){
 					Log::Error("No Power Multiplier detected for ButtonControl " + name + ". Defaulting to 1.0. This may cause driving errors!");
 					multiply = 1.0;
 				}
 				else
 					multiply = multiply_xml.as_double();
-				ButtonControl *tmp = new ButtonControl(m_driveJoy, name, channel.as_int(), actOnRelease, reversed, multiply, isSolenoid);
+				ButtonControl *tmp = new ButtonControl(m_driveJoy, name, channel.as_int(), actOnRelease, reversed, multiply, isSolenoid, m_activeCollection, isOverdrive);
 				m_drive->AddControlDrive(tmp);
 				string actOnRelease_print = actOnRelease ? "true" : "false";
 				string reversed_print = reversed ? "true" : "false";
 				string isSolenoid_print = isSolenoid ? "true" : "false";
-				Log::General("Added Button Control " + name + ", Button: " + to_string(channel.as_int()) + ", ActOnRelease: " + actOnRelease_print + ", Reversed: " + reversed_print + ", PowerMultiplier: " + to_string(multiply) + ", IsSolenoid: " + isSolenoid_print);
+				string isOverdrive_print = isOverdrive ? "true" : "false";
+				Log::General("Added Button Control " + name + ", Button: " + to_string(channel.as_int()) + ", ActOnRelease: " + actOnRelease_print + ", Reversed: " + reversed_print + ", PowerMultiplier: " + to_string(multiply) + ", IsSolenoid: " + isSolenoid_print + ", IsOverdrive: " + isOverdrive_print);
 				xml_attribute bindings = button.attribute("bindings");
 				if(bindings){
 					string bind_string = bindings.as_string();
@@ -504,6 +508,8 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 				if(isAmpLimited)
 					tmp->SetAmpRegulation(11, 30);
+				if (isRamp)
+					tmp->SetRamp(0.1);
 				//TODO: make this work lol
 				xml_attribute bind_event_xml = button.attribute("bindEvent");
 				bool bind_event = bind_event_xml.as_bool(); 
@@ -539,7 +545,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 				else
 					multiply = multiply_xml.as_double();
-				ToggleButtonControl *tmp = new ToggleButtonControl(m_driveJoy, name, channel.as_int(), reversed, multiply);
+				ToggleButtonControl *tmp = new ToggleButtonControl(m_driveJoy, name, channel.as_int(), reversed, multiply, m_activeCollection);
 				m_drive->AddControlDrive(tmp);
 				xml_attribute bindings = button.attribute("bindings");
 				if(bindings){
@@ -566,6 +572,47 @@ void Config::AllocateDriverControls(xml_node &controls){
 	}	
 
 	#pragma endregion ToggleButtonControl
+
+	#pragma region GoalButtonControl
+	
+	xml_node GoalButtonControls = drive.child("GoalButtonControls");
+	if(GoalButtonControls){
+		for(xml_node button = GoalButtonControls.first_child(); button; button = button.next_sibling()){
+			string name = button.name();
+			xml_attribute channel = button.attribute("button");
+			if(channel){
+				xml_attribute goal = button.attribute("goal");
+				xml_attribute params = button.attribute("params");
+				if(goal && params){
+					TeleOpGoal goalToAdd = getTeleOpGoal(goal.as_string());
+					if(goalToAdd != TeleOpGoal::None){
+						GoalButtonControl* tmp = new GoalButtonControl(m_driveJoy, name, channel.as_int(), m_activeCollection, goalToAdd, params.as_double());
+						m_drive->AddControlDrive(tmp);
+						Log::General("Added GoalButtonControl " + name + ", Button: " + to_string(channel.as_int()) + ", Goal: " + goal.as_string() + ", Params: " + params.as_string());
+						xml_attribute bind_event_xml = button.attribute("bindEvent");
+						bool bind_event = bind_event_xml.as_bool(); 
+						if(!bind_event_xml || bind_event){
+							m_activeCollection->AddEvent(&(tmp->ValueChanged));
+						}
+					}
+					else {
+						Log::Error("Failed to load GoalButtonControl " + name + ". This may cause a fatal runtime eror!");
+					}
+				}
+				else{
+					Log::Error("Failed to load GoalButtonControl " + name + ". This may cause a fatal runtime eror!");
+				}
+			}
+			else{
+				Log::Error("Failed to load GoalButtonControl " + name + ". This may cause a fatal runtime eror!");
+			}
+		}
+	}
+	else{
+		Log::Error("Goal Button Control Driver definitions not found! Skipping...");
+	}
+
+	#pragma endregion
 }
 
 void Config::AllocateOperatorControls(xml_node &controls){
@@ -591,6 +638,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				double multiply;
 				xml_attribute deadZone_xml = axis.attribute("deadZone");
 				xml_attribute multiply_xml = axis.attribute("powerMultiplier");
+				bool isLift = axis.attribute("isLift").as_bool();
 				if(!deadZone_xml){
 					Log::Error("No DeadZone detected for AxisControl " + name + ". Defaulting to 0.085. This may cause driving errors!");
 					deadZone = 0.085;
@@ -603,7 +651,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				}
 				else
 					multiply = multiply_xml.as_double();
-				AxisControl *tmp = new AxisControl(m_operatorJoy, name, channel.as_int(), deadZone, reversed, multiply);
+				AxisControl *tmp = new AxisControl(m_operatorJoy, name, channel.as_int(), deadZone, reversed, multiply, m_activeCollection);
 				m_drive->AddControlOperate(tmp);
 				xml_attribute bindings = axis.attribute("bindings");
 				if(bindings){
@@ -618,6 +666,10 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				bool bind_event = bind_event_xml.as_bool(); 
 				if(!bind_event_xml || bind_event){
 					m_activeCollection->AddEvent(&(tmp->ValueChanged));
+				}
+				if(isLift){
+					tmp->SetLift(6.9, m_activeCollection);
+					Log::General("SET LIFT");
 				}
 			}
 			else{
@@ -653,7 +705,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				}
 				else
 					multiply = multiply_xml.as_double();
-				ButtonControl *tmp = new ButtonControl(m_operatorJoy, name, channel.as_int(), actOnRelease, reversed, multiply, isSolenoid);
+				ButtonControl *tmp = new ButtonControl(m_operatorJoy, name, channel.as_int(), actOnRelease, reversed, multiply, isSolenoid, m_activeCollection);
 				m_drive->AddControlOperate(tmp);
 				xml_attribute bindings = button.attribute("bindings");
 				if(bindings){
@@ -702,7 +754,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				}
 				else
 					multiply = multiply_xml.as_double();
-				ToggleButtonControl *tmp = new ToggleButtonControl(m_operatorJoy, name, channel.as_int(), reversed, multiply);
+				ToggleButtonControl *tmp = new ToggleButtonControl(m_operatorJoy, name, channel.as_int(), reversed, multiply, m_activeCollection);
 				m_drive->AddControlOperate(tmp);
 				xml_attribute bindings = button.attribute("bindings");
 				if(bindings){
@@ -729,6 +781,48 @@ void Config::AllocateOperatorControls(xml_node &controls){
 	}	
 
 	#pragma endregion ToggleButtonControl
+
+	#pragma region GoalButtonControl
+	
+	xml_node GoalButtonControls = _operator.child("GoalButtonControls");
+	if(GoalButtonControls){
+		for(xml_node button = GoalButtonControls.first_child(); button; button = button.next_sibling()){
+			string name = button.name();
+			xml_attribute channel = button.attribute("button");
+			if(channel){
+				xml_attribute goal = button.attribute("goal");
+				xml_attribute params = button.attribute("params");
+				if(goal && params){
+					TeleOpGoal goalToAdd = getTeleOpGoal(goal.as_string());
+					if(goalToAdd != TeleOpGoal::None){
+						GoalButtonControl* tmp = new GoalButtonControl(m_operatorJoy, name, channel.as_int(), m_activeCollection, goalToAdd, params.as_double());
+						m_drive->AddControlOperate(tmp);
+						Log::General("Added GoalButtonControl " + name + ", Button: " + to_string(channel.as_int()) + ", Goal: " + goal.as_string() + ", Params: " + params.as_string());
+						xml_attribute bind_event_xml = button.attribute("bindEvent");
+						bool bind_event = bind_event_xml.as_bool(); 
+						if(!bind_event_xml || bind_event){
+							m_activeCollection->AddEvent(&(tmp->ValueChanged));
+						}
+					}
+					else {
+						Log::Error("Failed to load GoalButtonControl " + name + ". This may cause a fatal runtime eror!");
+					}
+				}
+				else{
+					Log::Error("Failed to load GoalButtonControl " + name + ". This may cause a fatal runtime eror!");
+				}
+			}
+			else{
+				Log::Error("Failed to load GoalButtonControl " + name + ". This may cause a fatal runtime eror!");
+			}
+		}
+	}
+	else{
+		Log::Error("Goal Button Control Operator definitions not found! Skipping...");
+	}
+
+	#pragma endregion
+
 }
 vector<string> Config::getBindingStringList(string bindings){
 	vector<char*> tmp;
@@ -766,6 +860,23 @@ bool Config::setBindingsToControl(vector<string> bindings, ControlItem *control)
 	if(!success)
 		Log::Error("One or more bindings failed to allocate for control " + control->name + ". Please check the Config!");
 	return success;
+}
+
+TeleOpGoal Config::getTeleOpGoal(string goalString){
+	if(goalString.compare("ElevatorControl") == 0){
+		return TeleOpGoal::ElevatorControl;
+	}
+	else if (goalString.compare("Timer") == 0) {
+		return TeleOpGoal::Timer;
+	}
+	else if(goalString.compare("DriveWithTimer") == 0)
+	{
+		return TeleOpGoal::eDriveWithTimer;
+	}
+	else{
+		Log::Error("Error registering teleop goal " + goalString + ". Skipping this control...");
+		return TeleOpGoal::None;
+	}
 }
 
 Config::~Config(){}

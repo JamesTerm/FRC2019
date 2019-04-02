@@ -23,7 +23,9 @@ Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com
 #include "../Controls/ButtonControl.h"
 #include "../Controls/AxisControl.h"
 #include "../Controls/ToggleButtonControl.h"
+#include "../Controls/GoalButtonControl.h"
 #include "../Pugi/pugixml.h"
+#include "../Goals/GoalSelector.h"
 
 using namespace System;
 using namespace pugi;
@@ -45,6 +47,7 @@ private:
 	Drive *m_drive;
 	vector<string> getBindingStringList(string bindings);
 	bool setBindingsToControl(vector<string> bindings, ControlItem *control);
+	TeleOpGoal getTeleOpGoal(string goalString);
 };
 
 }

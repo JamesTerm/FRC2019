@@ -18,11 +18,14 @@ Email:	dylantrwatson@gmail.com
 #include "../Util/Constants.h" 
 #include "../Components/OutputComponent.h"
 #include "../Global.h"
+#include "../Config/ActiveCollection.h"
+#include "../Util/SmartDashboard.h"
 
 using namespace frc;
 using namespace std;
 using namespace Util;
 using namespace Components;
+using namespace Configuration;
 
 namespace Controls
 {
@@ -34,10 +37,11 @@ namespace Controls
 			vector<OutputComponent*> components;
 
 		public:
+			ActiveCollection* m_activeCollection;
 			Joystick *joy;
 			ControlItem();
-			ControlItem(Joystick *_joy, string _name, bool _reversed, double _powerMultiplier);
-			virtual double Update() = 0;
+			ControlItem(Joystick *_joy, string _name, bool _reversed, double _powerMultiplier, ActiveCollection* activeCollection);
+			virtual double Update(double _dTime) = 0;
 			void AddComponent(OutputComponent *component);
 			vector<string> GetComponents();
 			string name;

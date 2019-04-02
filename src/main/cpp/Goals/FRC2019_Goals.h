@@ -121,8 +121,8 @@ class Goal_ControllerOverride : public AtomicGoal
   public:
     Event DriverValueChanged;
     Event OperatorValueChanged;
-    bool m_IsDriveInUse;
-    bool m_IsOperatorInUse;
+    bool m_IsDriveInUse = false;
+    bool m_IsOperatorInUse = false;
     Goal_ControllerOverride(ActiveCollection *activeCollection, int controller = 2)
     {
       m_activeCollection = activeCollection;
@@ -139,32 +139,70 @@ class Goal_ControllerOverride : public AtomicGoal
     int m_controller;
     ActiveCollection *m_activeCollection;
 };
+#if 0
 class Goal_ElevatorControl : public AtomicGoal
 {
+  //for right now, straight up trapezoidal profile that tries to approx the correct distance.
+  //pot will only stop if it goes over/under (depending on direction) target
   public:
     Goal_ElevatorControl(ActiveCollection* activeCollection, double target)
     {
       m_activeCollection = activeCollection;
+      m_pot = (PotentiometerItem*)m_activeCollection->Get("pot");
       m_target = target;
-      m_Status = eInactive;
-      m_potientiometer = (PotentiometerItem*)activeCollection->Get("elevatorPot"); //TODO this
+      m_timeElapsed = 0;
+
+      if(target > m_pot->Get())
+      {
+        m_goingUp = true;
+        moveTime = (target - m_pot->Get()) * UP_TIME_SCALAR;
+      }
+      else
+      {
+        m_goingUp = false;
+        moveTime = (m_pot->Get() - target) * DOWN_TIME_SCALAR;
+      }
+      
     }
     virtual void Activate();
     virtual Goal::Goal_Status Process(double dTime);
     virtual void Terminate();
   private:
-    double m_target;
-    double m_currentPos;
-    double m_power;
     ActiveCollection* m_activeCollection;
-    PotentiometerItem* m_potientiometer;
+    PotentiometerItem* m_pot;
+    double m_target;
+    double m_timeElapsed;
+    double moveTime;
+    bool m_goingUp;
 
-    int kp = 0, ki = 0, kd = 0;
-    int bias = 0; //bias is a constant that is added to the output.
-    double error, integ, deriv;
-    double errorPrior;
-
+    const double MAX_POWER = .5;
+    const double MIN_POWER = .2;
+    const double UP_TIME_SCALAR = .1; //idk what these really are
+    const double DOWN_TIME_SCALAR = 1.1;
 };
+#else
+class Goal_ElevatorControl : public AtomicGoal
+{
+  public:
+    Goal_ElevatorControl(ActiveCollection* activeCollection, double target) : m_activeCollection(activeCollection) , m_target(target)
+    {
+      m_pot = (PotentiometerItem*)activeCollection->Get("pot");
+    }
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    virtual void Terminate();
+  private:
+    ActiveCollection* m_activeCollection;
+    PotentiometerItem* m_pot;
+    double m_target;
+
+    double m_currentPos;
+    double error, errorPrior = 0, integ, deriv;
+    const double bias = 0, kp = 4, ki = 0, kd = 0;
+    const double MAX_POWER = .5;
+    const double FREEDOM = 0.02;
+};
+#endif
     
 
 //Goals that use data to determine completion go here

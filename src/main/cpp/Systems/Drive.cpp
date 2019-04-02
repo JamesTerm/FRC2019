@@ -16,7 +16,10 @@ Email:	cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com
 using namespace std;
 using namespace System;
 
-Drive::Drive() { }
+Drive::Drive(ActiveCollection* activeCollection) { 
+	m_activeCollection = activeCollection;
+	m_teleOpGoal = new MultitaskGoal(m_activeCollection);
+}
 
 void Drive::AddControlDrive(ControlItem *control)
 {
@@ -28,16 +31,16 @@ void Drive::AddControlOperate(ControlItem *control)
 	m_operateControlCollection.push_back(control);
 }
 
-void Drive::Update()
+void Drive::Update(double deltaTime)
 {
 	if (!m_DisableDrive)
 	{
 		for (int i = 0; i < (int)m_driveControlCollection.size(); i++)
-			(*m_driveControlCollection[i]).Update();
+			(*m_driveControlCollection[i]).Update(deltaTime);
 	}
 	if (!m_DisableOperator)
 	{
 		for (int i = 0; i < (int)m_operateControlCollection.size(); i++)
-			(*m_operateControlCollection[i]).Update();
+			(*m_operateControlCollection[i]).Update(deltaTime);
 	}
 }

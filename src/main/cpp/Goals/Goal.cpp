@@ -149,3 +149,7 @@ void MultitaskGoal::Terminate()
 	RemoveAllGoals();
 	m_Status = eInactive; //make this inactive
 }
+
+void MultitaskGoal::Reset(){
+	Terminate();
+}

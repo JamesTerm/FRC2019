@@ -18,8 +18,8 @@ using namespace Controls;
 
 ButtonControl::ButtonControl() {}
 
-ButtonControl::ButtonControl(Joystick *_joy, string _name, int _button, bool _actOnRelease, bool _reversed, double _powerMultiplier, bool _isSolenoid)
-	: ControlItem(_joy, _name, _reversed, _powerMultiplier) {
+ButtonControl::ButtonControl(Joystick *_joy, string _name, int _button, bool _actOnRelease, bool _reversed, double _powerMultiplier, bool _isSolenoid, ActiveCollection* ac, bool _isOverdrive)
+	: ControlItem(_joy, _name, _reversed, _powerMultiplier, ac) {
 	button = _button;
 	actOnRelease = _actOnRelease;
 	isSolenoid = _isSolenoid;
@@ -28,11 +28,19 @@ ButtonControl::ButtonControl(Joystick *_joy, string _name, int _button, bool _ac
 	isAmpRegulated = false;
 	powerPort = 20;
 	pdp = new PowerDistributionPanel();
+
+	isOverdrive = _isOverdrive;
 }
 
-double ButtonControl::Update(){
+double ButtonControl::Update(double _dTime){
 	double val = joy->GetRawButton(button); //*< Value recieved from the button
 	double tmp = val; //*< Temporary value to consistantly hold the original value of the button -> not affected by reversing the ButtonControl
+
+	if(isOverdrive)
+		{
+			bool over = !(val < EPSILON_MIN);
+			m_activeCollection->SetOverdrive(over);
+		}
 
 	/*
 	* This is not a ramped control -> it does not speed up while the button is held down like a jet engine
@@ -48,6 +56,9 @@ double ButtonControl::Update(){
 		if (reversed)
 			val = !val; //*< Set the value of the button to the inverse of the recieved value
 		current = val * powerMultiplier; //*< This is the power that will be set to the motor based upon the powerMultiplier
+
+		
+
 		/*
 		* If the value has not changed since the last calling of the Update function, end the function
 		*/
@@ -72,6 +83,7 @@ double ButtonControl::Update(){
 		* If the button is being pressed
 		*/
 		if(val){
+
 			/*
 			* If the difference between the previous value set to the motor and the powermultiplier is greater than the set increment
 			*/
@@ -103,6 +115,7 @@ double ButtonControl::Update(){
 			return current;
 		}
 		else if(actOnRelease && !val){
+			current = 0.0;
 			if(abs(previous - current) > EPSILON_MIN)
 					ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
 			previous = 0;

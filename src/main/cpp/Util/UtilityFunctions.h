@@ -28,10 +28,10 @@ using namespace Components;
 /**********************************DRIVE METHODS**********************/
 static void SetDrive(double left, double right, ActiveCollection *activeCollection) //set left and right motor power. range: [0,1]
 {
-	VictorSPItem *left_0 = activeCollection->GetVictor("left_0"); //creates pointers to motor objects. This robot has three left motors and three right motors
-	VictorSPItem *left_1 = activeCollection->GetVictor("left_1");
-	VictorSPItem *right_0 = activeCollection->GetVictor("right_0");
-	VictorSPItem *right_1 = activeCollection->GetVictor("right_1");
+	VictorSPXItem *left_0 = (VictorSPXItem*)activeCollection->Get("left_0"); //creates pointers to motor objects. This robot has three left motors and three right motors
+	VictorSPXItem *left_1 = (VictorSPXItem*)activeCollection->Get("left_1");
+	VictorSPXItem *right_0 = (VictorSPXItem*)activeCollection->Get("right_0");
+	VictorSPXItem *right_1 = (VictorSPXItem*)activeCollection->Get("right_1");
 	
 
 	left_0->Set(left); //sets left and right motors to desired power
@@ -55,7 +55,17 @@ static void DriveWithTimer(double left, double right, double sec, ActiveCollecti
 
 /***********************OPERATOR METHODS************************/
 
-//we dont have any yet because robot doesn't exist yet...
+static void SetElevator(double power, ActiveCollection* activeCollection)
+{
+	((VictorSPXItem*)activeCollection->Get("elevator_0"))->Set(-power);
+	((VictorSPXItem*)activeCollection->Get("elevator_1"))->Set(-power);
+	((VictorSPXItem*)activeCollection->Get("elevator_2"))->Set(-power);
+	((VictorSPXItem*)activeCollection->Get("elevator_3"))->Set(-power);
+}
+static void StopElevator(ActiveCollection* activeCollection)
+{
+	SetElevator(0, activeCollection);
+}
 
 /********************************AUTON METHODS********************************/
 static void SlowStop(double left, double right, ActiveCollection *activeCollection) //sets motor power and decreases it over time until robot comes to a stop

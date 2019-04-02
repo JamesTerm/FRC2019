@@ -56,7 +56,9 @@ Goal::Goal_Status Goal_TimeOut::Process(double dTime)
 {
     if (m_Status == eActive)
     {
+        Log::General("timeOutProcess");
         m_currentTime += dTime;
+        SmartDashboard::PutNumber("timeOut",m_currentTime);
         if (m_currentTime >= m_timeOut)
         {
             Terminate();
@@ -76,8 +78,10 @@ void Goal_TimeOut::Terminate()
 /***********************Goal_DriveWithTimer***********************/
 Goal::Goal_Status Goal_DriveWithTimer::Process(double dTime)
 {
+    Log::General("b4");
     if (m_Status == eActive)
     {
+        Log::General("processing");
         m_currentTime += dTime;
         SetDrive(m_leftSpeed, m_rightSpeed, m_activeCollection);
         if (m_currentTime >= m_timeOut)
@@ -101,104 +105,7 @@ void Goal_DriveWithTimer::Terminate()
 #pragma endregion
 
 #pragma region ControllerOverride
-#if 0
-/***********************Goal_ControllerOverride***********************/
-void Goal_ControllerOverride::Activate()
-{
-    m_Status = eActive;
-}
 
-void Goal_ControllerOverride::TestDriver()
-{
-	if (m_IsDriveInUse)
-	{
-		//since we listened to just one event this is a bit redundant added for consistency
-		m_EventMap.Event_Map["DriverDetected"].Fire();  
-		m_Status = eCompleted;
-	}
-}
-
-void Goal_ControllerOverride::TestOperator()
-{
-	if (m_IsOperatorInUse)
-	{
-		m_EventMap.Event_Map["OperatorDetected"].Fire();
-		m_Status = eCompleted;
-	}
-}
-
-//Setup to remain active until an override is detected... in which case it can fire an event and change to completed status
-Goal::Goal_Status Goal_ControllerOverride::Process(double dTime)
-{
-    if(eActive)
-    {
-		if (m_controller == 0)
-			TestDriver();
-		else if (m_controller == 1)
-			TestOperator();
-        else
-        {
-			TestDriver();
-			if (m_Status==eActive)
-				TestOperator();
-        }
-    }
-	return m_Status;
-}
-
-
-void Goal_ControllerOverride::SetCallbacks(bool bind)
-{
-	std::function<void()> oe = [&] 
-	{
-		m_IsOperatorInUse=true; 
-	};
-	std::function<void(bool)> oe_on_off = [&](bool on)
-	{
-		m_IsOperatorInUse = true;
-	};
-	std::function<void(double)> oe_val = [&](double val)
-	{
-		if (val>0.0)
-			m_IsOperatorInUse = true;
-	};
-
-	std::function<void(bool)> de_on_off = [&](bool on)
-	{
-		m_IsDriveInUse = on;
-	};
-
-	if (bind)
-	{
-		m_EventMap.EventOnOff_Map["IsDriverMoving"].Subscribe(this, de_on_off);
-		m_EventMap.Event_Map["Arm_SetPosRest"].Subscribe(this,oe);
-		m_EventMap.Event_Map["Arm_SetPosCargo1"].Subscribe(this, oe);
-		m_EventMap.Event_Map["Arm_SetPosCargo2"].Subscribe(this, oe);
-		m_EventMap.Event_Map["Arm_SetPosCargo3"].Subscribe(this, oe);
-		m_EventMap.EventValue_Map["Arm_SetCurrentVelocity"].Subscribe(this, oe_val);
-		m_EventMap.EventOnOff_Map["Arm_IntakeDeploy"].Subscribe(this, oe_on_off);
-		//note skipping keyboard, but could indeed listen to them as well
-		m_EventMap.EventValue_Map["Claw_SetCurrentVelocity"].Subscribe(this, oe_val);
-		m_EventMap.EventOnOff_Map["Arm_HatchDeploy"].Subscribe(this, oe_on_off);
-		m_EventMap.EventOnOff_Map["Arm_HatchGrabDeploy"].Subscribe(this, oe_on_off);
-		m_EventMap.EventOnOff_Map["Robot_CloseDoor"].Subscribe(this, oe_on_off);
-	}
-	else
-	{
-		m_EventMap.EventOnOff_Map["IsDriverMoving"].Remove(this);
-		m_EventMap.Event_Map["Arm_SetPosRest"].Remove(this);
-		m_EventMap.Event_Map["Arm_SetPosCargo1"].Remove(this);
-		m_EventMap.Event_Map["Arm_SetPosCargo2"].Remove(this);
-		m_EventMap.Event_Map["Arm_SetPosCargo3"].Remove(this);
-		m_EventMap.EventValue_Map["Arm_SetCurrentVelocity"].Remove(this);
-		m_EventMap.EventOnOff_Map["Arm_IntakeDeploy"].Remove(this);
-		m_EventMap.EventValue_Map["Claw_SetCurrentVelocity"].Remove(this);
-		m_EventMap.EventOnOff_Map["Arm_HatchDeploy"].Remove(this);
-		m_EventMap.EventOnOff_Map["Arm_HatchGrabDeploy"].Remove(this);
-		m_EventMap.EventOnOff_Map["Robot_CloseDoor"].Remove(this);
-	}
-}
-#endif
 void Goal_ControllerOverride::Activate()
 {
     m_Status = eActive;
@@ -256,8 +163,6 @@ void Goal_ControllerOverride::SetCallbacks(bool bind)
             if(args->GetSender()->joy->GetPort() == 1){
                 m_IsOperatorInUse = true;
             }
-            delete args;
-            args = nullptr;
         }catch(exception &e){
             Log::Error("Known Exception Thrown in onValueChanged in a ControllerOverride! This can cause fatal Runtime Errors! Check your logs and XML.");
             Log::Error(e.what());
@@ -281,32 +186,104 @@ void Goal_ElevatorControl::Activate()
     m_Status = eActive;
 }
 
+#if 0
 Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
 {
-    ActivateIfInactive(); //this goal will always be active
     if(m_Status == eActive)
     {
-        //TODO: buttons can set target to specific value and joystick can increase/decrease target
-        m_currentPos = m_potientiometer->Get();
-        error = (m_target - m_currentPos) / m_target;
-        integ += error * dTime;               //Right Riemann Sum integral
-        deriv = (error - errorPrior) / dTime; // rise/run slope
-        errorPrior = error;               //set errorPrior for next process call
-
-        m_power = bias + (kp * error) + (ki * integ) + (kd * deriv); //power is equal to P,I,D * k-values + bias
-
-        //SetElevator(m_power,m_activeCollection); //TODO this
-        return m_Status = eActive;
+        m_timeElapsed += dTime;
+        if(((m_pot->Get() > m_target && m_goingUp) || (m_pot->Get() < m_target && !m_goingUp)))
+        {
+            Terminate();
+            return m_Status = eCompleted;
+        }
+        else
+        {
+            //look at elevator trapezoid in design folder
+            if(m_goingUp)
+            {
+                if(m_timeElapsed < .25)
+                {
+                    SetElevator((MAX_POWER-MIN_POWER)/.25 * m_timeElapsed + MIN_POWER, m_activeCollection);
+                }
+                else if(m_timeElapsed > .25 && m_timeElapsed < moveTime)
+                {
+                    SetElevator(MAX_POWER, m_activeCollection);
+                }
+                else if(m_timeElapsed > moveTime && m_timeElapsed < moveTime + .75)
+                {
+                    SetElevator(((MIN_POWER-MAX_POWER)/.25)*(m_timeElapsed - moveTime - .25) + MAX_POWER, m_activeCollection);
+                }
+                else
+                {
+                    Terminate();
+                    return m_Status = eCompleted;
+                }
+                
+                
+            }
+            else
+            {
+                //exact same math as above but with a negative in front
+                if(m_timeElapsed < .25)
+                {
+                    SetElevator(-((MAX_POWER-MIN_POWER)/.25 * m_timeElapsed + MIN_POWER), m_activeCollection);
+                }
+                else if(m_timeElapsed > .25 && m_timeElapsed < moveTime)
+                {
+                    SetElevator(-MAX_POWER, m_activeCollection);
+                }
+                else if(m_timeElapsed > moveTime && m_timeElapsed < moveTime + .25)
+                {
+                    SetElevator(-(((MIN_POWER-MAX_POWER)/.25)*(m_timeElapsed - moveTime - .25) + MAX_POWER), m_activeCollection);
+                }
+                else
+                {
+                    Terminate();
+                    return m_Status = eCompleted;
+                }
+            }
+        }
     }
     else
     {
         return m_Status;
     }
+    
 }
+#else 
+Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
+{
+    if(m_Status == eActive)
+    {
+        Log::General("ele");
+        m_currentPos = m_pot->Get();
+        if(m_currentPos >= m_target - FREEDOM && m_currentPos <= m_target + FREEDOM)
+        {
+            Terminate();
+            nt::NetworkTableInstance::GetDefault().GetTable("DASHBOARD_TABLE")->PutNumber("pot",m_currentPos);
+            return eCompleted;
+        }
+        error = m_target - m_currentPos;
+        integ += error * dTime;
+        deriv = (error - errorPrior) / dTime;
+
+        double power = MAX_POWER * (kp * error + ki + integ + kd * deriv);
+        SetElevator(power, m_activeCollection);
+        return eActive;
+
+    }
+    else
+    {
+        return m_Status;
+    }
+    
+}
+#endif
 
 void Goal_ElevatorControl::Terminate()
 {
-    //StopElevator(); //TODO this
+    StopElevator(m_activeCollection);
 }
 #pragma region FeedbackLoopGoals
 /***********************Goal_Turn***********************/
@@ -434,7 +411,7 @@ Goal::Goal_Status Goal_VisionAlign::Process(double dTime)
         return m_Status = eFailed;
     }
     updateVision();
-    Log::General( m_currentTarget->getX() + " " + m_currentTarget->getY() + " " + m_currentTarget->getRadius() + " " + Height + " " + Width + HasTarget);
+    Log::General( to_string(m_currentTarget->getX()) + " " + to_string(m_currentTarget->getY()) + " " + to_string(m_currentTarget->getRadius()) + " " + to_string(Height) + " " + to_string(Width) + to_string(HasTarget));
     if(!HasTarget) 
     {
         Log::General("no target");

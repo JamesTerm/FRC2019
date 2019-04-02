@@ -32,16 +32,18 @@ private:
 	double ampLimit;
 	PowerDistributionPanel *pdp;
 
+	bool isOverdrive;
+
 public:
 	ButtonControl();
-	ButtonControl(Joystick *_joy, string _name, int _button, bool _actOnRelease, bool _reversed, double _powerMultiplier, bool _isSolenoid);
+	ButtonControl(Joystick *_joy, string _name, int _button, bool _actOnRelease, bool _reversed, double _powerMultiplier, bool _isSolenoid, ActiveCollection* ac, bool _isOverdrive = false);
 	void SetToSolenoids(DoubleSolenoid::Value value);
 	void SetSolenoidDefault();
 	void SetRamp(double _inc);
 	void SetAmpRegulation(int _powerPort, double _ampLimit);
 	virtual ~ButtonControl();
 	int getSign(double val);
-	virtual double Update() override;
+	virtual double Update(double _dTime) override;
 };
 }
 

@@ -24,15 +24,17 @@ using namespace Components;
 
 AxisControl::AxisControl() { }
 
-AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZone, bool _reversed, double _powerMultiplier)
-	: ControlItem(_joy, _name, _reversed, _powerMultiplier)
+AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZone, bool _reversed, double _powerMultiplier, ActiveCollection* ac, bool _useOverdrive)
+	: ControlItem(_joy, _name, _reversed, _powerMultiplier, ac)
 {
 	axis = _axis;
 	deadZone = _deadZone;
 	isLift = false;
+	m_activeCollection = ac;
+	useOverdrive = _useOverdrive;
 }
 
-double AxisControl::Update()
+double AxisControl::Update(double _dTime)
 {
 	double raw = (*joy).GetRawAxis(axis);
 	if (!(abs(raw) > deadZone))
@@ -44,16 +46,23 @@ double AxisControl::Update()
 			previousPow = currentPow;
 			return currentPow;
 		}
-		else{
+		else if(!m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive){
 			double currentVal = ((PotentiometerItem*)m_activeCollection->Get("pot"))->Get();
+			//TODO: use PID. this is a gross temp fix
+			#if 0
 			if(!isIdle){
 				targetVal = currentVal;
 				isIdle = true;
 				return currentPow;
+				Log::General("!isIdle", true);
+				SmartDashboard::PutBoolean("IS WORKING", true);
 			}
-			double err = (targetVal - currentVal)/targetVal;
+			double err = (targetVal - currentVal);
+			Log::General("error: " + to_string(err));
 			currentPow = err * gane;
-			SetToComponents(currentPow);
+			Log::General("SETTING CURRENT POW: " + to_string(currentPow));
+			#endif
+			SetToComponents(bias);
 			return currentPow;
 		}
 	}
@@ -62,9 +71,30 @@ double AxisControl::Update()
 	}
 	double dz = deadZone + MINIMUM_JOYSTICK_RETURN;
 	double val = ((abs(raw) - dz) * (pow(1-dz, -1)) * getSign(raw)) * powerMultiplier;
+
+	bool overdrive = m_activeCollection->GetOverdrive();
+	if(useOverdrive && overdrive && abs(raw) > .95)
+	{
+		overdriveModifier += .01;
+		if(overdriveModifier > 1.0 - powerMultiplier) overdriveModifier = 1.0 - powerMultiplier;
+	}
+	else
+	{
+		if(overdriveModifier > 0)
+			overdriveModifier -= .01;
+		if(overdriveModifier < 0)
+			overdriveModifier = 0;
+	}
+	double signedOverdriveModifier = overdriveModifier * getSign(raw);
+	
+	
 	if(reversed)
+	{
 		val = -val;
-	currentPow = val;
+		signedOverdriveModifier = -signedOverdriveModifier;
+	}
+		
+	currentPow = val + signedOverdriveModifier;
 	if(abs(previousPow - currentPow) < EPSILON_MIN)
 		return currentPow;
 	previousPow = currentPow;

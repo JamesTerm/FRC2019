@@ -17,10 +17,11 @@ Email:	irobot9803@gmail.com
 
 using namespace std;
 using namespace Logger;
+using namespace frc;
 
     const string filename = "C/RoboLog.txt"; //name of file to be created
     static ofstream file_;
-    static bool atComp = true; //bool for comp
+    static bool atComp = false; //bool for comp
 
     void Log::General(string message, bool toDriverStation)
     {
@@ -28,10 +29,12 @@ using namespace Logger;
         {
             if(toDriverStation)
             {
-                cout << "WARNING LOG:" + message << endl;
+                DriverStation::ReportError("message");
             }
-            Log::Append("LOG: " + message);
+            cout << message << endl;
 	    }
+        Log::Append("LOG: " + message);
+
     }
     void Log::Error(string message)
     {

@@ -39,6 +39,7 @@
     <ClCompile Include="..\..\main\cpp\Controls\AxisControl.cpp" />
     <ClCompile Include="..\..\main\cpp\Controls\ButtonControl.cpp" />
     <ClCompile Include="..\..\main\cpp\Controls\ControlItem.cpp" />
+    <ClCompile Include="..\..\main\cpp\Controls\GoalButtonControl.cpp" />
     <ClCompile Include="..\..\main\cpp\Controls\ToggleButtonControl.cpp" />
     <ClCompile Include="..\..\main\cpp\Goals\FRC2019_Goals.cpp" />
     <ClCompile Include="..\..\main\cpp\Goals\Goal.cpp" />
@@ -67,6 +68,7 @@
     <ClInclude Include="..\..\main\cpp\Controls\AxisControl.h" />
     <ClInclude Include="..\..\main\cpp\Controls\ButtonControl.h" />
     <ClInclude Include="..\..\main\cpp\Controls\ControlItem.h" />
+    <ClInclude Include="..\..\main\cpp\Controls\GoalButtonControl.h" />
     <ClInclude Include="..\..\main\cpp\Controls\ToggleButtonControl.h" />
     <ClInclude Include="..\..\main\cpp\Goals\FRC2019_Goals.h" />
     <ClInclude Include="..\..\main\cpp\Goals\GoalSelector.h" />
