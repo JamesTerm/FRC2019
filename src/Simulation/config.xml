@@ -51,7 +51,7 @@
         <!-- Driver Controller, slot should always be 0 -->
         <Driver slot="0">
             <AxisControls>
-                <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="left_0, left_1"/>
+                <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="left_0, left_1" useOverdrive="true"/>
                 <rightDrive axis="4" deadZone="0.08" reversed="true" powerMultiplier="0.8" bindings="right_0, right_1"/>
             </AxisControls>
           <ButtonControls>

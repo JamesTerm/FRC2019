@@ -39,8 +39,6 @@ double ButtonControl::Update(double _dTime){
 	if(isOverdrive)
 		{
 			bool over = !(val < EPSILON_MIN);
-			SmartDashboard::PutBoolean("overdrive",over);
-			SmartDashboard::PutNumber("overbtn",val);
 			m_activeCollection->SetOverdrive(over);
 		}
 

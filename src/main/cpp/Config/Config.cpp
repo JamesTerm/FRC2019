@@ -416,6 +416,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 			xml_attribute channel = axis.attribute("axis");
 			if(channel){
 				bool reversed = axis.attribute("reversed").as_bool();
+				bool useOverdrive = axis.attribute("useOverdrive").as_bool();
 				double deadZone;
 				double multiply;
 				xml_attribute deadZone_xml = axis.attribute("deadZone");
@@ -433,7 +434,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 				}
 				else
 					multiply = multiply_xml.as_double();
-				AxisControl *tmp = new AxisControl(m_driveJoy, name, channel.as_int(), deadZone, reversed, multiply, m_activeCollection);
+				AxisControl *tmp = new AxisControl(m_driveJoy, name, channel.as_int(), deadZone, reversed, multiply, m_activeCollection, useOverdrive);
 				m_drive->AddControlDrive(tmp);
 				string reversed_print = reversed ? "true" : "false" ;
 				Log::General("Added AxisControl " + name + ", Axis: " + to_string(channel.as_int()) + ", DeadZone: " + to_string(deadZone) + ", Reversed: " + reversed_print + ", Power Multiplier: " + to_string(multiply) + "Is Lift: " + to_string(isLift));

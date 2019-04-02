@@ -43,11 +43,14 @@ namespace Controls
 
 			double bias = -.05;
 
+			//this var is for overdrive, if it is being used
 			double overdriveModifier = 0;
+			//this var is assigned when axis is configure. decides wehter overdrive is to be used or not
+			bool useOverdrive;
 
 		public:
 			AxisControl();
-			AxisControl(Joystick *_joy, string _name, int _axis, double _deadZone, bool _reversed, double _powerMultiplier, ActiveCollection* ac);
+			AxisControl(Joystick *_joy, string _name, int _axis, double _deadZone, bool _reversed, double _powerMultiplier, ActiveCollection* ac, bool _useOverdrive = false);
 			virtual double Update(double _dTime) override;
 			void SetLift(double _gane, ActiveCollection *activeCollection);
 			virtual ~AxisControl();

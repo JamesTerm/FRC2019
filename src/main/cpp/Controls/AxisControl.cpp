@@ -24,13 +24,14 @@ using namespace Components;
 
 AxisControl::AxisControl() { }
 
-AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZone, bool _reversed, double _powerMultiplier, ActiveCollection* ac)
+AxisControl::AxisControl(Joystick *_joy, string _name, int _axis, double _deadZone, bool _reversed, double _powerMultiplier, ActiveCollection* ac, bool _useOverdrive)
 	: ControlItem(_joy, _name, _reversed, _powerMultiplier, ac)
 {
 	axis = _axis;
 	deadZone = _deadZone;
 	isLift = false;
 	m_activeCollection = ac;
+	useOverdrive = _useOverdrive;
 }
 
 double AxisControl::Update(double _dTime)
@@ -72,7 +73,7 @@ double AxisControl::Update(double _dTime)
 	double val = ((abs(raw) - dz) * (pow(1-dz, -1)) * getSign(raw)) * powerMultiplier;
 
 	bool overdrive = m_activeCollection->GetOverdrive();
-	if(overdrive && abs(raw) > .95)
+	if(useOverdrive && overdrive && abs(raw) > .95)
 	{
 		overdriveModifier += .01;
 		if(overdriveModifier > 1.0 - powerMultiplier) overdriveModifier = 1.0 - powerMultiplier;
