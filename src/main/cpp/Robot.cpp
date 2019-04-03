@@ -51,13 +51,12 @@ void Robot::RobotInit()
 	camera.SetFPS(15);
 	SmartDashboard::init();
 	m_inst = nt::NetworkTableInstance::GetDefault();		  //!Network tables
-	m_visionTable = m_inst.GetTable("VISION_2019");			  //!Vision network table
 	m_dashboardTable = m_inst.GetTable("DASHBOARD_TABLE");
 	m_dashboardTable->PutStringArray("AUTON_OPTIONS", m_autonOptions);
 	m_dashboardTable->PutStringArray("POSITION_OPTIONS", m_positionOptions);
 
 	//TODO: put this in some sort of config
-	m_visionTable->PutNumber("LS",0);
+	/*m_visionTable->PutNumber("LS",0);
 	m_visionTable->PutNumber("US",3);
 	m_visionTable->PutNumber("LH",87);
 	m_visionTable->PutNumber("UH",126);
@@ -70,7 +69,7 @@ void Robot::RobotInit()
 	m_visionTable->PutNumber("UPPER_BOUND",0); //top Y bound
 	m_visionTable->PutNumber("LOWER_BOUND",1000); //bottom Y bound
 	m_visionTable->PutNumber("LEFT_BOUND",0); //left X bound
-	m_visionTable->PutNumber("RIGHT_BOUND",1000); //right X bound
+	m_visionTable->PutNumber("RIGHT_BOUND",1000); //right X bound*/
 }
 
 /*

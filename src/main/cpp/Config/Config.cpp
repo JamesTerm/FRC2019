@@ -126,9 +126,18 @@ void Config::LoadValues(xml_document &doc){
 	//TODO: make it so we can mess with the camera during the running of the robot: ie, switch which stream we are using 
 	xml_node enableSecondaryCamera = root.child("EnableSecondaryCameraServer");
 	if(enableSecondaryCamera){
-		xml_attribute cameraServerEnabled = enableSecondaryCamera.attribute("value");
+		xml_attribute cameraServerEnabled = enableSecondaryCamera.attribute("enabled");
 		if(cameraServerEnabled.as_bool()){
-			cs::UsbCamera cam = CameraServer::GetInstance()->StartAutomaticCapture();
+			cs::UsbCamera cam;
+			if(enableSecondaryCamera.attribute("port"))
+			{
+				cam = CameraServer::GetInstance()->StartAutomaticCapture(enableSecondaryCamera.attribute("port").as_int());
+			}
+			else
+			{
+				Log::Error("No SecondaryCameraServer USB port found. Using 0 as default.");
+				cam = CameraServer::GetInstance()->StartAutomaticCapture(0);
+			}
 			if(enableSecondaryCamera.attribute("autoExposure").as_bool()){
 				cam.SetExposureAuto();
 				Log::General("SecondaryCameraServer AutoExposure enabled");
@@ -137,13 +146,12 @@ void Config::LoadValues(xml_document &doc){
 				cam.SetResolution(enableSecondaryCamera.attribute("width").as_int(), enableSecondaryCamera.attribute("height").as_int());
 			}
 			else{
-				//TODO: Make stuff like this log-only (ie. not console) unless verbose output. Will assign to Ian.
-				Log::Error("No width/height for SecondaryCameraServer found!");
+				Log::Error("No width/height for SecondaryCameraServer found! Camera Server will use defauly values.");
 			}
 			if(enableSecondaryCamera.attribute("fps"))
 				cam.SetFPS(enableSecondaryCamera.attribute("fps").as_int());
 			else
-				Log::Error("No FPS for SecondaryCameraServer found!");
+				Log::Error("No FPS for SecondaryCameraServer found! Camera Server will use defauly values.");
 			Log::General(R"(Secondary camera server started, you can access the stream at http://10.34.81.2:1181)", true);
 		}
 		else{
@@ -154,6 +162,22 @@ void Config::LoadValues(xml_document &doc){
 		Log::Error("EnableSecondaryCameraServer not found. Disabling by default");
 
 	#pragma endregion SecondaryCameraServer
+
+	#pragma region Vision
+	xml_node vision = root.child("Vision");
+	if(vision)
+	{
+		if(vision.attribute("LS"))
+		{
+			
+		}
+	}
+	else
+	{
+		Log::Error("Vision not found. Vision server does not have proper values to work with and will likely fail!");
+	}
+	
+	#pragma endregion Vision
 
 	#pragma endregion MetaData
 

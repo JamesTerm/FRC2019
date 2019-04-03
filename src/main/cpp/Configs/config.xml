@@ -85,4 +85,5 @@
 			</ToggleButtonControls>
 		</Operator>
     </Controls>
+    <EnableSecondaryCameraServer fps="15" width="160" height="120"/>
 </Robot>

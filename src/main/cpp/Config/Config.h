@@ -17,6 +17,9 @@ Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
+#include <networktables/NetworkTable.h>
+#include <networktables/NetworkTableEntry.h>
+#include <networktables/NetworkTableInstance.h>
 
 #include "ActiveCollection.h"
 #include "../Systems/Drive.h"

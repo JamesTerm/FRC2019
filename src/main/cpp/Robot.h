@@ -10,7 +10,9 @@
 #include <string>
 #include <frc/WPILib.h>
 #include <frc/SampleRobot.h>
-
+#include <networktables/NetworkTable.h>
+#include <networktables/NetworkTableEntry.h>
+#include <networktables/NetworkTableInstance.h>
 
 #include "Config/Config.h"
 #include "Config/ActiveCollection.h"
@@ -20,9 +22,6 @@
 #include "Util/Log.h"
 #include "Goals/FRC2019_Goals.h"
 #include "Goals/GoalSelector.h"
-#include "networktables/NetworkTable.h"
-#include "networktables/NetworkTableEntry.h"
-#include "networktables/NetworkTableInstance.h"
 #include "Util/VisionTarget.h"
 
 using namespace frc;
@@ -53,7 +52,6 @@ class Robot : public SampleRobot
         MultitaskGoal* m_masterGoal;
         MultitaskGoal* m_teleOpMasterGoal;
 		nt::NetworkTableInstance m_inst; //!Network tables
-        shared_ptr<NetworkTable> m_visionTable; //!Vision table
         shared_ptr<NetworkTable> m_dashboardTable;
         cs::UsbCamera camera;
         string m_autonOptions[5] = {"DriveStraight","OnePieceAuto","TwoPieceAuto","DEBUG","NONE"};
