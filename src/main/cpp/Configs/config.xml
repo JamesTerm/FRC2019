@@ -41,9 +41,9 @@
         </Encoder>
         <!-- Region for DoubleSolenoids -->
         <DoubleSolenoid>
-            <hatch_open fChannel="0" rChannel="1" default="reverse"/>
-            <wrist fChannel="2" rChannel="3" default="reverse"/>
+            <wrist fChannel="0" rChannel="1" default="reverse"/>
 			<hatch_push fChannel="4" rChannel="5" default="reverse"/>
+            <endgame fChannel="2" rChannel="3" default="reverse"/>
 		</DoubleSolenoid>
         <!-- Region for DigitalInputs -->
         <DigitalInput>
@@ -56,12 +56,15 @@
         <!-- Driver Controller, slot should always be 0 -->
         <Driver slot="0">
             <AxisControls>
-                <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="left_0, left_1"/>
-                <rightDrive axis="5" deadZone="0.08" reversed="true" powerMultiplier="0.8" bindings="right_0, right_1"/>
+                <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="left_0, left_1" useOverdrive="true"/>
+                <rightDrive axis="5" deadZone="0.08" reversed="true" powerMultiplier="0.8" bindings="right_0, right_1" useOverdrive="true"/>
             </AxisControls>
           <ButtonControls>
+                <overdrive button="5" powerMultiplier="1.0" isOverdrive="true" />
           </ButtonControls>
-          
+          <ToggleButtonControls>
+                <endgame_control button="3" powerMultiplier="1.0" bindings="endgame"/>
+          </ToggleButtonControls>
         </Driver>
 		<Operator slot="1">
 			<AxisControls>
@@ -74,15 +77,11 @@
 			</ButtonControls>
             <GoalButtonControls>
                 <!--Elevator pot settings 3/21/19 0: .12, 1: .30, 2: .66, 3: .97 -->
-                <elePreset_0 button="1" goal="ElevatorControl" params=".12"/>
-                <elePreset_1 button="3" goal="ElevatorControl" params=".30"/>
-                <elePreset_2 button="4" goal="ElevatorControl" params=".66"/>
-                <elePreset_3 button="2" goal="ElevatorControl" params=".97"/>
             </GoalButtonControls>
 			<ToggleButtonControls>
                 <hatch_push_control button="5" powerMultiplier="1.0" bindings="hatch_push"/>
-				<hatch_open_control button="6" powerMultiplier="1.0" bindings="hatch_open"/>
 				<wrist_control button="10" powerMultiplier="1.0" bindings="wrist"/>
+                
 			</ToggleButtonControls>
 		</Operator>
     </Controls>

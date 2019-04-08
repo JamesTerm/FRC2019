@@ -134,8 +134,8 @@ void Robot::OperatorControl()
 	//m_teleOpMasterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
 	//m_teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
 	m_activeCollection->SetActiveGoal(m_teleOpMasterGoal);
-	m_activeCollection->GetActiveGoal()->AddGoal(new Goal_TimeOut(m_activeCollection, 3000));
-	m_activeCollection->GetActiveGoal()->Activate();
+	// m_activeCollection->GetActiveGoal()->AddGoal(new Goal_TimeOut(m_activeCollection, 3000));
+	// m_activeCollection->GetActiveGoal()->Activate();
 	//TODO: Talk to Ian about this
 	Log::restartfile();
 	Log::General("Teleoperation Started.");
