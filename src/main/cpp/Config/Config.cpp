@@ -124,42 +124,66 @@ void Config::LoadValues(xml_document &doc){
 	#pragma region SecondaryCameraServer
 
 	//TODO: make it so we can mess with the camera during the running of the robot: ie, switch which stream we are using 
-	xml_node enableSecondaryCamera = root.child("EnableSecondaryCameraServer");
-	if(enableSecondaryCamera){
-		xml_attribute cameraServerEnabled = enableSecondaryCamera.attribute("enabled");
-		if(cameraServerEnabled.as_bool()){
-			cs::UsbCamera cam;
-			if(enableSecondaryCamera.attribute("port"))
+	xml_node enableSecondaryCamera = root.child("RobotCameraServer");
+	if(enableSecondaryCamera)
+	{
+		if(enableSecondaryCamera.attribute("enabled").as_bool())
+		{
+			for(xml_node camera; camera; camera.next_sibling())
 			{
-				cam = CameraServer::GetInstance()->StartAutomaticCapture(enableSecondaryCamera.attribute("port").as_int());
+				xml_attribute enabled = camera.attribute("enabled");
+				if(enabled.as_bool())
+				{
+					xml_attribute port = camera.attribute("port");
+					xml_attribute fps = camera.attribute("fps");
+					xml_attribute width = camera.attribute("width");
+					xml_attribute height = camera.attribute("height");
+					int iport, ifps, iwidth, iheight;
+					if(port)
+					{
+						iport = port.as_int();
+					}
+					else
+					{
+						Log::Error("CAMERA IS MISSING PORT! DISABLED!");
+						continue;
+					}
+
+					if(fps)
+					{
+						ifps = port.as_int();
+					}
+					else
+					{
+						Log::Error("Camera FPS Missing! Using default value!")
+						ifps = 15;
+					}
+					
+					if(width && height)
+					{
+						iwidth = width.as_int();
+						iheight = height.as_int();
+					}
+					else
+					{
+						Log::Error("Camera Width or Height Missing! Using default values!");
+						iwidth = 160;
+						iheight = 120;
+					}
+					cs::UsbCamera cam = CameraServer::GetInstance()->StartAutomaticCapture(iport);
+					cam.SetFPS(ifps);
+					cam.SetResolution(iwidth,iheight);
+				}
+				else
+				{
+					Log::General("Camera Disabled");
+				}
+
 			}
-			else
-			{
-				Log::Error("No SecondaryCameraServer USB port found. Using 0 as default.");
-				cam = CameraServer::GetInstance()->StartAutomaticCapture(0);
-			}
-			if(enableSecondaryCamera.attribute("autoExposure").as_bool()){
-				cam.SetExposureAuto();
-				Log::General("SecondaryCameraServer AutoExposure enabled");
-			}
-			if(enableSecondaryCamera.attribute("width") && enableSecondaryCamera.attribute("height")){
-				cam.SetResolution(enableSecondaryCamera.attribute("width").as_int(), enableSecondaryCamera.attribute("height").as_int());
-			}
-			else{
-				Log::Error("No width/height for SecondaryCameraServer found! Camera Server will use defauly values.");
-			}
-			if(enableSecondaryCamera.attribute("fps"))
-				cam.SetFPS(enableSecondaryCamera.attribute("fps").as_int());
-			else
-				Log::Error("No FPS for SecondaryCameraServer found! Camera Server will use defauly values.");
-			Log::General(R"(Secondary camera server started, you can access the stream at http://10.34.81.2:1181)", true);
-		}
-		else{
-			Log::Error("EnableSecondaryCameraServer value not found. Disabling by default");
 		}
 	}
-	else
-		Log::Error("EnableSecondaryCameraServer not found. Disabling by default");
+		
+		
 
 	#pragma endregion SecondaryCameraServer
 
@@ -184,7 +208,7 @@ void Config::LoadValues(xml_document &doc){
 		}
 		else
 		{
-			Log::Error("Vision   not found! Vision server does not have proper values to work with and will likely fail!");
+			Log::Error("Vision US not found! Vision server does not have proper values to work with and will likely fail!");
 		}
 		
 		//LH
@@ -194,7 +218,7 @@ void Config::LoadValues(xml_document &doc){
 		}
 		else
 		{
-			Log::Error("Vision   not found! Vision server does not have proper values to work with and will likely fail!");
+			Log::Error("Vision LH not found! Vision server does not have proper values to work with and will likely fail!");
 		}
 		
 		//UH
@@ -204,7 +228,7 @@ void Config::LoadValues(xml_document &doc){
 		}
 		else
 		{
-			Log::Error("Vision   not found! Vision server does not have proper values to work with and will likely fail!");
+			Log::Error("Vision UH not found! Vision server does not have proper values to work with and will likely fail!");
 		}
 		
 		//LV
@@ -214,7 +238,7 @@ void Config::LoadValues(xml_document &doc){
 		}
 		else
 		{
-			Log::Error("Vision   not found! Vision server does not have proper values to work with and will likely fail!");
+			Log::Error("Vision LV not found! Vision server does not have proper values to work with and will likely fail!");
 		}
 		
 		//UV
@@ -224,7 +248,7 @@ void Config::LoadValues(xml_document &doc){
 		}
 		else
 		{
-			Log::Error("Vision   not found! Vision server does not have proper values to work with and will likely fail!");
+			Log::Error("Vision UV not found! Vision server does not have proper values to work with and will likely fail!");
 		}
 		
 		//MinA
@@ -234,7 +258,7 @@ void Config::LoadValues(xml_document &doc){
 		}
 		else
 		{
-			Log::Error("Vision   not found! Vision server does not have proper values to work with and will likely fail!");
+			Log::Error("Vision MinA not found! Vision server does not have proper values to work with and will likely fail!");
 		}
 		
 		//MaxA
@@ -244,7 +268,7 @@ void Config::LoadValues(xml_document &doc){
 		}
 		else
 		{
-			Log::Error("Vision   not found! Vision server does not have proper values to work with and will likely fail!");
+			Log::Error("Vision MaxA not found! Vision server does not have proper values to work with and will likely fail!");
 		}
 		
 		//MaxO
@@ -254,7 +278,7 @@ void Config::LoadValues(xml_document &doc){
 		}
 		else
 		{
-			Log::Error("Vision   not found! Vision server does not have proper values to work with and will likely fail!");
+			Log::Error("Vision MaxO not found! Vision server does not have proper values to work with and will likely fail!");
 		}
 		
 		//Lower bound
@@ -264,7 +288,7 @@ void Config::LoadValues(xml_document &doc){
 		}
 		else
 		{
-			Log::Error("Vision   not found! Vision server does not have proper values to work with and will likely fail!");
+			Log::Error("Vision Lower bound not found! Vision server does not have proper values to work with and will likely fail!");
 		}
 		
 		//upper bound
@@ -274,7 +298,7 @@ void Config::LoadValues(xml_document &doc){
 		}
 		else
 		{
-			Log::Error("Vision   not found! Vision server does not have proper values to work with and will likely fail!");
+			Log::Error("Vision Upper bound not found! Vision server does not have proper values to work with and will likely fail!");
 		}
 		
 		//left bound
@@ -284,7 +308,7 @@ void Config::LoadValues(xml_document &doc){
 		}
 		else
 		{
-			Log::Error("Vision   not found! Vision server does not have proper values to work with and will likely fail!");
+			Log::Error("Vision left bound not found! Vision server does not have proper values to work with and will likely fail!");
 		}
 		
 		//right bound
@@ -294,7 +318,7 @@ void Config::LoadValues(xml_document &doc){
 		}
 		else
 		{
-			Log::Error("Vision   not found! Vision server does not have proper values to work with and will likely fail!");
+			Log::Error("Vision right bound not found! Vision server does not have proper values to work with and will likely fail!");
 		}
 		
 	}
