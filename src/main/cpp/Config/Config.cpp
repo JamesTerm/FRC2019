@@ -873,6 +873,10 @@ TeleOpGoal Config::getTeleOpGoal(string goalString){
 	{
 		return TeleOpGoal::eDriveWithTimer;
 	}
+	else if(goalString.compare("RelativeElevatorControl") == 0)
+	{
+		return TeleOpGoal::RelativeElevatorControl;
+	}
 	else{
 		Log::Error("Error registering teleop goal " + goalString + ". Skipping this control...");
 		return TeleOpGoal::None;

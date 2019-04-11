@@ -141,7 +141,7 @@ void Robot::OperatorControl()
 	Log::General("Teleoperation Started.");
 	double LastTime = GetTime();
 	//We can test teleop auton goals here a bit later
-	//PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
+	PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
 	while (IsOperatorControl() && !IsDisabled())
 	{
 		
@@ -153,7 +153,9 @@ void Robot::OperatorControl()
 		#endif
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
-		//Log::General("pot: " + to_string(pot->Get()));
+#ifndef _Win32
+		Log::General("pot: " + to_string(pot->Get()));
+#endif
 		m_drive->Update(DeltaTime);
 /*		if (m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive) {
 			m_activeCollection->GetActiveGoal()->Process(0.010);

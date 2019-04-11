@@ -17,6 +17,7 @@ enum TeleOpGoal{
     ElevatorControl,
 	Timer,
     eDriveWithTimer,
+    RelativeElevatorControl,
     None
 };
 
@@ -131,5 +132,7 @@ static Goal* SelectTeleOpGoal(ActiveCollection* activeCollection, TeleOpGoal goa
 		return new Goal_TimeOut(activeCollection, params);
     else if(goalSelected == TeleOpGoal::eDriveWithTimer)
         return new Goal_DriveWithTimer(activeCollection, .5, .5, params);
+    else if(goalSelected == TeleOpGoal::RelativeElevatorControl)
+        return new Goal_RelativeElevatorControl(activeCollection, params);
 	return new Goal_TimeOut(activeCollection, params);
 }
