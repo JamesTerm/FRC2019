@@ -62,7 +62,7 @@ double AxisControl::Update(double _dTime)
 			currentPow = err * gane;
 			Log::General("SETTING CURRENT POW: " + to_string(currentPow));
 			#endif
-			//SetToComponents(bias);
+			SetToComponents(bias);
 			return currentPow;
 		}
 		return currentPow;
