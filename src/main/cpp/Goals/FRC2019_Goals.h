@@ -200,7 +200,7 @@ class Goal_ElevatorControl : public AtomicGoal
 
     double m_currentPos;
     double error, errorPrior = 0, integ, deriv;
-    const double bias = 0, kp = 1, ki = 0, kd = 0;
+    const double bias = 0, kp = 4, ki = 0, kd = .003;
     const double FREEDOM = 0.02;
 };
 
@@ -211,12 +211,14 @@ class Goal_RelativeElevatorControl : public AtomicGoal
       {
           double target = ((PotentiometerItem*)activeCollection->Get("pot"))->Get() + delta;
           goal = new Goal_ElevatorControl(activeCollection, target);
+          m_activeColelction = activeCollection;
       }
       virtual void Activate();
       virtual Goal::Goal_Status Process(double dTime);
       virtual void Terminate();
     private:
       Goal_ElevatorControl* goal;
+      ActiveCollection* m_activeColelction;
 };
 #endif
     

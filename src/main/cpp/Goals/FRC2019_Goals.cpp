@@ -183,6 +183,7 @@ void Goal_ControllerOverride::SetCallbacks(bool bind)
 
 void Goal_ElevatorControl::Activate()
 {
+    Log::General("ele act");
     m_Status = eActive;
     error = 0;
     deriv = 0;
@@ -276,6 +277,8 @@ Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
         deriv = (error - errorPrior) / dTime;
 
         double power = kp * error + ki * integ + kd * deriv;
+        if(power > .75) power = .75;
+        if(power < -.75) power = -.75;
         SetElevator(power, m_activeCollection);
         return eActive;
 
@@ -295,12 +298,18 @@ void Goal_ElevatorControl::Terminate()
 
 void Goal_RelativeElevatorControl::Activate()
 {
+    Log::General("Rele act");
     goal->Activate();
+    m_Status = eActive;
 }
 
 Goal::Goal_Status Goal_RelativeElevatorControl::Process(double dTime)
 {
-    return goal->Process(dTime);
+    Log::General("Rele proc");
+    Goal::Goal_Status stat = goal->Process(dTime);
+    if(stat == eCompleted)
+        ((DoubleSolenoidItem*)(m_activeColelction->Get("hatch_push")))->SetReverse();
+    return stat;
 }
 
 void Goal_RelativeElevatorControl::Terminate()
