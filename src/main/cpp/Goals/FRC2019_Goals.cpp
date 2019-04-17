@@ -184,6 +184,9 @@ void Goal_ControllerOverride::SetCallbacks(bool bind)
 void Goal_ElevatorControl::Activate()
 {
     m_Status = eActive;
+    error = 0;
+    deriv = 0;
+    integ = 0;
 }
 
 #if 0
@@ -256,8 +259,12 @@ Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
 {
     if(m_Status == eActive)
     {
-        Log::General("ele");
+        Log::General("ele target: " + to_string(m_target));
+#ifndef _Win32
         m_currentPos = m_pot->Get();
+        #else 
+        m_currentPos = .6;
+        #endif
         if(m_currentPos >= m_target - FREEDOM && m_currentPos <= m_target + FREEDOM)
         {
             Terminate();
@@ -268,7 +275,9 @@ Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
         integ += error * dTime;
         deriv = (error - errorPrior) / dTime;
 
-        double power = MAX_POWER * (kp * error + ki + integ + kd * deriv);
+        double power = kp * error + ki * integ + kd * deriv;
+        if(power > MAX_POWER) power = .75;
+        if(power < -MAX_POWER) power = -.75;
         SetElevator(power, m_activeCollection);
         return eActive;
 
@@ -284,6 +293,25 @@ Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
 void Goal_ElevatorControl::Terminate()
 {
     StopElevator(m_activeCollection);
+}
+
+void Goal_RelativeElevatorControl::Activate()
+{
+    goal->Activate();
+    m_Status = eActive;
+}
+
+Goal::Goal_Status Goal_RelativeElevatorControl::Process(double dTime)
+{
+    Goal::Goal_Status stat = goal->Process(dTime);
+    if(stat == eCompleted)
+        ((DoubleSolenoidItem*)(m_activeColelction->Get("hatch_push")))->DefaultSet();
+    return stat;
+}
+
+void Goal_RelativeElevatorControl::Terminate()
+{
+    goal->Terminate();
 }
 #pragma region FeedbackLoopGoals
 /***********************Goal_Turn***********************/

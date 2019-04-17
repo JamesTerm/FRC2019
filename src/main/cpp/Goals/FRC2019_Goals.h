@@ -186,7 +186,9 @@ class Goal_ElevatorControl : public AtomicGoal
   public:
     Goal_ElevatorControl(ActiveCollection* activeCollection, double target) : m_activeCollection(activeCollection) , m_target(target)
     {
+      #ifndef _Win32
       m_pot = (PotentiometerItem*)activeCollection->Get("pot");
+      #endif
     }
     virtual void Activate();
     virtual Goal::Goal_Status Process(double dTime);
@@ -198,9 +200,26 @@ class Goal_ElevatorControl : public AtomicGoal
 
     double m_currentPos;
     double error, errorPrior = 0, integ, deriv;
-    const double bias = 0, kp = 4, ki = 0, kd = 0;
-    const double MAX_POWER = .5;
+    const double bias = 0, kp = 4, ki = 0, kd = .003;
     const double FREEDOM = 0.02;
+    const double MAX_POWER = .75;
+};
+
+class Goal_RelativeElevatorControl : public AtomicGoal
+{
+    public:
+      Goal_RelativeElevatorControl(ActiveCollection* activeCollection, double delta)
+      {
+          double target = ((PotentiometerItem*)activeCollection->Get("pot"))->Get() + delta;
+          goal = new Goal_ElevatorControl(activeCollection, target);
+          m_activeColelction = activeCollection;
+      }
+      virtual void Activate();
+      virtual Goal::Goal_Status Process(double dTime);
+      virtual void Terminate();
+    private:
+      Goal_ElevatorControl* goal;
+      ActiveCollection* m_activeColelction;
 };
 #endif
     

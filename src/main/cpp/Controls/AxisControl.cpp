@@ -65,6 +65,7 @@ double AxisControl::Update(double _dTime)
 			SetToComponents(bias);
 			return currentPow;
 		}
+		return currentPow;
 	}
 	else{
 		isIdle = false;

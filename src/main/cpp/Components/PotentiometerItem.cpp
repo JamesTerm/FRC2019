@@ -21,6 +21,7 @@ PotentiometerItem::PotentiometerItem(int _channel, string _name)
 	: InputComponent(_name){
 	channel = _channel;
 	apt = new AnalogPotentiometer(channel);
+	initPosition = apt->Get();
 }
 
 string PotentiometerItem::GetName(){
@@ -28,7 +29,7 @@ string PotentiometerItem::GetName(){
 }
 
 double PotentiometerItem::Get(){
-	return apt->Get();
+	return apt->Get() - initPosition; //init position it subtracted to return the delta from startup position.
 }
 
 PotentiometerItem::~PotentiometerItem() {}
