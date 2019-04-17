@@ -14,11 +14,11 @@ Email: chrisrweeks@aol.com
 #include "FRC2019_Goals.h"
 
 enum TeleOpGoal{
-    ElevatorControl,
-	Timer,
+    eElevatorControl,
+	eTimer,
     eDriveWithTimer,
-    RelativeElevatorControl,
-    None
+    eRelativeElevatorControl,
+    eNone
 };
 
 static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal, string autonSelected, string positionSelected)
@@ -126,13 +126,13 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
 }
 
 static Goal* SelectTeleOpGoal(ActiveCollection* activeCollection, TeleOpGoal goalSelected, double params){
-	if (goalSelected == TeleOpGoal::ElevatorControl)
+	if (goalSelected == TeleOpGoal::eElevatorControl)
 		return new Goal_ElevatorControl(activeCollection, params);
-	else if (goalSelected == TeleOpGoal::Timer)
+	else if (goalSelected == TeleOpGoal::eTimer)
 		return new Goal_TimeOut(activeCollection, params);
     else if(goalSelected == TeleOpGoal::eDriveWithTimer)
         return new Goal_DriveWithTimer(activeCollection, .5, .5, params);
-    else if(goalSelected == TeleOpGoal::RelativeElevatorControl)
+    else if(goalSelected == TeleOpGoal::eRelativeElevatorControl)
         return new Goal_RelativeElevatorControl(activeCollection, params);
 	return new Goal_TimeOut(activeCollection, params);
 }

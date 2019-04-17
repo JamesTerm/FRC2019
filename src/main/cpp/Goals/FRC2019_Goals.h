@@ -202,6 +202,7 @@ class Goal_ElevatorControl : public AtomicGoal
     double error, errorPrior = 0, integ, deriv;
     const double bias = 0, kp = 4, ki = 0, kd = .003;
     const double FREEDOM = 0.02;
+    const double MAX_POWER = .75;
 };
 
 class Goal_RelativeElevatorControl : public AtomicGoal

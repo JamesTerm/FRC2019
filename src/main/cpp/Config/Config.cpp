@@ -585,7 +585,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 				xml_attribute params = button.attribute("params");
 				if(goal && params){
 					TeleOpGoal goalToAdd = getTeleOpGoal(goal.as_string());
-					if(goalToAdd != TeleOpGoal::None){
+					if(goalToAdd != TeleOpGoal::eNone){
 						GoalButtonControl* tmp = new GoalButtonControl(m_driveJoy, name, channel.as_int(), m_activeCollection, goalToAdd, params.as_double());
 						m_drive->AddControlDrive(tmp);
 						Log::General("Added GoalButtonControl " + name + ", Button: " + to_string(channel.as_int()) + ", Goal: " + goal.as_string() + ", Params: " + params.as_string());
@@ -794,7 +794,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 				xml_attribute params = button.attribute("params");
 				if(goal && params){
 					TeleOpGoal goalToAdd = getTeleOpGoal(goal.as_string());
-					if(goalToAdd != TeleOpGoal::None){
+					if(goalToAdd != TeleOpGoal::eNone){
 						GoalButtonControl* tmp = new GoalButtonControl(m_operatorJoy, name, channel.as_int(), m_activeCollection, goalToAdd, params.as_double());
 						m_drive->AddControlOperate(tmp);
 						Log::General("Added GoalButtonControl " + name + ", Button: " + to_string(channel.as_int()) + ", Goal: " + goal.as_string() + ", Params: " + params.as_string());
@@ -864,10 +864,10 @@ bool Config::setBindingsToControl(vector<string> bindings, ControlItem *control)
 
 TeleOpGoal Config::getTeleOpGoal(string goalString){
 	if(goalString.compare("ElevatorControl") == 0){
-		return TeleOpGoal::ElevatorControl;
+		return TeleOpGoal::eElevatorControl;
 	}
 	else if (goalString.compare("Timer") == 0) {
-		return TeleOpGoal::Timer;
+		return TeleOpGoal::eTimer;
 	}
 	else if(goalString.compare("DriveWithTimer") == 0)
 	{
@@ -875,11 +875,11 @@ TeleOpGoal Config::getTeleOpGoal(string goalString){
 	}
 	else if(goalString.compare("RelativeElevatorControl") == 0)
 	{
-		return TeleOpGoal::RelativeElevatorControl;
+		return TeleOpGoal::eRelativeElevatorControl;
 	}
 	else{
 		Log::Error("Error registering teleop goal " + goalString + ". Skipping this control...");
-		return TeleOpGoal::None;
+		return TeleOpGoal::eNone;
 	}
 }
 

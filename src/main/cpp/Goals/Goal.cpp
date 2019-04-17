@@ -109,8 +109,7 @@ Goal::Goal_Status MultitaskGoal::Process(double dTime_s)
 	//detected... This way any success that happened will be reflected and dealt with below
 	for (GoalList::iterator it = m_GoalsToProcess.begin(); it != m_GoalsToProcess.end(); ++it)
 	{
-		if((*it)->GetStatus() == eActive)
-			status = (*it)->Process(dTime_s);
+		status = (*it)->Process(dTime_s);
 		if (status == eFailed)
 		{
 			m_Status = eFailed;

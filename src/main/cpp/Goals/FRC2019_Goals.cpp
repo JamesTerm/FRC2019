@@ -276,8 +276,8 @@ Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
         deriv = (error - errorPrior) / dTime;
 
         double power = kp * error + ki * integ + kd * deriv;
-        if(power > .75) power = .75;
-        if(power < -.75) power = -.75;
+        if(power > MAX_POWER) power = .75;
+        if(power < -MAX_POWER) power = -.75;
         SetElevator(power, m_activeCollection);
         return eActive;
 
@@ -305,7 +305,7 @@ Goal::Goal_Status Goal_RelativeElevatorControl::Process(double dTime)
 {
     Goal::Goal_Status stat = goal->Process(dTime);
     if(stat == eCompleted)
-        ((DoubleSolenoidItem*)(m_activeColelction->Get("hatch_push")))->SetReverse();
+        ((DoubleSolenoidItem*)(m_activeColelction->Get("hatch_push")))->DefaultSet();
     return stat;
 }
 
