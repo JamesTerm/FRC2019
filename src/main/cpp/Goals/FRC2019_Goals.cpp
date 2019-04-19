@@ -276,8 +276,8 @@ Goal::Goal_Status Goal_ElevatorControl::Process(double dTime)
         deriv = (error - errorPrior) / dTime;
 
         double power = kp * error + ki * integ + kd * deriv;
-        if(power > MAX_POWER) power = .75;
-        if(power < -MAX_POWER) power = -.75;
+        if(power > MAX_POWER) power = MAX_POWER;
+        if(power < -MAX_POWER) power = -MAX_POWER;
         SetElevator(power, m_activeCollection);
         return eActive;
 

@@ -76,10 +76,10 @@
         <intakeButton button="4" powerMultiplier="0.8" isRamp="true" isAmpLimited="false" actOnRelease="true"/>
 			</ButtonControls>
             <GoalButtonControls>
-                <elePreset_0 button="1" goal="ElevatorControl" params="0"/>
-                <elePreset_1 button="3" goal="ElevatorControl" params=".25"/>
-                <elePreset_2 button="4" goal="ElevatorControl" params=".70"/>
-                <releEle button="8" goal="RelativeElevatorControl" params="-.07"/>
+                <elePreset_0 button="1" goal="ElevatorControl" params="0.22"/>
+                <elePreset_1 button="3" goal="ElevatorControl" params=".42"/>
+                <elePreset_2 button="4" goal="ElevatorControl" params=".83"/>
+                <releEle button="2" goal="RelativeElevatorControl" params="-.07"/>
             </GoalButtonControls>
 			<ToggleButtonControls>
                 <hatch_push_control button="5" powerMultiplier="1.0" bindings="hatch_push"/>

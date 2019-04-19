@@ -1,0 +1,44 @@
+function createScavengerMatrix() {
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var compiledSheet = spreadsheet.getSheetByName("Compiled Sheet");
+  var compData = compiledSheet.getRange("A1:Z100");
+  var sheets = [];
+  var sheetName = "Form Responses ";
+  for(var i = 0; i < 8; i++)
+  {
+    sheets[i] = spreadsheet.getSheetByName(sheetName + (i+1));
+  }
+  var teamsPerForm = [];
+  for(var j = 0; j < 8; j++){
+    teamsPerForm[j] = sheets[j].getRange("B2:B100").getValues();
+  }
+  var teamNoRepeats = [];
+  var found = false;
+  Logger.log("test");
+  for(var k = 0; k < teamsPerForm.length; k++){
+    found = false;
+    for(var l = 0; l < teamsPerForm[k].length; l++){
+      Logger.log("CHECKING: " + teamsPerForm[k][l]);
+      found = false;
+      for(var m = 0; m < teamNoRepeats.length; m++){
+        if(teamsPerForm[k][l] == teamNoRepeats[m]){
+          found = true;
+        }
+        if(!found){
+         teamNoRepeats[teamNoRepeats.length] = teamsPerForm[k][l];
+          Logger.log("TEAM: " + teamNoRepeats[teamNoRepeats.length - 1]);
+        }
+       }
+    }
+  }
+
+  for(var n = 0; n < teamNoRepeats.length; n++){
+    Logger.log("YEET: " + teamNoRepeats[n]);
+  }
+  
+//    compiledSheet.getRange("L2:L1000").setValues(teamNoRepeats);
+  //collect a list of all spreadsheets
+  //collect list of lists of teams
+  //make a list of all teams
+  //foreach of previous list, check to see if they exist in each of the list-list
+}

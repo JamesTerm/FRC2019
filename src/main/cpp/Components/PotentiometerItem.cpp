@@ -29,6 +29,7 @@ string PotentiometerItem::GetName(){
 }
 
 double PotentiometerItem::Get(){
+	Log::General("real: " + to_string(apt->Get()));
 	return apt->Get() - initPosition; //init position it subtracted to return the delta from startup position.
 }
 
