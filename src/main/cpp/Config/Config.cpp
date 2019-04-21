@@ -124,36 +124,210 @@ void Config::LoadValues(xml_document &doc){
 	#pragma region SecondaryCameraServer
 
 	//TODO: make it so we can mess with the camera during the running of the robot: ie, switch which stream we are using 
-	xml_node enableSecondaryCamera = root.child("EnableSecondaryCameraServer");
-	if(enableSecondaryCamera){
-		xml_attribute cameraServerEnabled = enableSecondaryCamera.attribute("value");
-		if(cameraServerEnabled.as_bool()){
-			cs::UsbCamera cam = CameraServer::GetInstance()->StartAutomaticCapture();
-			if(enableSecondaryCamera.attribute("autoExposure").as_bool()){
-				cam.SetExposureAuto();
-				Log::General("SecondaryCameraServer AutoExposure enabled");
+	xml_node enableSecondaryCamera = root.child("RobotCameraServer");
+	if(enableSecondaryCamera)
+	{
+		if(enableSecondaryCamera.attribute("enabled").as_bool())
+		{
+			for(xml_node camera; camera; camera.next_sibling())
+			{
+				xml_attribute enabled = camera.attribute("enabled");
+				if(enabled.as_bool())
+				{
+					xml_attribute port = camera.attribute("port");
+					xml_attribute fps = camera.attribute("fps");
+					xml_attribute width = camera.attribute("width");
+					xml_attribute height = camera.attribute("height");
+					int iport, ifps, iwidth, iheight;
+					if(port)
+					{
+						iport = port.as_int();
+					}
+					else
+					{
+						Log::Error("CAMERA IS MISSING PORT! DISABLED!");
+						continue;
+					}
+
+					if(fps)
+					{
+						ifps = port.as_int();
+					}
+					else
+					{
+						Log::Error("Camera FPS Missing! Using default value!")
+						ifps = 15;
+					}
+					
+					if(width && height)
+					{
+						iwidth = width.as_int();
+						iheight = height.as_int();
+					}
+					else
+					{
+						Log::Error("Camera Width or Height Missing! Using default values!");
+						iwidth = 160;
+						iheight = 120;
+					}
+					cs::UsbCamera cam = CameraServer::GetInstance()->StartAutomaticCapture(iport);
+					cam.SetFPS(ifps);
+					cam.SetResolution(iwidth,iheight);
+				}
+				else
+				{
+					Log::General("Camera Disabled");
+				}
+
 			}
-			if(enableSecondaryCamera.attribute("width") && enableSecondaryCamera.attribute("height")){
-				cam.SetResolution(enableSecondaryCamera.attribute("width").as_int(), enableSecondaryCamera.attribute("height").as_int());
-			}
-			else{
-				//TODO: Make stuff like this log-only (ie. not console) unless verbose output. Will assign to Ian.
-				Log::Error("No width/height for SecondaryCameraServer found!");
-			}
-			if(enableSecondaryCamera.attribute("fps"))
-				cam.SetFPS(enableSecondaryCamera.attribute("fps").as_int());
-			else
-				Log::Error("No FPS for SecondaryCameraServer found!");
-			Log::General(R"(Secondary camera server started, you can access the stream at http://10.34.81.2:1181)", true);
-		}
-		else{
-			Log::Error("EnableSecondaryCameraServer value not found. Disabling by default");
 		}
 	}
-	else
-		Log::Error("EnableSecondaryCameraServer not found. Disabling by default");
+		
+		
 
 	#pragma endregion SecondaryCameraServer
+
+	#pragma region Vision
+	shared_ptr<NetworkTable> vision_table = nt::NetworkTableInstance::GetDefault().GetTable("VISION_2019");
+	xml_node vision = root.child("Vision");
+	if(vision)
+	{
+		//LS
+		if(vision.attribute("LS"))
+		{
+			vision_table->PutNumber("LS",vision.attribute("LS").as_int());
+		}
+		else
+		{
+			Log::Error("Vision LS not found! Vision server does not have proper values to work with and will likely fail!");
+		}
+		//US
+		if(vision.attribute("US"))
+		{
+			vision_table->PutNumber("US",vision.attribute("US").as_int());
+		}
+		else
+		{
+			Log::Error("Vision US not found! Vision server does not have proper values to work with and will likely fail!");
+		}
+		
+		//LH
+		if(vision.attribute("LH"))
+		{
+			vision_table->PutNumber("LH",vision.attribute("LH").as_int());
+		}
+		else
+		{
+			Log::Error("Vision LH not found! Vision server does not have proper values to work with and will likely fail!");
+		}
+		
+		//UH
+		if(vision.attribute("UH"))
+		{
+			vision_table->PutNumber("UH",vision.attribute("UH").as_int());
+		}
+		else
+		{
+			Log::Error("Vision UH not found! Vision server does not have proper values to work with and will likely fail!");
+		}
+		
+		//LV
+		if(vision.attribute("LV"))
+		{
+			vision_table->PutNumber("LV",vision.attribute("LV").as_int());
+		}
+		else
+		{
+			Log::Error("Vision LV not found! Vision server does not have proper values to work with and will likely fail!");
+		}
+		
+		//UV
+		if(vision.attribute("UV"))
+		{
+			vision_table->PutNumber("UV",vision.attribute("UV").as_int());
+		}
+		else
+		{
+			Log::Error("Vision UV not found! Vision server does not have proper values to work with and will likely fail!");
+		}
+		
+		//MinA
+		if(vision.attribute("MinA"))
+		{
+			vision_table->PutNumber("MinA",vision.attribute("MinA").as_int());
+		}
+		else
+		{
+			Log::Error("Vision MinA not found! Vision server does not have proper values to work with and will likely fail!");
+		}
+		
+		//MaxA
+		if(vision.attribute("MaxA"))
+		{
+			vision_table->PutNumber("MaxA",vision.attribute("MaxA").as_int());
+		}
+		else
+		{
+			Log::Error("Vision MaxA not found! Vision server does not have proper values to work with and will likely fail!");
+		}
+		
+		//MaxO
+		if(vision.attribute("MaxO"))
+		{
+			vision_table->PutNumber("MaxO",vision.attribute("MaxO").as_int());
+		}
+		else
+		{
+			Log::Error("Vision MaxO not found! Vision server does not have proper values to work with and will likely fail!");
+		}
+		
+		//Lower bound
+		if(vision.attribute("LOWER_BOUND"))
+		{
+			vision_table->PutNumber("LOWER_BOUND",vision.attribute("LOWER_BOUND").as_int());
+		}
+		else
+		{
+			Log::Error("Vision Lower bound not found! Vision server does not have proper values to work with and will likely fail!");
+		}
+		
+		//upper bound
+		if(vision.attribute("UPPER_BOUND"))
+		{
+			vision_table->PutNumber("UPPER_BOUND",vision.attribute("UPPER_BOUND").as_int());
+		}
+		else
+		{
+			Log::Error("Vision Upper bound not found! Vision server does not have proper values to work with and will likely fail!");
+		}
+		
+		//left bound
+		if(vision.attribute("LEFT_BOUND"))
+		{
+			vision_table->PutNumber("LEFT_BOUND",vision.attribute("LEFT_BOUND").as_int());
+		}
+		else
+		{
+			Log::Error("Vision left bound not found! Vision server does not have proper values to work with and will likely fail!");
+		}
+		
+		//right bound
+		if(vision.attribute("RIGHT_BOUND"))
+		{
+			vision_table->PutNumber("RIGHT_BOUND",vision.attribute("RIGHT_BOUND").as_int());
+		}
+		else
+		{
+			Log::Error("Vision right bound not found! Vision server does not have proper values to work with and will likely fail!");
+		}
+		
+	}
+	else
+	{
+		Log::Error("Vision not found. Vision server does not have proper values to work with and will likely fail!");
+	}
+	
+	#pragma endregion Vision
 
 	#pragma endregion MetaData
 

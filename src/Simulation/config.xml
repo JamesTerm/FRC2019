@@ -78,4 +78,6 @@
 			</ToggleButtonControls>
 		</Operator>
     </Controls>
+    <EnableSecondaryCameraServer enabled="true" port="0" fps="15" width="160" height="120"/>
+    <Vision LS="0" LH="87" LV="255" US="3" UH="126" UV="255" MinA="1112" MaxA="82763" MaxO="62" UPPER_BOUND="0" LOWER_BOUND="1000" LEFT_BOUND="0" RIGHT_BOUND="1000"/>
 </Robot>

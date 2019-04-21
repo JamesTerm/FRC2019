@@ -88,4 +88,9 @@
 			</ToggleButtonControls>
 		</Operator>
     </Controls>
+    <RobotCameraServer enabled="true">
+        <driver_cam enabled="true" port="0" fps="15" width="160" height="120"/>
+        <backup_cam enabled="true" port="1" fps="15" width="160" height="120"/>
+    </RobotCameraServer>
+    <Vision LS="0" US="3" LH="87" UH="126" LV="255" UV="255" MinA="1112" MaxA="82763" MaxO="62" LOWER_BOUND="0" UPPER_BOUND="1000" LEFT_BOUND="0" RIGHT_BOUND="1000"/>
 </Robot>
