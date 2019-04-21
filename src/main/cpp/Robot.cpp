@@ -154,7 +154,7 @@ void Robot::OperatorControl()
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
 #ifndef _Win32
-		Log::General("pot: " + to_string(pot->Get()));
+		//Log::General("pot: " + to_string(pot->Get()));
 #endif
 		m_drive->Update(DeltaTime);
 /*		if (m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive) {
