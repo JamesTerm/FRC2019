@@ -141,7 +141,7 @@ void Robot::OperatorControl()
 	Log::General("Teleoperation Started.");
 	double LastTime = GetTime();
 	//We can test teleop auton goals here a bit later
-	//PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
+	PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
 	while (IsOperatorControl() && !IsDisabled())
 	{
 		
