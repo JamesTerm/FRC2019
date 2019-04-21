@@ -57,6 +57,8 @@ static void DriveWithTimer(double left, double right, double sec, ActiveCollecti
 
 static void SetElevator(double power, ActiveCollection* activeCollection)
 {
+	Log::General("util " + to_string(power));
+	SmartDashboard::PutNumber("util", power);
 	((VictorSPXItem*)activeCollection->Get("elevator_0"))->Set(-power);
 	((VictorSPXItem*)activeCollection->Get("elevator_1"))->Set(-power);
 	((VictorSPXItem*)activeCollection->Get("elevator_2"))->Set(-power);

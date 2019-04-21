@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Root of the Config -->
+<Robot>
+    <!-- Version of the current config to be printed on the console -->
+    <Version version="1" />
+    <!-- Comment on this particular config to be printed on the console -->
+    <Comment comment="A" />
+    <!-- Sets whether or not to initialize the NavX -->
+    <UseNavX value="true" />
+    <!-- Sets whether or not to initialize the camera to send back to the driver station -->
+    <!-- Contains assignments to ports and robot dimensions -->
+    <RobotConfig>
+        <!-- Region for defining VictorSP Items -->
+        <VictorSP>
+            <left_0 channel="0" reversed="true" />
+            <left_1 channel="1" reversed="true" />
+            <left_2 channel="2" reversed="true"/>
+            <right_0 channel="3" reversed="true" />
+            <right_1 channel="4" reversed="true" />
+            <right_2 channel="5" reversed="true"/>
+        </VictorSP>
+        <!-- Region for VictorSPX CAN Items -->
+        <VictorSPX>
+        </VictorSPX>
+        <!-- Region for TalonSRX CAN Items -->
+
+        <TalonSRX>
+        </TalonSRX>
+        <!-- Region for Potentiometers -->
+        <Potentiometer>
+        </Potentiometer>
+        <!-- Region for Encoders -->
+        <Encoder>
+        </Encoder>
+        <!-- Region for DoubleSolenoids -->
+        <DoubleSolenoid>
+		</DoubleSolenoid>
+        <!-- Region for DigitalInputs -->
+        <DigitalInput>
+            <!--limSwitch channel="4"/-->
+        </DigitalInput>
+    </RobotConfig>
+
+    <!-- Root of all control definitions -->
+    <Controls>
+        <!-- Driver Controller, slot should always be 0 -->
+        <Driver slot="0">
+            <AxisControls>
+                <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.7" bindings="left_0, left_1, left_2" useOverdrive="true"/>
+                <rightDrive axis="5" deadZone="0.08" reversed="true" powerMultiplier="0.7" bindings="right_0, right_1, right_2" useOverdrive="true"/>
+            </AxisControls>
+          <ButtonControls>
+                <overdrive button="5" powerMultiplier="1.0" isOverdrive="true" />
+          </ButtonControls>
+          <ToggleButtonControls>
+          </ToggleButtonControls>
+        </Driver>
+		<Operator slot="1">
+			<AxisControls>
+			</AxisControls>
+			<ButtonControls>
+			</ButtonControls>
+            <GoalButtonControls>
+            </GoalButtonControls>
+			<ToggleButtonControls>
+			</ToggleButtonControls>
+		</Operator>
+    </Controls>
+</Robot>

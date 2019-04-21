@@ -58,6 +58,9 @@
                 <overdrive button="5" powerMultiplier="1.0" isRamp="false" isAmpLimited="false" actOnRelease="false" isOverdrive="true"/>
           </ButtonControls>
           <GoalButtonControls>
+                <elePreset_0 button="1" goal="ElevatorControl" params="0"/>
+                <elePreset_1 button="3" goal="ElevatorControl" params=".18"/>
+                <elePreset_2 button="4" goal="ElevatorControl" params=".54"/>
           </GoalButtonControls>
         </Driver>
 		<Operator slot="1">

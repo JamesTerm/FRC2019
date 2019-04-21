@@ -20,6 +20,7 @@ namespace Components{
 class PotentiometerItem : public InputComponent{
 private:
 	int channel;
+	int initPosition; //this is set on init. Ensures accurate measurement of distance traveled. As long as elevator is all the way down on startup, which it should
 	AnalogPotentiometer *apt;
 
 public:
