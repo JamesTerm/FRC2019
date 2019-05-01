@@ -155,7 +155,7 @@ void Config::LoadValues(xml_document &doc){
 					}
 					else
 					{
-						Log::Error("Camera FPS Missing! Using default value!")
+						Log::Error("Camera FPS Missing! Using default value!");
 						ifps = 15;
 					}
 					
