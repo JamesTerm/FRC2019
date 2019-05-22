@@ -103,7 +103,7 @@ void Robot::Autonomous()
 /*
  * Called when teleop starts
  */
-#if 1 //test method doesnt work in rio for some reason...
+//test method doesnt work in rio for some reason...
 //TODO: Potentially make a "test" tag in the config that can toggle this?
 void Robot::OperatorControl()
 {
@@ -131,37 +131,10 @@ void Robot::OperatorControl()
 		#endif
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
-#ifndef _Win32
-		//Log::General("pot: " + to_string(pot->Get()));
-#endif
 		m_drive->Update(DeltaTime);
-/*		if (m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive) {
-			m_activeCollection->GetActiveGoal()->Process(0.010);
-			SmartDashboard::PutBoolean("TeleOpGoalActive", true);
-		}
-		else {
-			m_activeCollection->GetActiveGoal()->Reset();
-			SmartDashboard::PutBoolean("TeleOpGoalActive", false);
-			m_activeCollection->GetActiveGoal()->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
-			m_activeCollection->GetActiveGoal()->AddGoal(new Goal_ControllerOverride(m_activeCollection));
-			m_activeCollection->GetActiveGoal()->Activate();
-		}*/
 		Wait(0.010); 
 	}
 }
-#else
-void Robot::OperatorControl()
-{
-	 DigitalInputItem* enc = (DigitalInputItem*)m_activeCollection->Get("limSwitch");
-	 //enc->Reset(); 
-	while(!IsDisabled()){
-		
-		Log::General("enc: " + to_string(enc->Get()), true);
-		m_drive->Update(0.010);
-		Wait(0.010);
-	}
-}
-#endif
 
 /*
  * Called when the Test period starts
@@ -170,7 +143,7 @@ void Robot::Test()
 {
 	while(!IsDisabled()){
 		PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
-		Log::General("POT: " + to_string(pot->Get()), true);
+		Log::General("POTENTIOMETER: " + to_string(pot->Get()), true);
 		m_drive->Update(0.010);
 		Wait(0.010);
 	}
