@@ -1,3 +1,15 @@
+/****************************** Header ******************************\
+Class Name: N/A
+File Name: SmartDashboard.cpp
+Summary: SmartDashboard entry point
+Project: BroncBotzFRC2019
+Copyright (c) BroncBotz.
+All rights reserved.
+
+Author(s): James Killian
+Email: James_killian@hotmail.com
+\********************************************************************/
+
 #pragma once
 
 #ifdef _Win32

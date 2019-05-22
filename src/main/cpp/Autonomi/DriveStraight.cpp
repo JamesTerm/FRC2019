@@ -1,5 +1,5 @@
 /****************************** Header ******************************\
-Class Name: DriveStraight
+Class Name: DriveStraight [DEPRECATED]
 File Name:	Drivestraight.cpp
 Summary:	An autonomous program to make the robot drive straight
 Project:     BroncBotzFRC2019
@@ -15,7 +15,7 @@ Email: ruizdylann@gmail.com
 using namespace std;
 using namespace Autonomi;
 using namespace Util;
-
+//[DEPRECATED]
 DriveStraight::DriveStraight(ActiveCollection *_activeCollection)
 {
 	activeCollection = _activeCollection;

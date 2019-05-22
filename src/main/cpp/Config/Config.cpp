@@ -6,8 +6,8 @@ Project:     BroncBotzFRC2019
 Copyright (c) BroncBotz.
 All rights reserved.
 
-Author(s): Ryan Cooper, Dylan Watson
-Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com
+Author(s): Ryan Cooper, Dylan Watson, Chris Weeks
+Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com, chrisrweeks@aol.com
 \********************************************************************/
 
 #include "Config.h"

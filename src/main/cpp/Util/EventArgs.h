@@ -1,3 +1,15 @@
+/****************************** Header ******************************\
+Class Name: TEventArgs inherits EventArgs
+File Name: EventArgs.h
+Summary: Argument template class to be used with events
+Project: BroncBotzFRC2019
+Copyright (c) BroncBotz.
+All rights reserved.
+
+Author(s): Ryan Cooper, Dylan Watson
+Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com
+\********************************************************************/
+
 #pragma once 
 
 class EventArgs

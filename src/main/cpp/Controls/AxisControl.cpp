@@ -48,7 +48,7 @@ double AxisControl::Update(double _dTime)
 		}
 		else if(!m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive){
 			double currentVal = ((PotentiometerItem*)m_activeCollection->Get("pot"))->Get();
-			//TODO: use PID. this is a gross temp fix
+			//TODO: Use PID. This is a last minute fix that just happens to work
 			#if 0
 			if(!isIdle){
 				targetVal = currentVal;
@@ -62,6 +62,8 @@ double AxisControl::Update(double _dTime)
 			currentPow = err * gane;
 			Log::General("SETTING CURRENT POW: " + to_string(currentPow));
 			#endif
+			//This is one of the only areas where the ValueChanged event is NOT called, as it would be called even when the operator 
+			//is not doing anything, which would ruin ControllerOverride
 			SetToComponents(bias);
 			return currentPow;
 		}

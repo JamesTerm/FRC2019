@@ -1,3 +1,15 @@
+/****************************** Header ******************************\
+Class Name: EventHandler
+File Name: Event.h
+Summary: Logic used to run observer-model events throughout the codebase
+Project: BroncBotzFRC2019
+Copyright (c) BroncBotz.
+All rights reserved.
+
+Author(s): Ryan Cooper, Dylan Watson
+Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com
+\********************************************************************/
+
 #pragma once
 
 #include <assert.h>
