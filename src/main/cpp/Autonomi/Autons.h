@@ -14,7 +14,6 @@ Email: ruizdylann@gmail.com
 #define SRC_AUTONOMI_AUTONS_H_
 
 #include "DriveStraight.h"
-#include "TemplateTest.h"
 //[DEPRECATED]
 namespace Autonomi{}
 
