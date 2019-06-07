@@ -129,7 +129,7 @@ void Config::LoadValues(xml_document &doc){
 	{
 		if(enableSecondaryCamera.attribute("enabled").as_bool())
 		{
-			for(xml_node camera; camera; camera.next_sibling())
+			for(xml_node camera = enableSecondaryCamera.first_child(); camera; camera.next_sibling())
 			{
 				xml_attribute enabled = camera.attribute("enabled");
 				if(enabled.as_bool())
