@@ -127,10 +127,14 @@ void Config::LoadValues(xml_document &doc){
 	xml_node enableSecondaryCamera = root.child("RobotCameraServer");
 	if(enableSecondaryCamera)
 	{
-		if(enableSecondaryCamera.attribute("enabled").as_bool())
+		//TODO: FIX THIS
+		CameraServer::GetInstance()->StartAutomaticCapture(0);
+		/*if(enableSecondaryCamera.attribute("enabled").as_bool())
 		{
 			for(xml_node camera = enableSecondaryCamera.first_child(); camera; camera.next_sibling())
 			{
+				if(camera)
+				{
 				xml_attribute enabled = camera.attribute("enabled");
 				if(enabled.as_bool())
 				{
@@ -151,7 +155,7 @@ void Config::LoadValues(xml_document &doc){
 
 					if(fps)
 					{
-						ifps = port.as_int();
+						ifps = fps.as_int();
 					}
 					else
 					{
@@ -178,9 +182,9 @@ void Config::LoadValues(xml_document &doc){
 				{
 					Log::General("Camera Disabled");
 				}
-
+				}
 			}
-		}
+		}*/
 	}
 		
 		
