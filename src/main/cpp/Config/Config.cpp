@@ -401,7 +401,8 @@ void Config::AllocateComponents(xml_node &root){
 		for(xml_node victorSpx = VictorSPX.first_child(); victorSpx; victorSpx = victorSpx.next_sibling()){
 			string name = victorSpx.name();
 			xml_attribute channel = victorSpx.attribute("channel");
-			bool reversed = victorSpx.attribute("reversed");
+			//TODO: Fix this line after comp and fix robot configs
+			bool reversed = victorSpx.attribute("reversed");//.as_bool();
 			int pdbChannel = victorSpx.attribute("pdbChannel") ? victorSpx.attribute("pdbChannel").as_int() : -1;
 			if(channel){
 				VictorSPXItem *tmp = new VictorSPXItem(channel.as_int(), name, reversed);

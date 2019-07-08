@@ -28,6 +28,7 @@
         </VictorSPX>
         <!-- Region for TalonSRX CAN Items -->
 
+
         <TalonSRX>
         </TalonSRX>
         <!-- Region for Potentiometers -->
@@ -76,9 +77,9 @@
         <intakeButton button="4" powerMultiplier="0.8" isRamp="true" isAmpLimited="false" actOnRelease="true"/>
 			</ButtonControls>
             <GoalButtonControls>
-                <elePreset_0 button="1" goal="ElevatorControl" params="0.22"/>
-                <elePreset_1 button="3" goal="ElevatorControl" params=".42"/>
-                <elePreset_2 button="4" goal="ElevatorControl" params=".83"/>
+                <elePreset_0 button="1" goal="ElevatorControl" params="0.21"/>
+                <elePreset_1 button="3" goal="ElevatorControl" params=".28"/>
+                <elePreset_2 button="4" goal="ElevatorControl" params=".69"/>
                 <releEle button="2" goal="RelativeElevatorControl" params="-.07"/>
             </GoalButtonControls>
 			<ToggleButtonControls>
