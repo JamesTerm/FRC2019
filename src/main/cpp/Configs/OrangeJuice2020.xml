@@ -22,7 +22,7 @@
             <right_2 channel="2" reversed="false"/>
             <left_0 channel="3" reversed="false"/>
             <left_1 channel="4" reversed="false"/>
-            <left_2 channel="5" revered="true"/>
+            <left_2 channel="5" reversed="false"/>
         </VictorSPX>
         <!-- Region for TalonSRX CAN Items -->
 
@@ -53,14 +53,14 @@
                 <leftDrive axis="1" deadZone="0.08" reversed="true" powerMultiplier="0.8" bindings="left_2" useOverdrive="true"/>
                 <rightDrive axis="5" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="right_0, right_1, right_2" useOverdrive="true"/>
             </AxisControls>
-          <!--ButtonControls>
+          <ButtonControls>
                 <overdrive button="5" powerMultiplier="1.0" isOverdrive="true" />
           </ButtonControls>
           <ToggleButtonControls>
                 <endgame_control button="3" powerMultiplier="1.0" bindings="endgame"/>
           </ToggleButtonControls-->
         </Driver>
-		<!--Operator slot="1">
+		<Operator slot="1">
 			<AxisControls>
                 <outtake_control axis="2" deadZone="0.08" reversed="false" powerMultiplier="1.0" bindings="intake"/>
 				<elevator_control axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.75" bindings="elevator_0, elevator_1, elevator_2, elevator_3" />
@@ -80,6 +80,6 @@
 				<wrist_control button="10" powerMultiplier="1.0" bindings="wrist"/>
                 
 			</ToggleButtonControls>
-		</Operator-->
+		</Operator>
     </Controls>
 </Robot>
