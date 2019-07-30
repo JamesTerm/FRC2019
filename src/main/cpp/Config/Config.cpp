@@ -81,6 +81,20 @@ void Config::LoadValues(xml_document &doc){
 
 	#pragma region MetaData
 
+	#pragma region Comp
+
+	xml_attribute comp = root.child("Competition").attribute("AtComp");
+	if(comp)
+	{
+		Log::atComp = comp;
+	}
+	else
+	{
+		Log::atComp = false;
+	}
+
+	#pragma endregion Comp
+
 	#pragma region Version
 
 	xml_attribute version = root.child("Version").attribute("version");

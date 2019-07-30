@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Root of the Config -->
 <Robot>
+    <!-- Set true or false based on if robot is at comp or not -->
+    <Competition AtComp = "false" />
     <!-- Version of the current config to be printed on the console -->
     <Version version="1" />
     <!-- Comment on this particular config to be printed on the console -->

@@ -29,6 +29,7 @@ Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com
 #include "../Controls/GoalButtonControl.h"
 #include "../Pugi/pugixml.h"
 #include "../Goals/GoalSelector.h"
+#include "../Util/Log.h"
 
 using namespace System;
 using namespace pugi;

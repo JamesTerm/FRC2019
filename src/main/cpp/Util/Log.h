@@ -32,6 +32,7 @@ namespace Logger
 				static void Warning(string message);
 				static void restartfile();
 				static void closeLogFile();
+				static bool atComp = false;
 			private:
 				//static const string filename;
 				//static ofstream file_;

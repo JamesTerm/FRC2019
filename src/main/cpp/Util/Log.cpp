@@ -21,7 +21,6 @@ using namespace frc;
 
     const string filename = "C/RoboLog.txt"; //name of file to be created
     static ofstream file_;
-    static bool atComp = false; //bool for comp
 
     void Log::General(string message, bool toDriverStation)
     {
