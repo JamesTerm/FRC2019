@@ -28,11 +28,14 @@ double GoalButtonControl::Update(double _dTime){
 	
 	m_current = val;
 
+	//if the button is not pressed and the state has changed on this iteration of the loop
 	if (!val && abs(m_previous - m_current) > EPSILON_MIN)
 		ValueChanged(new TEventArgs<double, GoalButtonControl*>(m_target, this));
+	//if there is a current goal running and this button is the one that set the goal
 	if (m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive && m_goalSet) {
 		m_activeCollection->GetActiveGoal()->Process(0.010);
 	}
+	//if there is not a goal currently active and this is the button that set the goal
 	else if (!(m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive) && m_goalSet) {
 		m_goalSet = false;
 		m_activeCollection->GetActiveGoal()->Reset();

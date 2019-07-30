@@ -25,15 +25,20 @@ using namespace Controls;
 auto onControllerValueChanged = [&](EventArgs* e) {
 	try{
 		auto args = (TEventArgs<double, ControlItem*>*)e;
+		//If the sender is a GoalButtonControl
 		if (dynamic_cast<GoalButtonControl*>(args->GetSender())) {
+			//Reset the active TeleOpGoal
 			args->GetSender()->m_activeCollection->GetActiveGoal()->Reset();
 			TeleOpGoal goal = ((GoalButtonControl*)(args->GetSender()))->m_goal;
 			SmartDashboard::PutString("GoalButtonControl Status", "Control Found");
+			//Convert from TeleOpGoal[enum] to a Goal[class]
 			Goal* goalToAdd = SelectTeleOpGoal(args->GetSender()->m_activeCollection, goal, args->GetValue());
 			MultitaskGoal* teleOpMasterGoal = args->GetSender()->m_activeCollection->GetActiveGoal();
+			//Add in a timeout and ControllerOverride to the the Multitask Goal
 			teleOpMasterGoal->AddGoal(new Goal_TimeOut(args->GetSender()->m_activeCollection, 7));
 			teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(args->GetSender()->m_activeCollection, 1));
 			teleOpMasterGoal->AddGoal(goalToAdd);
+			//Set and activate the TeleOp Goal
 			args->GetSender()->m_activeCollection->SetActiveGoal(teleOpMasterGoal);
 			args->GetSender()->m_activeCollection->GetActiveGoal()->Activate();
 			((GoalButtonControl*)(args->GetSender()))->m_goalSet = true;

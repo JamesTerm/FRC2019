@@ -30,6 +30,7 @@
         </VictorSPX>
         <!-- Region for TalonSRX CAN Items -->
 
+
         <TalonSRX>
         </TalonSRX>
         <!-- Region for Potentiometers -->
@@ -78,9 +79,9 @@
         <intakeButton button="4" powerMultiplier="0.8" isRamp="true" isAmpLimited="false" actOnRelease="true"/>
 			</ButtonControls>
             <GoalButtonControls>
-                <elePreset_0 button="1" goal="ElevatorControl" params="0.22"/>
-                <elePreset_1 button="3" goal="ElevatorControl" params=".42"/>
-                <elePreset_2 button="4" goal="ElevatorControl" params=".83"/>
+                <elePreset_0 button="1" goal="ElevatorControl" params="0.21"/>
+                <elePreset_1 button="3" goal="ElevatorControl" params=".28"/>
+                <elePreset_2 button="4" goal="ElevatorControl" params=".69"/>
                 <releEle button="2" goal="RelativeElevatorControl" params="-.07"/>
             </GoalButtonControls>
 			<ToggleButtonControls>
@@ -90,9 +91,8 @@
 			</ToggleButtonControls>
 		</Operator>
     </Controls>
-    <!--RobotCameraServer enabled="true">
+    <RobotCameraServer enabled="true">
         <driver_cam enabled="true" port="0" fps="15" width="160" height="120"/>
-        <backup_cam enabled="true" port="1" fps="15" width="160" height="120"/>
     </RobotCameraServer>
-    <Vision LS="0" US="3" LH="87" UH="126" LV="255" UV="255" MinA="1112" MaxA="82763" MaxO="62" LOWER_BOUND="0" UPPER_BOUND="1000" LEFT_BOUND="0" RIGHT_BOUND="1000"/-->
+    <!--Vision LS="0" US="3" LH="87" UH="126" LV="255" UV="255" MinA="1112" MaxA="82763" MaxO="62" LOWER_BOUND="0" UPPER_BOUND="1000" LEFT_BOUND="0" RIGHT_BOUND="1000"/-->
 </Robot>

@@ -24,7 +24,7 @@ enum TeleOpGoal{
 static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal, string autonSelected, string positionSelected)
 {
     bool isFound = true;
-    #if 1
+    #if 0
     if(autonSelected == "NONE") return true;
     
 	if (autonSelected == "DEBUG")

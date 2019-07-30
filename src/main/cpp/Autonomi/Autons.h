@@ -1,5 +1,5 @@
 /****************************** Header ******************************\
-Class Name: -
+Class Name: - [DEPRECATED]
 File Name:	Autons.h
 Summary:
 Project:     BroncBotzFRC2019
@@ -14,8 +14,7 @@ Email: ruizdylann@gmail.com
 #define SRC_AUTONOMI_AUTONS_H_
 
 #include "DriveStraight.h"
-#include "TemplateTest.h"
-
+//[DEPRECATED]
 namespace Autonomi{}
 
 #endif /* SRC_AUTONOMI_AUTONS_H_ */

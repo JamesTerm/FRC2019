@@ -1,3 +1,16 @@
+/****************************** Header ******************************\
+Class Name: VisionTarget
+File Name: VisionTarget.cpp
+Summary: Utility class to manipulate data relating to vision targets
+Project: BroncBotzFRC2019
+Copyright (c) BroncBotz.
+All rights reserved.
+
+Author(s): Ryan Cooper, Dylan Watson, Chris Weeks
+Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com, 
+chrisrweeks@aol.com
+\********************************************************************/
+
 #pragma once
 
 #include <string>

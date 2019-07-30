@@ -62,11 +62,11 @@ double ButtonControl::Update(double _dTime){
 		/*
 		* If the value has not changed since the last calling of the Update function, end the function
 		*/
-		if (abs(previous - current) < EPSILON_MIN) 
+		if (abs(previous - current) < EPSILON_MIN) //If the state of the button has not changed, don't change a thing
 			return current;
-		if (!actOnRelease && !tmp)
+		if (!actOnRelease && !tmp) //If this is not actOnRelease AND if the button is released CONTINUE to set the previous value from when it was pushed, NOT the current value
 			ValueChanged(new TEventArgs<double, ButtonControl*>(previous, this));
-		else
+		else //This would happen if it has changed and it is either (actOnRelease and released [which would set 0]) OR (!actonRelease and pressed [which would set 1*powerMultiplier])
 			ValueChanged(new TEventArgs<double, ButtonControl*>(current, this));
 		previous = current;
 		return current;

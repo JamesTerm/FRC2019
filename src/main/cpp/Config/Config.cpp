@@ -6,8 +6,8 @@ Project:     BroncBotzFRC2019
 Copyright (c) BroncBotz.
 All rights reserved.
 
-Author(s): Ryan Cooper, Dylan Watson
-Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com
+Author(s): Ryan Cooper, Dylan Watson, Chris Weeks
+Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com, chrisrweeks@aol.com
 \********************************************************************/
 
 #include "Config.h"
@@ -141,10 +141,14 @@ void Config::LoadValues(xml_document &doc){
 	xml_node enableSecondaryCamera = root.child("RobotCameraServer");
 	if(enableSecondaryCamera)
 	{
-		if(enableSecondaryCamera.attribute("enabled").as_bool())
+		//TODO: FIX THIS
+		CameraServer::GetInstance()->StartAutomaticCapture(0);
+		/*if(enableSecondaryCamera.attribute("enabled").as_bool())
 		{
-			for(xml_node camera; camera; camera.next_sibling())
+			for(xml_node camera = enableSecondaryCamera.first_child(); camera; camera.next_sibling())
 			{
+				if(camera)
+				{
 				xml_attribute enabled = camera.attribute("enabled");
 				if(enabled.as_bool())
 				{
@@ -165,7 +169,7 @@ void Config::LoadValues(xml_document &doc){
 
 					if(fps)
 					{
-						ifps = port.as_int();
+						ifps = fps.as_int();
 					}
 					else
 					{
@@ -192,9 +196,9 @@ void Config::LoadValues(xml_document &doc){
 				{
 					Log::General("Camera Disabled");
 				}
-
+				}
 			}
-		}
+		}*/
 	}
 		
 		
@@ -411,7 +415,8 @@ void Config::AllocateComponents(xml_node &root){
 		for(xml_node victorSpx = VictorSPX.first_child(); victorSpx; victorSpx = victorSpx.next_sibling()){
 			string name = victorSpx.name();
 			xml_attribute channel = victorSpx.attribute("channel");
-			bool reversed = victorSpx.attribute("reversed");
+			//TODO: Fix this line after comp and fix robot configs
+			bool reversed = victorSpx.attribute("reversed");//.as_bool();
 			int pdbChannel = victorSpx.attribute("pdbChannel") ? victorSpx.attribute("pdbChannel").as_int() : -1;
 			if(channel){
 				VictorSPXItem *tmp = new VictorSPXItem(channel.as_int(), name, reversed);
