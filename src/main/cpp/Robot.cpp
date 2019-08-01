@@ -58,11 +58,14 @@ void Robot::RobotInit()
  */
 void Robot::Autonomous()
 {
-
+	ActiveCollection oof2;
 	m_masterGoal = new MultitaskGoal(m_activeCollection, false);
 
 	Log::General("Autonomous Started");
 	//TODO: Make defaults set now and call the active collection
+
+	oof2.GetDoubleSolenoidDefault();
+
 #ifndef _Win32
 	string autoSelected = m_dashboardTable->GetString("AUTON_SELECTION", m_driveStraight);
 	string positionSelected = m_dashboardTable->GetString("POSITION_SELECTION", "NONE"); // Default auto is drive striaght 
