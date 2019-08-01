@@ -83,7 +83,7 @@ void Config::LoadValues(xml_document &doc){
 
 	#pragma region Comp
 
-	xml_attribute comp = root.child("Competition").attribute("AtComp");
+	bool comp = root.child("Competition").attribute("AtComp").as_bool();
 	if(comp)
 	{
 		Log::atComp = comp;
