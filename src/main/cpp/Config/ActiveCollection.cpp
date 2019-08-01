@@ -87,6 +87,29 @@ TalonSRXItem* ActiveCollection::GetTalon(string name)
 }
 
 /**
+ * Method to return a Solenoid of a certain name
+ **/
+DoubleSolenoidItem* ActiveCollection::GetDoubleSolenoid(string name)
+{
+	DoubleSolenoidItem *ret = nullptr;
+	try
+	{
+		for(int i=0; i<(int)activeCollection.size();i++){
+			if((*activeCollection[i]).name == (string)name){
+				ret=(DoubleSolenoidItem*)activeCollection[i];
+			}
+		}
+		if (!ret) throw "Gabe youre dum";
+	}
+	catch(...){
+		Log::Error("Cannot find DoubleSolenoid " + name + ", it does not exist in the active collection!");
+	}
+	return ret;
+	
+
+}
+
+/**
  * Method to return an Encoder of a certain name
 **/
 EncoderItem* ActiveCollection::GetEncoder(string name)
