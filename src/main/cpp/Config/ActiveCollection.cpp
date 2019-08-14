@@ -11,6 +11,8 @@ Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com, chrisrweeks@aol
 \********************************************************************/
 
 #include <iostream>
+#include <typeinfo>
+#include <typeindex>
 
 #include "ActiveCollection.h"
 #include "../Goals/Goal.h"
@@ -89,27 +91,19 @@ TalonSRXItem* ActiveCollection::GetTalon(string name)
 /**
  * Method to return all Solenoids
  **/
-DoubleSolenoidItem* ActiveCollection::GetDoubleSolenoidDefault()
+void ActiveCollection::DoubleSolenoidDefault()
 {
-	DoubleSolenoidItem *ret = nullptr;
-	DoubleSolenoidItem oof;
 	try
 	{
-		for(int i=0; i<(int)activeCollection.size();i++){
-			if((*activeCollection[i]).name == "DoubleSolenoid"){
-				ret=(DoubleSolenoidItem*)activeCollection[i];
-				oof.DefaultSet();
-				
-			}
+		for(int i=0; i<(int)activeCollection.size();i++)
+		{
+			if(dynamic_cast<DoubleSolenoidItem*>(activeCollection[i]))
+				((DoubleSolenoidItem*)activeCollection[i])->DefaultSet();
 		}
-		if (!ret) throw "Gabe youre dum";
 	}
 	catch(...){
 		Log::Error("Cannot find DoubleSolenoids, it does not exist in the active collection!");
 	}
-	return ret;
-	
-
 }
 
 /**

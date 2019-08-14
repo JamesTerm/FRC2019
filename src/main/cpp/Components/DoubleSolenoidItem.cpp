@@ -32,7 +32,7 @@ DoubleSolenoidItem::DoubleSolenoidItem(string _name, int _forwardChannel, int _r
 	reversed = _reversed;
 	solenoid = new DoubleSolenoid(forwardChannel, reverseChannel);
 	//TODO: THIS MAY BE BROKEN
-	DefaultSet();
+	//DefaultSet();
 	
 }
 
