@@ -135,3 +135,8 @@ C:\Users\weeks\Documents\ExampleDashboard\FRCDashboard2019\bin\Debug\AForge.dll
 C:\Users\weeks\Documents\ExampleDashboard\FRCDashboard2019\bin\Debug\AForge.Video.dll
 C:\Users\weeks\Documents\ExampleDashboard\FRCDashboard2019\bin\Debug\AForge.xml
 C:\Users\weeks\Documents\ExampleDashboard\FRCDashboard2019\bin\Debug\AForge.Video.xml
+C:\Users\gabri\Desktop\FRC2020\FRCDashboard2019\obj\Debug\FRCDashboard2019.csprojAssemblyReference.cache
+C:\Users\gabri\Desktop\FRC2020\FRCDashboard2019\obj\Debug\MainWindow.g.cs
+C:\Users\gabri\Desktop\FRC2020\FRCDashboard2019\obj\Debug\App.g.cs
+C:\Users\gabri\Desktop\FRC2020\FRCDashboard2019\obj\Debug\FRCDashboard2019_MarkupCompile.cache
+C:\Users\gabri\Desktop\FRC2020\FRCDashboard2019\obj\Debug\FRCDashboard2019_MarkupCompile.lref

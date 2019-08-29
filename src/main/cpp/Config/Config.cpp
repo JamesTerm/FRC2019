@@ -141,12 +141,14 @@ void Config::LoadValues(xml_document &doc){
 	xml_node enableSecondaryCamera = root.child("RobotCameraServer");
 	if(enableSecondaryCamera)
 	{
-		//TODO: FIX THIS
-		CameraServer::GetInstance()->StartAutomaticCapture(0);
-		/*if(enableSecondaryCamera.attribute("enabled").as_bool())
+		//TODO: chris dum
+		//CameraServer::GetInstance()->StartAutomaticCapture(0);
+		if(enableSecondaryCamera.attribute("enabled").as_bool())
 		{
-			for(xml_node camera = enableSecondaryCamera.first_child(); camera; camera.next_sibling())
+			
+			for(xml_node camera = enableSecondaryCamera.first_child(); camera; camera = camera.next_sibling())
 			{
+				Log::General("first for loop");
 				if(camera)
 				{
 				xml_attribute enabled = camera.attribute("enabled");
@@ -188,9 +190,15 @@ void Config::LoadValues(xml_document &doc){
 						iwidth = 160;
 						iheight = 120;
 					}
-					cs::UsbCamera cam = CameraServer::GetInstance()->StartAutomaticCapture(iport);
-					cam.SetFPS(ifps);
-					cam.SetResolution(iwidth,iheight);
+					Log::General("iport" + iport,true);
+
+
+					 cs::UsbCamera cam = CameraServer::GetInstance()->StartAutomaticCapture(iport);
+					 cam.SetFPS(ifps);
+					 cam.SetResolution(iwidth,iheight);
+
+					
+					//cam;
 				}
 				else
 				{
@@ -198,7 +206,7 @@ void Config::LoadValues(xml_document &doc){
 				}
 				}
 			}
-		}*/
+		}
 	}
 		
 		
