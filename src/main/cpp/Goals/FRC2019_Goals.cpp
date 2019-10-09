@@ -305,6 +305,7 @@ Goal::Goal_Status Goal_RelativeElevatorControl::Process(double dTime)
 {
     Goal::Goal_Status stat = goal->Process(dTime);
     if(stat == eCompleted)
+    //TODO: this sets defaults do check if solenoids are broken for whatever reason
         ((DoubleSolenoidItem*)(m_activeColelction->Get("hatch_push")))->DefaultSet();
     return stat;
 }
