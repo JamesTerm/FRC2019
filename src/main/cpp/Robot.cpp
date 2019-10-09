@@ -133,7 +133,6 @@ void Robot::OperatorControl()
 		#endif
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
-		Log::General("I hate everything", true);
 		m_drive->Update(DeltaTime);
 		Wait(0.010); 
 	}

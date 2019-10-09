@@ -45,7 +45,7 @@
         <!-- Region for DoubleSolenoids -->
         <DoubleSolenoid>
             <wrist fChannel="0" rChannel="1" default="reverse"/>
-			<hatch_push fChannel="4" rChannel="5" default="forward"/>
+			<hatch_push fChannel="5" rChannel="4" default="forward"/>
             <endgame fChannel="2" rChannel="3" default="reverse"/>
 		</DoubleSolenoid>
         <!-- Region for DigitalInputs -->
