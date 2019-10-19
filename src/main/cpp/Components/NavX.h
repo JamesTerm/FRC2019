@@ -27,7 +27,18 @@ public:
 	NavX(SerialPort::Port serialPortId, SerialDataType dataType, uint8_t updateRateHz) : AHRS(serialPortId, dataType, updateRateHz), NativeComponent("NavX"){}
 	NavX* GetRawComponent(){return this;}
 	virtual ~NavX(){}
+	double GetNavXAngle(){
+
+		double gay = GetAngle();
+
+		return gay;
+	}
+
 };
+	
+	
+
 }
+	
 
 #endif /* SRC_COMPONENTS_NAVX_H_ */

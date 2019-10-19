@@ -146,7 +146,7 @@ static void DriveForward(double dist, double power, ActiveCollection *activeColl
 			//cout << "output = " << output << endl;
 
 			left = power + output; //set left motor to desired power + output
-			right = power - output; //set right motor to desired power - output (+ and - to make robot turn slightly)
+			right = power + output; //set right motor to desired power - output (+ and - to make robot turn slightly)
 
 			SetDrive(left, right, activeCollection); //setDrive to new powers
 
@@ -214,20 +214,26 @@ static void Turn(double target, ActiveCollection *activeCollection)
 
 	//cout << "initial angle = " << navx->GetAngle() << endl;
 
-	double killTime = .5, elapsedTime = 0; //killTime is the time allowed before Turn method times out. Used in case robot is stuck or code messes up.
+	double killTime = 3, elapsedTime = 0; //killTime is the time allowed before Turn method times out. Used in case robot is stuck or code messes up.
 
 	double left, right, power = 0; //left and right motor powers, and default pwoer
 
 	double currentValue = navx->GetAngle(); //get current navx angle
 
-	double kp = .0046, ki = 0, kd = .0046; //PID constants
-	double allow = 2, errorPrior = 0, error, integ = 0, deriv, output;	//allow: +/- degrees of error allowed
+	
+
+	double kp = 0.5/target; //PID constants
+	double ki = kp/100;
+	double kd = 2.8/target;
+
+	double allow = 1, errorPrior = 0, error, integ = 0, deriv, output;	//allow: +/- degrees of error allowed
 																		//errorPrior: error from previus loop iteration
 																		//error: target - current value (P)
 																		//(I)nteg and (D)eriv
 	//while current value is within target +/- allowed error && while time < killTime && we are still in auton period
-	while(((currentValue > target + allow) || (currentValue < target - allow)) && (elapsedTime < killTime) && _IsAutononomous())
+	while((currentValue >= target + allow ) || (currentValue <= target - allow) && (elapsedTime < killTime) && _IsAutononomous)//please make this auto when done
 	{
+		
 		error = target - currentValue; //P
 		integ = integ + error; //I
 		deriv = (error - errorPrior); //D
@@ -236,9 +242,24 @@ static void Turn(double target, ActiveCollection *activeCollection)
 
 		//cout << "output = " << output << endl;
 
-		left = power + output;  //set left motor to desired power + output
-		right = power - output; //set right motor to desired power - output (+ and - to make robot turn slightly)
+		
 
+		if(target > 0){
+			left = power - output;  //set left motor to desired power + output //might have to make postive
+			right = power - output; //set right motor to desired power - output (+ and - to make robot turn slightly) //might have to make negative again for auto
+
+		}
+		else if (target < 0)
+		{
+			left = power + output;  //set left motor to desired power + output //might have to make postive
+			right = power + output; //set right motor to desired power - output (+ and - to make robot turn slightly) //might have to make negative again for auto
+		}
+		else
+		{
+			Log::General("What are you doing trying to go to 0 using turn, a method that resets the value of the navx");
+		}
+		
+		
 		SetDrive(left, right, activeCollection); //set drive to new powers
 
 		currentValue = navx->GetAngle(); //get new navx angle
@@ -246,6 +267,7 @@ static void Turn(double target, ActiveCollection *activeCollection)
 		Wait(.04);
 		elapsedTime += .04; //add time to elapsed
 		//cout<<"angle = " << currentValue << "	left = " << left << "	right = " << right << endl;
+
 	}
 	StopDrive(activeCollection); //once finished, stop drive
 	Wait(.25);
