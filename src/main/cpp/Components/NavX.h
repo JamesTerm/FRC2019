@@ -28,14 +28,10 @@ public:
 	NavX* GetRawComponent(){return this;}
 	virtual ~NavX(){}
 	double GetNavXAngle(){
-
-		double gay = GetAngle();
-
-		return gay;
+		double angle = GetAngle();
+		return angle;
 	}
-
 };
-	
 	
 
 }

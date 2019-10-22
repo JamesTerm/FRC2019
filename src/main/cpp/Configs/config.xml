@@ -37,8 +37,8 @@
         </Potentiometer>
         <!-- Region for Encoders -->
         <Encoder>
-            <shit aChannel="2" bChannel="3" reversed="false"/>
-            <shit2 aChannel="5" bChannel="6" reversed="false"/>
+            <enc aChannel="2" bChannel="3" reversed="false"/>
+            <enc2 aChannel="5" bChannel="6" reversed="false"/>
         </Encoder>
         <!-- Region for DoubleSolenoids -->
         <DoubleSolenoid>
