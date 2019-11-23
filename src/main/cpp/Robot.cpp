@@ -143,13 +143,13 @@ void Robot::OperatorControl()
  */
 void Robot::Test()
 {
-	limelight Cam;
+	limelight* Cam = new limelight();
 	while(!IsDisabled()){
 		PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
 		Log::General("POTENTIOMETER: " + to_string(pot->Get()), true);
-		Cam.HorizontalOffset();
-		Cam.VerticalOffset();
-		Cam.TargetDistance();
+		Cam->HorizontalOffset();
+		Cam->VerticalOffset();
+		Cam->TargetDistance();
 		m_drive->Update(0.010);
 		Wait(0.010);
 	}
