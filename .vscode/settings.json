@@ -86,5 +86,6 @@
   },
   "C_Cpp.configurationWarnings": "Disabled",
   "C_Cpp.default.configurationProvider": "vscode-wpilib",
-  "wpilib.autoStartRioLog": false
+  "wpilib.autoStartRioLog": false,
+  "C_Cpp.errorSquiggles": "Disabled"
 }

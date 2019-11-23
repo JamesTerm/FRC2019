@@ -23,6 +23,7 @@
 #include "Goals/FRC2019_Goals.h"
 #include "Goals/GoalSelector.h"
 #include "Util/VisionTarget.h"
+#include "Limelight/limelight.h"
 
 using namespace frc;
 using namespace System;
@@ -30,6 +31,7 @@ using namespace Controls;
 using namespace Configuration;
 using namespace Autonomi;
 using namespace Logger;
+using namespace Lime;
 
 #define VERSION 1    //!< Defines the program version for the entire program.
 #define REVISION "A" //!< Defines the revision of this version of the program.
