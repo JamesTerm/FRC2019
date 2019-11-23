@@ -122,6 +122,7 @@ void Robot::OperatorControl()
 	double LastTime = GetTime();
 	//We can test teleop auton goals here a bit later
 	PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
+	limelight* Cam = new limelight();
 	while (IsOperatorControl() && !IsDisabled())
 	{
 		
@@ -134,6 +135,17 @@ void Robot::OperatorControl()
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
 		m_drive->Update(DeltaTime);
+
+		if(Cam->SeesTarget())
+		{
+			double X = Cam->HorizontalOffset();
+			double Y = Cam->VerticalOffset();
+			double Z = Cam->TargetDistance();
+			cout << to_string(X) << endl;
+			cout << to_string(Y) << endl;
+			cout << to_string(Z) << endl;
+		}
+		cout << "HI" << endl;
 		Wait(0.010); 
 	}
 }
@@ -143,13 +155,9 @@ void Robot::OperatorControl()
  */
 void Robot::Test()
 {
-	limelight* Cam = new limelight();
 	while(!IsDisabled()){
 		PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
 		Log::General("POTENTIOMETER: " + to_string(pot->Get()), true);
-		Cam->HorizontalOffset();
-		Cam->VerticalOffset();
-		Cam->TargetDistance();
 		m_drive->Update(0.010);
 		Wait(0.010);
 	}

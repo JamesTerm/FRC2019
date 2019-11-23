@@ -25,22 +25,18 @@ class limelight
     public:
         double HorizontalOffset()
         {
-          Log::General(to_string(table->GetNumber("tx", 0.0)) + "", true);
           return table->GetNumber("tx", 0.0);
         }
         double VerticalOffset()
         {
-            Log::General(to_string(table->GetNumber("ty", 0.0)), true);
             return table->GetNumber("ty", 0.0);
         }
         double TargetDistance()
         {
-            Log::General(to_string(table->GetNumber("ta", 0.0)), true);
             return table->GetNumber("ta", 0.0);
         }
         bool SeesTarget()
         {
-            Log::General(to_string(table->GetNumber("tv", 0.0)), true);
             int Present = table->GetNumber("tv", 0.0);
             if(Present > 0)
             {
@@ -75,7 +71,7 @@ class limelight
             }
         }
     private:
-        std::shared_ptr<NetworkTable> table = table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
+        std::shared_ptr<NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
  };
 }
 #endif /* SRC_limelight_H_ */
