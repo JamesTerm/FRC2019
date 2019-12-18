@@ -24,6 +24,7 @@
 #include "Goals/GoalSelector.h"
 #include "Util/VisionTarget.h"
 #include "Limelight/limelight.h"
+#include "Util/UtilityFunctions.h"
 
 using namespace frc;
 using namespace System;
