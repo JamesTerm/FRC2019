@@ -216,7 +216,8 @@ static void Turn(double target, ActiveCollection *activeCollection)
 
 	double killTime = 10, elapsedTime = 0; //killTime is the time allowed before Turn method times out. Used in case robot is stuck or code messes up.
 
-	double left, right, power = 0; //left and right motor powers, and default pwoer
+	double left, right = 0; //left and right motor powers, and default pwoer
+	double power = 0.05;
 
 	double currentValue = navx->GetAngle(); //get current navx angle
 
@@ -225,23 +226,46 @@ static void Turn(double target, ActiveCollection *activeCollection)
 
 	//kp = 0.007 and kd = 0.01 for 90 degrees
 
-	double kp = 0.0075; //PID constants
-	double ki = 0;
-	double kd = 0.01;
+	double P = 0.0075; //PID constants
+	double I = 0;
+	double F = 0.01;
 
 	double allow = 1, errorPrior, error, integ = 0, deriv, output;	//allow: +/- degrees of error allowed
 																		//errorPrior: error from previus loop iteration
 																		//error: target - current value (P)
 																		//(I)nteg and (D)eriv
+	
+	double PerErrorTrack = 10;
+
 	//while current value is within target +/- allowed error && while time < killTime && we are still in auton period
-	while((currentValue >= target + allow ) || (currentValue <= target - allow) && (elapsedTime < killTime) && _IsTeleoporated)//please make this auto when done
+	//while((currentValue >= target + allow ) || (currentValue <= target - allow) && (elapsedTime < killTime) && _IsTeleoporated)//please make this auto when done
+	while((PerErrorTrack > 0.5) && (elapsedTime < killTime))
 	{
-		//(currentValue >= target + allow ) || (currentValue <= target - allow) && 
-		error = target - currentValue; //P
+		/*error = target - currentValue; //P
 		integ = integ + error; //I
 		deriv = (error - errorPrior); //D
 		output = (kp*error) + (ki*integ) + (kd*deriv); //PID * scalars = output
 		errorPrior = error; //set errorPrior for next iteration of loop
+		PerErrorTrack = error;
+		*/
+
+		double Error = GoalPoint - Pos;
+        totalE += Error * ChangeInTime;
+        double Result = ((P * Error) + (I * totalE)  + (D * ((Error - PrevE) / ChangeInTime)) + (F * GoalPoint));
+		PrevE = Error;
+
+		if(Limit) 
+		{
+        	if (Result > 1) {
+              Result = 1;
+            } else if (Result < -1) {
+                Result = -1;
+            }
+	    }
+
+		if(PerErrorTrack < 0)
+			PerErrorTrack *= -1;
+
 
 		if(target > 0){
 			left = power - output;  //set left motor to desired power + output //might have to make postive
@@ -259,14 +283,14 @@ static void Turn(double target, ActiveCollection *activeCollection)
 		}
 		
 		
-		SetDrive(left, right, activeCollection); //set drive to new powers
+		SetDrive(left*0.85, right*0.85, activeCollection); //set drive to new powers
 
 		currentValue = navx->GetAngle(); //get new navx angle
 
 		Wait(.04);
 		elapsedTime += .04; //add time to elapsed
 		cout<<"angle = " << currentValue << "	left = " << left << "	right = " << right << endl;
-
+		cout << "Prev Error " << errorPrior << endl;
 	}
 	StopDrive(activeCollection); //once finished, stop drive
 	Wait(.25);
