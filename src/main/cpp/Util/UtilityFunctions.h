@@ -217,7 +217,7 @@ static void Turn(double target, ActiveCollection *activeCollection)
 	double killTime = 10, elapsedTime = 0; //killTime is the time allowed before Turn method times out. Used in case robot is stuck or code messes up.
 
 	double left, right = 0; //left and right motor powers, and default pwoer
-	double power = 0.05;
+	double power = 0;
 
 	double currentValue = navx->GetAngle(); //get current navx angle
 
