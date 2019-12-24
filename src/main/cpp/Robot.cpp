@@ -125,6 +125,8 @@ void Robot::OperatorControl()
 	//limelight* Cam = new limelight();
 
 	Turn(180, m_activeCollection);
+	Wait(10);
+	Turn(90, m_activeCollection);
 
 	while (IsOperatorControl() && !IsDisabled())
 	{

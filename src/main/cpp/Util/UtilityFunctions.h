@@ -221,45 +221,32 @@ static void Turn(double target, ActiveCollection *activeCollection)
 
 	double currentValue = navx->GetAngle(); //get current navx angle
 
-	//note for Me:
-	//Just P used, value is 0.006
-
-	//kp = 0.007 and kd = 0.01 for 90 degrees
-
-	double P = 0.0075; //PID constants
-	double I = 0;
-	double F = 0.01;
-
-	double allow = 1, errorPrior, error, integ = 0, deriv, output;	//allow: +/- degrees of error allowed
-																		//errorPrior: error from previus loop iteration
-																		//error: target - current value (P)
-																		//(I)nteg and (D)eriv
+	double P = 1; //PID constants
+	double I = 0.08;
+	double D = 0.06;
+	double F = -0.15;
+	double Limit = 0.7;
+	double ChangeInTime = 0.01;
+	double PrevE, totalE = 0;
 	
 	double PerErrorTrack = 10;
 
-	//while current value is within target +/- allowed error && while time < killTime && we are still in auton period
-	//while((currentValue >= target + allow ) || (currentValue <= target - allow) && (elapsedTime < killTime) && _IsTeleoporated)//please make this auto when done
-	while((PerErrorTrack > 0.5) && (elapsedTime < killTime))
+	while((PerErrorTrack > 0.1) && (elapsedTime < killTime))
 	{
-		/*error = target - currentValue; //P
-		integ = integ + error; //I
-		deriv = (error - errorPrior); //D
-		output = (kp*error) + (ki*integ) + (kd*deriv); //PID * scalars = output
-		errorPrior = error; //set errorPrior for next iteration of loop
-		PerErrorTrack = error;
-		*/
+		currentValue = navx->GetAngle(); //get new navx angle
 
-		double Error = GoalPoint - Pos;
-        totalE += Error * ChangeInTime;
-        double Result = ((P * Error) + (I * totalE)  + (D * ((Error - PrevE) / ChangeInTime)) + (F * GoalPoint));
+		double Error = target - currentValue;
+        totalE += Error * 0.4;
+        double Result = ((P * Error) + (I * totalE)  + (D * ((Error - PrevE) / ChangeInTime)) + (F * target));
 		PrevE = Error;
+		PerErrorTrack = Error;
 
-		if(Limit) 
+		if(Limit != 0)
 		{
-        	if (Result > 1) {
-              Result = 1;
-            } else if (Result < -1) {
-                Result = -1;
+        	if (Result > Limit) {
+              Result = Limit;
+            } else if (Result < -Limit) {
+                Result = -Limit;
             }
 	    }
 
@@ -268,29 +255,29 @@ static void Turn(double target, ActiveCollection *activeCollection)
 
 
 		if(target > 0){
-			left = power - output;  //set left motor to desired power + output //might have to make postive
-			right = power - output; //set right motor to desired power - output (+ and - to make robot turn slightly) //might have to make negative again for auto
+			left = power - Result;  //set left motor to desired power + output //might have to make postive
+			right = power - Result; //set right motor to desired power - output (+ and - to make robot turn slightly) //might have to make negative again for auto
 
 		}
 		else if (target < 0)
 		{
-			left = power + output;  //set left motor to desired power + output //might have to make postive
-			right = power + output; //set right motor to desired power - output (+ and - to make robot turn slightly) //might have to make negative again for auto
+			left = power + Result;  //set left motor to desired power + output //might have to make postive
+			right = power + Result; //set right motor to desired power - output (+ and - to make robot turn slightly) //might have to make negative again for auto
 		}
 		else
 		{
+			left = 0;
+			right = 0;
 			Log::General("What are you doing trying to go to 0 using turn, a method that resets the value of the navx");
 		}
 		
 		
 		SetDrive(left*0.85, right*0.85, activeCollection); //set drive to new powers
 
-		currentValue = navx->GetAngle(); //get new navx angle
-
-		Wait(.04);
-		elapsedTime += .04; //add time to elapsed
+		Wait(ChangeInTime);
+		elapsedTime += ChangeInTime; //add time to elapsed
 		cout<<"angle = " << currentValue << "	left = " << left << "	right = " << right << endl;
-		cout << "Prev Error " << errorPrior << endl;
+		cout << "Error " << Error << endl;
 	}
 	StopDrive(activeCollection); //once finished, stop drive
 	Wait(.25);
