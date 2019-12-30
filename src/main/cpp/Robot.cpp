@@ -123,10 +123,9 @@ void Robot::OperatorControl()
 	//We can test teleop auton goals here a bit later
 	PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
 	//limelight* Cam = new limelight();
-
-	Turn(180, m_activeCollection);
+	
+	DriveForward(0, 0, m_activeCollection);
 	Wait(10);
-	Turn(90, m_activeCollection);
 
 	while (IsOperatorControl() && !IsDisabled())
 	{
