@@ -13,11 +13,18 @@ Email: irobot9803@gmail.com
 #ifndef SRC_limelight_H_
 #define SRC_limelight_H_
 
+#ifdef _Win32
+#include "../Util//SmartDashboard.h"
+#else
 #include "frc/smartdashboard/Smartdashboard.h"
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableInstance.h"
 #include "../Global.h"
+<<<<<<< HEAD
 #include "NativeComponent.h"
+=======
+#endif
+>>>>>>> a84148e35b1073720bf49d42711d081d9f239975
 
 using namespace std;
 namespace Lime{
