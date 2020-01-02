@@ -17,12 +17,14 @@ Email: irobot9803@gmail.com
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableInstance.h"
 #include "../Global.h"
+#include "NativeComponent.h"
 
 using namespace std;
 namespace Lime{
-class limelight
+class limelight : NativeComponent //Inheritance or something 
 {
     public:
+        limelight() : NativeComponent("limelight") { } 
         double HorizontalOffset()
         {
           return table->GetNumber("tx", 0.0);

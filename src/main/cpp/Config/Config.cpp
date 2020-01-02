@@ -369,6 +369,10 @@ void Config::LoadValues(xml_document &doc){
 		return;
 	}
 
+
+ 	xml_node LimeLight = root.child("LimeLight"); //hey look I also wrote this, and it also broke.  But this is something that is needed for the LimeLight
+	
+
 	AllocateDriverControls(controls);
 	AllocateOperatorControls(controls);
 }
