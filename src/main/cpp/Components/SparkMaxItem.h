@@ -13,12 +13,12 @@ Email: irobot983@gmail.com
 #ifndef SRC_COMPONENTS_SPARKMAXITEM_H_
 #define SRC_COMPONENTS_SPARKMAXITEM_H_
 
-#include "rev/SparkmaxLib.h"
+#include <rev/SparkMax.h>
 #include "OutputComponent.h"
 
 using namespace std;
 using namespace frc;
-
+using namespace rev;
 namespace Components{
 class SparkMaxItem : public OutputComponent{
 private:

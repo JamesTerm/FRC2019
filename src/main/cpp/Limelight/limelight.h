@@ -15,7 +15,7 @@ Email: irobot9803@gmail.com
 
 #ifdef _Win32
 #include "../Util//SmartDashboard.h"
-#else
+#endif
 #include "frc/smartdashboard/Smartdashboard.h"
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableInstance.h"
@@ -24,8 +24,9 @@ Email: irobot9803@gmail.com
 #include "../Components/NativeComponent.h"
 
 using namespace std;
+using namespace Components;
 namespace Lime{
-class limelight : NativeComponent //Inheritance or something 
+class limelight : public NativeComponent //Inheritance or something 
 {
     public:
         limelight() : NativeComponent("limelight") { } 
@@ -41,7 +42,7 @@ class limelight : NativeComponent //Inheritance or something
         {
             double robotheight = 42;
             robotheight -= TargetHeight;
-            return robotHeight / tan(VerticalOffset);
+            return robotheight / tan(VerticalOffset());
         }
         bool SeesTarget()
         {

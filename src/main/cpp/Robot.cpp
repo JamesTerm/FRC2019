@@ -137,7 +137,7 @@ void Robot::OperatorControl()
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
 		//m_drive->Update(DeltaTime);
-		cout << lime->TargetDistance() << endl;
+		cout << lime->TargetDistance(0) << endl; //I put 0 in here so it would compile. IDK what you actually want.
 /*
 		if(Cam->SeesTarget())
 		{
