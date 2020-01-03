@@ -20,11 +20,8 @@ Email: irobot9803@gmail.com
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableInstance.h"
 #include "../Global.h"
-<<<<<<< HEAD
+#include "cmath"
 #include "NativeComponent.h"
-=======
-#endif
->>>>>>> a84148e35b1073720bf49d42711d081d9f239975
 
 using namespace std;
 namespace Lime{
@@ -40,9 +37,11 @@ class limelight : NativeComponent //Inheritance or something
         {
             return table->GetNumber("ty", 0.0);
         }
-        double TargetDistance()
+        double TargetDistance(double TargetHeight)
         {
-            return table->GetNumber("ta", 0.0);
+            double robotheight = 42
+            robotheight -= TargetHeight
+            return robotHeight / tan(VerticalOffset);
         }
         bool SeesTarget()
         {

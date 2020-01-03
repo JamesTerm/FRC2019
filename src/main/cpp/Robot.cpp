@@ -123,9 +123,7 @@ void Robot::OperatorControl()
 	//We can test teleop auton goals here a bit later
 	PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
 	//limelight* Cam = new limelight();
-	
-	DriveForward(0, 0, m_activeCollection);
-	Wait(10);
+	limelight* lime = (limelight*)(m_activeCollection->Get("limelight"));
 
 	while (IsOperatorControl() && !IsDisabled())
 	{
@@ -138,7 +136,8 @@ void Robot::OperatorControl()
 		#endif
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
-		m_drive->Update(DeltaTime);
+		//m_drive->Update(DeltaTime);
+		cout << lime->TargetDistance() << endl;
 /*
 		if(Cam->SeesTarget())
 		{
