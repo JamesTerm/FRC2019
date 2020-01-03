@@ -21,7 +21,7 @@ Email: irobot9803@gmail.com
 #include "networktables/NetworkTableInstance.h"
 #include "../Global.h"
 #include "cmath"
-#include "NativeComponent.h"
+#include "../Components/NativeComponent.h"
 
 using namespace std;
 namespace Lime{
