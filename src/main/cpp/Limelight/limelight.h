@@ -39,8 +39,8 @@ class limelight : NativeComponent //Inheritance or something
         }
         double TargetDistance(double TargetHeight)
         {
-            double robotheight = 42
-            robotheight -= TargetHeight
+            double robotheight = 42;
+            robotheight -= TargetHeight;
             return robotHeight / tan(VerticalOffset);
         }
         bool SeesTarget()
