@@ -135,7 +135,7 @@ static void DriveForward(double dist, double power, ActiveCollection *activeColl
 	double F = (0);
 	double Limit = 0.5;
 	double ChangeInTime = 0.004;
-	double PrevE, totalE = 0;
+	double PrevE = 0, totalE = 0;
 	double PrevEncoder = 10000, totalEncoder = 0;
 	double enc = 0;
 
