@@ -15,11 +15,12 @@ Email: irobot9803@gmail.com
 
 #ifdef _Win32
 #include "../Util//SmartDashboard.h"
-#endif
+#else
 #include "frc/smartdashboard/Smartdashboard.h"
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableInstance.h"
 #include "../Global.h"
+#endif
 #include "cmath"
 #include "../Components/NativeComponent.h"
 #include "iostream"
