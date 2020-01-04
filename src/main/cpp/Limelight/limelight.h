@@ -22,6 +22,7 @@ Email: irobot9803@gmail.com
 #include "../Global.h"
 #include "cmath"
 #include "../Components/NativeComponent.h"
+#include "iostream"
 
 using namespace std;
 using namespace Components;
@@ -29,7 +30,7 @@ namespace Lime{
 class limelight : public NativeComponent //Inheritance or something 
 {
     public:
-        limelight() : NativeComponent("limelight") { } 
+        limelight() : NativeComponent("LimeLight") {} 
         double HorizontalOffset()
         {
           return table->GetNumber("tx", 0.0);
@@ -40,9 +41,10 @@ class limelight : public NativeComponent //Inheritance or something
         }
         double TargetDistance(double TargetHeight)
         {
-            double robotheight = 42;
-            robotheight -= TargetHeight;
-            return robotheight / tan(VerticalOffset());
+            double robotheight = TargetHeight - 42;
+            cout << (robotheight / tan((VerticalOffset() * 3.14159265) / 180)) << endl;
+            cout << "angle: " << (VerticalOffset() * 3.14159265) / 180 << endl;
+            return (robotheight / tan((VerticalOffset() * 3.14159265) / 180));
         }
         bool SeesTarget()
         {

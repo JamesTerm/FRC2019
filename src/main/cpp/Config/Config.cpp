@@ -369,12 +369,13 @@ void Config::LoadValues(xml_document &doc){
 		return;
 	}
 
-
- 	if(root.child("LimeLight")){ //hey look I also wrote this, and it also broke.  But this is something that is needed for the LimeLight
+	xml_node LM = root.child("limeLight");
+ 	//if(LM)
+	{ //hey look I also wrote this, and it also broke.  But this is something that is needed for the LimeLight
 		limelight* lime = new limelight();
 		m_activeCollection->Add(lime);
 	}
-
+		
 	AllocateDriverControls(controls);
 	AllocateOperatorControls(controls);
 }

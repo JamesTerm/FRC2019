@@ -43,7 +43,7 @@ NativeComponent* ActiveCollection::Get(string name)
 		if(!ret) throw "AHHH";
 	}
 	catch(...){
-		Log::Error("Cannot find component " + name + ", it does not exist in the active collection!\nCheck your type correlation!");
+		Log::Error("Cannot find component " + name + ", it does not exist in the active collection!");
 	}
 	return ret;
 }

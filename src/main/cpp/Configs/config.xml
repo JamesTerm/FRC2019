@@ -9,7 +9,7 @@
     <UseNavX value="true" />
     <!-- Sets whether or not to initialize the camera to send back to the driver station -->
     <!-- Contains assignments to ports and robot dimensions -->
-    <Limelight />
+    <limeLight />
     <RobotConfig>
         <!-- Region for defining VictorSP Items -->
         <VictorSP>
