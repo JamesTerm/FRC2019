@@ -12,25 +12,21 @@
     <RobotConfig>
         <!-- Region for defining VictorSP Items -->
         <VictorSP>
-            <left_0 channel="0" reversed="true" />
-            <left_1 channel="1" reversed="true" />
-            <left_2 channel="2" reversed="true"/>
-            <right_0 channel="3" reversed="true" />
-            <right_1 channel="4" reversed="true" />
-            <right_2 channel="5" reversed="true"/>
-            <climb_0 channel="9" reversed="true"/>
-            <climb_1 channel="17" reversed="true"/>
-            <leftIntake channel="6" reversed="false"/>
-            <rightIntake channel="7" reversed="false"/>
-            <intakeDrop channel="8" reversed="false"/>
+           <shooter0 channel="8" reversed=""/>
+           <shooter1 channel="9" reversed=""/>
         </VictorSP>
         <!-- Region for VictorSPX CAN Items -->
         <VictorSPX>
+            <right_0 channel="0" reversed="false"/>
+            <right_1 channel="1" reversed="false"/>
+            <right_2 channel="2" reversed="false"/>
+            <left_0 channel="3" reversed="false"/>
+            <left_1 channel="4" reversed="false"/>
+            <left_2 channel="5" reversed="false"/>
         </VictorSPX>
         <!-- Region for TalonSRX CAN Items -->
 
         <TalonSRX>
-        <lift channel="24" reversed="true"/>
         </TalonSRX>
         <!-- Region for Potentiometers -->
         <Potentiometer>
@@ -40,10 +36,12 @@
         </Encoder>
         <!-- Region for DoubleSolenoids -->
         <DoubleSolenoid>
+
 		</DoubleSolenoid>
         <!-- Region for DigitalInputs -->
         <DigitalInput>
             <!--limSwitch channel="4"/-->
+            
         </DigitalInput>
     </RobotConfig>
 
@@ -52,33 +50,35 @@
         <!-- Driver Controller, slot should always be 0 -->
         <Driver slot="0">
             <AxisControls>
-                <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.7" bindings="left_0, left_1, left_2" useOverdrive="true"/>
-                <rightDrive axis="5" deadZone="0.08" reversed="true" powerMultiplier="0.7" bindings="right_0, right_1, right_2" useOverdrive="true"/>
+                <leftDrive axis="1" deadZone="0.08" reversed="true" powerMultiplier="0.8" bindings="left_2" useOverdrive="true"/>
+                <rightDrive axis="5" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="right_0, right_1, right_2" useOverdrive="true"/>
             </AxisControls>
           <ButtonControls>
                 <overdrive button="5" powerMultiplier="1.0" isOverdrive="true" />
           </ButtonControls>
           <ToggleButtonControls>
-          </ToggleButtonControls>
+                <endgame_control button="3" powerMultiplier="1.0" bindings="endgame"/>
+          </ToggleButtonControls-->
         </Driver>
 		<Operator slot="1">
 			<AxisControls>
-                <intakeDropControl axis="5" deadZone="0.3" reversed="true" powerMultiplier="0.5" bindings="intakeDrop"/>
-                <liftControl axis="1" deadZone="0.1" reversed="true" powerMultiplier="0.9" bindings="lift"/>
-                <!--<climbControl axis="2" deadZone="0.07" reversed="false" powerMultiplier="0.9"/>-->
-                <intakeOutFastControl axis="3" deadZone=".07" reversed="false" powerMultiplier="-.6" bindings="rightIntake, leftIntake"/>
-                
+                <outtake_control axis="2" deadZone="0.08" reversed="false" powerMultiplier="1.0" bindings="intake"/>
+				<elevator_control axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.75" bindings="elevator_0, elevator_1, elevator_2, elevator_3" />
+                <intake_control axis="3" deadZone="0.08" reversed="true" powerMultiplier="1.0" bindings="intake"/>
 			</AxisControls>
 			<ButtonControls>
-
-            <intakeOutSlow button="2" actOnRelease="false" reversed="false" powerMultiplier="-.3" bindings="rightIntake, leftIntake" />
-            <intakeInControlRight button="3" actOnRelease="true" reversed="false" powerMultiplier=".75" bindings="rightIntake" />
-            <intakeInControlLeft button="3" actOnRelease="true" reversed="false" powerMultiplier=".9" bindings="leftIntake" />
-
+        <intakeButton button="4" powerMultiplier="0.8" isRamp="true" isAmpLimited="false" actOnRelease="true"/>
 			</ButtonControls>
             <GoalButtonControls>
+                <elePreset_0 button="1" goal="ElevatorControl" params="0"/>
+                <elePreset_1 button="3" goal="ElevatorControl" params=".25"/>
+                <elePreset_2 button="4" goal="ElevatorControl" params=".70"/>
+                <releEle button="8" goal="RelativeElevatorControl" params="-.07"/>
             </GoalButtonControls>
 			<ToggleButtonControls>
+                <hatch_push_control button="5" powerMultiplier="1.0" bindings="hatch_push"/>
+				<wrist_control button="10" powerMultiplier="1.0" bindings="wrist"/>
+                
 			</ToggleButtonControls>
 		</Operator>
     </Controls>

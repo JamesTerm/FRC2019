@@ -81,6 +81,20 @@ void Config::LoadValues(xml_document &doc){
 
 	#pragma region MetaData
 
+	#pragma region Comp
+
+	bool comp = root.child("Competition").attribute("AtComp").as_bool();
+	if(comp)
+	{
+		Log::atComp = comp;
+	}
+	else
+	{
+		Log::atComp = false;
+	}
+
+	#pragma endregion Comp
+
 	#pragma region Version
 
 	xml_attribute version = root.child("Version").attribute("version");
@@ -127,10 +141,16 @@ void Config::LoadValues(xml_document &doc){
 	xml_node enableSecondaryCamera = root.child("RobotCameraServer");
 	if(enableSecondaryCamera)
 	{
+		//TODO: chris dum
+		//CameraServer::GetInstance()->StartAutomaticCapture(0);
 		if(enableSecondaryCamera.attribute("enabled").as_bool())
 		{
-			for(xml_node camera = enableSecondaryCamera.first_child(); camera; camera.next_sibling())
+			
+			for(xml_node camera = enableSecondaryCamera.first_child(); camera; camera = camera.next_sibling())
 			{
+				Log::General("first for loop");
+				if(camera)
+				{
 				xml_attribute enabled = camera.attribute("enabled");
 				if(enabled.as_bool())
 				{
@@ -151,7 +171,7 @@ void Config::LoadValues(xml_document &doc){
 
 					if(fps)
 					{
-						ifps = port.as_int();
+						ifps = fps.as_int();
 					}
 					else
 					{
@@ -170,15 +190,21 @@ void Config::LoadValues(xml_document &doc){
 						iwidth = 160;
 						iheight = 120;
 					}
-					cs::UsbCamera cam = CameraServer::GetInstance()->StartAutomaticCapture(iport);
-					cam.SetFPS(ifps);
-					cam.SetResolution(iwidth,iheight);
+					Log::General("iport" + iport,true);
+
+
+					 cs::UsbCamera cam = CameraServer::GetInstance()->StartAutomaticCapture(iport);
+					 cam.SetFPS(ifps);
+					 cam.SetResolution(iwidth,iheight);
+
+					
+					//cam;
 				}
 				else
 				{
 					Log::General("Camera Disabled");
 				}
-
+				}
 			}
 		}
 	}
@@ -343,6 +369,13 @@ void Config::LoadValues(xml_document &doc){
 		return;
 	}
 
+	xml_node LM = root.child("limeLight");
+ 	//if(LM)
+	{ //hey look I also wrote this, and it also broke.  But this is something that is needed for the LimeLight
+		limelight* lime = new limelight();
+		m_activeCollection->Add(lime);
+	}
+		
 	AllocateDriverControls(controls);
 	AllocateOperatorControls(controls);
 }
@@ -397,7 +430,8 @@ void Config::AllocateComponents(xml_node &root){
 		for(xml_node victorSpx = VictorSPX.first_child(); victorSpx; victorSpx = victorSpx.next_sibling()){
 			string name = victorSpx.name();
 			xml_attribute channel = victorSpx.attribute("channel");
-			bool reversed = victorSpx.attribute("reversed");
+			//TODO: Fix this line after comp and fix robot configs
+			bool reversed = victorSpx.attribute("reversed");//.as_bool();
 			int pdbChannel = victorSpx.attribute("pdbChannel") ? victorSpx.attribute("pdbChannel").as_int() : -1;
 			if(channel){
 				VictorSPXItem *tmp = new VictorSPXItem(channel.as_int(), name, reversed);

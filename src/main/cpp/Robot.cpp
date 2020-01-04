@@ -58,10 +58,12 @@ void Robot::RobotInit()
  */
 void Robot::Autonomous()
 {
-
+	
 	m_masterGoal = new MultitaskGoal(m_activeCollection, false);
 
 	Log::General("Autonomous Started");
+	//TODO: Make defaults set now and call the active collection
+	m_activeCollection->DoubleSolenoidDefault();
 #ifndef _Win32
 	string autoSelected = m_dashboardTable->GetString("AUTON_SELECTION", m_driveStraight);
 	string positionSelected = m_dashboardTable->GetString("POSITION_SELECTION", "NONE"); // Default auto is drive striaght 
@@ -120,6 +122,9 @@ void Robot::OperatorControl()
 	double LastTime = GetTime();
 	//We can test teleop auton goals here a bit later
 	PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
+	//limelight* Cam = new limelight();
+	limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
+
 	while (IsOperatorControl() && !IsDisabled())
 	{
 		
@@ -132,6 +137,18 @@ void Robot::OperatorControl()
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
 		m_drive->Update(DeltaTime);
+		cout << to_string(lime->TargetDistance(48)) << endl;
+/*
+		if(Cam->SeesTarget())
+		{
+			double X = Cam->HorizontalOffset();
+			double Y = Cam->VerticalOffset();
+			double Z = Cam->TargetDistance();
+			cout << to_string(X) << endl;
+			cout << to_string(Y) << endl;
+			cout << to_string(Z) << endl;
+		}
+		cout << "HI" << endl;*/
 		Wait(0.010); 
 	}
 }
