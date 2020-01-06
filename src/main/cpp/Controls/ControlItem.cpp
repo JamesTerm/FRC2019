@@ -45,6 +45,7 @@ auto onControllerValueChanged = [&](EventArgs* e) {
 			SmartDashboard::PutString("GoalButtonControl Status", "GoalActivated");
 			return;
 		}
+		cout << "Changed: " << args->GetValue() << endl;
 		args->GetSender()->SetToComponents(args->GetValue());
 		SmartDashboard::PutNumber(args->GetSender()->name, args->GetValue());
 	}catch(exception &e){

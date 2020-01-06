@@ -58,10 +58,12 @@ void Robot::RobotInit()
  */
 void Robot::Autonomous()
 {
-
+	
 	m_masterGoal = new MultitaskGoal(m_activeCollection, false);
 
 	Log::General("Autonomous Started");
+	//TODO: Make defaults set now and call the active collection
+	m_activeCollection->DoubleSolenoidDefault();
 #ifndef _Win32
 	string autoSelected = m_dashboardTable->GetString("AUTON_SELECTION", m_driveStraight);
 	string positionSelected = m_dashboardTable->GetString("POSITION_SELECTION", "NONE"); // Default auto is drive striaght 
@@ -105,7 +107,7 @@ void Robot::Autonomous()
  */
 //test method doesnt work in rio for some reason...
 //TODO: Potentially make a "test" tag in the config that can toggle this?
-void Robot::OperatorControl()
+void Robot::Teleop()
 {
 	m_activeCollection->GetActiveGoal()->~MultitaskGoal(); //!< Destroy any pre-existing masterGoal that was not properly disposed of
 	m_teleOpMasterGoal = new MultitaskGoal(m_activeCollection, false);
@@ -119,7 +121,10 @@ void Robot::OperatorControl()
 	Log::General("Teleoperation Started.");
 	double LastTime = GetTime();
 	//We can test teleop auton goals here a bit later
-	PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
+	//PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
+	//limelight* Cam = new limelight();
+	limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
+
 	while (IsOperatorControl() && !IsDisabled())
 	{
 		
@@ -132,6 +137,18 @@ void Robot::OperatorControl()
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
 		m_drive->Update(DeltaTime);
+		cout << to_string(lime->TargetDistance(48)) << endl;
+/*
+		if(Cam->SeesTarget())
+		{
+			double X = Cam->HorizontalOffset();
+			double Y = Cam->VerticalOffset();
+			double Z = Cam->TargetDistance();
+			cout << to_string(X) << endl;
+			cout << to_string(Y) << endl;
+			cout << to_string(Z) << endl;
+		}
+		cout << "HI" << endl;*/
 		Wait(0.010); 
 	}
 }
@@ -142,11 +159,54 @@ void Robot::OperatorControl()
 void Robot::Test()
 {
 	while(!IsDisabled()){
-		PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
-		Log::General("POTENTIOMETER: " + to_string(pot->Get()), true);
+		//PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
+		//Log::General("POTENTIOMETER: " + to_string(pot->Get()), true);
 		m_drive->Update(0.010);
 		Wait(0.010);
 	}
 }
 
-START_ROBOT_CLASS(Robot) //!< This identifies Robot as the main Robot starting class
+void Robot::StartCompetition() {
+  auto& lw = *frc::LiveWindow::GetInstance();
+
+  RobotInit();
+
+  // Tell the DS that the robot is ready to be enabled
+  HAL_ObserveUserProgramStarting();
+
+  while (!m_exit) {
+    if (IsDisabled()) {
+      m_ds.InDisabled(true);
+      Disabled();
+      m_ds.InDisabled(false);
+      while (IsDisabled()) m_ds.WaitForData();
+    } else if (IsAutonomous()) {
+      m_ds.InAutonomous(true);
+      Autonomous();
+      m_ds.InAutonomous(false);
+      while (IsAutonomous() && IsEnabled()) m_ds.WaitForData();
+    } else if (IsTest()) {
+      lw.SetEnabled(true);
+      frc::Shuffleboard::EnableActuatorWidgets();
+      m_ds.InTest(true);
+      Test();
+      m_ds.InTest(false);
+      while (IsTest() && IsEnabled()) m_ds.WaitForData();
+      lw.SetEnabled(false);
+      frc::Shuffleboard::DisableActuatorWidgets();
+    } else {
+      m_ds.InOperatorControl(true);
+      Teleop();
+      m_ds.InOperatorControl(false);
+      while (IsOperatorControl() && IsEnabled()) m_ds.WaitForData();
+    }
+  }
+}
+
+void Robot::EndCompetition() { m_exit = true; }
+
+void Robot::Disabled() { /*Do nothing for now*/ }
+
+#ifndef RUNNING_FRC_TESTS
+int main() { return frc::StartRobot<Robot>(); }  //!< This identifies Robot as the main Robot starting class
+#endif

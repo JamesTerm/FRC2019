@@ -49,6 +49,7 @@ namespace Configuration
 			VictorSPItem* GetVictor(string name);
 			TalonSRXItem* GetTalon(string name);
 			EncoderItem* GetEncoder(string name);
+			void DoubleSolenoidDefault();
 			NavX* GetNavX();
 			int GetSize();
 			vector<NativeComponent*> GetRawComponent();

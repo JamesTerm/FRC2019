@@ -46,7 +46,7 @@ double AxisControl::Update(double _dTime)
 			previousPow = currentPow;
 			return currentPow;
 		}
-		else if(!m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive){
+		else if(!(m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive)){
 			double currentVal = ((PotentiometerItem*)m_activeCollection->Get("pot"))->Get();
 			//TODO: Use PID. This is a last minute fix that just happens to work
 			#if 0

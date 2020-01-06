@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Root of the Config -->
 <Robot>
+    <!-- Set true or false based on if robot is at comp or not -->
+    <Competition AtComp = "false" />
     <!-- Version of the current config to be printed on the console -->
     <Version version="1" />
     <!-- Comment on this particular config to be printed on the console -->
@@ -28,6 +30,7 @@
         </VictorSPX>
         <!-- Region for TalonSRX CAN Items -->
 
+
         <TalonSRX>
         </TalonSRX>
         <!-- Region for Potentiometers -->
@@ -42,7 +45,7 @@
         <!-- Region for DoubleSolenoids -->
         <DoubleSolenoid>
             <wrist fChannel="0" rChannel="1" default="reverse"/>
-			<hatch_push fChannel="4" rChannel="5" default="reverse"/>
+			<hatch_push fChannel="5" rChannel="4" default="forward"/>
             <endgame fChannel="2" rChannel="3" default="reverse"/>
 		</DoubleSolenoid>
         <!-- Region for DigitalInputs -->
@@ -56,8 +59,8 @@
         <!-- Driver Controller, slot should always be 0 -->
         <Driver slot="0">
             <AxisControls>
-                <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.8" bindings="left_0, left_1" useOverdrive="true"/>
-                <rightDrive axis="5" deadZone="0.08" reversed="true" powerMultiplier="0.8" bindings="right_0, right_1" useOverdrive="true"/>
+                <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.7" bindings="left_0, left_1" useOverdrive="true"/>
+                <rightDrive axis="5" deadZone="0.08" reversed="true" powerMultiplier="0.7" bindings="right_0, right_1" useOverdrive="true"/>
             </AxisControls>
           <ButtonControls>
                 <overdrive button="5" powerMultiplier="1.0" isOverdrive="true" />
@@ -76,9 +79,9 @@
         <intakeButton button="4" powerMultiplier="0.8" isRamp="true" isAmpLimited="false" actOnRelease="true"/>
 			</ButtonControls>
             <GoalButtonControls>
-                <elePreset_0 button="1" goal="ElevatorControl" params="0.22"/>
-                <elePreset_1 button="3" goal="ElevatorControl" params=".42"/>
-                <elePreset_2 button="4" goal="ElevatorControl" params=".83"/>
+                <elePreset_0 button="1" goal="ElevatorControl" params="0.21"/>
+                <elePreset_1 button="3" goal="ElevatorControl" params=".28"/>
+                <elePreset_2 button="4" goal="ElevatorControl" params=".69"/>
                 <releEle button="2" goal="RelativeElevatorControl" params="-.07"/>
             </GoalButtonControls>
 			<ToggleButtonControls>

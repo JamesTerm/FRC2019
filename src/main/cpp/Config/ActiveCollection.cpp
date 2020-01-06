@@ -11,6 +11,8 @@ Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com, chrisrweeks@aol
 \********************************************************************/
 
 #include <iostream>
+#include <typeinfo>
+#include <typeindex>
 
 #include "ActiveCollection.h"
 #include "../Goals/Goal.h"
@@ -41,7 +43,7 @@ NativeComponent* ActiveCollection::Get(string name)
 		if(!ret) throw "AHHH";
 	}
 	catch(...){
-		Log::Error("Cannot find component " + name + ", it does not exist in the active collection!\nCheck your type correlation!");
+		Log::Error("Cannot find component " + name + ", it does not exist in the active collection!");
 	}
 	return ret;
 }
@@ -84,6 +86,24 @@ TalonSRXItem* ActiveCollection::GetTalon(string name)
 		Log::Error("Cannot find talon " + name + ", it does not exist in the active collection!");
 	}
 	return ret;
+}
+
+/**
+ * Method to return all Solenoids
+ **/
+void ActiveCollection::DoubleSolenoidDefault()
+{
+	try
+	{
+		for(int i=0; i<(int)activeCollection.size();i++)
+		{
+			if(dynamic_cast<DoubleSolenoidItem*>(activeCollection[i]))
+				((DoubleSolenoidItem*)activeCollection[i])->DefaultSet();
+		}
+	}
+	catch(...){
+		Log::Error("Cannot find DoubleSolenoids, it does not exist in the active collection!");
+	}
 }
 
 /**
