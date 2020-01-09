@@ -11,6 +11,5 @@ pool:
   name: 'Default'
 
 steps:
-- script: cd 
-          gradlew generateVsCodeConfig  -Dorg.gradle.java.home="C:\Users\Public\wpilib\2020\jdk"
-  displayName: 'Run a one-line script'
+- script: gradlew build generateVsCodeConfig  -Dorg.gradle.java.home="C:\Users\Public\wpilib\2020\jdk"
+  displayName: 'Build the code'
