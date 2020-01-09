@@ -210,7 +210,3 @@ void Robot::Disabled() { /*Do nothing for now*/ }
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }  //!< This identifies Robot as the main Robot starting class
 #endif
-
-//TESING THE BUILD SERVER
-broken code 
-//V 1.2
