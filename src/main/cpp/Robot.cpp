@@ -125,6 +125,8 @@ void Robot::Teleop()
 	//limelight* Cam = new limelight();
 	limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
 
+	Track(180, m_activeCollection);
+
 	while (IsOperatorControl() && !IsDisabled())
 	{
 		
@@ -137,7 +139,7 @@ void Robot::Teleop()
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
 		m_drive->Update(DeltaTime);
-		cout << to_string(lime->TargetDistance(48)) << endl;
+		
 /*
 		if(Cam->SeesTarget())
 		{
