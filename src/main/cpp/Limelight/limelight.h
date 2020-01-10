@@ -38,14 +38,14 @@ class limelight : public NativeComponent //Inheritance or something
         }
         double VerticalOffset()
         {
-            return table->GetNumber("ty", 0.0);
+            return (table->GetNumber("ty", 0.0));
         }
         double TargetDistance(double TargetHeight)
         {
             double robotheight = TargetHeight - 42;
-            cout << (robotheight / tan((VerticalOffset() * 3.14159265) / 180)) << endl;
-            cout << "angle: " << (VerticalOffset() * 3.14159265) / 180 << endl;
-            return (robotheight / tan((VerticalOffset() * 3.14159265) / 180));
+            double radianAngle = (tan(((VerticalOffset()) * 3.1415) / 180));
+            cout << "angle: " << (radianAngle) << "  :: Limelight input: " << (VerticalOffset()) << endl;
+            return (robotheight / (radianAngle)) + 5;
         }
         bool SeesTarget()
         {
