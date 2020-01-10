@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Root of the Config -->
+<Robot>
+    <!-- Set true or false based on if robot is at comp or not -->
+    <Competition AtComp = "false" />
+    <!-- Version of the current config to be printed on the console -->
+    <Version version="1" />
+    <!-- Comment on this particular config to be printed on the console -->
+    <Comment comment="A" />
+    <!-- Sets whether or not to initialize the NavX -->
+    <UseNavX value="false" />
+    <!-- Sets whether or not to initialize the camera to send back to the driver station -->
+    <!-- Contains assignments to ports and robot dimensions -->
+    <RobotConfig>
+        <!-- Region for defining VictorSP Items -->
+        <VictorSP>
+            <right0 channel="0" reversed="false"/>
+             <right1 channel="1" reversed="false"/>
+              <left2 channel="2" reversed="false"/>
+               <left3 channel="3" reversed="false"/>
+        </VictorSP>
+        <!-- Region for VictorSPX CAN Items -->
+        <VictorSPX>
+            
+        
+
+
+        <TalonSRX>
+        </TalonSRX>
+        <!-- Region for Potentiometers -->
+        <Potentiometer>
+            <pot channel="0"/>
+        </Potentiometer>
+        <!-- Region for Encoders -->
+        <Encoder>
+            <enc0 aChannel="0" bChannel="1"/>
+            <enc1 aChannel="2" bChannel="3"/>
+        </Encoder>
+        <!-- Region for DoubleSolenoids -->
+        <DoubleSolenoid>
+            <wrist fChannel="0" rChannel="1" default="reverse"/>
+			<hatch_push fChannel="5" rChannel="4" default="forward"/>
+            <endgame fChannel="2" rChannel="3" default="reverse"/>
+		</DoubleSolenoid>
+        <!-- Region for DigitalInputs -->
+        <DigitalInput>
+            <!--limSwitch channel="4"/-->
+        </DigitalInput>
+    </RobotConfig>
+
+    <!-- Root of all control definitions -->
+    <Controls>
+        <!-- Driver Controller, slot should always be 0 -->
+        <Driver slot="0">
+            <AxisControls>
+                <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.7" bindings="left2, left3" useOverdrive="false"/>
+                <rightDrive axis="5" deadZone="0.08" reversed="true" powerMultiplier="0.7" bindings="right0, right1" useOverdrive="false"/>
+            </AxisControls>
+          <ButtonControls>
+          </ButtonControls>
+          <ToggleButtonControls>
+          </ToggleButtonControls>
+        </Driver>
+		<Operator slot="1">
+			<AxisControls>
+			</AxisControls>
+			<ButtonControls>
+			</ButtonControls>
+            <GoalButtonControls>
+            </GoalButtonControls>
+			<ToggleButtonControls>
+                
+			</ToggleButtonControls>
+		</Operator>
+    </Controls>
+    <RobotCameraServer enabled="false">
+    </RobotCameraServer>
+    <!--Vision LS="0" US="3" LH="87" UH="126" LV="255" UV="255" MinA="1112" MaxA="82763" MaxO="62" LOWER_BOUND="0" UPPER_BOUND="1000" LEFT_BOUND="0" RIGHT_BOUND="1000"/-->
+</Robot>
