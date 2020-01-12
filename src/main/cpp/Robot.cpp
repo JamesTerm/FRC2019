@@ -122,10 +122,9 @@ void Robot::Teleop()
 	double LastTime = GetTime();
 	//We can test teleop auton goals here a bit later
 	//PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
-	//limelight* Cam = new limelight();
 	limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
 
-	Track(180, m_activeCollection);
+	TurnPIDF(180, m_activeCollection);
 
 	while (IsOperatorControl() && !IsDisabled())
 	{

@@ -10,6 +10,7 @@ Author(s): Ryan Cooper, Dylann Ruiz
 Comments added by Chris Weeks
 Email: cooper.ryan@centaurisoft.org, ruizdylann@gmail.com
 \********************************************************************/
+#pragma once
 
 #ifndef SRC_UTIL_UTILITYFUNCTIONS_H_
 #define SRC_UTIL_UTILITYFUNCTIONS_H_
@@ -213,46 +214,20 @@ static void DriveForward(double dist, double power, ActiveCollection *activeColl
  * Uses a PID loop to turn the desired amount of degrees. PID input: Navx, output: motor power
  * What's a PID loop? Read the explination above DriveForward()
  */
-	double Target;
-	double P = 0.21; //PID constants
-	double I = 0.14;
-	double D = 0.08;
-	double F = 0.09;
-	double Limit = 0.5;
-	double MinLimit = 0.45;
-	double ChangeInTime = 0.04;
-	double PrevE = 0;
-	double totalE = 0;
-	double thresh = 10;
-	double Angle = 0;
-	//.
-	double PerErrorTrack = 10000;
-	bool IsNegative = false;
-	double killTime = 2, elapsedTimeT = 0;
-	double currentValue = 0;
-	double leftT = 0, rightT = 0; //left and right motor powers, and default pwoer
-	double powerT = 0;
-	double Real = 0;
-	bool Done = false;
-	bool go = false;
-	double BeforeKill = 0;
-	bool setedup = false;
-	int doneOnce = 0;
-	NavX *navx;
-
-	double ABSValue(double val)
+	
+	static double ABSValue(double val)
 	{
 		if (val < 0)
 			val *= -1;
 		return val;
 	}
 
-	double roundValue(double val)
+	static double roundValue(double val)
 	{
 		return round((float)val);
 	}
 
-	bool Inrange(double a, double v, double T)
+	static bool Inrange(double a, double v, double T)
 	{
 		if (ABSValue(roundValue(a)) < ABSValue(v) + T && ABSValue(roundValue(a)) > ABSValue(v) - T)
 		{
@@ -261,7 +236,7 @@ static void DriveForward(double dist, double power, ActiveCollection *activeColl
 		return false;
 	}
 
-	double Sign(double Value){
+	static double Sign(double Value){
 		if(Value < 0){
 			return -1;
 		}
@@ -270,172 +245,13 @@ static void DriveForward(double dist, double power, ActiveCollection *activeColl
 		}
 	}
 
-	void ResetVal(bool RealTarget)
-	{
-		if (RealTarget)
-			Target = Real;
-		thresh = 0.5;
-		if (ABSValue(Angle) > Target + 10 || ABSValue(Angle) < Target - 10)
-			Limit = 0.5;
-		else
-		{
-			Limit -= 0.1;
-			if (Limit < MinLimit)
-				Limit = MinLimit;
-		}
-		PerErrorTrack = 100000;
-		totalE = 0;
-		PrevE = 0;
-		Log::General("Turn Again");
-		Done = false;
-	}
+static double TotalTimeSpent = 0;
 
-	bool turnPIDF(double target, ActiveCollection *activeCollection)
-	{
-		if ((PerErrorTrack > thresh))
-		{
-			currentValue = ABSValue(Angle);
-
-			double Error = target - currentValue;
-			totalE += Error * ChangeInTime;
-			double Result = ((P * Error) + (I * totalE) + (D * ((Error - PrevE) / ChangeInTime)) + F);
-			PrevE = Error;
-			PerErrorTrack = Error;
-
-			if (Limit != 0)
-			{
-				if (ABSValue(Result) > Limit)
-				{
-					Result = Limit * Sign(Result);
-				}
-				else if (ABSValue(Result) < MinLimit)
-				{
-					Result = MinLimit * Sign(Result);
-				}
-			}
-
-			if (PerErrorTrack < 0)
-				PerErrorTrack *= -1;
-
-
-			if (!IsNegative)
-			{
-				leftT = powerT - Result;  //set left motor to desired power + output //might have to make postive
-				rightT = powerT - Result; //set right motor to desired power - output (+ and - to make robot turn slightly) //might have to make negative again for auto
-
-			}
-			else if (IsNegative)
-			{
-				leftT = powerT + Result;  //set left motor to desired power + output //might have to make postive
-				rightT = powerT + Result; //set right motor to desired power - output (+ and - to make robot turn slightly) //might have to make negative again for auto
-			}
-			else
-			{
-				leftT = 0;
-				rightT = 0;
-			}
-
-			SetDrive(leftT, rightT, activeCollection);
-
-			Wait(ChangeInTime);
-			elapsedTimeT += ChangeInTime; //add time to elapsed
-			Log::General("Turning: " + to_string(rightT) + " :: PerErrorTrack: " + to_string(PerErrorTrack));
-			return false;
-		}
-		else
-		{
-			Wait(2);
-			Log::General("Done: " + to_string(Angle) + " :: Final: " + to_string(navx->GetAngle()));
-			return true;
-		}
-	}
-
-	//.
-	void Setup() {
-		IsNegative = (Target < 0);
-		Target = Real = ABSValue(Target);
-		Target *= 0.8;
-
-		if(Target < 10)
-		{
-			thresh = 0.1;
-		}
-		if (Target > 90)
-			MinLimit = 0.45;
-
-	}
-
-	void Track(double TurnAngle, ActiveCollection *activeCollection)
-	{
-		Target = TurnAngle;
-		setedup = true;
-		Setup();
-		navx = activeCollection->GetNavX();
-	
-		navx->Reset();
-		Wait(0.25);
-
-		while(setedup)
-		{
-		Angle = navx->GetAngle();
-		if ((elapsedTimeT < killTime))
-		{
-			if (!Done)
-				go = turnPIDF(Target, activeCollection);
-
-			if (go)
-			{
-				if (!Inrange(Angle, Target, 0.5))
-				{
-					ResetVal(true);
-				}
-				else
-				{
-					Log::General("Finished!");
-					Done = true;
-					BeforeKill = elapsedTimeT;
-					elapsedTimeT = killTime;
-				}
-			}
-		}
-		else
-		{
-			if (Inrange(Angle, Target, 0.5))
-			{
-				ResetVal(true);
-				if (Inrange(Angle, Target, 0.1))
-				{
-					Log::General("Time out");
-					setedup = false;
-					if (Done)
-						Log::General("At Target");
-					else
-						Log::General("Not at Target, but its fine");
-				}
-				else
-				{
-					elapsedTimeT = BeforeKill;
-				}
-			}
-			else
-			{
-				elapsedTimeT = BeforeKill;
-				ResetVal(true);
-			}
-		}
-		}
-
-		StopDrive(activeCollection);
-		Wait(2);
-		cout << to_string(navx->GetAngle()) << endl;
-	}
-	
-
-static void Turn(double target, ActiveCollection *activeCollection)
+static double Turn(double target, ActiveCollection *activeCollection, double T)
 {
-	bool IsNegative = (target < 0); 
+	bool IsNegative = (target < 0);
 	target = ABSValue(target);
-	target *= 0.8;
+	//target *= 0.8;
 	NavX *navx = activeCollection->GetNavX();
 	
 	navx->Reset(); //reset navx angle
@@ -443,7 +259,7 @@ static void Turn(double target, ActiveCollection *activeCollection)
 
 	cout << "initial angle = " << navx->GetAngle() << endl;
 
-	double killTime = 10, elapsedTime = 0; //killTime is the time allowed before Turn method times out. Used in case robot is stuck or code messes up.
+	double killTime = 2, elapsedTime = 0; //killTime is the time allowed before Turn method times out. Used in case robot is stuck or code messes up.
 
 	double left, right = 0; //left and right motor powers, and default pwoer
 	double power = 0;
@@ -455,12 +271,14 @@ static void Turn(double target, ActiveCollection *activeCollection)
 	double D = 0.0005;
 	double F = (0.09 * target);
 	double Limit = 0.5;
+	double MinLimit = 0.35;
 	double ChangeInTime = 0.004;
 	double PrevE, totalE = 0;
 	
 	double PerErrorTrack = 10000;
+	double thres = T;
 
-	while((PerErrorTrack > 10) && (elapsedTime < killTime))
+	while((PerErrorTrack > thres) && (elapsedTime < killTime))
 	{
 		currentValue = ABSValue(navx->GetAngle()); //get new navx angle
 
@@ -472,16 +290,13 @@ static void Turn(double target, ActiveCollection *activeCollection)
 
 		if(Limit != 0)
 		{
-        	if (Result > Limit) {
-              Result = Limit;
-            } else if (Result < -Limit) {
-                Result = -Limit;
+        	if (ABSValue(Result) > Limit) {
+              Result = Limit * Sign(Result);
+            } else if (ABSValue(Result) < MinLimit) {
+                Result = MinLimit * Sign(Result);
             }
 	    }
-
-		if(PerErrorTrack < 0)
-			PerErrorTrack *= -1;
-
+		PerErrorTrack = ABSValue(PerErrorTrack);
 
 		if(!IsNegative){
 			left = power - Result;  //set left motor to desired power + output //might have to make postive
@@ -493,11 +308,12 @@ static void Turn(double target, ActiveCollection *activeCollection)
 			left = power + Result;  //set left motor to desired power + output //might have to make postive
 			right = power + Result; //set right motor to desired power - output (+ and - to make robot turn slightly) //might have to make negative again for auto
 		}
-		else
+		if(target == 0)
 		{
 			left = 0;
 			right = 0;
 			Log::General("What are you doing trying to go to 0 using turn, a method that resets the value of the navx");
+			PerErrorTrack = 0;
 		}
 		
 		
@@ -505,13 +321,28 @@ static void Turn(double target, ActiveCollection *activeCollection)
 
 		Wait(ChangeInTime);
 		elapsedTime += ChangeInTime; //add time to elapsed
-		cout<<"angle = " << currentValue << "	left = " << left << "	right = " << right << endl;
-		cout << "Error " << Error << endl;
+		TotalTimeSpent += ChangeInTime;
 	}
 	StopDrive(activeCollection); //once finished, stop drive
 	Wait(.25);
 	currentValue = navx->GetAngle(); //get final navx angle
-	cout << "final angle = " << currentValue << endl;
+	return currentValue;
+}
+
+static void TurnPIDF(double Target, ActiveCollection *activeCollection){
+	double TheTarget = 0;
+	double RealTarget = 0;
+	double Kill = 10;
+	TotalTimeSpent = 0;
+	TheTarget = RealTarget = Target;
+	TheTarget *= 0.8;
+	RealTarget -= Turn(TheTarget, activeCollection, 10);
+	Log::General("Error: " + to_string(RealTarget));
+	while((RealTarget > 1) && (TotalTimeSpent < Kill)){
+		RealTarget -= Turn(RealTarget, activeCollection, 1);
+		Log::General("Error: " + to_string(RealTarget));
+	}
+	Log::General("Final Error: " + to_string(RealTarget));
 }
 
 #endif /* SRC_UTIL_UTILITYFUNCTIONS_H_ */

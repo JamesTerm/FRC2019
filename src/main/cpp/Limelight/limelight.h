@@ -9,6 +9,7 @@ All rights reserved.
 Author(s): Ian Poll
 Email: irobot9803@gmail.com
 \********************************************************************/
+#pragma once
 
 #ifndef SRC_limelight_H_
 #define SRC_limelight_H_
