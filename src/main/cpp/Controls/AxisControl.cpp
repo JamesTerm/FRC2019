@@ -18,7 +18,7 @@ Email:	dylantrwatson@gmail.com
 #include "..\Util\Constants.h"
 
 using namespace std;
-using namespace Util;
+//using namespace Util;
 using namespace Controls;
 using namespace Components;
 

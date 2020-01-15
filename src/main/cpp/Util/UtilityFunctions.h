@@ -85,136 +85,6 @@ static void SlowStop(double left, double right, ActiveCollection *activeCollecti
 	StopDrive(activeCollection);
 }
 
-/* DriveForward
- * This method uses two PID loops to drive straight and the requesred encoder distance
- * The first PID loop runs for the 60% of requested distance, using the navx to correct angle
- * the second PID loop runs for the remaining distance, at at a lower speed to improve accuracy.
- * 
- * What is a PID loop?
- * A PID loop is a feedback loop that uses an input stream to control an output stream. In our case, the NavX angle controls left/right motor speeds.
- * 	P - Proportion
- * 		outputs a value proportional to error (desired value minus expected value). 
- 6 		For our code: We want to be facing at the same direction the whole time, so any deviation from that value is error.  
- 9  I - Integral
- 6 		The general term for integral is area under a graph. If you think of a graph of time versus error, integral would be the area between
- 9 		the x-axis and the graph. Integral is used for error correction. Integral is not always neccessary, so you may see its scalar value (ki)
- * 		set to zero. 
- * 		For our code: Say we wanted to drive a specified distance and our robot was alrealy only 1 encoder tick away. The kp and kd values would not
- * 		provide enough power to push that last bit, because the values are so small and in the real world there's friction and stuff that would stop it.
- * 		The ki value, will observe error over time and, if it is high enough, provide that small boost that the robot needs.
- *  D - Derivative
- * 		Another way to think of derivative is slope. Derivate is the slope of the line tangent to a graph at a specific point.
- * 		Going back to the graph described above, derivitive will find how steep our error line is, aka the rate of change of error.
- * 		If we did not have kd, then kp would always overshoot the desired value, then start swinging back towards it, and overshoot again,
- * 		kinda like a pendulum trying to be at 0 degrees, it would always overshoot. Think of the kd value like a finger pushing against the pendulum.
- * 		When the pendulum isn't moving, the finger doesn't push at all, but the faster the pendulum moves, the more kd pushes back. Once tuned properly, kd
- * 		will stop the pendulum exactly at zero degrees, without it overshooting or pushing the pendulum back away. 
- * 		For our code: with only ki, the robot would oscillate around zero degress while driving forward and never stay there. With kd, the derivate will push against
- * 		ki to hopefully stop turning exactly at zero degrees.
- * 		derivative = current error - error prior. 
- */
-static void DriveForward(double dist, double power, ActiveCollection *activeCollection)
-{
-
-	NavX *navx = activeCollection->GetNavX();
-	navx->Reset(); //reset navx angle
-	EncoderItem *enc0 = activeCollection->GetEncoder("enc0"); //gets encoder from active collection
-	enc0->Reset(); //resets encoder value
-	Wait(.25);
-
-	cout << "initial angle = " << navx->GetAngle() << endl;
-
-	double killTime = 60, elapsedTime = 0; //killTime is the time allowed before Turn method times out. Used in case robot is stuck or code messes up.
-
-	double left, right = 0; //left and right motor powers, and default pwoer
-
-	double currentValue = navx->GetAngle(); //get current navx angle
-
-	double P = 0.06; //PID constants
-	double I = 0.008;
-	double D = 0.0005;
-	double F = (0);
-	double Limit = 0.5;
-	double ChangeInTime = 0.004;
-	double PrevE = 0, totalE = 0;
-	double PrevEncoder = 10000, totalEncoder = 0;
-	double enc = 0;
-
-	while((elapsedTime < killTime) && (PrevEncoder > 1))
-	{
-		currentValue = navx->GetAngle(); //get new navx angle
-		enc = enc0->Get(); //get new encoder distance
-		//Angle PIDF
-		double Error = 0 - currentValue;
-        totalE += Error * ChangeInTime;
-        double Result = ((P * Error) + (I * totalE)  + (D * ((Error - PrevE) / ChangeInTime)));
-		PrevE = Error;
-
-		//Distance Traveled PIDF
-		double ErrorEncoder = dist - currentValue;
-        totalEncoder += ErrorEncoder * ChangeInTime;
-        double ResultEncoder = ((P * ErrorEncoder) + (I * totalEncoder)  + (D * ((ErrorEncoder - PrevEncoder) / ChangeInTime)) + F);
-		PrevEncoder = ErrorEncoder;
-
-		if(power != 0)
-		{
-        	if (ResultEncoder > power) {
-              ResultEncoder = power;
-            } else if (ResultEncoder < -power) {
-                ResultEncoder = -power;
-            }
-	    }
-
-		if(Limit != 0)
-		{
-        	if (Result > Limit) {
-              Result = Limit;
-            } else if (Result < -Limit) {
-                Result = -Limit;
-            }
-	    }
-
-		left = ResultEncoder - Result;
-		right = ResultEncoder - Result;
-		
-		
-		SetDrive(left, right, activeCollection); //set drive to new powers
-
-		Wait(ChangeInTime);
-		elapsedTime += ChangeInTime; //add time to elapsed
-		cout<<"angle = " << currentValue << "	left = " << left << "	right = " << right << endl;
-		cout << "Error " << Error << endl;
-	}
-	StopDrive(activeCollection); //once finished, stop drive
-	Wait(.25);
-	currentValue = navx->GetAngle(); //get final navx angle
-}
-
-/*	
- *          ,
- *        _=|_		DEEP SPACE 2019
- *      _[_## ]_
- * _  +[_[_+_]P/    _    |_       ____      _=--|-~
- *  ~---\_I_I_[=\--~ ~~--[o]--==-|##==]-=-~~  o]H
- * -~ /[_[_|_]_]\\  -_  [[=]]    |====]  __  !j]H
- *   /    "|"    \      ^U-U^  - |    - ~ .~  U/~
- *  ~~--__~~~--__~~-__   H_H_    |_     --   _H_
- * -. _  ~~~#######~~~     ~~~-    ~~--  ._ - ~~-=
- *            ~~~=~~  -~~--  _     . -      _ _ -
- *
- *        ----------------------------------
- *       |        June, 20th, 1969          |
- *       |  Here Men from the Planet Earth  |
- *       |   First set Foot upon the Moon   |
- *       | We came in Peace for all Mankind |
- *        ---------------------------=apx=--
- */
-
-/* Turn
- * Uses a PID loop to turn the desired amount of degrees. PID input: Navx, output: motor power
- * What's a PID loop? Read the explination above DriveForward()
- */
-	
 	static double ABSValue(double val)
 	{
 		if (val < 0)
@@ -245,13 +115,202 @@ static void DriveForward(double dist, double power, ActiveCollection *activeColl
 		}
 	}
 
-static double TotalTimeSpent = 0;
+/* DriveForward
+ * This method uses two PID loops to drive straight and the requesred encoder distance
+ * The first PID loop runs for the 60% of requested distance, using the navx to correct angle
+ * the second PID loop runs for the remaining distance, at at a lower speed to improve accuracy.
+ * 
+ * What is a PID loop?
+ * A PID loop is a feedback loop that uses an input stream to control an output stream. In our case, the NavX angle controls left/right motor speeds.
+ * 	P - Proportion
+ * 		outputs a value proportional to error (desired value minus expected value). 
+ 6 		For our code: We want to be facing at the same direction the whole time, so any deviation from that value is error.  
+ 9  I - Integral
+ 6 		The general term for integral is area under a graph. If you think of a graph of time versus error, integral would be the area between
+ 9 		the x-axis and the graph. Integral is used for error correction. Integral is not always neccessary, so you may see its scalar value (ki)
+ * 		set to zero. 
+ * 		For our code: Say we wanted to drive a specified distance and our robot was alrealy only 1 encoder tick away. The kp and kd values would not
+ * 		provide enough power to push that last bit, because the values are so small and in the real world there's friction and stuff that would stop it.
+ * 		The ki value, will observe error over time and, if it is high enough, provide that small boost that the robot needs.
+ *  D - Derivative
+ * 		Another way to think of derivative is slope. Derivate is the slope of the line tangent to a graph at a specific point.
+ * 		Going back to the graph described above, derivitive will find how steep our error line is, aka the rate of change of error.
+ * 		If we did not have kd, then kp would always overshoot the desired value, then start swinging back towards it, and overshoot again,
+ * 		kinda like a pendulum trying to be at 0 degrees, it would always overshoot. Think of the kd value like a finger pushing against the pendulum.
+ * 		When the pendulum isn't moving, the finger doesn't push at all, but the faster the pendulum moves, the more kd pushes back. Once tuned properly, kd
+ * 		will stop the pendulum exactly at zero degrees, without it overshooting or pushing the pendulum back away. 
+ * 		For our code: with only ki, the robot would oscillate around zero degress while driving forward and never stay there. With kd, the derivate will push against
+ * 		ki to hopefully stop turning exactly at zero degrees.
+ * 		derivative = current error - error prior. 
+ */
+static double DriveForward(double dist, double power, ActiveCollection *activeCollection, double T)
+{
 
+	NavX *navx = activeCollection->GetNavX();
+	navx->Reset(); //reset navx angle
+	EncoderItem *enc0 = activeCollection->GetEncoder("enc0"); //gets encoder from active collection
+	enc0->Reset(); //resets encoder value
+	Wait(.25);
+	bool IsNegative  = (dist < 0);
+	cout << "initial angle = " << navx->GetAngle() << endl;
+
+	double killTime = 5, elapsedTime = 0; //killTime is the time allowed before Turn method times out. Used in case robot is stuck or code messes up.
+
+	double left, right = 0; //left and right motor powers, and default pwoer
+
+	double currentValue = navx->GetAngle(); //get current navx angle
+
+	double P = 0.06; //PID constants
+	double I = 0.008;
+	double D = 0.008;
+	double F = (0.09) * ABSValue(dist);
+	double Limit = 0.5;
+	double MinPower = 0.15;
+	double ChangeInTime = 0.004;
+	double PrevE = 0, totalE = 0;
+	double PrevEncoder = 0, totalEncoder = 0, PrevEncoderTrack = 10000;
+	double enc = 0;
+	double distTo = ABSValue(dist);
+
+
+	while((elapsedTime < killTime) && (PrevEncoderTrack > T))
+	{
+		currentValue = navx->GetAngle(); //get new navx angle
+		enc = ABSValue(enc0->Get()); //get new encoder distance
+		//Angle PIDF
+		double Error = 0 - currentValue;
+        totalE += Error * ChangeInTime;
+        double Result = ((P * Error) + (I * totalE)  + (D * ((Error - PrevE) / ChangeInTime)));
+		PrevE = Error;
+
+		//Distance Traveled PIDF
+		double ErrorEncoder = distTo - enc;
+        totalEncoder += ErrorEncoder * ChangeInTime;
+        double ResultEncoder = ((P * ErrorEncoder) + (I * totalEncoder)  + (D * ((ErrorEncoder - PrevEncoder) / ChangeInTime)) + F);
+		PrevEncoder = ErrorEncoder;
+		PrevEncoderTrack = ABSValue(PrevEncoder);
+		if(power != 0)
+		{
+        	if (ABSValue(ResultEncoder) > power) 
+			{
+              ResultEncoder = power * Sign(ResultEncoder);
+            } 
+			else if (ABSValue(ResultEncoder) < MinPower) 
+			{
+                ResultEncoder = MinPower * Sign(ResultEncoder);
+            }
+	    }
+
+		if(Limit != 0)
+		{
+        	if (Result > Limit)
+			{
+              Result = Limit;
+            }
+			else if (Result < -Limit)
+			{
+                Result = -Limit;
+            }
+	    }
+		
+		if(!IsNegative)
+		{
+			left = -ResultEncoder - Result;
+			right = ResultEncoder - Result;
+		}
+		else
+		{
+			left = ResultEncoder - Result;
+			right = -ResultEncoder - Result;
+		}
+
+		SetDrive(left, right, activeCollection); //set drive to new powers
+
+		Wait(ChangeInTime);
+		elapsedTime += ChangeInTime; //add time to elapsed
+		//cout << "EncoderPos: " << to_string(enc) << "  : Encoder To: " << to_string(distTo) << "  : Result: " << to_string(ResultEncoder) << endl;
+	}
+	StopDrive(activeCollection); //once finished, stop drive
+	Wait(.5);
+	currentValue = navx->GetAngle(); //get final navx angle
+	enc = ABSValue(enc0 -> Get());
+	return (distTo - enc);
+}
+
+static void MoveForwardPIDF(double Dist, double MaxPower, ActiveCollection *activeCollection){
+	double RealTarget = 0;
+	double Kill = 10;
+	double TotalTimeSpent = 0;
+	RealTarget = Dist * 110;
+	double x = 20;
+	while((ABSValue(RealTarget) > 0.5) && (TotalTimeSpent < Kill))
+	{	
+		RealTarget = DriveForward(RealTarget, MaxPower, activeCollection, x);
+		Log::General("Error: " + to_string(RealTarget));
+		x -= 25;
+		if(x < 1)
+		{
+			x = 1;
+		}
+		TotalTimeSpent++;
+	}
+	Wait(0.5);
+	Log::General("Final Error: " + to_string(RealTarget));
+	
+}
+
+/*	
+ *          ,
+ *        _=|_		DEEP SPACE 2019
+ *      _[_## ]_
+ * _  +[_[_+_]P/    _    |_       ____      _=--|-~
+ *  ~---\_I_I_[=\--~ ~~--[o]--==-|##==]-=-~~  o]H
+ * -~ /[_[_|_]_]\\  -_  [[=]]    |====]  __  !j]H
+ *   /    "|"    \      ^U-U^  - |    - ~ .~  U/~
+ *  ~~--__~~~--__~~-__   H_H_    |_     --   _H_
+ * -. _  ~~~#######~~~     ~~~-    ~~--  ._ - ~~-=
+ *            ~~~=~~  -~~--  _     . -      _ _ -
+ *
+ *        ----------------------------------
+ *       |        June, 20th, 1969          |
+ *       |  Here Men from the Planet Earth  |
+ *       |   First set Foot upon the Moon   |
+ *       | We came in Peace for all Mankind |
+ *        ---------------------------=apx=--
+ */
+/*
+ *						INFINITE RECHARGE 2020
+ *____														   ____
+ *|\/|\_______________________________________________________/|\/|
+ *|\/|_/__/__/__/__/__/__/__/__/_()_/__/__/__/__/__/__/__/__/__|\/|
+ *|\/| 				   			 ||							   |\/|
+ *|/\|						/##########\					   |\/|
+ *|\/|      		  /#####/    ||	   \#####\				   |\/|
+ *|/\|			|#####__________8||8__________#####|		   |\/|
+ *|\/|							 \/							   |\/|
+ *|/\|							 ||							   |\/|
+ *|\/|							 ||							   |\/|
+ *|/\|							+==\\						   ----				
+ *|\/|							[---]\\ 0					_  ----				
+ *|/\|							{/\/\_|_|					0| ----					
+ *|\/|							0--0--0						|| ----					
+ *|/\|												     __/||\\___.\			
+ *|\/|___________________________________________________|_0__0__0_| 0____________			
+ * ===============================================================================
+ * 						It's over BroncBotz...
+ * 						I HAVE THE HIGH GROUND.
+ * 											-Any other Robot with a hang
+ * 
+ */
+/* Turn
+ * Uses a PID loop to turn the desired amount of degrees. PID input: Navx, output: motor power
+ * What's a PID loop? Read the explination above DriveForward()
+ */
+	
 static double Turn(double target, ActiveCollection *activeCollection, double T)
 {
 	bool IsNegative = (target < 0);
 	target = ABSValue(target);
-	//target *= 0.8;
 	NavX *navx = activeCollection->GetNavX();
 	
 	navx->Reset(); //reset navx angle
@@ -321,28 +380,39 @@ static double Turn(double target, ActiveCollection *activeCollection, double T)
 
 		Wait(ChangeInTime);
 		elapsedTime += ChangeInTime; //add time to elapsed
-		TotalTimeSpent += ChangeInTime;
+		
 	}
 	StopDrive(activeCollection); //once finished, stop drive
-	Wait(.25);
+	Wait(.5);
 	currentValue = navx->GetAngle(); //get final navx angle
 	return currentValue;
 }
 
-static void TurnPIDF(double Target, ActiveCollection *activeCollection){
+static void TurnPIDF(double Target, ActiveCollection *activeCollection){	//This is used for turning NOT TURN()
 	double TheTarget = 0;
 	double RealTarget = 0;
 	double Kill = 10;
-	TotalTimeSpent = 0;
+	double TotalTimeSpent = 0;
 	TheTarget = RealTarget = Target;
 	TheTarget *= 0.8;
-	RealTarget -= Turn(TheTarget, activeCollection, 10);
+	RealTarget -= Turn(TheTarget, activeCollection, RealTarget * 0.1);
 	Log::General("Error: " + to_string(RealTarget));
-	while((RealTarget > 1) && (TotalTimeSpent < Kill)){
-		RealTarget -= Turn(RealTarget, activeCollection, 1);
+	double x = 10;
+	while((RealTarget > 0.5) && (TotalTimeSpent < Kill))
+	{	
+		RealTarget -= Turn(RealTarget, activeCollection, x);
 		Log::General("Error: " + to_string(RealTarget));
+		x -= 1.5;
+		if(x < 0.2){
+			x = 0.2;
+		}
+		TotalTimeSpent++;
 	}
+	Wait(0.5);
 	Log::General("Final Error: " + to_string(RealTarget));
+	if(ABSValue(RealTarget) > 1){
+		TurnPIDF(-RealTarget, activeCollection);
+	}
 }
 
 #endif /* SRC_UTIL_UTILITYFUNCTIONS_H_ */
