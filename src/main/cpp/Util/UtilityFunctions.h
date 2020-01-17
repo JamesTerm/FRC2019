@@ -147,9 +147,8 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 {
 
 	NavX *navx = activeCollection->GetNavX();
-	navx->Reset(); //reset navx angle
 	EncoderItem *enc0 = activeCollection->GetEncoder("enc0"); //gets encoder from active collection
-	enc0->Reset(); //resets encoder value
+	enc0 -> Reset();
 	Wait(.25);
 	bool IsNegative  = (dist < 0);
 	cout << "initial angle = " << navx->GetAngle() << endl;
@@ -160,12 +159,12 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 
 	double currentValue = navx->GetAngle(); //get current navx angle
 
-	double P = 0.06; //PID constants
-	double I = 0.008;
+	double P = 0.005; //PID constants
+	double I = 0.0005;
 	double D = 0.008;
 	double F = (0.09) * ABSValue(dist);
 	double Limit = 0.5;
-	double MinPower = 0.15;
+	double MinPower = 0.12;
 	double ChangeInTime = 0.004;
 	double PrevE = 0, totalE = 0;
 	double PrevEncoder = 0, totalEncoder = 0, PrevEncoderTrack = 10000;
@@ -220,8 +219,8 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 		}
 		else
 		{
-			left = ResultEncoder - Result;
-			right = -ResultEncoder - Result;
+			left = ResultEncoder + Result;
+			right = -ResultEncoder + Result;
 		}
 
 		SetDrive(left, right, activeCollection); //set drive to new powers
@@ -231,32 +230,39 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 		//cout << "EncoderPos: " << to_string(enc) << "  : Encoder To: " << to_string(distTo) << "  : Result: " << to_string(ResultEncoder) << endl;
 	}
 	StopDrive(activeCollection); //once finished, stop drive
-	Wait(.5);
+	//Wait(.5);
 	currentValue = navx->GetAngle(); //get final navx angle
-	enc = ABSValue(enc0 -> Get());
-	return (distTo - enc);
+	enc = (enc0 -> Get());
+	return enc;
 }
 
-static void MoveForwardPIDF(double Dist, double MaxPower, ActiveCollection *activeCollection){
-	double RealTarget = 0;
-	double Kill = 10;
+static void MoveForwardPIDF(double Dist, double MaxPowerInput, ActiveCollection *activeCollection){
+	double Tar = Dist * 145, RealTarget = Dist * 145;
+	double MaxPower = MaxPowerInput;
+	double Kill = 50;
 	double TotalTimeSpent = 0;
-	RealTarget = Dist * 110;
-	double x = 20;
-	while((ABSValue(RealTarget) > 0.5) && (TotalTimeSpent < Kill))
-	{	
-		RealTarget = DriveForward(RealTarget, MaxPower, activeCollection, x);
+	double x = 20 + (((MaxPower/0.25) - 1) * 10);
+	bool SubPower = MaxPower >= 0.3;
+	NavX *navx0 = activeCollection->GetNavX();
+	navx0 -> Reset();
+	activeCollection -> GetEncoder("enc1") -> Reset();
+	Wait(0.25);
+	while((ABSValue(RealTarget) > 5) && (TotalTimeSpent < Kill))
+	{
+		RealTarget -= DriveForward(RealTarget, MaxPower, activeCollection, x);
 		Log::General("Error: " + to_string(RealTarget));
-		x -= 25;
-		if(x < 1)
+		x -= 2;
+		if(SubPower)
+			MaxPower = 0.2;
+		if(x < 5)
 		{
-			x = 1;
+			x = 5;
 		}
 		TotalTimeSpent++;
 	}
 	Wait(0.5);
-	Log::General("Final Error: " + to_string(RealTarget));
-	
+	Log::General("Final Error: " + to_string(RealTarget) + "  :: Total DisTraveled = " + to_string(activeCollection -> GetEncoder("enc1") -> Get()));
+	Log::General("Calculated Distance: " + to_string(Tar) + "  :: Diff: " + to_string(Tar + activeCollection -> GetEncoder("enc1") -> Get()));
 }
 
 /*	
@@ -329,8 +335,8 @@ static double Turn(double target, ActiveCollection *activeCollection, double T)
 	double I = 0.008;
 	double D = 0.0005;
 	double F = (0.09 * target);
-	double Limit = 0.5;
-	double MinLimit = 0.35;
+	double Limit = 0.25;
+	double MinLimit = 0.05;
 	double ChangeInTime = 0.004;
 	double PrevE, totalE = 0;
 	

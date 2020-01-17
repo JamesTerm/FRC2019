@@ -124,11 +124,10 @@ void Robot::Teleop()
 	//PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
 	limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
 
-	MoveForwardPIDF(1, 0.5, m_activeCollection);
+	MoveForwardPIDF(14, 0.6, m_activeCollection);
 
 	while (IsOperatorControl() && !IsDisabled())
 	{
-		
 		const double CurrentTime = GetTime();
 		#ifndef _Win32
 		const double DeltaTime = CurrentTime - LastTime;
