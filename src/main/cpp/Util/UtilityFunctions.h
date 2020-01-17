@@ -159,9 +159,9 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 
 	double currentValue = navx->GetAngle(); //get current navx angle
 
-	double P = 0.005; //PID constants
-	double I = 0.0005;
-	double D = 0.008;
+	double P = 0.0009; //PID constants
+	double I = 0;
+	double D = 0;
 	double F = (0.09) * ABSValue(dist);
 	double Limit = 0.5;
 	double MinPower = 0.12;
@@ -219,8 +219,8 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 		}
 		else
 		{
-			left = ResultEncoder + Result;
-			right = -ResultEncoder + Result;
+			left = ResultEncoder - Result;
+			right = -ResultEncoder - Result;
 		}
 
 		SetDrive(left, right, activeCollection); //set drive to new powers
@@ -247,7 +247,7 @@ static void MoveForwardPIDF(double Dist, double MaxPowerInput, ActiveCollection 
 	navx0 -> Reset();
 	activeCollection -> GetEncoder("enc1") -> Reset();
 	Wait(0.25);
-	while((ABSValue(RealTarget) > 5) && (TotalTimeSpent < Kill))
+	//while((ABSValue(RealTarget) > 5) && (TotalTimeSpent < Kill))
 	{
 		RealTarget -= DriveForward(RealTarget, MaxPower, activeCollection, x);
 		Log::General("Error: " + to_string(RealTarget));
