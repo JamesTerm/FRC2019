@@ -147,9 +147,9 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 {
 
 	NavX *navx = activeCollection->GetNavX();
+	navx -> Reset();
 	EncoderItem *enc0 = activeCollection->GetEncoder("enc0"); //gets encoder from active collection
 	enc0 -> Reset();
-	Wait(.25);
 	bool IsNegative  = (dist < 0);
 	cout << "initial angle = " << navx->GetAngle() << endl;
 
@@ -159,9 +159,9 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 
 	double currentValue = navx->GetAngle(); //get current navx angle
 
-	double P = 0.0009; //PID constants
-	double I = 0;
-	double D = 0;
+	double P = 0.006; //PID constants
+	double I = 0.08;
+	double D = 0.0005;
 	double F = (0.09) * ABSValue(dist);
 	double Limit = 0.5;
 	double MinPower = 0.12;
@@ -172,7 +172,8 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 	double distTo = ABSValue(dist);
 
 
-	while((elapsedTime < killTime) && (PrevEncoderTrack > T))
+
+	while((elapsedTime < killTime) && (!Inrange(enc, distTo, T)))
 	{
 		currentValue = navx->GetAngle(); //get new navx angle
 		enc = ABSValue(enc0->Get()); //get new encoder distance
@@ -230,37 +231,41 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 		//cout << "EncoderPos: " << to_string(enc) << "  : Encoder To: " << to_string(distTo) << "  : Result: " << to_string(ResultEncoder) << endl;
 	}
 	StopDrive(activeCollection); //once finished, stop drive
-	//Wait(.5);
+	Wait(.5);
 	currentValue = navx->GetAngle(); //get final navx angle
 	enc = (enc0 -> Get());
 	return enc;
 }
 
 static void MoveForwardPIDF(double Dist, double MaxPowerInput, ActiveCollection *activeCollection){
-	double Tar = Dist * 145, RealTarget = Dist * 145;
+	double Tar = Dist * 132, RealTarget = Dist * 132;
 	double MaxPower = MaxPowerInput;
 	double Kill = 50;
 	double TotalTimeSpent = 0;
-	double x = 20 + (((MaxPower/0.25) - 1) * 10);
+	double x = 1;
+	double ExtraSafeThres = 250 * (Dist / 1.5);
 	bool SubPower = MaxPower >= 0.3;
-	NavX *navx0 = activeCollection->GetNavX();
-	navx0 -> Reset();
-	activeCollection -> GetEncoder("enc1") -> Reset();
-	Wait(0.25);
-	//while((ABSValue(RealTarget) > 5) && (TotalTimeSpent < Kill))
+	while((ABSValue(RealTarget) > 5) && (TotalTimeSpent < Kill))
 	{
-		RealTarget -= DriveForward(RealTarget, MaxPower, activeCollection, x);
-		Log::General("Error: " + to_string(RealTarget));
+		if(SubPower)
+			RealTarget -= DriveForward(RealTarget, MaxPower, activeCollection, x + ExtraSafeThres);
+		else
+			RealTarget -= DriveForward(RealTarget, MaxPower, activeCollection, x);
+		Log::General("Power: " + to_string(MaxPower));
 		x -= 2;
 		if(SubPower)
+		{
 			MaxPower = 0.2;
+			ExtraSafeThres = 0;
+		}
 		if(x < 5)
 		{
 			x = 5;
 		}
+		NavX *Gyro = activeCollection->GetNavX();
+		Gyro->Reset();
 		TotalTimeSpent++;
 	}
-	Wait(0.5);
 	Log::General("Final Error: " + to_string(RealTarget) + "  :: Total DisTraveled = " + to_string(activeCollection -> GetEncoder("enc1") -> Get()));
 	Log::General("Calculated Distance: " + to_string(Tar) + "  :: Diff: " + to_string(Tar + activeCollection -> GetEncoder("enc1") -> Get()));
 }
@@ -310,7 +315,7 @@ static void MoveForwardPIDF(double Dist, double MaxPowerInput, ActiveCollection 
  */
 /* Turn
  * Uses a PID loop to turn the desired amount of degrees. PID input: Navx, output: motor power
- * What's a PID loop? Read the explination above DriveForward()
+ * What's a PID loop? Read the explanation above DriveForward()
  */
 	
 static double Turn(double target, ActiveCollection *activeCollection, double T)
