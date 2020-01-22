@@ -159,9 +159,13 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 
 	double currentValue = navx->GetAngle(); //get current navx angle
 
-	double P = 0.00065; //PID constants
-	double I = 0.08;
-	double D = 0.0005;
+	double P = -0.009; //PID constants
+	double I = 0.34;
+	double D = 1;
+	double PE = 0.07; //PID constants
+	double IE = 0.08;
+	double DE = 0.0005;
+	
 	double F = (0.09) * ABSValue(dist);
 	double Limit = 0.5;
 	double MinPower = 0.12;
@@ -180,7 +184,7 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 		//Angle PIDF
 		double Error = 0 - currentValue;
         totalE += Error * ChangeInTime;
-        double Result = ((P * Error) + (I * totalE)  + (D * ((Error - PrevE) / ChangeInTime)));
+        double Result = ((PE * Error) + (IE * totalE)  + (DE * ((Error - PrevE) / ChangeInTime)));
 		PrevE = Error;
 
 		//Distance Traveled PIDF
@@ -238,20 +242,17 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 }
 
 static void MoveForwardPIDF(double Dist, double MaxPowerInput, ActiveCollection *activeCollection){
-	double Tar = Dist * 99.65, RealTarget = Dist * 99.65;
+	double Tar = Dist * 110, RealTarget = Dist * 110;
 	double MaxPower = MaxPowerInput;
 	double Kill = 5;
 	double TotalTimeSpent = 0;
 	double x = 20;
-	double ExtraSafeThres = 250 * (Dist / 1.5);
+	double ExtraSafeThres = 100 * (Dist / 1.5);
 	bool SubPower = MaxPower >= 0.3;
 	while((ABSValue(RealTarget) > 10) && (TotalTimeSpent < Kill))
 	{
-		if(SubPower)
-			RealTarget -= DriveForward(RealTarget, MaxPower, activeCollection, x + ExtraSafeThres);
-		else
-			RealTarget -= DriveForward(RealTarget, MaxPower, activeCollection, x);
-		Log::General("Power: " + to_string(MaxPower));
+		RealTarget -= DriveForward(RealTarget, MaxPower, activeCollection, x);
+		
 		x -= 2;
 		if(SubPower)
 		{
