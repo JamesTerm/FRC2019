@@ -159,7 +159,7 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 
 	double currentValue = navx->GetAngle(); //get current navx angle
 
-	double P = 0.006; //PID constants
+	double P = 0.00065; //PID constants
 	double I = 0.08;
 	double D = 0.0005;
 	double F = (0.09) * ABSValue(dist);
@@ -238,14 +238,14 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 }
 
 static void MoveForwardPIDF(double Dist, double MaxPowerInput, ActiveCollection *activeCollection){
-	double Tar = Dist * 132, RealTarget = Dist * 132;
+	double Tar = Dist * 99.65, RealTarget = Dist * 99.65;
 	double MaxPower = MaxPowerInput;
-	double Kill = 50;
+	double Kill = 5;
 	double TotalTimeSpent = 0;
-	double x = 1;
+	double x = 20;
 	double ExtraSafeThres = 250 * (Dist / 1.5);
 	bool SubPower = MaxPower >= 0.3;
-	while((ABSValue(RealTarget) > 5) && (TotalTimeSpent < Kill))
+	while((ABSValue(RealTarget) > 10) && (TotalTimeSpent < Kill))
 	{
 		if(SubPower)
 			RealTarget -= DriveForward(RealTarget, MaxPower, activeCollection, x + ExtraSafeThres);
