@@ -861,6 +861,8 @@ void Config::AllocateOperatorControls(xml_node &controls){
 					multiply = multiply_xml.as_double();
 				AxisControl *tmp = new AxisControl(m_operatorJoy, name, channel.as_int(), deadZone, reversed, multiply, m_activeCollection);
 				m_drive->AddControlOperate(tmp);
+				string reversed_print = reversed ? "true" : "false" ;
+				Log::General("Added AxisControl " + name + ", Axis: " + to_string(channel.as_int()) + ", DeadZone: " + to_string(deadZone) + ", Reversed: " + reversed_print + ", Power Multiplier: " + to_string(multiply) + "Is Lift: " + to_string(isLift));
 				xml_attribute bindings = axis.attribute("bindings");
 				if(bindings){
 					string bind_string = bindings.as_string();
@@ -1032,6 +1034,7 @@ void Config::AllocateOperatorControls(xml_node &controls){
 	#pragma endregion
 
 }
+
 vector<string> Config::getBindingStringList(string bindings){
 	vector<char*> tmp;
 	vector<string> ret;
