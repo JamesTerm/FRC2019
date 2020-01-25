@@ -167,14 +167,16 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 	
 	double F = (0.0) * ABSValue(dist);
 	double Limit = 0.5;
-	double MinPower = 0.1;
+	double MinPower = 0;
 	double ChangeInTime = 0.004;
 	double PrevE = 0, totalE = 0;
 	double PrevEncoder = 0, totalEncoder = 0, PrevEncoderTrack = 10000;
 	double enc = 0;
 	double distTo = ABSValue(dist);
 
-	while((elapsedTime < killTime) && (!Inrange(enc, distTo, T)))
+	double NumberAtTarget = 0;
+
+	while((elapsedTime < killTime) && (NumberAtTarget < 10))
 	{
 		currentValue = navx->GetAngle(); //get new navx angle
 		enc = ABSValue(enc0->Get()); //get new encoder distance
@@ -203,13 +205,29 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 	    }
 
 		if(!IsNegative){
-			if(ResultEncoder < 0){
-				ResultEncoder = 0;
+			if(ErrorEncoder > 0){
+				if(ResultEncoder < 0){
+					ResultEncoder = MinPower;
+				}
+			}
+			else
+			{
+				if(ResultEncoder > 0){
+					ResultEncoder = MinPower;
+				}
 			}
 		}
 		else{
-			if(ResultEncoder > 0){
-				ResultEncoder = 0;
+			if(ErrorEncoder > 0){
+				if(ResultEncoder > 0){
+					ResultEncoder = MinPower;
+				}
+			}
+			else
+			{
+				if(ResultEncoder < 0){
+					ResultEncoder = MinPower;
+				}
 			}
 		}
 
@@ -238,6 +256,10 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 		
 		SetDrive(left, right, activeCollection); //set drive to new powers
 
+		if(Inrange(enc, dist, T)){
+			NumberAtTarget++;
+		}
+
 		Wait(ChangeInTime);
 		elapsedTime += ChangeInTime; //add time to elapsed
 		//cout << "EncoderPos: " << to_string(enc) << "  : Encoder To: " << to_string(distTo) << "  : Result: " << to_string(ResultEncoder) << endl;
@@ -248,9 +270,9 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 }
 
 static void MoveForwardPIDF(double Dist, double MaxPowerInput, ActiveCollection *activeCollection){
-	double Tar = Dist * 100, RealTarget = Dist * 100;
+	double Tar = Dist * 96.7, RealTarget = Dist * 96.7;
 	double MaxPower = MaxPowerInput;
-	double x = 0;
+	double x = 10;
 	
 	EncoderItem *enc0 = activeCollection->GetEncoder("enc0"); //gets encoder from active collection
 	enc0 -> Reset();
