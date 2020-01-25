@@ -148,34 +148,31 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 
 	NavX *navx = activeCollection->GetNavX();
 	navx -> Reset();
-	EncoderItem *enc0 = activeCollection->GetEncoder("enc0"); //gets encoder from active collection
-	enc0 -> Reset();
+	EncoderItem *enc0 = activeCollection->GetEncoder("enc0");
 	bool IsNegative  = (dist < 0);
 	cout << "initial angle = " << navx->GetAngle() << endl;
 
-	double killTime = 5, elapsedTime = 0; //killTime is the time allowed before Turn method times out. Used in case robot is stuck or code messes up.
+	double killTime = 10, elapsedTime = 0; //killTime is the time allowed before Turn method times out. Used in case robot is stuck or code messes up.
 
 	double left, right = 0; //left and right motor powers, and default pwoer
 
 	double currentValue = navx->GetAngle(); //get current navx angle
 
-	double P = -0.009; //PID constants
-	double I = 0.34;
-	double D = 1;
+	double P = 5; //PID constants
+	double I = -0.0005;
+	double D = 8;
 	double PE = 0.07; //PID constants
 	double IE = 0.08;
 	double DE = 0.0005;
 	
-	double F = (0.09) * ABSValue(dist);
+	double F = (0.0) * ABSValue(dist);
 	double Limit = 0.5;
-	double MinPower = 0.12;
+	double MinPower = 0.1;
 	double ChangeInTime = 0.004;
 	double PrevE = 0, totalE = 0;
 	double PrevEncoder = 0, totalEncoder = 0, PrevEncoderTrack = 10000;
 	double enc = 0;
 	double distTo = ABSValue(dist);
-
-
 
 	while((elapsedTime < killTime) && (!Inrange(enc, distTo, T)))
 	{
@@ -205,6 +202,17 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
             }
 	    }
 
+		if(!IsNegative){
+			if(ResultEncoder < 0){
+				ResultEncoder = 0;
+			}
+		}
+		else{
+			if(ResultEncoder > 0){
+				ResultEncoder = 0;
+			}
+		}
+
 		if(Limit != 0)
 		{
         	if (Result > Limit)
@@ -227,7 +235,7 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 			left = ResultEncoder - Result;
 			right = -ResultEncoder - Result;
 		}
-
+		
 		SetDrive(left, right, activeCollection); //set drive to new powers
 
 		Wait(ChangeInTime);
@@ -236,39 +244,22 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 	}
 	StopDrive(activeCollection); //once finished, stop drive
 	Wait(.5);
-	currentValue = navx->GetAngle(); //get final navx angle
-	enc = (enc0 -> Get());
-	return enc;
+	return 0;
 }
 
 static void MoveForwardPIDF(double Dist, double MaxPowerInput, ActiveCollection *activeCollection){
-	double Tar = Dist * 110, RealTarget = Dist * 110;
+	double Tar = Dist * 100, RealTarget = Dist * 100;
 	double MaxPower = MaxPowerInput;
-	double Kill = 5;
-	double TotalTimeSpent = 0;
-	double x = 20;
-	double ExtraSafeThres = 100 * (Dist / 1.5);
-	bool SubPower = MaxPower >= 0.3;
-	while((ABSValue(RealTarget) > 10) && (TotalTimeSpent < Kill))
-	{
-		RealTarget -= DriveForward(RealTarget, MaxPower, activeCollection, x);
-		
-		x -= 2;
-		if(SubPower)
-		{
-			MaxPower = 0.2;
-			ExtraSafeThres = 0;
-		}
-		if(x < 5)
-		{
-			x = 5;
-		}
-		NavX *Gyro = activeCollection->GetNavX();
-		Gyro->Reset();
-		TotalTimeSpent++;
-	}
+	double x = 0;
+	
+	EncoderItem *enc0 = activeCollection->GetEncoder("enc0"); //gets encoder from active collection
+	enc0 -> Reset();
+	DriveForward(RealTarget, MaxPower, activeCollection, x);
+	
+	Wait(0.5);
 	Log::General("Final Error: " + to_string(RealTarget) + "  :: Total DisTraveled = " + to_string(activeCollection -> GetEncoder("enc1") -> Get()));
 	Log::General("Calculated Distance: " + to_string(Tar) + "  :: Diff: " + to_string(Tar + activeCollection -> GetEncoder("enc1") -> Get()));
+
 }
 
 /*	

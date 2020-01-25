@@ -124,7 +124,6 @@ void Robot::Teleop()
 	//PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
 	limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
 
-	MoveForwardPIDF(15, 0.6, m_activeCollection);
 
 	while (IsOperatorControl() && !IsDisabled())
 	{
@@ -146,6 +145,7 @@ void Robot::Teleop()
  */
 void Robot::Test()
 {
+	MoveForwardPIDF(5, 0.6, m_activeCollection);
 	while(!IsDisabled()){
 		//PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
 		//Log::General("POTENTIOMETER: " + to_string(pot->Get()), true);
