@@ -14,13 +14,9 @@
     <RobotConfig>
         <!-- Region for defining VictorSP Items -->
         <VictorSP>
-                <shooter0 channel="0" reversed="true"/>
                 <shooter1 channel="1" reversed="false"/>
                 <left2 channel="2" reversed="false"/>
                 <right1 channel="3" reversed="false"/>
-
-
-
         </VictorSP>
         <!-- Region for VictorSPX CAN Items -->
         <VictorSPX>
@@ -29,6 +25,7 @@
 
 
         <TalonSRX>
+            <shooter0 channel="0" reversed="true" enableEncoder="true"/>
         </TalonSRX>
         <!-- Region for Potentiometers -->
         <Potentiometer>
