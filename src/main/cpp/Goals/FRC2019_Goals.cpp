@@ -502,6 +502,128 @@ void Goal_Hatch::Terminate()
 }
 #endif
 #endif
+
+/**********************Goal_MoveForward*************************/
+
+void Goal_MoveForward::Activate()
+{
+    EncoderItem *enc0 = m_activeCollection->GetEncoder("enc0"); //gets encoder from active collection
+	enc0 -> Reset();
+    NavX *navx = m_activeCollection->GetNavX();
+	navx -> Reset();
+    m_Status = eActive;
+}
+
+Goal::Goal_Status Goal_MoveForward::Process(double dTime)
+{
+    if(!Done)
+    {
+       if(NumberAtTarget < 400)
+    	{
+            ChangeInTime = dTime;
+    		currentValue = navx->GetAngle(); //get new navx angle
+    		enc = ABSValue(enc0->Get()); //get new encoder distance
+    		//Angle PIDF
+	    	double Error = 0 - currentValue;
+            totalE += Error * ChangeInTime;
+            double Result = ((PE * Error) + (IE * totalE)  + (DE * ((Error - PrevE) / ChangeInTime)));
+    		PrevE = Error;
+
+	    	//Distance Traveled PIDF
+    		double ErrorEncoder = distTo - enc;
+            totalEncoder += ErrorEncoder * ChangeInTime;
+            double ResultEncoder = ((P * ErrorEncoder) + (I * totalEncoder)  + (D * ((ErrorEncoder - PrevEncoder) / ChangeInTime)) + F);
+    		PrevEncoder = ErrorEncoder;
+	    	PrevEncoderTrack = ABSValue(PrevEncoder);
+    		if(MaxPower != 0)
+	    	{
+            	if (ABSValue(ResultEncoder) > MaxPower) 
+			    {
+                  ResultEncoder = MaxPower * Sign(ResultEncoder);
+                } 
+    			else if (ABSValue(ResultEncoder) < MinPower) 
+	    		{
+                    ResultEncoder = MinPower * Sign(ResultEncoder);
+                }
+	        }
+
+    		if(!IsNegative){
+	    		if(ErrorEncoder > 0){
+		    		if(ResultEncoder < 0){
+			    		ResultEncoder = MinPower;
+		    		}
+		    	}
+	    		else
+		    	{
+			    	if(ResultEncoder > 0){
+				    	ResultEncoder = MinPower;
+	    			}
+	    		}
+	    	}
+	    	else{
+		    	if(ErrorEncoder > 0){
+	    			if(ResultEncoder > 0){
+		    			ResultEncoder = MinPower;
+		    		}
+		    	}
+	    		else
+	    		{
+		    		if(ResultEncoder < 0){
+			    		ResultEncoder = MinPower;
+		    		}
+	    		}
+    		}
+
+	    	if(Limit != 0)
+		    {
+               	if (Result > Limit)
+		    	{
+                  Result = Limit;
+                }
+	    		else if (Result < -Limit)
+		    	{
+                    Result = -Limit;
+                }
+	        }
+		
+    		if(!IsNegative)
+	    	{
+		    	left = -ResultEncoder - Result;
+    			right = ResultEncoder - Result;
+	    	}
+    		else
+	    	{
+		    	left = ResultEncoder - Result;
+			    right = -ResultEncoder - Result;
+    		}
+		
+	    	SetDrive(left, right, m_activeCollection); //set drive to new powers
+
+	    	if(Inrange(enc, RealTarget, 10)){
+		    	NumberAtTarget++;
+	    	}
+        }
+        else
+        {
+            Done = true;
+        }
+    
+    }
+    else
+    {
+    	StopDrive(m_activeCollection); //once finished, stop drive
+    }
+    if(!Done)
+         return m_Status = eActive;
+    else if(Done)
+         return m_Status = eCompleted;
+}
+
+void Goal_MoveForward::Terminate()
+{
+    StopDrive(m_activeCollection);
+}
+
 #pragma endregion
 #pragma endregion
 

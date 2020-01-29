@@ -367,6 +367,55 @@ public:
 protected:
   ActiveCollection *m_activeCollection;
 };
+
+
+class Goal_MoveForward : public Goal_TimeOut
+{
+  public:
+    Goal_MoveForward(ActiveCollection *activeCollection, double Dist, double MaxPowerOutput) : Goal_TimeOut(activeCollection, 5)
+    {
+        RealTarget *= Dist;
+        MaxPower = MaxPowerOutput;
+        m_activeCollection = activeCollection;
+        distTo = ABSValue(RealTarget);
+    }
+
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    virtual void Terminate();
+
+    private:
+
+      double RealTarget = 89;         // 85 was working yesterday
+	    double MaxPower = 0;
+
+      ActiveCollection *m_activeCollection;
+      EncoderItem *enc0;
+      NavX *navx;
+
+      double left = 0, right = 0;
+      bool IsNegative  = false;
+      double P = 5; //PID constants
+	    double I = -0.0005;
+	    double D = 8;
+	    double PE = 0.07; //PID constants
+	    double IE = 0.08;
+	    double DE = 0.0005;
+      double ChangeInTime = 0;
+	    double F = (0.0);
+	    double Limit = 0.5;
+	    double MinPower = 0;
+	    double PrevE = 0, totalE = 0;
+	    double PrevEncoder = 0, totalEncoder = 0, PrevEncoderTrack = 10000;
+	    double enc = 0;
+      double currentValue = 0;
+	    double distTo = 0;
+
+	    double NumberAtTarget = 0;
+      bool Moving = false;
+      bool Done = false;
+};
+
 #pragma endregion
 #pragma endregion
 
@@ -375,18 +424,6 @@ protected:
 
 //utility-style goals go here
 #pragma region utility
-
-class Goal_MoveForward : public Goal_Wait_ac
-{
-  public:
-    Goal_MoveForward(ActiveCollection *activeCollection, double Dist, double MaxPower) : Goal_Wait_ac(activeCollection, 5)
-    {
-
-    }
-
-    private:
-      ActiveCollection *m_activeCollection;
-}
 
 #pragma endregion
 
