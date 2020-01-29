@@ -270,7 +270,7 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 }
 
 static void MoveForwardPIDF(double Dist, double MaxPowerInput, ActiveCollection *activeCollection){
-	double Tar = Dist * 85, RealTarget = Dist * 85;
+	double RealTarget = Dist * 89;         // 85 was working yesterday
 	double MaxPower = MaxPowerInput;
 	double x = 10;
 	
@@ -279,9 +279,7 @@ static void MoveForwardPIDF(double Dist, double MaxPowerInput, ActiveCollection 
 	DriveForward(RealTarget, MaxPower, activeCollection, x);
 	Log::General("ENC 0: " + to_string(enc0->Get()));
 	Wait(0.5);
-	Log::General("Final Error: " + to_string(RealTarget) + "  :: Total DisTraveled = " + to_string(activeCollection -> GetEncoder("enc1") -> Get()));
-	Log::General("Calculated Distance: " + to_string(Tar) + "  :: Diff: " + to_string(Tar + activeCollection -> GetEncoder("enc1") -> Get()));
-
+	Log::General("Final Error: " + to_string(RealTarget));
 }
 
 

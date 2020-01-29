@@ -376,6 +376,18 @@ protected:
 //utility-style goals go here
 #pragma region utility
 
+class Goal_MoveForward : public Goal_Wait_ac
+{
+  public:
+    Goal_MoveForward(ActiveCollection *activeCollection, double Dist, double MaxPower) : Goal_Wait_ac(activeCollection, 5)
+    {
+
+    }
+
+    private:
+      ActiveCollection *m_activeCollection;
+}
+
 #pragma endregion
 
 //auton goals and other complex goals go here
