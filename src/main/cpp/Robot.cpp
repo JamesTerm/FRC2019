@@ -124,7 +124,6 @@ void Robot::Teleop()
 	//PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
 	limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
 
-
 	while (IsOperatorControl() && !IsDisabled())
 	{
 		const double CurrentTime = GetTime();
@@ -145,12 +144,14 @@ void Robot::Teleop()
  */
 void Robot::Test()
 {
+
+	MoveForwardPIDF(5, 0.6, m_activeCollection);
+
+/*
 	double LastTime = GetTime();
 	int lastPos = 0;
 	((TalonSRXItem*)m_activeCollection->Get("shooter0"))->SetQuadraturePosition(0);
 	
-	//*Commented this out for shooter and dashboard testing
-	//MoveForwardPIDF(5, 0.6, m_activeCollection);
 	
 	while(!IsDisabled()){
 		const double CurrentTime = GetTime();
@@ -164,7 +165,7 @@ void Robot::Test()
 		if (DeltaTime == 0.0) continue;  //never send 0 time
 		m_drive->Update(DeltaTime);
 		Wait(0.010);
-	}
+	}*/
 }
 
 void Robot::StartCompetition() {

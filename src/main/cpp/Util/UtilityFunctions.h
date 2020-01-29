@@ -176,7 +176,7 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 
 	double NumberAtTarget = 0;
 
-	while((elapsedTime < killTime) && (NumberAtTarget < 10))
+	while((elapsedTime < killTime) && (NumberAtTarget < 400))
 	{
 		currentValue = navx->GetAngle(); //get new navx angle
 		enc = ABSValue(enc0->Get()); //get new encoder distance
@@ -270,19 +270,20 @@ static double DriveForward(double dist, double power, ActiveCollection *activeCo
 }
 
 static void MoveForwardPIDF(double Dist, double MaxPowerInput, ActiveCollection *activeCollection){
-	double Tar = Dist * 96.7, RealTarget = Dist * 96.7;
+	double Tar = Dist * 85, RealTarget = Dist * 85;
 	double MaxPower = MaxPowerInput;
 	double x = 10;
 	
 	EncoderItem *enc0 = activeCollection->GetEncoder("enc0"); //gets encoder from active collection
 	enc0 -> Reset();
 	DriveForward(RealTarget, MaxPower, activeCollection, x);
-	
+	Log::General("ENC 0: " + to_string(enc0->Get()));
 	Wait(0.5);
 	Log::General("Final Error: " + to_string(RealTarget) + "  :: Total DisTraveled = " + to_string(activeCollection -> GetEncoder("enc1") -> Get()));
 	Log::General("Calculated Distance: " + to_string(Tar) + "  :: Diff: " + to_string(Tar + activeCollection -> GetEncoder("enc1") -> Get()));
 
 }
+
 
 /*
  *
