@@ -62,6 +62,7 @@ class Robot : public RobotBase
         const string m_driveStraight = "drive";
         MultitaskGoal* m_masterGoal;
         MultitaskGoal* m_teleOpMasterGoal;
+        Goal_MoveForward* m_Drive;
 		nt::NetworkTableInstance m_inst; //!Network tables
         shared_ptr<NetworkTable> m_dashboardTable;
         string m_autonOptions[5] = {"DriveStraight","OnePieceAuto","TwoPieceAuto","DEBUG","NONE"};

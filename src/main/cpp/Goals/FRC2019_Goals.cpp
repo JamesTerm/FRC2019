@@ -512,11 +512,12 @@ void Goal_MoveForward::Activate()
     NavX *navx = m_activeCollection->GetNavX();
 	navx -> Reset();
     m_Status = eActive;
+    Moving = true;
 }
 
 Goal::Goal_Status Goal_MoveForward::Process(double dTime)
 {
-    if(!Done)
+    if(!Done && m_Status == eActive)
     {
        if(NumberAtTarget < 400)
     	{
@@ -606,6 +607,7 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
         else
         {
             Done = true;
+            Moving = false;
         }
     
     }
@@ -613,10 +615,13 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
     {
     	StopDrive(m_activeCollection); //once finished, stop drive
     }
-    if(!Done)
+    if(!Done && Moving)
          return m_Status = eActive;
-    else if(Done)
+    else if(Done && !Moving)
          return m_Status = eCompleted;
+    else
+        return m_Status = eFailed;
+    
 }
 
 void Goal_MoveForward::Terminate()
