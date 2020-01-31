@@ -24,15 +24,27 @@ SparkMaxItem::SparkMaxItem(int _channel, string _name, bool _reversed)
 	: OutputComponent(_name){
 	channel = _channel;
 	reversed = _reversed;
-	Max = new CANSparkMax(channel);
-	Encoder = new CANEncoder (Max, CANEncoder::kQuadrature);
+	Max = new CANSparkMax(channel, rev::CANSparkMax::MotorType::kBrushless);
+	Max->SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+	Name = _name;
 }
+
 double SparkMaxItem::Get(){
-    return Max->GetAppliedOutput();
+    return Max->Get();
 }
+
 double SparkMaxItem:: GetEncoderValue(){
-	return Encoder -> GetPosition();
+	return Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 24).GetPosition();
 }
+
+string SparkMaxItem::GetName(){
+	return Name;
+}
+
+int SparkMaxItem::GetPolarity(){
+	return (reversed? -1 : 1);
+}
+
 void SparkMaxItem::Set(double val){
 	
 	if((val<0 || val>0) && !inUse)
@@ -45,7 +57,16 @@ void SparkMaxItem::Set(double val){
 	else if(!inUse)
 	{
 		inUse = true;
-		Max->Set(0);
+		Max->StopMotor();
+		inUse = false;
+	}
+}
+
+void SparkMaxItem::Stop(){
+	if(!inUse)
+	{
+		inUse = true;
+		Max->StopMotor();
 		inUse = false;
 	}
 }
