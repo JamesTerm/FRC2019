@@ -6,14 +6,15 @@ Project:     BroncBotzFRC2019
 Copyright (c) BroncBotz.
 All rights reserved.
 
-Author(s): Ian Poll
+Author(s): Ian Poll, Shruti Venkatramanan, Guadalupe Rodriguez, Emily Martinez
 Email: irobot983@gmail.com
 \********************************************************************/
 
 #ifndef SRC_COMPONENTS_SPARKMAXITEM_H_
 #define SRC_COMPONENTS_SPARKMAXITEM_H_
 
-#include <rev/SparkMax.h>
+#include <rev/CANSparkMax.h>
+
 #include "OutputComponent.h"
 
 using namespace std;
@@ -22,13 +23,16 @@ using namespace rev;
 namespace Components{
 class SparkMaxItem : public OutputComponent{
 private:
-	SparkMax *Max;
+	CANSparkMax *Max;
+	CANEncoder *Encoder;
 	int channel;
 	bool reversed;
 
 public:
 	SparkMaxItem();
-	SparkMaxItem(int channel, string name, bool reversed);
+	SparkMaxItem(int _channel, string _name, bool _reversed);
+	virtual double GetEncoderValue();
+    
 	virtual double Get() override;
 	virtual void Set(double val) override;
 	virtual void Set(DoubleSolenoid::Value value) override;
@@ -36,7 +40,7 @@ public:
 	int PDBChannel;
 	virtual void DefaultSet() override;
 	virtual ~SparkMaxItem();
-	SparkMax *AsSparkMax() { return Max; }
+	CANSparkMax *AsSparkMax() { return Max; }
 };
 }
 
