@@ -369,15 +369,16 @@ protected:
 };
 
 
-class Goal_MoveForward : public Goal_TimeOut
+class Goal_MoveForward : public AtomicGoal
 {
   public:
-    Goal_MoveForward(ActiveCollection *activeCollection, double Dist, double MaxPowerOutput) : Goal_TimeOut(activeCollection, 5)
+    Goal_MoveForward(ActiveCollection *activeCollection, double Dist, double MaxPowerOutput, double MaxTime)
     {
         RealTarget *= Dist;
         MaxPower = MaxPowerOutput;
         m_activeCollection = activeCollection;
         distTo = ABSValue(RealTarget);
+        TotalTime = MaxTime;
     }
 
     virtual void Activate();
@@ -386,6 +387,8 @@ class Goal_MoveForward : public Goal_TimeOut
 
     private:
 
+      double TimePassed = 0;
+      double TotalTime = 0;
       double RealTarget = 89;         // 85 was working yesterday
 	    double MaxPower = 0;
 

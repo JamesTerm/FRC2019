@@ -519,7 +519,7 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
 {
     if(!Done && m_Status == eActive)
     {
-       if(NumberAtTarget < 400)
+       if(NumberAtTarget < 400 && TimePassed < TotalTime)
     	{
             ChangeInTime = dTime;
     		currentValue = navx->GetAngle(); //get new navx angle
@@ -603,6 +603,13 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
 	    	if(Inrange(enc, RealTarget, 10)){
 		    	NumberAtTarget++;
 	    	}
+
+            TimePassed += dTime;
+        }
+        else if(TotalTime <= TimePassed)
+        {
+            Done = true;
+            Moving = true;
         }
         else
         {
