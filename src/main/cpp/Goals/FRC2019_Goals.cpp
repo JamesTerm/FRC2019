@@ -629,6 +629,26 @@ void Goal_MoveForward::Terminate()
     StopDrive(m_activeCollection);
 }
 
+
+/*********************Goal_TurnPID**********************************/
+
+void Goal_TurnPID::Activate()
+{
+    NavX *navx = m_activeCollection->GetNavX();
+	navx -> Reset();
+    m_Status = eActive;
+    Moving = true;
+}
+
+Goal::Goal_Status Goal_TurnPID::Process(double dTime)
+{
+    if(!Done && m_Status == eActive)
+    {
+      //add in the stuff from util for turn goal   
+    }
+
+}
+
 #pragma endregion
 #pragma endregion
 
