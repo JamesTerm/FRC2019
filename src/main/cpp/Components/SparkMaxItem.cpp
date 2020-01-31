@@ -6,7 +6,7 @@ Project:     BroncBotzFRC2019
 Copyright (c) BroncBotz.
 All rights reserved.
 
-Author(s): Ian Poll
+Author(s): Ian Poll, Shruti Venkatramanan, Guadalupe Rodriguez, Emily Martinez
 Email: irobot983@gmail.com
 \********************************************************************/
 
