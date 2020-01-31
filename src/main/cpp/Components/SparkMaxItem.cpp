@@ -37,7 +37,7 @@ void SparkMaxItem::Set(double val){
 	
 	if((val<0 || val>0) && !inUse)
 	{
-		inUse = false;
+		inUse = true;
 		if(reversed) Max->Set(-val);
 		else Max->Set(val);
 		inUse = false;
