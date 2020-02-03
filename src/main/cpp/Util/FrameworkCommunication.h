@@ -19,17 +19,21 @@ namespace Util{
                     dashboardComm->PutNumber(key,value);
             }
 
-            void SendData(string k, int v, bool aP = true){
-                SendData(k,(double)v,aP);
+            void SendData(string k, int v, bool aP = true, bool isBool = true){
+                if(isBool)
+                    SendData(k,nt::Value::MakeString((v?"true":"false")),aP);
+                else
+                    SendData(k,(double)v,aP);
             }
 
             void SendData(string k, string v, bool aP = true){
                 SendData(k,nt::Value::MakeString(v),aP);
             }
 
-            void SendData(string k, bool v, bool aP = true){
-                SendData(k,nt::Value::MakeBoolean(v),aP);
-            }
+            //! DEPRECATED; USE SENDDATA(STRING,INT,BOOL,BOOL) INSTEAD
+            /*void SendData(string k, bool v, bool aP = true){
+                SendData(k,nt::Value::MakeString(to_string(v)),aP);
+            }*/
 
             void SendHealthData(string key, string value){
                 dashboardComm->PutValue("H_"+key,nt::Value::MakeString(value));
@@ -40,6 +44,7 @@ namespace Util{
             }
 
             void NotifyRobotState(string value){
+                // cout << "ROBOT_STATE "+value << endl;
                 dashboardComm->PutValue("ROBOT_STATE", nt::Value::MakeString(value));
             }
         private:

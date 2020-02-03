@@ -14,6 +14,8 @@ chrisrweeks@aol.com
 
 #include <iostream>
 #include "Robot.h"
+#include "Util/RobotStatus.h"
+#include "Util/FrameworkCommunication.h"
 using namespace std;
 
 /**
@@ -42,6 +44,7 @@ Robot::~Robot()
  */
 void Robot::RobotInit()
 {
+	FrameworkCommunication::GetInstance();
 	Log::restartfile();
 	Log::General("Program Version: " + to_string(VERSION) + " Revision: " + REVISION, true);
 	Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
@@ -50,6 +53,7 @@ void Robot::RobotInit()
 	m_dashboardTable = m_inst.GetTable("DASHBOARD_TABLE");
 	m_dashboardTable->PutStringArray("AUTON_OPTIONS", m_autonOptions);
 	m_dashboardTable->PutStringArray("POSITION_OPTIONS", m_positionOptions);
+	// Util::FrameworkCommunication::GetInstance().SendData("MESSAGE","yeetus");//? Temporary
 }
 
 /*
@@ -58,7 +62,7 @@ void Robot::RobotInit()
  */
 void Robot::Autonomous()
 {
-	
+	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Auton);	
 	m_masterGoal = new MultitaskGoal(m_activeCollection, false);
 
 	Log::General("Autonomous Started");
@@ -109,6 +113,10 @@ void Robot::Autonomous()
 //TODO: Potentially make a "test" tag in the config that can toggle this?
 void Robot::Teleop()
 {
+	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Teleop);
+	Util::FrameworkCommunication::GetInstance().SendData("dTest","yeet!"+to_string(GetTime()),true);
+
+
 	m_activeCollection->GetActiveGoal()->~MultitaskGoal(); //!< Destroy any pre-existing masterGoal that was not properly disposed of
 	m_teleOpMasterGoal = new MultitaskGoal(m_activeCollection, false);
 	//m_teleOpMasterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
@@ -145,6 +153,7 @@ void Robot::Teleop()
  */
 void Robot::Test()
 {
+	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
 	double LastTime = GetTime();
 	int lastPos = 0;
 	((TalonSRXItem*)m_activeCollection->Get("shooter0"))->SetQuadraturePosition(0);
@@ -206,7 +215,9 @@ void Robot::StartCompetition() {
 
 void Robot::EndCompetition() { m_exit = true; }
 
-void Robot::Disabled() { /*Do nothing for now*/ }
+void Robot::Disabled() { 
+	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Disabled);
+ }
 
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }  //!< This identifies Robot as the main Robot starting class

@@ -9,7 +9,7 @@ namespace Util{
         Teleop,
         Auton,
         Test,
-        Diabled
+        Disabled
     };
 
     class RobotStatus{
@@ -20,6 +20,7 @@ namespace Util{
             }
             Event RobotStatusChanged;
             void NotifyState(RobotState state){
+                // cout << "NOTIFYSTATE" << endl;
                 CurrentRobotState = state;
                 RobotStatusChanged(new TEventArgs<RobotState,RobotStatus*>(CurrentRobotState,this));
             }

@@ -47,6 +47,7 @@ namespace Util{
     FrameworkCommunication::FrameworkCommunication(){
         RobotStatus::GetInstance().RobotStatusChanged += Instance_RobotStatusChanged;
         auto inst = nt::NetworkTableInstance::GetDefault();
+        inst.DeleteAllEntries();
         dashboardComm = inst.GetTable(DASHBOARD_NETWORK_TABLE);
     }
 
