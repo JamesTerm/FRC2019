@@ -40,7 +40,10 @@ public:
 	int PDBChannel;
 	virtual void DefaultSet() override;
 	virtual ~SparkMaxItem();
-	CANSparkMax *AsSparkMax() { return Max; }
+	CANSparkMax *AsSparkMax() { return Max;}
+    void ResetEncoderValue(); 
+	
+	
 };
 }
 

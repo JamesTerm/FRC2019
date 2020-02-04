@@ -24,8 +24,8 @@ SparkMaxItem::SparkMaxItem(int _channel, string _name, bool _reversed)
 	: OutputComponent(_name){
 	channel = _channel;
 	reversed = _reversed;
-	Max = new CANSparkMax(channel);
-	Encoder = new CANEncoder (Max, CANEncoder::kQuadrature);
+/*	Max = new CANSparkMax(channel, CANSparkMaxLowLevel::MotorType::kBrushless);
+	Encoder = new CANEncoder (*Max, CANEncoder::EncoderType::kQuadrature);*/
 }
 double SparkMaxItem::Get(){
     return Max->GetAppliedOutput();
@@ -33,6 +33,7 @@ double SparkMaxItem::Get(){
 double SparkMaxItem:: GetEncoderValue(){
 	return Encoder -> GetPosition();
 }
+
 void SparkMaxItem::Set(double val){
 	
 	if((val<0 || val>0) && !inUse)
@@ -52,6 +53,10 @@ void SparkMaxItem::Set(double val){
 
 void SparkMaxItem::SetPDBChannel(int val){
 	PDBChannel = val;
+}
+void SparkMaxItem::ResetEncoderValue(){
+	Encoder-> SetPosition(0);
+
 }
 
 void SparkMaxItem::DefaultSet(){
