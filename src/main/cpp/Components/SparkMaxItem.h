@@ -24,18 +24,21 @@ namespace Components{
 class SparkMaxItem : public OutputComponent{
 private:
 	CANSparkMax *Max;
-	CANEncoder *Encoder;
 	int channel;
 	bool reversed;
+	string Name;
 
 public:
 	SparkMaxItem();
 	SparkMaxItem(int _channel, string _name, bool _reversed);
-	virtual double GetEncoderValue();
+	double GetEncoderValue();
     
-	virtual double Get() override;
+	double Get();
+	int GetPolarity();
 	virtual void Set(double val) override;
 	virtual void Set(DoubleSolenoid::Value value) override;
+	void Stop();
+	string GetName();
 	void SetPDBChannel(int val);
 	int PDBChannel;
 	virtual void DefaultSet() override;

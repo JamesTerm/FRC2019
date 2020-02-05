@@ -457,7 +457,7 @@ void Config::AllocateComponents(xml_node &root){
 #pragma endregion SparkMax
 
 xml_node SparkMax = robot.child("SparkMax");
-	if(VictorSPX){
+	if(SparkMax){
 		for(xml_node SparkMax = SparkMax.first_child(); SparkMax; SparkMax = SparkMax.next_sibling()){
 			string name = SparkMax.name();
 			xml_attribute channel = SparkMax.attribute("channel");

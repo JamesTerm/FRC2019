@@ -639,7 +639,7 @@ void Goal_MoveForward::Terminate()
 
 /*********************Goal_TurnPID**********************************/
 
-void Goal_TurnPID::Activate()
+/*void Goal_TurnPID::Activate()
 {
     NavX *navx = m_activeCollection->GetNavX();
 	navx -> Reset();
@@ -654,7 +654,7 @@ Goal::Goal_Status Goal_TurnPID::Process(double dTime)
       //add in the stuff from util for turn goal   
     }
 
-}
+}*/
 
 #pragma endregion
 #pragma endregion

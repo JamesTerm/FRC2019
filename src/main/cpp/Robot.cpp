@@ -145,7 +145,7 @@ void Robot::Teleop()
 void Robot::Test()
 {
 
-	m_Drive = new Goal_MoveForward(m_activeCollection, 5, 0.6);
+	m_Drive = new Goal_MoveForward(m_activeCollection, 5, 0.6, 5);
 	m_Drive->Activate();
 	while(m_Drive->GetStatus() == Goal::eActive && !IsDisabled())
 	{
