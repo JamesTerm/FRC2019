@@ -75,7 +75,7 @@ void SparkMaxItem::SetPDBChannel(int val){
 	PDBChannel = val;
 }
 void SparkMaxItem::ResetEncoderValue(){
-	Encoder-> SetPosition(0);
+	Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 24).SetPosition(0);
 
 }
 
