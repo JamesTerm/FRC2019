@@ -114,7 +114,6 @@ void Robot::Autonomous()
 void Robot::Teleop()
 {
 	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Teleop);
-	Util::FrameworkCommunication::GetInstance().SendData("dTest","yeet!"+to_string(GetTime()),true);
 
 
 	m_activeCollection->GetActiveGoal()->~MultitaskGoal(); //!< Destroy any pre-existing masterGoal that was not properly disposed of
