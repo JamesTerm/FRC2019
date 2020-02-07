@@ -27,6 +27,7 @@ SparkMaxItem::SparkMaxItem(int _channel, string _name, bool _reversed)
 	Max = new CANSparkMax(channel, rev::CANSparkMax::MotorType::kBrushless);
 	Max->SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 	Name = _name;
+	Offset = 0;
 }
 
 double SparkMaxItem::Get(){
@@ -34,7 +35,11 @@ double SparkMaxItem::Get(){
 }
 
 double SparkMaxItem:: GetEncoderValue(){
-	return Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 24).GetPosition();
+	return Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 24).GetPosition() - Offset;
+}
+
+void SparkMaxItem::Reset(){
+	Offset = Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 24).GetPosition();
 }
 
 string SparkMaxItem::GetName(){

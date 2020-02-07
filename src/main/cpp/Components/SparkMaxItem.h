@@ -27,6 +27,7 @@ private:
 	int channel;
 	bool reversed;
 	string Name;
+	double Offset;
 
 public:
 	SparkMaxItem();
@@ -35,6 +36,7 @@ public:
     
 	double Get();
 	int GetPolarity();
+	void Reset();
 	virtual void Set(double val) override;
 	virtual void Set(DoubleSolenoid::Value value) override;
 	void Stop();
