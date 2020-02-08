@@ -144,25 +144,21 @@ void Robot::Teleop()
  */
 void Robot::Test()
 {
-	cout << "entered" << endl;
 
 	m_activeCollection->GetActiveGoal()->~Goal();
-	cout << "set active goal" << endl;
 
 	m_Drive = new Goal_MoveForward(m_activeCollection, 5, 0.6, 5);
-	Log::General("Made Goal",true);
 	
 	m_Drive->Activate();
-	Log::General("Activated",true);
 
 	while(m_Drive->GetStatus() == Goal::eActive && !IsDisabled())
 	{
-	Log::General("Activated",true);
 	
 		m_Drive->Process(0.01);
 		Wait(0.01);
 	}
 	
+	// MoveForwardPIDF(10, 0.6, m_activeCollection);
 
 /*
 	double LastTime = GetTime();

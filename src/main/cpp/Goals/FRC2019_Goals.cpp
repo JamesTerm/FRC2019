@@ -507,9 +507,9 @@ void Goal_Hatch::Terminate()
 
 void Goal_MoveForward::Activate()
 {
-    EncoderItem *enc0 = m_activeCollection->GetEncoder("enc0"); //gets encoder from active collection
+    enc0 = m_activeCollection->GetEncoder("enc0"); //gets encoder from active collection
 	enc0 -> Reset();
-    NavX *navx = m_activeCollection->GetNavX();
+    navx = m_activeCollection->GetNavX();
 	navx -> Reset();
     m_Status = eActive;
     Moving = true;
