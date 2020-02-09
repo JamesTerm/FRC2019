@@ -419,6 +419,53 @@ class Goal_MoveForward : public AtomicGoal
       bool Done = false;
 };
 
+class Goal_TurnPIDF : public AtomicGoal
+{
+  public:
+    Goal_TurnPIDF(ActiveCollection *activeCollection, double Angle, double MaxPowerOutput, double MaxTime)
+    {
+        RealTarget *= Angle;
+        MaxPower = MaxPowerOutput;
+        m_activeCollection = activeCollection;
+        distTo = ABSValue(RealTarget);
+        TotalTime = MaxTime;
+    }
+
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    virtual void Terminate();
+
+    private:
+
+      double TimePassed = 0;
+      double TotalTime = 0;
+      double RealTarget = 89;         // 85 was working yesterday
+	    double MaxPower = 0;
+      double power = 0;
+
+      ActiveCollection *m_activeCollection;
+      NavX *navx;
+
+      double left = 0, right = 0;
+      bool IsNegative  = false;
+      double P = 5; //PID constants
+	    double I = -0.0005;
+	    double D = 8;
+      double ChangeInTime = 0;
+	    double F = (0.09);
+	    double Limit = 0.5;
+	    double MinPower = 0;
+	    double PrevE = 0, totalE = 0, PrevTrack = 10000;
+	    double enc = 0;
+      double currentValue = 0;
+	    double distTo = 0;
+
+	    double NumberAtTarget = 0;
+      bool Moving = false;
+      bool Done = false;
+};
+
+
 #pragma endregion
 #pragma endregion
 

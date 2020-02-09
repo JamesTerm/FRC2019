@@ -507,9 +507,9 @@ void Goal_Hatch::Terminate()
 
 void Goal_MoveForward::Activate()
 {
-    EncoderItem *enc0 = m_activeCollection->GetEncoder("enc0"); //gets encoder from active collection
+    enc0 = m_activeCollection->GetEncoder("enc0"); //gets encoder from active collection
 	enc0 -> Reset();
-    NavX *navx = m_activeCollection->GetNavX();
+    navx = m_activeCollection->GetNavX();
 	navx -> Reset();
     m_Status = eActive;
     Moving = true;
@@ -639,7 +639,7 @@ void Goal_MoveForward::Terminate()
 
 /*********************Goal_TurnPID**********************************/
 
-/*void Goal_TurnPID::Activate()
+void Goal_TurnPIDF::Activate()
 {
     NavX *navx = m_activeCollection->GetNavX();
 	navx -> Reset();
@@ -647,14 +647,87 @@ void Goal_MoveForward::Terminate()
     Moving = true;
 }
 
-Goal::Goal_Status Goal_TurnPID::Process(double dTime)
+Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
 {
     if(!Done && m_Status == eActive)
     {
-      //add in the stuff from util for turn goal   
-    }
+       if(NumberAtTarget < 400 && TimePassed < TotalTime)
+    	{
+            ChangeInTime = dTime;
+    		currentValue = navx->GetAngle(); //get new navx angle
+    		//Angle PIDF
+	    	double Error = RealTarget - currentValue;
+            totalE += Error * ChangeInTime;
+            double Result = ((P * Error) + (I * totalE)  + (D * ((Error - PrevE) / ChangeInTime)) + F);
+    		PrevE = Error;
+	    	PrevTrack = ABSValue(PrevE);
+    		
+            if(MaxPower != 0)
+	    	{
+             	if (ABSValue(Result) > MaxPower)
+                {
+                    Result = MaxPower * Sign(Result);
+                } 
+               else if (ABSValue(Result) < MinPower)
+                {
+                    Result = MinPower * Sign(Result);
+                }
+	        }
 
-}*/
+	    	if(!IsNegative){
+		    	left = power - Result;  //set left motor to desired power + output //might have to make postive
+			    right = power - Result; //set right motor to desired power - output (+ and - to make robot turn slightly) //might have to make negative again for auto
+		    }
+		    else if (IsNegative)
+		    {
+			    left = power + Result;  //set left motor to desired power + output //might have to make postive
+			    right = power + Result; //set right motor to desired power - output (+ and - to make robot turn slightly) //might have to make negative again for auto
+		    }
+		    if(RealTarget == 0)
+		    {
+			    left = 0;
+			    right = 0;
+			    Log::General("What are you doing trying to go to 0 using turn, a method that resets the value of the navx");
+			    PrevE = 0;
+		    }
+		
+	    	SetDrive(left, right, m_activeCollection); //set drive to new powers
+
+	    	if(Inrange(currentValue, RealTarget, 10)){
+		    	NumberAtTarget++;
+	    	}
+
+            TimePassed += dTime;
+        }
+        else if(TotalTime <= TimePassed)
+        {
+            Done = true;
+            Moving = true;
+        }
+        else
+        {
+            Done = true;
+            Moving = false;
+        }
+    
+    }
+    else
+    {
+    	StopDrive(m_activeCollection); //once finished, stop drive
+    }
+    if(!Done && Moving)
+         return m_Status = eActive;
+    else if(Done && !Moving)
+         return m_Status = eCompleted;
+    else
+        return m_Status = eFailed;
+    
+}
+
+void Goal_TurnPIDF::Terminate()
+{
+    StopDrive(m_activeCollection);
+}
 
 #pragma endregion
 #pragma endregion
