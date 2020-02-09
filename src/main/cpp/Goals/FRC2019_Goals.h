@@ -482,3 +482,71 @@ private:
 #pragma region MultitaskGoals
 
 #pragma endregion
+
+class Goal_ShooterComposite : public CompositeGoal
+{
+  public:
+   Goal_ShooterComposite(ActiveCollection *activecollection)
+   {
+     m_activeCollection = activecollection;
+     m_Status = eInactive; 
+
+   }
+
+   virtual void Activate();
+
+   private:
+   ActiveCollection* m_activeCollection;
+  
+
+};
+
+class Goal_ShooterBunch : public AtomicGoal
+{
+public:
+  Goal_ShooterBunch(ActiveCollection *activeCollection)
+  {
+    m_activeCollection = activeCollection;
+    m_Status = eInactive;
+
+  }
+
+  virtual void Activate();
+
+private:
+  ActiveCollection* m_activeCollection;
+};
+
+class Goal_ShooterYeet : public AtomicGoal
+{
+public:
+  Goal_ShooterYeet(ActiveCollection *activeCollection, double Speed, double MaxSpeed, string MotorName)
+  {
+    m_activeCollection = activeCollection;
+    m_Speed = Speed;
+    m_MaxSpeed = MaxSpeed;
+    m_Status = eInactive;
+    ShooterMotor = (TalonSRXItem*)activeCollection->Get(MotorName);
+    IsNegative = Speed < 0;
+  }
+  //Find what motor to get
+
+  virtual void Activate();
+  virtual Goal::Goal_Status Process(double dTime);
+  virtual void Terminate();
+
+private:
+  double m_Speed;
+  double m_MaxSpeed;
+  TalonSRXItem *ShooterMotor;
+  double revSpeed = 0;
+  double LastE = 0;
+  double P = 5;
+  double I = -0.0005;
+  double D = 8;
+  double total = 0;
+  double PrevE = 0;
+  bool IsNegative;
+  
+  ActiveCollection* m_activeCollection;
+};

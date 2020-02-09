@@ -717,3 +717,54 @@ void Goal_OneHatchFrontShip::Activate()
 #pragma region MultitaskGoals
 
 #pragma endregion
+
+void Goal_ShooterYeet::Activate()
+{
+    m_Status = eActive;
+    ShooterMotor->SetQuadraturePosition(0);
+}
+
+Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
+{
+    if (m_Status = eActive){
+
+        double EncoderValue = ShooterMotor->GetQuadraturePosition();
+        revSpeed = (EncoderValue-LastE) / dTime; 
+        double Error = m_Speed - revSpeed;
+        total += Error * dTime;
+        double Result = ((P * Error) + (I * total)  + (D * ((Error - PrevE) / dTime)));
+        PrevE = Error;
+
+        if (ABSValue(Result)>m_MaxSpeed)
+        {
+            Result = Sign(Result)*m_MaxSpeed;
+        }
+        else if(Result < 0 && !IsNegative)
+        {
+            Result *= -1;
+        }
+        else if(Result > 0 && IsNegative)
+        {
+            Result *= -1;
+        }
+
+        Log::General("Target speed: " + to_string(m_Speed) + ", Actual speed: " + to_string((EncoderValue-LastE) / dTime));
+
+        ShooterMotor -> Set(Result);
+        LastE = EncoderValue;
+        return eActive;
+
+    }
+    else if (m_Status = eInactive){
+        ShooterMotor -> Set(0);
+        return eInactive;
+    }
+}
+
+
+void Goal_ShooterYeet::Terminate()
+{
+    m_Status = eInactive;
+
+
+}
