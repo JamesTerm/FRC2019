@@ -145,10 +145,11 @@ void Robot::Teleop()
 void Robot::Test()
 {
 
-	//m_Drive = new Goal_MoveForward(m_activeCollection, 5, 0.6, 5);
-	// m_Drive->Activate();
-
-	Goal_ShooterYeet* ShootG = new Goal_ShooterYeet(m_activeCollection, 0.05, 0.8, "shooter0");
+	/*
+	m_Drive = new Goal_TurnPIDF(m_activeCollection, 90, 0.6, 4);
+	m_Drive->Activate();
+	*/
+	Goal_ShooterYeet* ShootG = new Goal_ShooterYeet(m_activeCollection, 0.1, 0.8, "shooter0", "shooter1");
 	ShootG->Activate();
 	while(ShootG->GetStatus() == Goal::eActive && !IsDisabled())
 	{
