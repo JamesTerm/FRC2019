@@ -519,7 +519,7 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
 {
     if(!Done && m_Status == eActive)
     {
-       if(NumberAtTarget < 400 && TimePassed < TotalTime)
+       if(NumberAtTarget < 100 && TimePassed < TotalTime)
     	{
             ChangeInTime = dTime;
     		currentValue = navx->GetAngle(); //get new navx angle
@@ -551,26 +551,26 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
     		if(!IsNegative){
 	    		if(ErrorEncoder > 0){
 		    		if(ResultEncoder < 0){
-			    		ResultEncoder = MinPower;
+			    		ResultEncoder = ABSValue(ResultEncoder);
 		    		}
 		    	}
 	    		else
 		    	{
 			    	if(ResultEncoder > 0){
-				    	ResultEncoder = MinPower;
+				    	ResultEncoder = ABSValue(ResultEncoder);
 	    			}
 	    		}
 	    	}
 	    	else{
 		    	if(ErrorEncoder > 0){
 	    			if(ResultEncoder > 0){
-		    			ResultEncoder = MinPower;
+		    			ResultEncoder = ABSValue(ResultEncoder);
 		    		}
 		    	}
 	    		else
 	    		{
 		    		if(ResultEncoder < 0){
-			    		ResultEncoder = MinPower;
+			    		ResultEncoder = ABSValue(ResultEncoder);
 		    		}
 	    		}
     		}
@@ -600,7 +600,8 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
 		
 	    	SetDrive(left, right, m_activeCollection); //set drive to new powers
 
-	    	if(Inrange(enc, RealTarget, 10)){
+	    	if(Inrange(enc, RealTarget, 50)){
+                Log::General("In range");
 		    	NumberAtTarget++;
 	    	}
 
@@ -633,7 +634,9 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
 
 void Goal_MoveForward::Terminate()
 {
+    m_Status = eCompleted;
     StopDrive(m_activeCollection);
+    Log::General("Done Moving");
 }
 
 
@@ -641,7 +644,7 @@ void Goal_MoveForward::Terminate()
 
 void Goal_TurnPIDF::Activate()
 {
-    NavX *navx = m_activeCollection->GetNavX();
+    navx = m_activeCollection->GetNavX();
 	navx -> Reset();
     m_Status = eActive;
     Moving = true;
@@ -716,17 +719,24 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     	StopDrive(m_activeCollection); //once finished, stop drive
     }
     if(!Done && Moving)
-         return m_Status = eActive;
+        return m_Status = eActive;
     else if(Done && !Moving)
-         return m_Status = eCompleted;
+    {
+        Log::General("Time out on Gyro");
+        return m_Status = eCompleted;
+    }
     else
+    {
+        Log::General("Time out");
         return m_Status = eFailed;
-    
+    }
 }
 
 void Goal_TurnPIDF::Terminate()
 {
+    m_Status = eCompleted;
     StopDrive(m_activeCollection);
+    Log::General("Done Moving");
 }
 
 #pragma endregion
@@ -812,7 +822,7 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
         {
             Result = Sign(Result)*m_MaxSpeed;
         }
-        else if(Result < 0 && !IsNegative)
+        if(Result < 0 && !IsNegative)
         {
             Result *= -1;
         }
@@ -824,6 +834,8 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
         Log::General("Target speed: " + to_string(m_Speed) + ", Actual speed: " + to_string((EncoderValue-LastE) / dTime));
 
         ShooterMotor -> Set(Result);
+        ShooterMotor2 ->Set(-Result);
+        Log::General("Power Output: " + to_string(Result));
         LastE = EncoderValue;
         return eActive;
 
