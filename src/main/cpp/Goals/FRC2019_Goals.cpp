@@ -805,47 +805,51 @@ void Goal_ShooterYeet::Activate()
 {
     m_Status = eActive;
     ShooterMotor->SetQuadraturePosition(0);
+    lastPos = (ShooterMotor->GetQuadraturePosition());
 }
 
 Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
 {
-    if (m_Status = eActive){
-
-        double EncoderValue = ShooterMotor->GetQuadraturePosition();
-        revSpeed = (EncoderValue-LastE) / dTime; 
-        double Error = m_Speed - revSpeed;
-        total += Error * dTime;
-        double Result = ((P * Error) + (I * total)  + (D * ((Error - PrevE) / dTime)));
-        PrevE = Error;
-
-        if (ABSValue(Result)>m_MaxSpeed)
+    if (m_Status = eActive)
+    {
+        if((ShooterMotor->GetQuadraturePosition()) != lastPos || FirstRun)//Change this to compare the encoder valus so to run it when the values are diff
         {
-            Result = Sign(Result)*m_MaxSpeed;
-        }
-        if(Result < 0 && !IsNegative)
-        {
-            Result *= -1;
-        }
-        else if(Result > 0 && IsNegative)
-        {
-            Result *= -1;
-        }
+            double EncoderValue = (ShooterMotor->GetQuadraturePosition());
+            int Spe = (EncoderValue - LastE);
+            revSpeed = Spe;
+            {
+                double Error = (m_Speed + revSpeed);
+                total += Error * dTime;
+                double Result = ((P * Error) + (I * PrevE));
+                PrevE = Error;
 
-        Log::General("Target speed: " + to_string(m_Speed) + ", Actual speed: " + to_string((EncoderValue-LastE) / dTime));
+                if (ABSValue(Result)>m_MaxSpeed)
+                {
+                    Result = Sign(Result)*m_MaxSpeed;
+                }
 
-        ShooterMotor -> Set(Result);
-        ShooterMotor2 ->Set(-Result);
-        Log::General("Power Output: " + to_string(Result));
-        LastE = EncoderValue;
+                double Accel = (revSpeed - LastSpe) * -1;
+
+                Log::General("Target speed: " + to_string(m_Speed) + ", Rate: " + to_string(-revSpeed) + ", Acceleration: " + to_string(Accel));
+
+		        /*ShooterMotor -> Set(Result);
+                ShooterMotor2 ->Set(Result);*/
+        
+                Log::General("Power Output: " + to_string(Result)  + ", Error: " + to_string(Error) + ", Real Power output: " + to_string(ShooterMotor->Get()));
+                Log::General("");
+                LastE = EncoderValue;
+                LastSpe = revSpeed;
+                FirstRun = false;
+                lastPos = (ShooterMotor->GetQuadraturePosition());
+            }
+        }
         return eActive;
-
     }
     else if (m_Status = eInactive){
         ShooterMotor -> Set(0);
         return eInactive;
     }
 }
-
 
 void Goal_ShooterYeet::Terminate()
 {

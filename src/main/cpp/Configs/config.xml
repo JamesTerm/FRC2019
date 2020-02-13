@@ -25,7 +25,7 @@
 
 
         <TalonSRX>
-            <shooter0 channel="0" reversed="true" enableEncoder="true"/>
+            <shooter0 channel="0" reversed="true" enableEncoder = "true"/>
         </TalonSRX>
         <!-- Region for Potentiometers -->
         <Potentiometer>
