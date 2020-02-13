@@ -12,7 +12,9 @@ Email: Shruti.venkat05@gmail.com
 \********************************************************************/
 
 #include "REVColorSensorV3.h"
+#inculde ".."
 
+using namespace rev;
 using namespace std;
 using namespace frc;
 using namespace Components;
