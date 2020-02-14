@@ -14,7 +14,7 @@ Email: shruti.venkat05@gmail.com
 #ifndef SRC_COMPONENTS_REVColorSensorV3_H_
 #define SRC_COMPONENTS_REVColorSensorV3_H_
 
-#include <rev/REVColorSensorV3.h>
+#include <rev/ColorSensorV3.h>
 
 #include "OutputComponent.h"
 

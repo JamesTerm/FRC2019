@@ -68,7 +68,8 @@
     "xstddef": "cpp",
     "xstring": "cpp",
     "xtr1common": "cpp",
-    "xtree": "cpp"
+    "xtree": "cpp",
+    "memory": "cpp"
   },
   "C_Cpp.configurationWarnings": "Disabled",
   "C_Cpp.default.configurationProvider": "vscode-wpilib",
