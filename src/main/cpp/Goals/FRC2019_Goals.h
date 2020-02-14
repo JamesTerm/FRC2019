@@ -567,13 +567,14 @@ private:
 class Goal_ShooterYeet : public AtomicGoal
 {
 public:
-  Goal_ShooterYeet(ActiveCollection *activeCollection, double Speed, double MaxSpeed, string MotorName)
+  Goal_ShooterYeet(ActiveCollection *activeCollection, double Speed, double MaxSpeed, string MotorName1, string MotorName2)
   {
     m_activeCollection = activeCollection;
     m_Speed = Speed;
     m_MaxSpeed = MaxSpeed;
     m_Status = eInactive;
-    ShooterMotor = (TalonSRXItem*)activeCollection->Get(MotorName);
+    ShooterMotor = (TalonSRXItem*)activeCollection->Get(MotorName1);
+    ShooterMotor2 = (VictorSPItem*)activeCollection->Get(MotorName2);
     IsNegative = Speed < 0;
   }
   //Find what motor to get
@@ -586,14 +587,18 @@ private:
   double m_Speed;
   double m_MaxSpeed;
   TalonSRXItem *ShooterMotor;
+  VictorSPItem *ShooterMotor2;
   double revSpeed = 0;
   double LastE = 0;
-  double P = 5;
-  double I = -0.0005;
-  double D = 8;
+  double P = 0.00005;
+  double I = 0.09;
+  double D = 5;
   double total = 0;
   double PrevE = 0;
   bool IsNegative;
-  
+  double lastPos = 0;
+  double LastSpe = 0;
+  bool FirstRun = true;
+
   ActiveCollection* m_activeCollection;
 };
