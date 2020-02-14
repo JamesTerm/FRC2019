@@ -42,12 +42,12 @@ public:
 	string GetName();
 	void (frc::I2C::Port port);
 	virtual void DefaultSet() override;
-	virtual ~REVColor();
+	virtual ~REVColorSensorV3();
 	REVColorSensorV3 *REVColorSensorV3() { return REV;}
     void ConfigureProximitySensor(); 
 	
 	
 };
 }
-3
+
 #endif /* SRC_COMPONENTS_REVColorSensorV3_H_ */
