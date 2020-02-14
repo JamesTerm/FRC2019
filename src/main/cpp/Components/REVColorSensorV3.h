@@ -31,8 +31,8 @@ private:
 	double Offset;
 
 public:
-	REVColor();
-	REVColor(int _channel, string _name, bool _reversed);
+	REVColorSensorV3();
+	REVColorSensorV3(int _channel, string _name, bool _reversed);
 	double GetColor();
     
 	double GetRawColor();
@@ -43,7 +43,7 @@ public:
 	void (frc::I2C::Port port);
 	virtual void DefaultSet() override;
 	virtual ~REVColor();
-	REVColorSensorV3 *REVColor() { return REV;}
+	REVColorSensorV3 *REVColorSensorV3() { return REV;}
     void ConfigureProximitySensor(); 
 	
 	
