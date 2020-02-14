@@ -131,7 +131,6 @@ void Robot::Teleop()
 	//PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
 	limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
 
-
 	while (IsOperatorControl() && !IsDisabled())
 	{
 		const double CurrentTime = GetTime();
@@ -152,13 +151,36 @@ void Robot::Teleop()
  */
 void Robot::Test()
 {
-	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
+//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
+	//m_Drive = new Goal_MoveForward(m_activeCollection, 5, 0.6, 5);
+	// m_Drive->Activate();
+
+	Goal_ShooterYeet* ShootG = new Goal_ShooterYeet(m_activeCollection, 0.05, 0.8, "shooter0");
+	ShootG->Activate();
+	while(ShootG->GetStatus() == Goal::eActive && !IsDisabled())
+	{
+		ShootG->Process(0.01);
+		Log::General("Encoder Pos: " + to_string(m_activeCollection->GetTalon("shooter0")->GetQuadraturePosition()));
+		Wait(0.01);
+	}
+	ShootG->Terminate();
+
+	/*
+	auto srx = (TalonSRXItem*)(m_activeCollection->Get("shooter0"));
+
+	
+	while(m_Drive->GetStatus() == Goal::eActive && !IsDisabled())
+	{
+		Log::General(to_string(srx->GetQuadraturePosition()));
+		m_drive->Update(0.01);
+		Wait(0.01);
+	}
+	
+	
 	double LastTime = GetTime();
 	int lastPos = 0;
 	((TalonSRXItem*)m_activeCollection->Get("shooter0"))->SetQuadraturePosition(0);
 	
-	//*Commented this out for shooter and dashboard testing
-	//MoveForwardPIDF(5, 0.6, m_activeCollection);
 	
 	while(!IsDisabled()){
 		const double CurrentTime = GetTime();
@@ -169,10 +191,13 @@ void Robot::Test()
 		double velocity = deltaPos / DeltaTime;
 
 		LastTime = CurrentTime;
+		lastPos = currentPos;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
 		m_drive->Update(DeltaTime);
+		cout << to_string(((TalonSRXItem*)m_activeCollection->Get("shooter0"))->GetQuadraturePosition()) << endl;
 		Wait(0.010);
 	}
+	*/
 }
 
 void Robot::StartCompetition() {

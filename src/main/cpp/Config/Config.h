@@ -31,6 +31,7 @@ Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com, chrisrweeks@aol
 #include "../Goals/GoalSelector.h"
 #include "../Util/Log.h"
 #include "../Limelight/limelight.h"
+#include "../Components/SparkMaxItem.h"
 
 using namespace System;
 using namespace pugi;

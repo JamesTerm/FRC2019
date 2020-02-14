@@ -454,7 +454,38 @@ void Config::AllocateComponents(xml_node &root){
 		Log::Error("VictorSPX definitions not found in config, skipping...");
 	}
 
-#pragma endregion VictorSPX
+#pragma endregion SparkMax
+
+xml_node SparkMax = robot.child("SparkMax");
+	if(SparkMax){
+		for(xml_node SparkMax = SparkMax.first_child(); SparkMax; SparkMax = SparkMax.next_sibling()){
+			string name = SparkMax.name();
+			xml_attribute channel = SparkMax.attribute("channel");
+			//TODO: Fix this line after comp and fix robot configs
+			bool reversed = SparkMax.attribute("reversed");//.as_bool();
+			int pdbChannel = SparkMax.attribute("pdbChannel") ? SparkMax.attribute("pdbChannel").as_int() : -1;
+			if(channel){
+				SparkMaxItem *tmp = new SparkMaxItem(channel.as_int(), name, reversed);
+				m_activeCollection->Add(tmp);
+				string reversed_print = reversed ? "true" : "false";
+				Log::General("Added SparkMax " + name + ", Channel: " + to_string(channel.as_int()) + ", Reversed: " + reversed_print);
+				if(pdbChannel != -1){
+					Log::General("Allocated PDBChannel " + to_string(pdbChannel) + " for SparkMax " + name);
+					tmp->SetPDBChannel(pdbChannel);
+				}
+			}
+			else{
+				Log::Error("Failed to load SparkMax " + name + ". This may cause a fatal runtime error!");
+			}
+
+
+		}
+	}
+	else{
+		Log::Error("SparkMax definitions not found in config, skipping...");
+	}
+
+#pragma endregion SparkMax
 
 	#pragma region TalonSRX
 
@@ -464,7 +495,7 @@ void Config::AllocateComponents(xml_node &root){
 			string name = talonSrx.name();
 			xml_attribute channel = talonSrx.attribute("channel");
 			bool reversed = talonSrx.attribute("reversed");
-			bool enableEncoder = talonSrx.attribute("enableEncoder");
+			bool enableEncoder = talonSrx.attribute("enableEncoder").as_bool();
 			int pdbChannel = talonSrx.attribute("pdbChannel") ? talonSrx.attribute("pdbChannel").as_int() : -1;
 			if(channel){
 				TalonSRXItem *tmp = new TalonSRXItem(channel.as_int(), name, reversed, enableEncoder);

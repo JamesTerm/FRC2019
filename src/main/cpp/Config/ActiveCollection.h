@@ -26,6 +26,7 @@ Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com, chrisrweeks@aol
 #include "../Components/DoubleSolenoidItem.h"
 #include "../Components/DigitalInputItem.h"
 #include "../Components/NavX.h"
+#include "../Components/SparkMaxItem.h"
 
 class MultitaskGoal;
 

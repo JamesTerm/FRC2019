@@ -64,7 +64,7 @@ class Goal
 		//TODO see if Owner and Type are necessary
 }; 
 
-class   AtomicGoal : public Goal
+class AtomicGoal : public Goal
 {
 	protected:  //from Goal
 		virtual void Activate()=0;

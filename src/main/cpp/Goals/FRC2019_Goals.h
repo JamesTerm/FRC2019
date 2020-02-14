@@ -367,6 +367,105 @@ public:
 protected:
   ActiveCollection *m_activeCollection;
 };
+
+
+class Goal_MoveForward : public AtomicGoal
+{
+  public:
+    Goal_MoveForward(ActiveCollection *activeCollection, double Dist, double MaxPowerOutput, double MaxTime)
+    {
+        RealTarget *= Dist;
+        MaxPower = MaxPowerOutput;
+        m_activeCollection = activeCollection;
+        distTo = ABSValue(RealTarget);
+        TotalTime = MaxTime;
+    }
+
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    virtual void Terminate();
+
+    private:
+
+      double TimePassed = 0;
+      double TotalTime = 0;
+      double RealTarget = 89;         // 85 was working yesterday
+	    double MaxPower = 0;
+
+      ActiveCollection *m_activeCollection;
+      EncoderItem *enc0;
+      NavX *navx;
+
+      double left = 0, right = 0;
+      bool IsNegative  = false;
+      double P = 5; //PID constants
+	    double I = -0.0005;
+	    double D = 8;
+	    double PE = 0.07; //PID constants
+	    double IE = 0.08;
+	    double DE = 0.0005;
+      double ChangeInTime = 0;
+	    double F = (0.0);
+	    double Limit = 0.5;
+	    double MinPower = 0;
+	    double PrevE = 0, totalE = 0;
+	    double PrevEncoder = 0, totalEncoder = 0, PrevEncoderTrack = 10000;
+	    double enc = 0;
+      double currentValue = 0;
+	    double distTo = 0;
+
+	    double NumberAtTarget = 0;
+      bool Moving = false;
+      bool Done = false;
+};
+
+class Goal_TurnPIDF : public AtomicGoal
+{
+  public:
+    Goal_TurnPIDF(ActiveCollection *activeCollection, double Angle, double MaxPowerOutput, double MaxTime)
+    {
+        RealTarget *= Angle;
+        MaxPower = MaxPowerOutput;
+        m_activeCollection = activeCollection;
+        distTo = ABSValue(RealTarget);
+        TotalTime = MaxTime;
+    }
+
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    virtual void Terminate();
+
+    private:
+
+      double TimePassed = 0;
+      double TotalTime = 0;
+      double RealTarget = 89;         // 85 was working yesterday
+	    double MaxPower = 0;
+      double power = 0;
+
+      ActiveCollection *m_activeCollection;
+      NavX *navx;
+
+      double left = 0, right = 0;
+      bool IsNegative  = false;
+      double P = 5; //PID constants
+	    double I = -0.0005;
+	    double D = 8;
+      double ChangeInTime = 0;
+	    double F = (0.09);
+	    double Limit = 0.5;
+	    double MinPower = 0;
+	    double PrevE = 0, totalE = 0, PrevTrack = 10000;
+	    double enc = 0;
+      double currentValue = 0;
+	    double distTo = 0;
+
+	    double NumberAtTarget = 0;
+      bool Moving = false;
+      bool Done = false;
+};
+
+
 #pragma endregion
 #pragma endregion
 
@@ -430,3 +529,71 @@ private:
 #pragma region MultitaskGoals
 
 #pragma endregion
+
+class Goal_ShooterComposite : public CompositeGoal
+{
+  public:
+   Goal_ShooterComposite(ActiveCollection *activecollection)
+   {
+     m_activeCollection = activecollection;
+     m_Status = eInactive; 
+
+   }
+
+   virtual void Activate();
+
+   private:
+   ActiveCollection* m_activeCollection;
+  
+
+};
+
+class Goal_ShooterBunch : public AtomicGoal
+{
+public:
+  Goal_ShooterBunch(ActiveCollection *activeCollection)
+  {
+    m_activeCollection = activeCollection;
+    m_Status = eInactive;
+
+  }
+
+  virtual void Activate();
+
+private:
+  ActiveCollection* m_activeCollection;
+};
+
+class Goal_ShooterYeet : public AtomicGoal
+{
+public:
+  Goal_ShooterYeet(ActiveCollection *activeCollection, double Speed, double MaxSpeed, string MotorName)
+  {
+    m_activeCollection = activeCollection;
+    m_Speed = Speed;
+    m_MaxSpeed = MaxSpeed;
+    m_Status = eInactive;
+    ShooterMotor = (TalonSRXItem*)activeCollection->Get(MotorName);
+    IsNegative = Speed < 0;
+  }
+  //Find what motor to get
+
+  virtual void Activate();
+  virtual Goal::Goal_Status Process(double dTime);
+  virtual void Terminate();
+
+private:
+  double m_Speed;
+  double m_MaxSpeed;
+  TalonSRXItem *ShooterMotor;
+  double revSpeed = 0;
+  double LastE = 0;
+  double P = 5;
+  double I = -0.0005;
+  double D = 8;
+  double total = 0;
+  double PrevE = 0;
+  bool IsNegative;
+  
+  ActiveCollection* m_activeCollection;
+};
