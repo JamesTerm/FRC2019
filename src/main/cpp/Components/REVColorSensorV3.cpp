@@ -12,7 +12,7 @@ All rights reserved.
    | ________ |
     -----------
 
-Author(s): Shruti Venkatramanan, Emily Martinez, Guadalupe Rodriguez
+Author(s): Shruti Venkatramanan, Emily Martinez, Guadalupe Rodriguez.
 Email: Shruti.venkat05@gmail.com
 \********************************************************************/
 
@@ -23,24 +23,17 @@ using namespace std;
 using namespace frc;
 using namespace Components;
 
-REVColorSensorV3:: InputComponent() {}
-
-REVColorSensorV3::REVColorSensorV3(int _channel, string _name)
+REVColorSensorV3::REVColorSensorV3(string _name)
 	: InputComponent(_name){
-    channel = _channel;
-	Color = new REVColor;
+	Color = new ColorSensorV3(frc::I2C::Port::kOnboard);
 	Name = _name;
 }
 
-double REVColorSensorV3::GetColor(){
-	double input = ((double)Color->GetColor()); cvghu 
+frc::Color REVColorSensorV3::GetColor(){
+	frc::Color input = (Color->GetColor()); 
 	return input;
 }
 
-double REVColorSensorV3::GetRawColor(){
-	double input = ((double)Color->GetRawColor());
-	return input;
-}
 
 uint32_t REVColorSensorV3::GetProximity(){
     uint32_t input = ((uint32_t)Color->GetProximity());
@@ -48,7 +41,7 @@ uint32_t REVColorSensorV3::GetProximity(){
 
 }
 
-string REVColorSensorV3:GetName(){
+string REVColorSensorV3::GetName(){
 	return name;
 }
 

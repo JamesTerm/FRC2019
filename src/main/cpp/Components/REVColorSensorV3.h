@@ -6,7 +6,7 @@ Project:     BroncBotzFRC2020
 Copyright (c) BroncBotz.
 All rights reserved.
 
-Author(s): Emily Martinez, Guadalupe Rodriguez, Shruti Venkatramanan
+Author(s): Emily Martinez, Guadalupe Rodriguez, Shruti Venkatramanan.
 Email: shruti.venkat05@gmail.com
 \********************************************************************/
 
@@ -16,37 +16,28 @@ Email: shruti.venkat05@gmail.com
 
 #include <rev/ColorSensorV3.h>
 
-#include "OutputComponent.h"
+#include "InputComponent.h"
 
 using namespace std;
 using namespace frc;
 using namespace rev;
 namespace Components{
-class REVColorSensorV3: public OutputComponent{
+class REVColorSensorV3: public InputComponent{
 private:
-    REVColorSensorV3 *REV;
-	int channel;
-	bool reversed;
+    ColorSensorV3 *Color;
 	string Name;
-	double Offset;
 
 public:
 	REVColorSensorV3();
-	REVColorSensorV3(int _channel, string _name, bool _reversed);
-	double GetColor();
-    
-	double GetRawColor();
+	REVColorSensorV3(string _name);
+	frc::Color GetColor();
+	
 	uint32_t GetProximity();
 	void ConfigureColorSensor();
-	virtual void Set(double val) override;
 	string GetName();
-	void (frc::I2C::Port port);
-	virtual void DefaultSet() override;
 	virtual ~REVColorSensorV3();
-	REVColorSensorV3 *REVColorSensorV3() { return REV;}
-    void ConfigureProximitySensor(); 
-	
-	
+	ColorSensorV3 *GetREVColorSensorV3() { return Color;}
+    void ConfigureProximitySensor();
 };
 }
 
