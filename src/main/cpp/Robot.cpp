@@ -149,56 +149,26 @@ void Robot::Test()
 	m_Drive = new Goal_TurnPIDF(m_activeCollection, 90, 0.6, 4);
 	m_Drive->Activate();
 	*/
-	Goal_ShooterYeet* ShootG = new Goal_ShooterYeet(m_activeCollection, 0.1, 0.8, "shooter0", "shooter1");
+	
+	Goal_ShooterYeet* ShootG = new Goal_ShooterYeet(m_activeCollection, 2000, 0.8, "shooter0", "shooter1");
 	ShootG->Activate();
 	while(ShootG->GetStatus() == Goal::eActive && !IsDisabled())
 	{
 		ShootG->Process(0.01);
-		Log::General("Encoder Pos: " + to_string(m_activeCollection->GetTalon("shooter0")->GetQuadraturePosition()));
+		((TalonSRXItem*)m_activeCollection->Get("shooter0"))->Set(0.1);
+    	((VictorSPItem*)m_activeCollection->Get("shooter1"))->Set(0.1);
+		//m_drive->Update(0.01);
+		//Log::General("Encoder Pos: " + to_string(m_activeCollection->GetTalon("shooter0")->GetQuadraturePosition()));
 		Wait(0.01);
 	}
 	ShootG->Terminate();
-
-	/*
-	auto srx = (TalonSRXItem*)(m_activeCollection->Get("shooter0"));
-
 	
-	while(m_Drive->GetStatus() == Goal::eActive && !IsDisabled())
-	{
-		Log::General(to_string(srx->GetQuadraturePosition()));
-		m_drive->Update(0.01);
-		Wait(0.01);
-	}
-	
-	
-	double LastTime = GetTime();
-	int lastPos = 0;
-	((TalonSRXItem*)m_activeCollection->Get("shooter0"))->SetQuadraturePosition(0);
-	
-	
-	while(!IsDisabled()){
-		const double CurrentTime = GetTime();
-		const double DeltaTime = CurrentTime - LastTime;
-
-		int currentPos = ((TalonSRXItem*)m_activeCollection->Get("shooter0"))->GetQuadraturePosition();
-		int deltaPos = abs(currentPos - lastPos);
-		double velocity = deltaPos / DeltaTime;
-
-		LastTime = CurrentTime;
-		lastPos = currentPos;
-		if (DeltaTime == 0.0) continue;  //never send 0 time
-		m_drive->Update(DeltaTime);
-		cout << to_string(((TalonSRXItem*)m_activeCollection->Get("shooter0"))->GetQuadraturePosition()) << endl;
-		Wait(0.010);
-	}
-	*/
 }
 
 void Robot::StartCompetition() {
   auto& lw = *frc::LiveWindow::GetInstance();
 
   RobotInit();
-
   // Tell the DS that the robot is ready to be enabled
   HAL_ObserveUserProgramStarting();
 

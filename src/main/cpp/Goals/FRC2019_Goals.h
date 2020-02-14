@@ -590,12 +590,15 @@ private:
   VictorSPItem *ShooterMotor2;
   double revSpeed = 0;
   double LastE = 0;
-  double P = 5;
-  double I = -0.0005;
-  double D = 8;
+  double P = 0.00005;
+  double I = 0.09;
+  double D = 5;
   double total = 0;
   double PrevE = 0;
   bool IsNegative;
-  
+  double lastPos = 0;
+  double LastSpe = 0;
+  bool FirstRun = true;
+
   ActiveCollection* m_activeCollection;
 };
