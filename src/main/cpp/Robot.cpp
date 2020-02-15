@@ -158,14 +158,12 @@ void Robot::Test()
 	m_Drive->Activate();
 	*/
 	
-	Goal_ShooterYeet* ShootG = new Goal_ShooterYeet(m_activeCollection, 2000, 0.8, "shooter0", "shooter1");
+	Goal_ShooterYeet* ShootG = new Goal_ShooterYeet(m_activeCollection, 8000, 0.8, "shooter0", "shooter1");
 	ShootG->Activate();
 	while(ShootG->GetStatus() == Goal::eActive && !IsDisabled())
 	{
 		ShootG->Process(0.01);
-		((TalonSRXItem*)m_activeCollection->Get("shooter0"))->Set(0.1);
-    	((VictorSPItem*)m_activeCollection->Get("shooter1"))->Set(0.1);
-		//m_drive->Update(0.01);
+		m_drive->Update(0.01);
 		//Log::General("Encoder Pos: " + to_string(m_activeCollection->GetTalon("shooter0")->GetQuadraturePosition()));
 		Wait(0.01);
 	}

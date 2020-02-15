@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Root of the Config -->
+<Robot>
+<!-- Set true or false based on if robot is at comp or not -->
+    <Competition AtComp = "false" />
+    <!-- Version of the current config to be printed on the console -->
+    <Version version="1" />
+    <!-- Comment on this particular config to be printed on the console -->
+    <Comment comment="A" />
+    <!-- Sets whether or not to initialize the NavX -->
+    <UseNavX value="true" />
+    <!-- Sets whether or not to initialize the camera to send back to the driver station -->
+    <!-- Contains assignments to ports and robot dimensions -->
+    <RobotConfig>
+     <!-- Region for defining VictorSP Items -->
+     <VictorSP>
+            <movingfloor channel="0" reversed="false"/>
+        </VictorSP>
+        <!-- Region for VictorSPX CAN Items -->
+     <VictorSPX>
+         <intake channel="0" reversed="false"/>
+
+         <indexer_1 channel="0" reversed="false"/>
+         <indexer_2 channel="0" reversed ="false"/>
+
+         <climber_1 channel="0" reversed="false"/>
+         <climber_2 channel="0" reversed="false"/>
+        </VictorSPX>
+        <!-- Region for TalonSRX CAN Items-->
+     <TalonSRX>
+         <colorspinny channel="1" reversed="" enableEncoder="true"/>
+
+         <shooter_1 channel="0" reversed="" enableEncoder="true"/>
+         <shooter_2 channel="0" reversed="false"/>
+        </TalonSRX>
+        <!-- Region for SparkMax CAN Items-->
+     <SparkMax>
+         <left_1 channel="0" reversed="false"/>
+         <left_2 channel="0" reversed="false"/>
+         <right_1 channel="0" reversed="false"/>
+         <right_2 channel="0" reversed="false"/>
+        </SparkMax> 
+    </RobotConfig>
+    
