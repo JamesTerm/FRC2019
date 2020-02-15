@@ -38,6 +38,12 @@ public:
 	virtual ~REVColorSensorV3();
 	ColorSensorV3 *GetREVColorSensorV3() { return Color;}
     void ConfigureProximitySensor();
+	string AddColorMatch();
+	string GetColorMatch();
+	
+
+	
+
 };
 }
 
