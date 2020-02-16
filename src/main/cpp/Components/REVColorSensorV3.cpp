@@ -46,7 +46,7 @@ rev::ColorMatch m_colorMatcher;
     m_colorMatcher.AddColorMatch(kRedTarget);
     m_colorMatcher.AddColorMatch(kYellowTarget);
   }
-void REVColorSensorV3:: Get(){
+string REVColorSensorV3:: GetColorMatch(){
 
   if (matchedColor == kBlueTarget) {
       colorString = "Blue"; 
@@ -56,13 +56,16 @@ void REVColorSensorV3:: Get(){
     } 
     else if (matchedColor == kGreenTarget) {
       colorString = "Green";
-    } else if (matchedColor == kYellowTarget) {
+    }
+     else if (matchedColor == kYellowTarget) {
       colorString = "Yellow";
-    } else {
+    }
+     else {
       colorString = "Unknown";
     }
 
     return();
+
 }
 
 frc::Color REVColorSensorV3::GetColor(){
