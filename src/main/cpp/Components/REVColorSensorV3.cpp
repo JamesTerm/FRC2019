@@ -48,6 +48,7 @@ string REVColorSensorV3:: GetColorMatch(){
     string colorString = "";
     double Conf = 0.0;
     frc::Color matchedColor = m_colorMatcher.MatchClosestColor(GetColor(), Conf);
+    
   if (matchedColor == kBlueTarget) {
       colorString = "Blue"; 
     }

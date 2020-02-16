@@ -549,6 +549,24 @@ class Goal_ShooterComposite : public CompositeGoal
 
 };
 
+class REVColorSensorV3 : public AtomicGoal
+{
+public:
+  REVColorSensorV3(ActiveCollection *activeCollection)
+  {
+    m_activeCollection = activeCollection;
+    m_Status = eInactive; 
+
+  }
+    virtual void Process();
+    virtual void Terminate();
+    virtual void Activate();
+
+  private:
+  ActiveCollection* m_activeCollection;
+
+};
+
 class Goal_ShooterBunch : public AtomicGoal
 {
 public:
