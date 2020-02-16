@@ -46,6 +46,8 @@ rev::ColorMatch m_colorMatcher;
     m_colorMatcher.AddColorMatch(kRedTarget);
     m_colorMatcher.AddColorMatch(kYellowTarget);
   }
+
+  
 string REVColorSensorV3:: GetColorMatch(){
 
   if (matchedColor == kBlueTarget) {
