@@ -13,6 +13,7 @@ Email: chrisrweeks@aol.com
 #include "FRC2019_Goals.h"
 
 using namespace std;
+using namespace Util;
 
 //?HINT ctrl+k then ctrl+0 will collapse all regions
 //?ctrl+k then ctrl+j will uncollapse all regions
@@ -812,7 +813,7 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
 {
     if (m_Status = eActive)
     {
-        if((ShooterMotor->GetQuadraturePosition()) != lastPos || FirstRun)//Change this to compare the encoder valus so to run it when the values are diff
+        if((ShooterMotor->GetQuadraturePosition()) != lastPos || FirstRun)
         {
             double EncoderValue = (ShooterMotor->GetQuadraturePosition());
             int Spe = (EncoderValue - LastE);
@@ -829,19 +830,45 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
                 }
 
                 double Accel = (revSpeed - LastSpe) * -1;
+                
+                double m_ActualSpeed = Result - LastResult;
+
+                if(ABSValue(m_ActualSpeed) > m_MaxSpeed){
+                    m_ActualSpeed = m_MaxSpeed * Sign(m_ActualSpeed);
+                }
+                
+                SpedSpeed += (m_ActualSpeed) * 1.5;
+
+                if(ABSValue(SpedSpeed) > m_MaxSpeed){
+                    SpedSpeed = m_MaxSpeed * Sign(SpedSpeed);
+                }
+
+                if(SpedSpeed < 0 && !IsNegative){
+                    SpedSpeed = 0.1;
+                }
+                else if(SpedSpeed > 0 && IsNegative){
+                    SpedSpeed = -0.1;
+                }
 
                 Log::General("Target speed: " + to_string(m_Speed) + ", Rate: " + to_string(-revSpeed) + ", Acceleration: " + to_string(Accel));
-
-		        /*ShooterMotor -> Set(Result);
-                ShooterMotor2 ->Set(Result);*/
-        
-                Log::General("Power Output: " + to_string(Result)  + ", Error: " + to_string(Error) + ", Real Power output: " + to_string(ShooterMotor->Get()));
+                
+                ShooterMotor -> Set(SpedSpeed);
+                ShooterMotor2 ->Set(SpedSpeed);
+                
+                Log::General("Power Output: " + to_string(SpedSpeed)  + ", Error: " + to_string(Error) + ", Real Power output: " + to_string(ShooterMotor->Get()));
                 Log::General("");
                 LastE = EncoderValue;
                 LastSpe = revSpeed;
                 FirstRun = false;
+                LastResult = Result;
+                ChangeOfChangeOfResult = m_ActualSpeed;
                 lastPos = (ShooterMotor->GetQuadraturePosition());
             }
+        }
+        else
+        {
+            Log::General("Idle Speed - Real Power output: " + to_string(ShooterMotor->Get()));
+            Log::General("");    
         }
         return eActive;
     }

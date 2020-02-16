@@ -16,6 +16,7 @@ Email: chrisrweeks@aol.com
 #include "Goal.h"
 #include "../Util/VisionTarget.h"
 #include "../Util/Units/Distances.h"
+#include "../Util/FrameworkCommunication.h"
 
 //?HINT: ctrl+k then ctrl+0 will collapse all regions
 //?HINT: ctrl+k then ctrl+[ will collapse all regions within the current scope of the cursor
@@ -590,9 +591,12 @@ private:
   VictorSPItem *ShooterMotor2;
   double revSpeed = 0;
   double LastE = 0;
-  double P = 0.00005;
-  double I = 0.09;
-  double D = 5;
+  double P = 10;
+  double I = 0.0001;
+  double D = 0;
+  double LastResult = 0;
+  double ChangeOfChangeOfResult = 0;
+  double SpedSpeed = 0.05;
   double total = 0;
   double PrevE = 0;
   bool IsNegative;
