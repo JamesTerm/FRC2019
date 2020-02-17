@@ -15,6 +15,8 @@ Email: shruti.venkat05@gmail.com
 #define SRC_COMPONENTS_REVColorSensorV3_H_
 
 #include <rev/ColorSensorV3.h>
+#include "rev/ColorMatch.h"
+#include <frc/util/color.h>
 
 #include "InputComponent.h"
 
@@ -26,6 +28,12 @@ class REVColorSensorV3: public InputComponent{
 private:
     ColorSensorV3 *Color;
 	string Name;
+	rev::ColorMatch m_colorMatcher;
+	frc::Color kYellowTarget;
+	frc::Color kRedTarget;
+	frc::Color kGreenTarget;
+	frc::Color kBlueTarget;
+
 
 public:
 	REVColorSensorV3();
@@ -38,11 +46,7 @@ public:
 	virtual ~REVColorSensorV3();
 	ColorSensorV3 *GetREVColorSensorV3() { return Color;}
     void ConfigureProximitySensor();
-	string AddColorMatch();
 	string GetColorMatch();
-	
-
-	
 
 };
 }

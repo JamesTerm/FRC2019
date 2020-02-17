@@ -821,7 +821,7 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
             {
                 double Error = (m_Speed + revSpeed);
                 total += Error * dTime;
-                double Result = ((P * Error) + (I * PrevE));
+                double Result = ((P * Error) + (I * PrevE) + (D * ((Error - PrevE) / dTime))) + (F * m_Speed);
                 PrevE = Error;
 
                 if (ABSValue(Result)>m_MaxSpeed)
@@ -844,10 +844,10 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
                 }
 
                 if(SpedSpeed < 0 && !IsNegative){
-                    SpedSpeed = 0.1;
+                    SpedSpeed = ABSValue(SpedSpeed) * SlowDownBias;
                 }
                 else if(SpedSpeed > 0 && IsNegative){
-                    SpedSpeed = -0.1;
+                    SpedSpeed = -ABSValue(SpedSpeed) * SlowDownBias;
                 }
 
                 Log::General("Target speed: " + to_string(m_Speed) + ", Rate: " + to_string(-revSpeed) + ", Acceleration: " + to_string(Accel));

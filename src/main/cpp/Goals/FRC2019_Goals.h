@@ -594,6 +594,7 @@ private:
   double P = 10;
   double I = 0.0001;
   double D = 0;
+  double F = 0.1;
   double LastResult = 0;
   double ChangeOfChangeOfResult = 0;
   double SpedSpeed = 0.05;
@@ -602,6 +603,7 @@ private:
   bool IsNegative;
   double lastPos = 0;
   double LastSpe = 0;
+  double SlowDownBias = 0.5;
   bool FirstRun = true;
 
   ActiveCollection* m_activeCollection;
