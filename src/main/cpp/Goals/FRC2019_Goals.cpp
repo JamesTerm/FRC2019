@@ -813,7 +813,7 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
 {
     if (m_Status = eActive)
     {
-        if((ShooterMotor->GetQuadraturePosition()) != lastPos || FirstRun)
+        if((ShooterMotor->GetQuadraturePosition()) != lastPos && !FirstRun)
         {
             double EncoderValue = (ShooterMotor->GetQuadraturePosition());
             int Spe = (EncoderValue - LastE);
@@ -821,53 +821,34 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
             {
                 double Error = (m_Speed + revSpeed);
                 total += Error * dTime;
-                double Result = ((P * Error) + (I * PrevE) + (D * ((Error - PrevE) / dTime))) + (F * m_Speed);
+                double Result = ((P * Error) + (I * PrevE) + (D * ((Error - PrevE) / dTime)));
                 PrevE = Error;
 
-                if (ABSValue(Result)>m_MaxSpeed)
+                double SpedSpeed = (IsNegative? Constrain(Scale(Result, SlowDownBias, (m_Speed * Bias)), -1, 0) : Constrain(Scale(Result, SlowDownBias, (m_Speed * Bias)), 0, 1));
+
+                Log::General("Target speed: " + to_string(m_Speed) + ", Rate: " + to_string(-revSpeed));
+                //if(SpedSpeed != 0)
                 {
-                    Result = Sign(Result)*m_MaxSpeed;
+                    ShooterMotor -> Set(SpedSpeed);
+                    ShooterMotor2 ->Set(SpedSpeed);
                 }
-
-                double Accel = (revSpeed - LastSpe) * -1;
-                
-                double m_ActualSpeed = Result - LastResult;
-
-                if(ABSValue(m_ActualSpeed) > m_MaxSpeed){
-                    m_ActualSpeed = m_MaxSpeed * Sign(m_ActualSpeed);
-                }
-                
-                SpedSpeed += (m_ActualSpeed) * 1.5;
-
-                if(ABSValue(SpedSpeed) > m_MaxSpeed){
-                    SpedSpeed = m_MaxSpeed * Sign(SpedSpeed);
-                }
-
-                if(SpedSpeed < 0 && !IsNegative){
-                    SpedSpeed = ABSValue(SpedSpeed) * SlowDownBias;
-                }
-                else if(SpedSpeed > 0 && IsNegative){
-                    SpedSpeed = -ABSValue(SpedSpeed) * SlowDownBias;
-                }
-
-                Log::General("Target speed: " + to_string(m_Speed) + ", Rate: " + to_string(-revSpeed) + ", Acceleration: " + to_string(Accel));
-                
-                ShooterMotor -> Set(SpedSpeed);
-                ShooterMotor2 ->Set(SpedSpeed);
-                
                 Log::General("Power Output: " + to_string(SpedSpeed)  + ", Error: " + to_string(Error) + ", Real Power output: " + to_string(ShooterMotor->Get()));
                 Log::General("");
                 LastE = EncoderValue;
                 LastSpe = revSpeed;
-                FirstRun = false;
                 LastResult = Result;
-                ChangeOfChangeOfResult = m_ActualSpeed;
                 lastPos = (ShooterMotor->GetQuadraturePosition());
             }
         }
+        else if(FirstRun)
+        {
+            ShooterMotor -> Set((IsNegative? -0.1 : 0.1));
+            ShooterMotor2 ->Set((IsNegative? -0.1 : 0.1));
+            FirstRun = false;
+        }
         else
         {
-            Log::General("Idle Speed - Real Power output: " + to_string(ShooterMotor->Get()));
+            Log::General("Idle Speed - Real Power output: " + to_string(ShooterMotor->Get()) + ", Encoder Pos: " + to_string(ShooterMotor->GetQuadraturePosition()));
             Log::General("");    
         }
         return eActive;

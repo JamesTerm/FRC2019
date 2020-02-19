@@ -589,21 +589,20 @@ private:
   double m_MaxSpeed;
   TalonSRXItem *ShooterMotor;
   VictorSPItem *ShooterMotor2;
+  double Bias = 10;
   double revSpeed = 0;
   double LastE = 0;
-  double P = 10;
+  double P = 7;
   double I = 0.0001;
   double D = 0;
-  double F = 0.1;
   double LastResult = 0;
-  double ChangeOfChangeOfResult = 0;
-  double SpedSpeed = 0.05;
+  double SpedSpeed = 0;
   double total = 0;
   double PrevE = 0;
   bool IsNegative;
   double lastPos = 0;
   double LastSpe = 0;
-  double SlowDownBias = 0.5;
+  double SlowDownBias = 0.1;
   bool FirstRun = true;
 
   ActiveCollection* m_activeCollection;

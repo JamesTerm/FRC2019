@@ -158,7 +158,7 @@ void Robot::Test()
 	m_Drive->Activate();
 	*/
 	
-	Goal_ShooterYeet* ShootG = new Goal_ShooterYeet(m_activeCollection, 8000, 0.8, "shooter0", "shooter1");
+	Goal_ShooterYeet* ShootG = new Goal_ShooterYeet(m_activeCollection, 10000, 0.8, "shooter0", "shooter1");
 	ShootG->Activate();
 	while(ShootG->GetStatus() == Goal::eActive && !IsDisabled())
 	{
