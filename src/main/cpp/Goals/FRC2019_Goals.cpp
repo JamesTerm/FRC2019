@@ -504,6 +504,58 @@ void Goal_Hatch::Terminate()
 #endif
 #endif
 
+
+/**********************REVColorSensorV3*************************/
+
+void REVColorSensorV3::Activate();
+{
+
+}
+
+Goal::Goal_Status REVColorSensor:: Process()
+{
+     if(m_Status == eActive)
+     {
+         if(matchedColor == kBlueTarget){
+             return m_Status = eInactive;
+         }
+         /*else(){
+
+
+         }*/
+
+         if(matchedColor == kRedTarget){
+             return m_Status = eInactive;
+         }
+         /*else(){
+
+
+         }*/
+
+         if(matchedColor == kYellowTarget){
+             return m_Status = eInactive;
+         }
+         /*else(){
+
+
+         }*/
+
+         if(matchedColor == kGreenTarget){
+             return m_Status = eInactive;
+         }
+         /*else(){
+
+
+         }*/
+
+         void REVColorSensorV3::Terminate(){
+           m_Status = eInactive;
+
+
+       }
+
+     };
+
 /**********************Goal_MoveForward*************************/
 
 void Goal_MoveForward::Activate()
