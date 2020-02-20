@@ -506,7 +506,7 @@ void Goal_Hatch::Terminate()
 
 
 /**********************REVColorSensorV3*************************/
-
+/*
 void REVColorSensorV3::Activate();
 {
 
@@ -519,42 +519,40 @@ Goal::Goal_Status REVColorSensor:: Process()
          if(matchedColor == kBlueTarget){
              return m_Status = eInactive;
          }
-         /*else(){
+         else(){
 
 
-         }*/
+         }
 
          if(matchedColor == kRedTarget){
              return m_Status = eInactive;
          }
-         /*else(){
+         else(){
 
 
-         }*/
+         }
 
          if(matchedColor == kYellowTarget){
              return m_Status = eInactive;
          }
-         /*else(){
+         else(){
 
 
-         }*/
+         }
 
          if(matchedColor == kGreenTarget){
              return m_Status = eInactive;
          }
-         /*else(){
+         else(){
 
 
-         }*/
+         }
+     }
+}
 
-         void REVColorSensorV3::Terminate(){
+void REVColorSensorV3::Terminate(){
            m_Status = eInactive;
-
-
-       }
-
-     };
+}*/
 
 /**********************Goal_MoveForward*************************/
 
@@ -859,6 +857,7 @@ void Goal_ShooterYeet::Activate()
     m_Status = eActive;
     ShooterMotor->SetQuadraturePosition(0);
     lastPos = (ShooterMotor->GetQuadraturePosition());
+    Bias = ((P * m_Speed)*(1.5 * (100000/m_Speed)));
 }
 
 Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
@@ -873,22 +872,27 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
             {
                 double Error = (m_Speed + revSpeed);
                 total += Error * dTime;
-                double Result = ((P * Error) + (I * PrevE) + (D * ((Error - PrevE) / dTime)));
+                double Result = ((P * Error) + (I * total) + (D * ((Error - PrevE) / dTime)));
                 PrevE = Error;
 
-                double SpedSpeed = (IsNegative? Constrain(Scale(Result, SlowDownBias, (m_Speed * Bias)), -1, 0) : Constrain(Scale(Result, SlowDownBias, (m_Speed * Bias)), 0, 1));
+                Log::General("Result : " + to_string(Scale(Result, SlowDownBias, (Bias))));
+                double SpedSpeed = (IsNegative? Constrain(Scale(Result, SlowDownBias, (Bias)), -m_MaxSpeed, 0) : Constrain(Scale(Result, SlowDownBias, (Bias)), 0, m_MaxSpeed));
+                Log::General("Result Scaled: " + to_string(SpedSpeed));
+                Reached = Inrange(revSpeed, m_Speed, 200);
 
-                Log::General("Target speed: " + to_string(m_Speed) + ", Rate: " + to_string(-revSpeed));
-                //if(SpedSpeed != 0)
+                SpedSpeed = (ABSValue(ABSValue(LastResult) - ABSValue(SpedSpeed)) < 0.5? SpedSpeed : LastResult);
+
+                Log::General("Target speed: " + to_string(ActualSpeedTar) + ", Rate: " + to_string(-revSpeed));
+                
                 {
                     ShooterMotor -> Set(SpedSpeed);
                     ShooterMotor2 ->Set(SpedSpeed);
                 }
-                Log::General("Power Output: " + to_string(SpedSpeed)  + ", Error: " + to_string(Error) + ", Real Power output: " + to_string(ShooterMotor->Get()));
+                Log::General("Power Output: " + to_string(SpedSpeed)  + ", Error: " + to_string(Error) + ", Real Power output: " + to_string(ShooterMotor->Get()) + ", Reached: " + to_string((Reached? 1 : 0)));
                 Log::General("");
                 LastE = EncoderValue;
                 LastSpe = revSpeed;
-                LastResult = Result;
+                LastResult = SpedSpeed;
                 lastPos = (ShooterMotor->GetQuadraturePosition());
             }
         }
@@ -896,13 +900,15 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
         {
             ShooterMotor -> Set((IsNegative? -0.1 : 0.1));
             ShooterMotor2 ->Set((IsNegative? -0.1 : 0.1));
+            LastResult = 0.1;
             FirstRun = false;
         }
         else
         {
-            Log::General("Idle Speed - Real Power output: " + to_string(ShooterMotor->Get()) + ", Encoder Pos: " + to_string(ShooterMotor->GetQuadraturePosition()));
-            Log::General("");    
+            /*Log::General("Idle Speed - Real Power output: " + to_string(ShooterMotor->Get()) + ", Encoder Pos: " + to_string(ShooterMotor->GetQuadraturePosition()));
+            Log::General("");*/    
         }
+
         return eActive;
     }
     else if (m_Status = eInactive){

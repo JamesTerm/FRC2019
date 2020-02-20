@@ -117,19 +117,19 @@ static void SlowStop(double left, double right, ActiveCollection *activeCollecti
 
 	static double Scale(double Value, double Min, double MaxValue)
 	{
-		double A = (Value / MaxValue) + Min;
-		return A;
+		double A = (ABSValue(Value) / MaxValue) + Min;
+		return A * Sign(Value);
 	}
 
 	static double Constrain(double Value, double Min, double Max)
 	{
-		if(ABSValue(Value) < Min)
+		if((Value) < Min)
 		{
-			return Min * Sign(Value);
+			return Min;// * Sign(Value);
 		}
-		else if(ABSValue(Value) > Max)
+		else if((Value) > Max)
 		{
-			return Max * Sign(Value);
+			return Max;// * Sign(Value);
 		}
 		else
 		{
