@@ -115,6 +115,28 @@ static void SlowStop(double left, double right, ActiveCollection *activeCollecti
 		}
 	}
 
+	static double Scale(double Value, double Min, double MaxValue)
+	{
+		double A = (ABSValue(Value) / MaxValue) + Min;
+		return A * Sign(Value);
+	}
+
+	static double Constrain(double Value, double Min, double Max)
+	{
+		if((Value) < Min)
+		{
+			return Min;// * Sign(Value);
+		}
+		else if((Value) > Max)
+		{
+			return Max;// * Sign(Value);
+		}
+		else
+		{
+			return Value;
+		}
+	}
+
 /* DriveForward
  * This method uses two PID loops to drive straight and the requesred encoder distance
  * The first PID loop runs for the 60% of requested distance, using the navx to correct angle
