@@ -506,55 +506,70 @@ void Goal_Hatch::Terminate()
 
 
 /**********************REVColorSensorV3*************************/
-/*
-void REVColorSensorV3::Activate();
+
+void REVColorSensorV3::Activate()
 {
+
 
 }
 
 Goal::Goal_Status REVColorSensor:: Process()
-{
-     if(m_Status == eActive)
-     {
-         if(matchedColor == kBlueTarget){
-             return m_Status = eInactive;
-         }
-         else(){
-
-
+ 
+   {
+         if(TargetString == Color -> getColor()){
+             return m_Status = eActive;
          }
 
-         if(matchedColor == kRedTarget){
-             return m_Status = eInactive;
+         else if(TargetString == Color -> getColor()){
+                 return m_Status = eCompleted;
          }
-         else(){
 
+         else
+         {
+             return m_Status = eFailed;
 
          }
 
-         if(matchedColor == kYellowTarget){
-             return m_Status = eInactive;
-         }
-         else(){
-
-
-         }
-
-         if(matchedColor == kGreenTarget){
-             return m_Status = eInactive;
-         }
-         else(){
-
-
-         }
-     }
-}
-
-void REVColorSensorV3::Terminate(){
+         void REVColorSensorV3::Terminate(){
            m_Status = eInactive;
-}*/
+         }
 
-/**********************Goal_MoveForward*************************/
+     };
+
+/*************************Goal_Position****************************/
+
+  void Position::Activate()
+  {
+
+
+      
+  }
+Goal::Goal_Status PositionV3:: Process()
+    {
+        if(Position -> QuadraturePosition != Calculate){
+            return m_Status = eActive;
+        }
+
+        else if(Position -> QuadraturePosition != Calculate){
+             return m_Status = eCompleted;
+        }
+        
+        else
+        {
+         Position -> Set(0);
+        }
+
+     }
+       void Position:: Terminate(){
+        m_Status = eInactive;
+        }
+
+    };
+
+
+
+
+/************************Goal_MoveForward*************************/
 
 void Goal_MoveForward::Activate()
 {

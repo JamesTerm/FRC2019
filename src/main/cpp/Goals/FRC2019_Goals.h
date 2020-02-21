@@ -549,13 +549,40 @@ class Goal_ShooterComposite : public CompositeGoal
 
 };
 
+class Position : public AtomicGoal
+{
+public:
+  Position(ActiveCollection *activeCollection)
+  
+
+  {
+    m_activeCollection = activeCollection;
+    m_Status = eInactive;
+    m_Calculate = Calculate;
+    
+
+  }
+  virtual void Process();
+  virtual void Terminate();
+  virtual void Activate();
+
+private:
+ActiveCollection* m_activeCollection;
+
+
+};
+
 class REVColorSensorV3 : public AtomicGoal
 {
 public:
   REVColorSensorV3(ActiveCollection *activeCollection)
+  Goal_REVColorSensorV3(string ColorVariable, REVColorSensorV3 color)
+
+
   {
     m_activeCollection = activeCollection;
-    m_Status = eInactive; 
+    m_Status = eInactive;
+    
 
   }
     virtual void Process();
@@ -564,6 +591,8 @@ public:
 
   private:
   ActiveCollection* m_activeCollection;
+  string TargetString = "";
+  REVColorSensorV3 Color;
 
 };
 
@@ -592,7 +621,7 @@ public:
     m_Speed = SpeedTar;
     ActualSpeedTar = SpeedTar;
     m_MaxSpeed = MaxSpeed;
-    m_Status = eInactive;
+    m_Status = eInactive;3
     ShooterMotor = (TalonSRXItem*)activeCollection->Get(MotorName1);
     ShooterMotor2 = (VictorSPItem*)activeCollection->Get(MotorName2);
     IsNegative = SpeedTar < 0;
