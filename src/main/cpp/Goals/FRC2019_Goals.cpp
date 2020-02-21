@@ -537,7 +537,7 @@ Goal::Goal_Status REVColorSensor:: Process()
      };
 
 /*************************Goal_Position****************************/
-
+/*
   void Position::Activate()
   {
 
