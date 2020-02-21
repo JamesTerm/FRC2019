@@ -506,7 +506,7 @@ void Goal_Hatch::Terminate()
 
 
 /**********************REVColorSensorV3*************************/
-
+/*
 void REVColorSensorV3::Activate()
 {
 
@@ -567,7 +567,7 @@ Goal::Goal_Status PositionV3:: Process()
     };
 
 
-
+*/
 
 /************************Goal_MoveForward*************************/
 

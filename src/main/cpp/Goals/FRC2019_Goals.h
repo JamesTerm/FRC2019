@@ -548,7 +548,7 @@ class Goal_ShooterComposite : public CompositeGoal
   
 
 };
-
+/*
 class Position : public AtomicGoal
 {
 public:
@@ -594,7 +594,7 @@ public:
   string TargetString = "";
   REVColorSensorV3 Color;
 
-};
+};*/
 
 class Goal_ShooterBunch : public AtomicGoal
 {
@@ -621,7 +621,7 @@ public:
     m_Speed = SpeedTar;
     ActualSpeedTar = SpeedTar;
     m_MaxSpeed = MaxSpeed;
-    m_Status = eInactive;3
+    m_Status = eInactive;
     ShooterMotor = (TalonSRXItem*)activeCollection->Get(MotorName1);
     ShooterMotor2 = (VictorSPItem*)activeCollection->Get(MotorName2);
     IsNegative = SpeedTar < 0;
