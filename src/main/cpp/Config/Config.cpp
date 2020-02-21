@@ -494,7 +494,7 @@ xml_node SparkMax = robot.child("SparkMax");
 		for(xml_node talonSrx = TalonSRX.first_child(); talonSrx; talonSrx = talonSrx.next_sibling()){
 			string name = talonSrx.name();
 			xml_attribute channel = talonSrx.attribute("channel");
-			bool reversed = talonSrx.attribute("reversed");
+			bool reversed = talonSrx.attribute("reversed").as_bool();
 			bool enableEncoder = talonSrx.attribute("enableEncoder").as_bool();
 			int pdbChannel = talonSrx.attribute("pdbChannel") ? talonSrx.attribute("pdbChannel").as_int() : -1;
 			if(channel){
