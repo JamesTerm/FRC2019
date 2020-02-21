@@ -858,7 +858,7 @@ void Goal_ShooterYeet::Activate()
     ShooterMotor->SetQuadraturePosition(0);
     lastPos = (ShooterMotor->GetQuadraturePosition());
     Bias = ((P * m_Speed)*(1.5 * (100000/m_Speed)));
-}
+}//
 
 Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
 {
