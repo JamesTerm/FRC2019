@@ -46,6 +46,7 @@ void TalonSRXItem::SetQuadraturePosition(int val){
 }
 
 void TalonSRXItem::Set(double val){
+	Log::General(name+" : "  + to_string(val));
 	if((val<0 || val>0) && !inUse)
 	{
 		inUse = true;

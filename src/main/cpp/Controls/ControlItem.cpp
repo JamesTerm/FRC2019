@@ -25,6 +25,8 @@ using namespace Controls;
 auto onControllerValueChanged = [&](EventArgs* e) {
 	try{
 		auto args = (TEventArgs<double, ControlItem*>*)e;
+	Log::General(" EVENT "+args->GetSender()->name);
+
 		//If the sender is a GoalButtonControl
 		if (dynamic_cast<GoalButtonControl*>(args->GetSender())) {
 			//Reset the active TeleOpGoal

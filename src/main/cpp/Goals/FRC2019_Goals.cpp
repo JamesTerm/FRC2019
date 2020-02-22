@@ -783,13 +783,42 @@ void Goal_OneHatchFrontShip::Activate()
 
 #pragma endregion
 
+/*void Goal_ShooterBunch::Activate()
+{
+    m_Status = eActive;
+}
+
+void Goal_ShooterBunch::Process()
+{
+    if(ShootWheel->Reached && m_Status == eActive)
+    {
+        Valve->SetForward();
+        MovingFloor->Set(Speed);
+        IndexL->Set(Speed);
+        IndexR->Set(Speed);
+    }
+    else
+    {
+        Valve->SetReverse();
+        MovingFloor->Set(0);
+        IndexL->Set(0);
+        IndexR->Set(0);
+    }
+    return m_Status = eActive;
+}
+
+void Goal_ShooterBunch::Terminate()
+{
+    m_Status = eInactive;
+}
+*/
 void Goal_ShooterYeet::Activate()
 {
     m_Status = eActive;
     ShooterMotor->SetQuadraturePosition(0);
     lastPos = (ShooterMotor->GetQuadraturePosition());
     Bias = ((P * m_Speed)*(1.5 * (100000/m_Speed)));
-}//
+}
 
 Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
 {
@@ -849,6 +878,4 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
 void Goal_ShooterYeet::Terminate()
 {
     m_Status = eInactive;
-
-
 }

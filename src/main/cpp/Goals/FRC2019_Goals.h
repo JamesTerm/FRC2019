@@ -594,22 +594,6 @@ public:
 
 };*/
 
-class Goal_ShooterBunch : public AtomicGoal
-{
-public:
-  Goal_ShooterBunch(ActiveCollection *activeCollection)
-  {
-    m_activeCollection = activeCollection;
-    m_Status = eInactive;
-
-  }
-
-  virtual void Activate();
-
-private:
-  ActiveCollection* m_activeCollection;
-};
-
 class Goal_ShooterYeet : public AtomicGoal
 {
 public:
@@ -630,6 +614,7 @@ public:
   virtual Goal::Goal_Status Process(double dTime);
   virtual void Terminate();
 
+  bool Reached = false;
 private:
   double m_Speed;
   double m_MaxSpeed;
@@ -650,8 +635,33 @@ private:
   double lastPos = 0;
   double LastSpe = 0;
   double SlowDownBias = 0.1;
-  bool Reached = false;
   bool FirstRun = true;
 
   ActiveCollection* m_activeCollection;
 };
+/*
+class Goal_ShooterBunch : public AtomicGoal
+{
+public:
+  Goal_ShooterBunch(ActiveCollection *activeCollection, Goal_ShooterYeet *Shooter)
+  {
+    MovingFloor = (VictorSPXItem*)activeCollection->Get("MovingFloor");
+    IndexL = (VictorSPXItem*)activeCollection->Get("IndexLeft");
+    IndexR = (VictorSPXItem*)activeCollection->Get("IndexRight");
+    Valve = (DoubleSolenoidItem*)activeCollection->Get("valve");
+    ShootWheel = Shooter;
+    m_Status = eInactive;
+  }
+
+  virtual void Activate();
+  virtual void Process();
+  virtual void Terminate();
+
+private:
+  double Speed = 0.1;
+  DoubleSolenoidItem* Valve;
+  VictorSPXItem* MovingFloor;
+  VictorSPXItem* IndexL;
+  VictorSPXItem* IndexR;
+  Goal_ShooterYeet* ShootWheel;
+};*/

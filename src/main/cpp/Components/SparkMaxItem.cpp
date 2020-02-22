@@ -51,7 +51,7 @@ int SparkMaxItem::GetPolarity(){
 }
 
 void SparkMaxItem::Set(double val){
-	
+	// Log::General(Name+" : "  + to_string(val));
 	if((val<0 || val>0) && !inUse)
 	{
 		inUse = true;
