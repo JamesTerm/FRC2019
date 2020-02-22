@@ -458,11 +458,12 @@ void Config::AllocateComponents(xml_node &root){
 
 xml_node SparkMax = robot.child("SparkMax");
 	if(SparkMax){
-		for(xml_node SparkMax = SparkMax.first_child(); SparkMax; SparkMax = SparkMax.next_sibling()){
+		for(xml_node sparkMax = SparkMax.first_child(); sparkMax; sparkMax = sparkMax.next_sibling()){
+			Log::Error("ENTERED FOR");
 			string name = SparkMax.name();
 			xml_attribute channel = SparkMax.attribute("channel");
 			//TODO: Fix this line after comp and fix robot configs
-			bool reversed = SparkMax.attribute("reversed");//.as_bool();
+			bool reversed = SparkMax.attribute("reversed").as_bool();
 			int pdbChannel = SparkMax.attribute("pdbChannel") ? SparkMax.attribute("pdbChannel").as_int() : -1;
 			if(channel){
 				SparkMaxItem *tmp = new SparkMaxItem(channel.as_int(), name, reversed);
