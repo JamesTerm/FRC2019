@@ -14,20 +14,36 @@
     <RobotConfig>
         <!-- Region for defining VictorSP Items -->
         <VictorSP>
-                <shooter1 channel="1" reversed="false"/>
-                <left2 channel="2" reversed="false"/>
-                <right1 channel="3" reversed="false"/>
+                <!--shooter1 channel="1" reversed="false"/>
+                <index0 channel="2" reversed="true"/>
+                <index1 channel="3" reversed="false"/-->
+                <!--left2 channel="2" reversed="false"/>
+                <right1 channel="3" reversed="false"/-->
         </VictorSP>
         <!-- Region for VictorSPX CAN Items -->
         <VictorSPX>
+			<test1 channel="0"/>
+			<test1 channel="1"/>
+			<test1 channel="2"/>
+			<test1 channel="3"/>
+			<test1 channel="4"/>
+			<test1 channel="5"/>
         </VictorSPX>
         
 
 
         <TalonSRX>
-            <shooter0 channel="0" reversed="true" enableEncoder = "true"/>
+            <shooter0 channel="0" reversed="false" enableEncoder="true"/>
+			<shooter1 channel="1" reversed="false" enableEncoder="true"/>
+			<shooter1 channel="2" reversed="false" enableEncoder="true"/>
         </TalonSRX>
-        <!-- Region for Potentiometers -->
+		<SparkMax>
+			<left0 channel="0"/>
+			<left1 channel="1"/>
+			<right0 channel="2"/>
+			<right1 channel="3"/>
+		</SparkMax>
+           <!-- Region for Potentiometers -->
         <Potentiometer>
         </Potentiometer>
         <!-- Region for Encoders -->
@@ -47,9 +63,11 @@
         <!-- Driver Controller, slot should always be 0 -->
         <Driver slot="0">
             <AxisControls>
-                <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.7" bindings="left2" useOverdrive="false"/>
-                <rightDrive axis="5" deadZone="0.08" reversed="true" powerMultiplier="0.7" bindings="right1" useOverdrive="false"/>
-                <shooting axis="3" deadZone=".05" reversed="false" powerMultiplier=".75" bindings="shooter0, shooter1" useOverdrive="false"/>
+                <leftDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.7" bindings="left0,left1" useOverdrive="false"/>
+				<rightDrive axis="1" deadZone="0.08" reversed="false" powerMultiplier="0.7" bindings="right0,right1" useOverdrive="false"/>
+				<!--rightDrive axis="5" deadZone="0.08" reversed="true" powerMultiplier="0.7" bindings="right1" useOverdrive="false"/-->
+                <!--shooting axis="3" deadZone=".05" reversed="false" powerMultiplier=".75" bindings="shooter0, shooter1" useOverdrive="false"/>
+                <indexing axis="2" deadZone=".05" reversed="false" powerMultiplier=".75" bindings="index0,index1" useOverdrive="false"/-->
             </AxisControls>
           <ButtonControls>
           </ButtonControls>

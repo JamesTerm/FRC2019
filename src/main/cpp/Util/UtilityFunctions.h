@@ -41,6 +41,25 @@ static void SetDrive(double left, double right, ActiveCollection *activeCollecti
 	right_1->Set(right);
 }
 
+static void SetNeoDrive(double left, double right, ActiveCollection *activeCollection)
+{
+	SparkMaxItem *left_0 = (SparkMaxItem*)activeCollection->Get("left1"); //creates pointers to motor objects. This robot has three left motors and three right motors
+	SparkMaxItem *left_1 = (SparkMaxItem*)activeCollection->Get("left2");
+	SparkMaxItem *right_0 = (SparkMaxItem*)activeCollection->Get("right1");
+	SparkMaxItem *right_1 = (SparkMaxItem*)activeCollection->Get("right2");
+	
+
+	left_0->Set(left); //sets left and right motors to desired power
+	left_1->Set(left);
+	right_0->Set(right);
+	right_1->Set(right);
+}
+
+static void StopNeoDrive(ActiveCollection *activeCollection) //sets drive power to zero
+{
+	SetNeoDrive(0, 0, activeCollection);
+}
+
 static void StopDrive(ActiveCollection *activeCollection) //sets drive power to zero
 {
 	SetDrive(0, 0, activeCollection);
@@ -135,6 +154,17 @@ static void SlowStop(double left, double right, ActiveCollection *activeCollecti
 		{
 			return Value;
 		}
+	}
+
+	static double PIDCalculae(double P, double I, double D, double& TotalError, double Error, double PrevE, double ChangeInTime)
+	{
+		TotalError += Error * ChangeInTime;
+		return ((P * Error) + (I * TotalError) + (D * ((Error - PrevE) / ChangeInTime)));
+	}
+
+	static bool BelowMaxRate(double Val1, double Val2, double MaxRate)
+	{
+		return ABSValue(ABSValue(Val1) - ABSValue(Val2)) < MaxRate;
 	}
 
 /* DriveForward

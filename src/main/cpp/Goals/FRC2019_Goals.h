@@ -375,11 +375,13 @@ class Goal_MoveForward : public AtomicGoal
   public:
     Goal_MoveForward(ActiveCollection *activeCollection, double Dist, double MaxPowerOutput, double MaxTime)
     {
-        RealTarget *= Dist;
+        RealTarget = Dist;
         MaxPower = MaxPowerOutput;
         m_activeCollection = activeCollection;
-        distTo = ABSValue(RealTarget);
+        distTo = (RealTarget);
         TotalTime = MaxTime;
+        IsNegative = Dist < 0;
+        enc0 = (SparkMaxItem*)activeCollection->Get("left1");
     }
 
     virtual void Activate();
@@ -390,14 +392,13 @@ class Goal_MoveForward : public AtomicGoal
 
       double TimePassed = 0;
       double TotalTime = 0;
-      double RealTarget = 89;         // 85 was working yesterday
+      double RealTarget = 0;         // 85 was working yesterday
 	    double MaxPower = 0;
 
       ActiveCollection *m_activeCollection;
-      EncoderItem *enc0;
+      SparkMaxItem *enc0;
       NavX *navx;
 
-      double left = 0, right = 0;
       bool IsNegative  = false;
       double P = 5; //PID constants
 	    double I = -0.0005;
@@ -406,15 +407,17 @@ class Goal_MoveForward : public AtomicGoal
 	    double IE = 0.08;
 	    double DE = 0.0005;
       double ChangeInTime = 0;
-	    double F = (0.0);
 	    double Limit = 0.5;
+      double Pevpower = 0;
+      double PrevEResult = 0.1;
 	    double MinPower = 0;
 	    double PrevE = 0, totalE = 0;
 	    double PrevEncoder = 0, totalEncoder = 0, PrevEncoderTrack = 10000;
 	    double enc = 0;
       double currentValue = 0;
 	    double distTo = 0;
-
+      double BiasE = 0;
+      double Bias = 0;
 	    double NumberAtTarget = 0;
       bool Moving = false;
       bool Done = false;
@@ -425,10 +428,9 @@ class Goal_TurnPIDF : public AtomicGoal
   public:
     Goal_TurnPIDF(ActiveCollection *activeCollection, double Angle, double MaxPowerOutput, double MaxTime)
     {
-        RealTarget *= Angle;
+        RealTarget = Angle;
         MaxPower = MaxPowerOutput;
         m_activeCollection = activeCollection;
-        distTo = ABSValue(RealTarget);
         TotalTime = MaxTime;
     }
 
@@ -442,24 +444,20 @@ class Goal_TurnPIDF : public AtomicGoal
       double TotalTime = 0;
       double RealTarget = 89;         // 85 was working yesterday
 	    double MaxPower = 0;
-      double power = 0;
+      double Pevpower = 0.1;
 
       ActiveCollection *m_activeCollection;
       NavX *navx;
 
-      double left = 0, right = 0;
       bool IsNegative  = false;
       double P = 5; //PID constants
 	    double I = -0.0005;
 	    double D = 8;
-      double ChangeInTime = 0;
-	    double F = (0.09);
-	    double Limit = 0.5;
+      double Bias = 0;
+	    double Limit = 0.1;
 	    double MinPower = 0;
 	    double PrevE = 0, totalE = 0, PrevTrack = 10000;
-	    double enc = 0;
       double currentValue = 0;
-	    double distTo = 0;
 
 	    double NumberAtTarget = 0;
       bool Moving = false;
@@ -623,7 +621,7 @@ public:
     m_MaxSpeed = MaxSpeed;
     m_Status = eInactive;
     ShooterMotor = (TalonSRXItem*)activeCollection->Get(MotorName1);
-    ShooterMotor2 = (VictorSPItem*)activeCollection->Get(MotorName2);
+    ShooterMotor2 = (TalonSRXItem*)activeCollection->Get(MotorName2);
     IsNegative = SpeedTar < 0;
   }
   //Find what motor to get
@@ -636,7 +634,7 @@ private:
   double m_Speed;
   double m_MaxSpeed;
   TalonSRXItem *ShooterMotor;
-  VictorSPItem *ShooterMotor2;
+  TalonSRXItem *ShooterMotor2;
   double ActualSpeedTar = 0;
   double Bias = 10;
   double revSpeed = 0;

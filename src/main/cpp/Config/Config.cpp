@@ -460,11 +460,11 @@ xml_node SparkMax = robot.child("SparkMax");
 	if(SparkMax){
 		for(xml_node sparkMax = SparkMax.first_child(); sparkMax; sparkMax = sparkMax.next_sibling()){
 			Log::Error("ENTERED FOR");
-			string name = SparkMax.name();
-			xml_attribute channel = SparkMax.attribute("channel");
+			string name = sparkMax.name();
+			xml_attribute channel = sparkMax.attribute("channel");
 			//TODO: Fix this line after comp and fix robot configs
-			bool reversed = SparkMax.attribute("reversed").as_bool();
-			int pdbChannel = SparkMax.attribute("pdbChannel") ? SparkMax.attribute("pdbChannel").as_int() : -1;
+			bool reversed = sparkMax.attribute("reversed").as_bool();
+			int pdbChannel = sparkMax.attribute("pdbChannel") ? sparkMax.attribute("pdbChannel").as_int() : -1;
 			if(channel){
 				SparkMaxItem *tmp = new SparkMaxItem(channel.as_int(), name, reversed);
 				m_activeCollection->Add(tmp);

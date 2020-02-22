@@ -573,12 +573,13 @@ Goal::Goal_Status PositionV3:: Process()
 
 void Goal_MoveForward::Activate()
 {
-    enc0 = m_activeCollection->GetEncoder("enc0"); //gets encoder from active collection
-	enc0 -> Reset();
+    enc0 -> Reset();
     navx = m_activeCollection->GetNavX();
 	navx -> Reset();
     m_Status = eActive;
     Moving = true;
+    Bias = 100;
+    BiasE = 100;
 }
 
 Goal::Goal_Status Goal_MoveForward::Process(double dTime)
@@ -587,90 +588,33 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
     {
        if(NumberAtTarget < 100 && TimePassed < TotalTime)
     	{
-            ChangeInTime = dTime;
-    		currentValue = navx->GetAngle(); //get new navx angle
-    		enc = ABSValue(enc0->Get()); //get new encoder distance
+            enc = enc0->Get();
+            currentValue = ABSValue(navx->GetAngle()); //get new navx angle
     		//Angle PIDF
-	    	double Error = 0 - currentValue;
-            totalE += Error * ChangeInTime;
-            double Result = ((PE * Error) + (IE * totalE)  + (DE * ((Error - PrevE) / ChangeInTime)));
-    		PrevE = Error;
+	    	double Error = currentValue;
+            double Result = PIDCalculae(P, I, D, totalE, Error, PrevE, dTime);
+            PrevE = Error;
 
-	    	//Distance Traveled PIDF
-    		double ErrorEncoder = distTo - enc;
-            totalEncoder += ErrorEncoder * ChangeInTime;
-            double ResultEncoder = ((P * ErrorEncoder) + (I * totalEncoder)  + (D * ((ErrorEncoder - PrevEncoder) / ChangeInTime)) + F);
-    		PrevEncoder = ErrorEncoder;
-	    	PrevEncoderTrack = ABSValue(PrevEncoder);
-    		if(MaxPower != 0)
-	    	{
-            	if (ABSValue(ResultEncoder) > MaxPower) 
-			    {
-                  ResultEncoder = MaxPower * Sign(ResultEncoder);
-                } 
-    			else if (ABSValue(ResultEncoder) < MinPower) 
-	    		{
-                    ResultEncoder = MinPower * Sign(ResultEncoder);
-                }
-	        }
+            Result = (Constrain(Scale(Result, MinPower, (Bias)), -MaxPower, MaxPower));
+            Result = BelowMaxRate(Result, Pevpower, Limit);
 
-    		if(!IsNegative){
-	    		if(ErrorEncoder > 0){
-		    		if(ResultEncoder < 0){
-			    		ResultEncoder = ABSValue(ResultEncoder);
-		    		}
-		    	}
-	    		else
-		    	{
-			    	if(ResultEncoder > 0){
-				    	ResultEncoder = ABSValue(ResultEncoder);
-	    			}
-	    		}
-	    	}
-	    	else{
-		    	if(ErrorEncoder > 0){
-	    			if(ResultEncoder > 0){
-		    			ResultEncoder = ABSValue(ResultEncoder);
-		    		}
-		    	}
-	    		else
-	    		{
-		    		if(ResultEncoder < 0){
-			    		ResultEncoder = ABSValue(ResultEncoder);
-		    		}
-	    		}
-    		}
+	    	
+    		double ErrorE = distTo - enc;
+            double ResultE = PIDCalculae(PE, IE, DE, totalEncoder, ErrorE, PrevEncoderTrack, dTime);
+            PrevEncoderTrack = ErrorE;
 
-	    	if(Limit != 0)
-		    {
-               	if (Result > Limit)
-		    	{
-                  Result = Limit;
-                }
-	    		else if (Result < -Limit)
-		    	{
-                    Result = -Limit;
-                }
-	        }
-		
-    		if(!IsNegative)
-	    	{
-		    	left = -ResultEncoder - Result;
-    			right = ResultEncoder - Result;
-	    	}
-    		else
-	    	{
-		    	left = ResultEncoder - Result;
-			    right = -ResultEncoder - Result;
-    		}
-		
-	    	SetDrive(left, right, m_activeCollection); //set drive to new powers
+            ResultE = (Constrain(Scale(Result, MinPower, (Bias)), -MaxPower, MaxPower)) * (IsNegative? -1 : 1);
+            ResultE = BelowMaxRate(ResultE, PrevEResult, Limit);
+	    	
+	    	SetNeoDrive(ResultE + Result, -ResultE - Result, m_activeCollection); //set drive to new powers
 
 	    	if(Inrange(enc, RealTarget, 50)){
                 Log::General("In range");
 		    	NumberAtTarget++;
 	    	}
 
+            Pevpower = Result;
+            PrevEResult = ResultE;
             TimePassed += dTime;
         }
         else if(TotalTime <= TimePassed)
@@ -687,7 +631,7 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
     }
     else
     {
-    	StopDrive(m_activeCollection); //once finished, stop drive
+    	StopNeoDrive(m_activeCollection); //once finished, stop drive
     }
     if(!Done && Moving)
          return m_Status = eActive;
@@ -701,7 +645,7 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
 void Goal_MoveForward::Terminate()
 {
     m_Status = eCompleted;
-    StopDrive(m_activeCollection);
+    StopNeoDrive(m_activeCollection);
     Log::General("Done Moving");
 }
 
@@ -714,6 +658,7 @@ void Goal_TurnPIDF::Activate()
 	navx -> Reset();
     m_Status = eActive;
     Moving = true;
+    Bias = 100;//Tune
 }
 
 Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
@@ -722,50 +667,21 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     {
        if(NumberAtTarget < 400 && TimePassed < TotalTime)
     	{
-            ChangeInTime = dTime;
-    		currentValue = navx->GetAngle(); //get new navx angle
+    		currentValue = ABSValue(navx->GetAngle()); //get new navx angle
     		//Angle PIDF
 	    	double Error = RealTarget - currentValue;
-            totalE += Error * ChangeInTime;
-            double Result = ((P * Error) + (I * totalE)  + (D * ((Error - PrevE) / ChangeInTime)) + F);
-    		PrevE = Error;
-	    	PrevTrack = ABSValue(PrevE);
-    		
-            if(MaxPower != 0)
-	    	{
-             	if (ABSValue(Result) > MaxPower)
-                {
-                    Result = MaxPower * Sign(Result);
-                } 
-               else if (ABSValue(Result) < MinPower)
-                {
-                    Result = MinPower * Sign(Result);
-                }
-	        }
+            double Result = PIDCalculae(P, I, D, totalE, Error, PrevE, dTime);
+            PrevE = Error;
 
-	    	if(!IsNegative){
-		    	left = power - Result;  //set left motor to desired power + output //might have to make postive
-			    right = power - Result; //set right motor to desired power - output (+ and - to make robot turn slightly) //might have to make negative again for auto
-		    }
-		    else if (IsNegative)
-		    {
-			    left = power + Result;  //set left motor to desired power + output //might have to make postive
-			    right = power + Result; //set right motor to desired power - output (+ and - to make robot turn slightly) //might have to make negative again for auto
-		    }
-		    if(RealTarget == 0)
-		    {
-			    left = 0;
-			    right = 0;
-			    Log::General("What are you doing trying to go to 0 using turn, a method that resets the value of the navx");
-			    PrevE = 0;
-		    }
-		
-	    	SetDrive(left, right, m_activeCollection); //set drive to new powers
+            Result = (Constrain(Scale(Result, MinPower, (Bias)), -MaxPower, MaxPower)) * (IsNegative? -1 : 1);
+            Result = BelowMaxRate(Result, Pevpower, Limit);
+
+	    	SetNeoDrive(Result, Result, m_activeCollection); //set drive to new powers
 
 	    	if(Inrange(currentValue, RealTarget, 10)){
 		    	NumberAtTarget++;
 	    	}
-
+            Pevpower = Result;
             TimePassed += dTime;
         }
         else if(TotalTime <= TimePassed)
@@ -782,7 +698,7 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     }
     else
     {
-    	StopDrive(m_activeCollection); //once finished, stop drive
+    	StopNeoDrive(m_activeCollection); //once finished, stop drive
     }
     if(!Done && Moving)
         return m_Status = eActive;
@@ -801,7 +717,7 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
 void Goal_TurnPIDF::Terminate()
 {
     m_Status = eCompleted;
-    StopDrive(m_activeCollection);
+    StopNeoDrive(m_activeCollection);
     Log::General("Done Moving");
 }
 
@@ -862,7 +778,7 @@ void Goal_OneHatchFrontShip::Activate()
     
 }
 #pragma endregion
-
+//#pragma region MultitaskGoals
 #pragma region MultitaskGoals
 
 #pragma endregion
@@ -882,12 +798,10 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
         if((ShooterMotor->GetQuadraturePosition()) != lastPos && !FirstRun)
         {
             double EncoderValue = (ShooterMotor->GetQuadraturePosition());
-            int Spe = (EncoderValue - LastE);
-            revSpeed = Spe;
+            revSpeed = (int)(EncoderValue - LastE);
             {
                 double Error = (m_Speed + revSpeed);
-                total += Error * dTime;
-                double Result = ((P * Error) + (I * total) + (D * ((Error - PrevE) / dTime)));
+                double Result = PIDCalculae(P, I, D, total, Error, PrevE, dTime);
                 PrevE = Error;
 
                 Log::General("Result : " + to_string(Scale(Result, SlowDownBias, (Bias))));
