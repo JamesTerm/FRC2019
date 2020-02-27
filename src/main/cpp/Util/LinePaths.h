@@ -19,6 +19,7 @@ using namespace std;
 using namespace Util;
 
 #define MaxPoints 10
+#define NumPoints 3
 #define MaxAutos 3
 
 struct Point
@@ -30,33 +31,26 @@ struct Point
 
 struct Auto
 {
-    Auto(double** Points)
+    Auto(double Points[MaxPoints][NumPoints])
     {
-        int i = 0;
-        for(i; i < sizeof(Points) / sizeof(*Points); i++)
+        for(int i = 0; i < MaxPoints; i++)
         {
             Waypoints[i].X = Points[i][0];
             Waypoints[i].Y = Points[i][1];
             Waypoints[i].Act = Points[i][2];
         }
-        int Last = i;
-        for(i; i < MaxPoints; i++)
-        {
-            Waypoints[i].X = Points[Last][0];
-            Waypoints[i].Y = Points[Last][1];
-            Waypoints[i].Act = Points[Last][2];
-        }
     }
-    Point *Waypoints = new Points[MaxPoints];
+    Point *Waypoints = new Point[MaxPoints];
 };
-/*
+
 static Auto Position1PathNum(int Path)
 {
-    static Auto Paths[MaxAutos] = {Auto({{0,0,0}})
-                                  ,Auto({{0,0,0}})
-                                  ,Auto({{0,0,0}})};
+    static double Path1[][3] = {{0,0,0}};
+    static Auto Paths[MaxAutos] = {Auto(Path1)
+                                  ,Auto(Path1)
+                                  ,Auto(Path1)};
 
     return Paths[Path];
 }
-*/
+
 #endif /* UTIL_LinePaths_H_ */
