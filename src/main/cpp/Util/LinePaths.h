@@ -40,12 +40,13 @@ struct Auto
             Waypoints[i].Act = Points[i][2];
         }
     }
+    int Num = MaxPoints;
     Point *Waypoints = new Point[MaxPoints];
 };
 
 static Auto Position1PathNum(int Path)
 {
-    static double Path1[][3] = {{0,0,0}};
+    static double Path1[][3] = {{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
     static Auto Paths[MaxAutos] = {Auto(Path1)
                                   ,Auto(Path1)
                                   ,Auto(Path1)};

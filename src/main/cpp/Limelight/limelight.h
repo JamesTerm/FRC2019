@@ -45,7 +45,7 @@ class limelight : public NativeComponent //Inheritance or something
         {
             double robotheight = TargetHeight - 42;
             double radianAngle = (tan(((VerticalOffset()) * 3.1415) / 180));
-            cout << "angle: " << (radianAngle) << "  :: Limelight input: " << (VerticalOffset()) << endl;
+            Log::General("angle: " + to_string(radianAngle) + "  :: Limelight input: " + to_string(VerticalOffset()));
             return (robotheight / (radianAngle)) + 5;
         }
         bool SeesTarget()
@@ -57,9 +57,20 @@ class limelight : public NativeComponent //Inheritance or something
             }
             return false;
         }
-        void SetCamMode(int Mode)
+        void SetPipeline(int Pipe = 0)
         {
-            table->PutNumber("camMode", Mode);
+            if(Pipe >= 0 && Pipe < 10)
+                table->PutNumber("pipeline", Pipe);
+            else
+                Log::Error("Pipelines only go from 0 - 9 not: " + to_string(Pipe));
+        }
+        void SetCamMode(bool VisionProcess = true)
+        {
+            if(VisionProcess)
+                table->PutNumber("camMode", 0);
+            else
+                table->PutNumber("camMode", 1);
+                
         }
         void Snapshots(bool takeShot)
         {

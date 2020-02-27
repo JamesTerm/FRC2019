@@ -19,9 +19,12 @@ Email: chrisrweeks@aol.com
 #include "../Util/Units/Distances.h"
 #include "../Util/FrameworkCommunication.h"
 #include "../Components/REVColorSensorV3.h"
+#include "../Util/LinePaths.h"
+#include "../Limelight/limelight.h"
 
 using namespace Components;
 using namespace std;
+using namespace Lime;
 
 //?HINT: ctrl+k then ctrl+0 will collapse all regions
 //?HINT: ctrl+k then ctrl+[ will collapse all regions within the current scope of the cursor
@@ -377,29 +380,29 @@ protected:
 class AutoPath : public CompositeGoal
 {
   public:
-    AutoPath(ActiveCollection* activeCollection, double** Path)
+    AutoPath(ActiveCollection* activeCollection, Auto Path)
     {
       m_activeCollection = activeCollection;
-      Dist = new double[sizeof(Path) / sizeof(*Path)];
-      Angle = new double[sizeof(Path) / sizeof(*Path)];
-      Actions = new double[sizeof(Path) / sizeof(*Path)];
+      Dist = new double[Path.Num];
+      Angle = new double[Path.Num];
+      Actions = new double[Path.Num];
       Dist[0] = 0;
       Angle[0] = 0;
       Actions[0] = 0;
-      for (int i = 1; i < sizeof(Path) / sizeof(*Path); i++)
+      for (int i = 1; i < Path.Num; i++)
       {
-        Actions[i] = Path[i][2];
-        float Dis = sqrt(pow(Path[i][0] - Path[i - 1][0], 2) + pow(Path[i][1] - Path[i - 1][1], 2));
+        Actions[i] = Path.Waypoints[i].Act;
+        float Dis = sqrt(pow(Path.Waypoints[i].X - Path.Waypoints[i-1].X, 2) + pow(Path.Waypoints[i].Y - Path.Waypoints[i-1].Y, 2));
             
-        float XDIS = (Path[i][0] - Path[i - 1][0]);
-        float YDIS = (Path[i][1] - Path[i - 1][1]);
+        float XDIS = (Path.Waypoints[i].X - Path.Waypoints[i-1].X);
+        float YDIS = (Path.Waypoints[i].Y - Path.Waypoints[i-1].Y);
 
         float A = (atan2(YDIS, XDIS) / 3.1415) * 180;
 
         Dist[i] = Dis;
         Angle[i] = A;
       }
-      for (int i = sizeof(Angle) / sizeof(*Angle) - 1; i > 1; i--)
+      for (int i = Path.Num - 1; i > 1; i--)
       {
         Angle[i] -= Angle[i - 1];
 
@@ -407,7 +410,7 @@ class AutoPath : public CompositeGoal
         {
           Angle[i] = 0;
           Dist[i] *= -1;
-          if (i != sizeof(Angle) / sizeof(*Angle) - 1)
+          if (i != Path.Num - 1)
           {
             Angle[i + 1] += 180;
           }
@@ -687,19 +690,21 @@ private:
 class Goal_ShooterBunch : public AtomicGoal
 {
 public:
-  Goal_ShooterBunch(ActiveCollection *activeCollection, Goal_ShooterYeet *Shooter)
+  Goal_ShooterBunch(ActiveCollection *activeCollection)
   {
     MovingFloor = (VictorSPXItem*)activeCollection->Get("MovingFloor");
     IndexL = (VictorSPXItem*)activeCollection->Get("IndexLeft");
     IndexR = (VictorSPXItem*)activeCollection->Get("IndexRight");
     Valve = (DoubleSolenoidItem*)activeCollection->Get("valve");
-    ShootWheel = Shooter;
+    Lime = (limelight*)activeCollection->Get("Limelight");
+    ShootWheel = new Goal_ShooterYeet(activeCollection, 1000, 0.8, "Shooter0", "Shooter1");
     m_Status = eInactive;
   }
 
   virtual void Activate();
   virtual Goal::Goal_Status Process(double dTime);
   virtual void Terminate();
+  int numShots = 0;
 
 private:
   double Speed = 0.1;
@@ -708,5 +713,5 @@ private:
   VictorSPXItem* IndexL;
   VictorSPXItem* IndexR;
   Goal_ShooterYeet* ShootWheel;
-  int numShots = 0;
+  limelight* Lime;
 };

@@ -556,7 +556,7 @@ Goal::Goal_Status Position::Process(double dTime)
     if(CurrentT < MaxT)
     {
         CurrentT += dTime;
-        if(m_Status = eActive)
+        if(m_Status == eActive)
         {
             double Error = Enc->Get() - m_Calculate;
             Spinner->Set(Constrain(PIDCal(P, I, D, TotalE, Error, LastE, dTime, 0.2, 0.05, LastResult, Bias), 0, 0.2));
@@ -753,7 +753,7 @@ void AutoPath::Activate()
         {
             if(Actions[i] == 1)
             {
-                AddSubgoal(new Goal_ShooterBunch(m_activeCollection, new Goal_ShooterYeet(m_activeCollection, 1000, 0.8, "Shooter0", "Shooter1")));
+                AddSubgoal(new Goal_ShooterBunch(m_activeCollection));
             }
         }
     }
@@ -831,9 +831,10 @@ void Goal_ShooterYeet::Activate()
 
 Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
 {
-    if (m_Status = eActive)
+    if (m_Status == eActive)
     {
         //TODO: Have Limelight modify m_Speed depending on distance from target
+        Bias = ((P * m_Speed)*(1.5 * (100000/m_Speed)));
         if((ShooterMotor->GetQuadraturePosition()) != lastPos && !FirstRun)
         {
             double EncoderValue = (ShooterMotor->GetQuadraturePosition());
