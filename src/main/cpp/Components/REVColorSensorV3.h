@@ -36,18 +36,17 @@ private:
 
 
 public:
-	REVColorSensorV3();
 	REVColorSensorV3(string _name);
 	frc::Color GetColor();
+	virtual double Get() override;
+	string GetColorMatch();
 	
 	uint32_t GetProximity();
 	void ConfigureColorSensor();
-	string GetName();
+	virtual string GetName() override;
 	virtual ~REVColorSensorV3();
 	ColorSensorV3 *GetREVColorSensorV3() { return Color;}
     void ConfigureProximitySensor();
-	string GetColorMatch();
-
 };
 }
 

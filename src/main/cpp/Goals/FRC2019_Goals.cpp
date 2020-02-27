@@ -506,68 +506,90 @@ void Goal_Hatch::Terminate()
 
 
 /**********************REVColorSensorV3*************************/
-/*
-void REVColorSensorV3::Activate()
+
+void Goal_REVColorSensorV3::Activate()
 {
-
-
+    m_Status = eActive;
 }
 
-Goal::Goal_Status REVColorSensor:: Process()
- 
-   {
-         if(TargetString == Color -> getColor()){
-             return m_Status = eActive;
+Goal::Goal_Status Goal_REVColorSensorV3:: Process(double dTime)
+{
+    if(CurrentT < MaxT && m_Status == eActive)
+    {
+         if(TargetString == Color -> Get()){
+            Spinner->Set(0.1);
+            return m_Status = eActive;
          }
-
-         else if(TargetString == Color -> getColor()){
-                 return m_Status = eCompleted;
+         else if(TargetString == Color -> Get()){
+             Spinner->Set(0);
+            return m_Status = eCompleted;
          }
+         CurrentT += dTime;
+    }
+    else if(m_Status == eCompleted)
+    {
+        Spinner->Set(0);
+        return m_Status = eCompleted;
+    }
+    else
+    {
+        Spinner->Set(0);
+        return m_Status = eFailed;
+    }
+}
 
-         else
-         {
-             return m_Status = eFailed;
-
-         }
-
-         void REVColorSensorV3::Terminate(){
-           m_Status = eInactive;
-         }
-
-     };
+void Goal_REVColorSensorV3::Terminate()
+{
+    m_Status = eInactive;
+}
 
 /*************************Goal_Position****************************/
-/*
-  void Position::Activate()
-  {
 
-
-      
-  }
-Goal::Goal_Status PositionV3:: Process()
+void Position::Activate()
+{
+    Enc->Reset();
+    Bias = 100;
+    m_Status = eActive;
+}
+Goal::Goal_Status Position::Process(double dTime)
+{
+    if(CurrentT < MaxT)
     {
-        if(Position -> QuadraturePosition != Calculate){
-            return m_Status = eActive;
+        CurrentT += dTime;
+        if(m_Status = eActive)
+        {
+            double Error = Enc->Get() - m_Calculate;
+            Spinner->Set(Constrain(PIDCal(P, I, D, TotalE, Error, LastE, dTime, 0.2, 0.05, LastResult, Bias), 0, 0.2));
         }
-
-        else if(Position -> QuadraturePosition != Calculate){
-             return m_Status = eCompleted;
+        if(Inrange(Enc->Get(), m_Calculate, 100))
+        {
+            Spinner->Set(0);
+            return m_Status = eCompleted;
         }
-        
         else
         {
-         Position -> Set(0);
+            return m_Status = eActive;
         }
-
-     }
-       void Position:: Terminate(){
-        m_Status = eInactive;
+    }
+    else
+    {
+        Spinner->Set(0);
+        if(Inrange(Enc->Get(), m_Calculate, 100))
+        {
+            return m_Status = eCompleted;
         }
+        else
+        {
+            return m_Status = eFailed;
+        }
+    }
+}
 
-    };
-
-
-*/
+void Position:: Terminate()
+{
+    Spinner->Set(0);
+    m_Status = eInactive;
+}
 
 /************************Goal_MoveForward*************************/
 
@@ -721,6 +743,22 @@ void Goal_TurnPIDF::Terminate()
     Log::General("Done Moving");
 }
 
+void AutoPath::Activate()
+{
+    for(int i = 0; i < sizeof(Actions) / sizeof(*Actions); i++)
+    {
+        AddSubgoal(new Goal_TurnPIDF(m_activeCollection, Angle[i], 0.6, 4));
+        AddSubgoal(new Goal_MoveForward(m_activeCollection, Dist[i], 0.6, 4));
+        if(Actions[i] != 0)
+        {
+            if(Actions[i] == 1)
+            {
+                AddSubgoal(new Goal_ShooterBunch(m_activeCollection, new Goal_ShooterYeet(m_activeCollection, 1000, 0.8, "Shooter0", "Shooter1")));
+            }
+        }
+    }
+}
+
 #pragma endregion
 #pragma endregion
 
@@ -783,35 +821,6 @@ void Goal_OneHatchFrontShip::Activate()
 
 #pragma endregion
 
-/*void Goal_ShooterBunch::Activate()
-{
-    m_Status = eActive;
-}
-
-void Goal_ShooterBunch::Process()
-{
-    if(ShootWheel->Reached && m_Status == eActive)
-    {
-        Valve->SetForward();
-        MovingFloor->Set(Speed);
-        IndexL->Set(Speed);
-        IndexR->Set(Speed);
-    }
-    else
-    {
-        Valve->SetReverse();
-        MovingFloor->Set(0);
-        IndexL->Set(0);
-        IndexR->Set(0);
-    }
-    return m_Status = eActive;
-}
-
-void Goal_ShooterBunch::Terminate()
-{
-    m_Status = eInactive;
-}
-*/
 void Goal_ShooterYeet::Activate()
 {
     m_Status = eActive;
@@ -824,6 +833,7 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
 {
     if (m_Status = eActive)
     {
+        //TODO: Have Limelight modify m_Speed depending on distance from target
         if((ShooterMotor->GetQuadraturePosition()) != lastPos && !FirstRun)
         {
             double EncoderValue = (ShooterMotor->GetQuadraturePosition());
@@ -877,5 +887,53 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
 
 void Goal_ShooterYeet::Terminate()
 {
+    m_Status = eInactive;
+}
+
+void Goal_ShooterBunch::Activate()
+{
+    ShootWheel->Activate();
+    m_Status = eActive;
+}
+
+Goal::Goal_Status Goal_ShooterBunch::Process(double dTime)
+{
+    if(numShots < 5 && m_Status == eActive)
+    {
+        ShootWheel->m_Speed = 4000;
+        ShootWheel->Process(dTime);
+        if(ShootWheel->Reached)
+        {
+            numShots++;
+            Valve->SetForward();
+            MovingFloor->Set(Speed);
+            IndexL->Set(Speed);
+            IndexR->Set(Speed);
+        }
+        else
+        {
+            Valve->SetReverse();
+            MovingFloor->Set(0);
+            IndexL->Set(0);
+            IndexR->Set(0);
+        }
+        return m_Status = eActive;
+    }
+    else
+    {
+        ShootWheel->m_Speed = 0;
+        ShootWheel->ShooterMotor->Set(0);
+        ShootWheel->ShooterMotor2->Set(0);
+        Valve->SetReverse();
+        MovingFloor->Set(0);
+        IndexL->Set(0);
+        IndexR->Set(0);
+        return m_Status = eCompleted;
+    }
+}
+
+void Goal_ShooterBunch::Terminate()
+{
+    ShootWheel->Terminate();
     m_Status = eInactive;
 }

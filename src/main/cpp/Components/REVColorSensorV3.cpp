@@ -43,9 +43,19 @@ frc::Color REVColorSensorV3::GetColor(){
 	return input;
 }
 
-string REVColorSensorV3:: GetColorMatch(){
+uint32_t REVColorSensorV3::GetProximity(){
+    uint32_t input = ((uint32_t)Color->GetProximity());
+    return input;
 
-    string colorString = "";
+}
+
+string REVColorSensorV3::GetName(){
+	return name;
+}
+
+double REVColorSensorV3::Get(){
+
+  string colorString = "";
     double Conf = 0.0;
     frc::Color matchedColor = m_colorMatcher.MatchClosestColor(GetColor(), Conf);
     
@@ -65,21 +75,25 @@ string REVColorSensorV3:: GetColorMatch(){
       colorString = "Unknown";
     }
 
-    return colorString;
-
-}
-
-
-
-
-uint32_t REVColorSensorV3::GetProximity(){
-    uint32_t input = ((uint32_t)Color->GetProximity());
-    return input;
-
-}
-
-string REVColorSensorV3::GetName(){
-	return name;
+  int Color = 0;
+  string C = colorString;
+  if(C == "Blue")
+  {
+    Color = 1;
+  }
+  else if(C == "Red")
+  {
+    Color = 2;
+  }
+  else if(C == "Green")
+  {
+    Color = 3;
+  }
+  else if(C == "Yellow")
+  {
+    Color = 4;
+  }
+  return Color;
 }
 
 REVColorSensorV3::~REVColorSensorV3() {}

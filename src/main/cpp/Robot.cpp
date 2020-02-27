@@ -152,23 +152,6 @@ void Robot::Teleop()
 void Robot::Test()
 {
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
-
-	/*
-	m_Drive = new Goal_TurnPIDF(m_activeCollection, 90, 0.6, 4);
-	m_Drive->Activate();
-	*/
-	
-	Goal_ShooterYeet* ShootG = new Goal_ShooterYeet(m_activeCollection, 10000, 0.8, "shooter0", "shooter1");
-	ShootG->Activate();
-	while(ShootG->GetStatus() == Goal::eActive && !IsDisabled())
-	{
-		ShootG->Process(0.01);
-		m_drive->Update(0.01);
-		//Log::General("Encoder Pos: " + to_string(m_activeCollection->GetTalon("shooter0")->GetQuadraturePosition()));
-		Wait(0.01);
-	}
-	ShootG->Terminate();
-	
 }
 
 void Robot::StartCompetition() {

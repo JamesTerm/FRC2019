@@ -167,6 +167,28 @@ static void SlowStop(double left, double right, ActiveCollection *activeCollecti
 		return ABSValue(ABSValue(Val1) - ABSValue(Val2)) < MaxRate;
 	}
 
+	static double GetMax(double V1, double V2)
+	{
+		return (V1 > V2 ? V1 : V2);
+	}
+
+	static double GetMin(double V1, double V2)
+	{
+		return (V1 < V2 ? V1 : V2);
+	}
+
+	static double PIDCal(double P, double I, double D, double& TotalError, double Error, double& PrevError, double ChangeInTime, double MaxPower, double MaxChange, double& LastResult, double Bias)
+	{
+		double Result = PIDCalculae(P, I, D, TotalError, Error, PrevError, ChangeInTime);
+		PrevError = Error;
+		Result = Constrain(Scale(Result, 0, (Bias)), -MaxPower, MaxPower);
+		Result = BelowMaxRate(Result, LastResult, MaxChange);
+		if(Result == LastResult)
+			Log::General("PIDCal went over max change, Current result = " + to_string(Result));
+		LastResult = Result;
+		return Result;
+	}
+
 /* DriveForward
  * This method uses two PID loops to drive straight and the requesred encoder distance
  * The first PID loop runs for the 60% of requested distance, using the navx to correct angle

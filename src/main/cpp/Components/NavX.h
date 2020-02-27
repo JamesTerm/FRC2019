@@ -31,6 +31,10 @@ public:
 		double angle = GetAngle();
 		return angle;
 	}
+	double GetRoll(){
+		double Angle = GetRoll();
+		return Angle;
+	}
 };
 	
 

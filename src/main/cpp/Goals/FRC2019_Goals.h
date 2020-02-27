@@ -13,10 +13,15 @@ Email: chrisrweeks@aol.com
 #pragma once
 
 #include <iostream>
+#include "cmath"
 #include "Goal.h"
 #include "../Util/VisionTarget.h"
 #include "../Util/Units/Distances.h"
 #include "../Util/FrameworkCommunication.h"
+#include "../Components/REVColorSensorV3.h"
+
+using namespace Components;
+using namespace std;
 
 //?HINT: ctrl+k then ctrl+0 will collapse all regions
 //?HINT: ctrl+k then ctrl+[ will collapse all regions within the current scope of the cursor
@@ -369,6 +374,57 @@ protected:
   ActiveCollection *m_activeCollection;
 };
 
+class AutoPath : public CompositeGoal
+{
+  public:
+    AutoPath(ActiveCollection* activeCollection, double** Path)
+    {
+      m_activeCollection = activeCollection;
+      Dist = new double[sizeof(Path) / sizeof(*Path)];
+      Angle = new double[sizeof(Path) / sizeof(*Path)];
+      Actions = new double[sizeof(Path) / sizeof(*Path)];
+      Dist[0] = 0;
+      Angle[0] = 0;
+      Actions[0] = 0;
+      for (int i = 1; i < sizeof(Path) / sizeof(*Path); i++)
+      {
+        Actions[i] = Path[i][2];
+        float Dis = sqrt(pow(Path[i][0] - Path[i - 1][0], 2) + pow(Path[i][1] - Path[i - 1][1], 2));
+            
+        float XDIS = (Path[i][0] - Path[i - 1][0]);
+        float YDIS = (Path[i][1] - Path[i - 1][1]);
+
+        float A = (atan2(YDIS, XDIS) / 3.1415) * 180;
+
+        Dist[i] = Dis;
+        Angle[i] = A;
+      }
+      for (int i = sizeof(Angle) / sizeof(*Angle) - 1; i > 1; i--)
+      {
+        Angle[i] -= Angle[i - 1];
+
+        if (ABSValue(Angle[i]) == 180)
+        {
+          Angle[i] = 0;
+          Dist[i] *= -1;
+          if (i != sizeof(Angle) / sizeof(*Angle) - 1)
+          {
+            Angle[i + 1] += 180;
+          }
+        }
+        if (Angle[i] < -200)
+          Angle[i] = GetMax(Angle[i], Angle[i] + 360);
+        else if (Angle[i] > 200)
+          Angle[i] = GetMin(Angle[i], Angle[i] - 360);
+      }
+    }
+    virtual void Activate();
+  private:
+    double* Dist;
+    double* Angle;
+    double* Actions;
+    ActiveCollection* m_activeCollection;
+};
 
 class Goal_MoveForward : public AtomicGoal
 {
@@ -529,70 +585,59 @@ private:
 
 #pragma endregion
 
-class Goal_ShooterComposite : public CompositeGoal
-{
-  public:
-   Goal_ShooterComposite(ActiveCollection *activecollection)
-   {
-     m_activeCollection = activecollection;
-     m_Status = eInactive; 
-
-   }
-
-   virtual void Activate();
-
-   private:
-   ActiveCollection* m_activeCollection;
-  
-
-};
-/*
 class Position : public AtomicGoal
 {
 public:
-  Position(ActiveCollection *activeCollection)
-  
-
+  Position(ActiveCollection *activeCollection, double Target, double MaxTime)
   {
-    m_activeCollection = activeCollection;
+    Spinner = (VictorSPXItem*)activeCollection->Get("Spinner");
+    Enc = activeCollection->GetEncoder("enc_Spinner");
     m_Status = eInactive;
-    m_Calculate = Calculate;
-    
-
+    m_Calculate = Target * 100;
+    MaxT = MaxTime;
   }
-  virtual void Process();
+  virtual Goal::Goal_Status Process(double dTIme);
   virtual void Terminate();
   virtual void Activate();
 
 private:
-ActiveCollection* m_activeCollection;
-
-
+  EncoderItem* Enc;
+  VictorSPXItem* Spinner;
+  double m_Calculate;
+  double Bias = 0;
+  double P = 10;
+  double I = 0.01;
+  double D = 0.0001;
+  double LastResult = 0.01;
+  double TotalE = 0;
+  double LastE = 0;
+  double CurrentT = 0;
+  double MaxT;
 };
 
-class REVColorSensorV3 : public AtomicGoal
+class Goal_REVColorSensorV3 : public AtomicGoal
 {
 public:
-  REVColorSensorV3(ActiveCollection *activeCollection)
-  Goal_REVColorSensorV3(string ColorVariable, REVColorSensorV3 color)
-
-
+  Goal_REVColorSensorV3(ActiveCollection *activeCollection, string ColorVariable, double MaxTime)
   {
-    m_activeCollection = activeCollection;
+    Spinner = (VictorSPXItem*)activeCollection->Get("Spinner");
+    TargetString = (ColorVariable == "Blue" ? 1 : (ColorVariable == "Red" ? 2 : (ColorVariable == "Green" ? 3 : (ColorVariable == "Yellow" ? 4 : 0))));
+    Color = (REVColorSensorV3*)activeCollection->Get("Color");
     m_Status = eInactive;
-    
-
+    MaxT = MaxTime;
   }
-    virtual void Process();
-    virtual void Terminate();
-    virtual void Activate();
+
+  virtual Goal::Goal_Status Process(double dTime);
+  virtual void Terminate();
+  virtual void Activate();
 
   private:
-  ActiveCollection* m_activeCollection;
-  string TargetString = "";
-  REVColorSensorV3 Color;
-
-};*/
+    VictorSPXItem* Spinner;
+    int TargetString = 0;
+    REVColorSensorV3* Color;
+    double CurrentT;
+    double MaxT;
+};
 
 class Goal_ShooterYeet : public AtomicGoal
 {
@@ -613,13 +658,12 @@ public:
   virtual void Activate();
   virtual Goal::Goal_Status Process(double dTime);
   virtual void Terminate();
-
-  bool Reached = false;
-private:
   double m_Speed;
-  double m_MaxSpeed;
   TalonSRXItem *ShooterMotor;
   TalonSRXItem *ShooterMotor2;
+  bool Reached = false;
+private:
+  double m_MaxSpeed;
   double ActualSpeedTar = 0;
   double Bias = 10;
   double revSpeed = 0;
@@ -639,7 +683,7 @@ private:
 
   ActiveCollection* m_activeCollection;
 };
-/*
+
 class Goal_ShooterBunch : public AtomicGoal
 {
 public:
@@ -654,7 +698,7 @@ public:
   }
 
   virtual void Activate();
-  virtual void Process();
+  virtual Goal::Goal_Status Process(double dTime);
   virtual void Terminate();
 
 private:
@@ -664,4 +708,5 @@ private:
   VictorSPXItem* IndexL;
   VictorSPXItem* IndexR;
   Goal_ShooterYeet* ShootWheel;
-};*/
+  int numShots = 0;
+};

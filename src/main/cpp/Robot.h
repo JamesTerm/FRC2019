@@ -29,6 +29,7 @@
 #include "Util/VisionTarget.h"
 #include "Limelight/limelight.h"
 #include "Util/UtilityFunctions.h"
+#include "Util/LinePaths.h"
 
 using namespace frc;
 using namespace System;

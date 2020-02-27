@@ -135,6 +135,20 @@ void Config::LoadValues(xml_document &doc){
 
 	#pragma endregion NavX
 
+	#pragma region ColorSen
+
+	xml_node CS = root.child("ColorSensor");
+	if(CS){
+		REVColorSensorV3 *tmp = new REVColorSensorV3("Color");
+		m_activeCollection->Add(tmp);
+		Log::General("Added Color Sensor");
+	}
+	else{
+		Log::Error("Color Sensor definitions not found in config, skipping...");
+	}
+
+	#pragma endregion ColorSen
+
 	#pragma region SecondaryCameraServer
 
 	//TODO: make it so we can mess with the camera during the running of the robot: ie, switch which stream we are using 
