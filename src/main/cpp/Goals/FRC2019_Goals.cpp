@@ -600,8 +600,8 @@ void Goal_MoveForward::Activate()
 	navx -> Reset();
     m_Status = eActive;
     Moving = true;
-    Bias = 100;
-    BiasE = 100;
+    Bias = (100000);
+    BiasE = ((PE * distTo)*(1.5 * (100000/distTo)));
 }
 
 Goal::Goal_Status Goal_MoveForward::Process(double dTime)
@@ -611,7 +611,7 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
        if(NumberAtTarget < 100 && TimePassed < TotalTime)
     	{
             enc = enc0->Get();
-            currentValue = ABSValue(navx->GetAngle()); //get new navx angle
+            currentValue = (navx->GetAngle()); //get new navx angle
     		//Angle PIDF
 	    	double Error = currentValue;
             double Result = PIDCalculae(P, I, D, totalE, Error, PrevE, dTime);
@@ -680,7 +680,7 @@ void Goal_TurnPIDF::Activate()
 	navx -> Reset();
     m_Status = eActive;
     Moving = true;
-    Bias = 100;//Tune
+    Bias = ((P * RealTarget)*(1.5 * (100000/RealTarget)));//Tune
 }
 
 Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)

@@ -32,30 +32,67 @@ namespace Lime{
 class limelight : public NativeComponent //Inheritance or something 
 {
     public:
-        limelight() : NativeComponent("LimeLight") {} 
+        limelight() : NativeComponent("LimeLight")
+        {
+            SetLED();
+            SetCamMode();
+            SetPipeline();
+        } 
         double HorizontalOffset()
         {
-          return table->GetNumber("tx", 0.0);
+            if(ProcessTarget && HasLEDon)
+            {
+                return table->GetNumber("tx", 0.0);
+            }
+            else
+            {
+                Log::Error("Turn on the led and turn on vision processing in order to get target");
+                return 0;
+            }
         }
         double VerticalOffset()
         {
-            return (table->GetNumber("ty", 0.0));
+            if(ProcessTarget && HasLEDon)
+            {
+                return (table->GetNumber("ty", 0.0));
+            }
+            else
+            {
+                Log::Error("Turn on the led and turn on vision processing in order to get target");
+                return 0;
+            }
         }
         double TargetDistance(double TargetHeight)
         {
-            double robotheight = TargetHeight - 42;
-            double radianAngle = (tan(((VerticalOffset()) * 3.1415) / 180));
-            Log::General("angle: " + to_string(radianAngle) + "  :: Limelight input: " + to_string(VerticalOffset()));
-            return (robotheight / (radianAngle)) + 5;
+            if(ProcessTarget && HasLEDon)
+            {
+                double robotheight = TargetHeight - 42;
+                double radianAngle = (tan(((VerticalOffset()) * 3.1415) / 180));
+                Log::General("angle: " + to_string(radianAngle) + "  :: Limelight input: " + to_string(VerticalOffset()));
+                return (robotheight / (radianAngle)) + 5;
+            }
+            else
+            {
+                Log::Error("Turn on the led and turn on vision processing in order to get target");
+                return 0;
+            }
         }
         bool SeesTarget()
         {
-            int Present = table->GetNumber("tv", 0.0);
-            if(Present > 0)
+            if(ProcessTarget && HasLEDon)
             {
-                return true;
+                int Present = table->GetNumber("tv", 0.0);
+                if(Present > 0)
+                {
+                    return true;
+                }
+                return false;
             }
-            return false;
+            else
+            {
+                Log::Error("Turn on the led and turn on vision processing in order to get target");
+                return false;
+            }
         }
         void SetPipeline(int Pipe = 0)
         {
@@ -67,10 +104,15 @@ class limelight : public NativeComponent //Inheritance or something
         void SetCamMode(bool VisionProcess = true)
         {
             if(VisionProcess)
+            {
+                ProcessTarget = true;
                 table->PutNumber("camMode", 0);
+            }
             else
+            {
+                ProcessTarget = true;
                 table->PutNumber("camMode", 1);
-                
+            }    
         }
         void Snapshots(bool takeShot)
         {
@@ -83,18 +125,28 @@ class limelight : public NativeComponent //Inheritance or something
                 table->PutNumber("snapshot", 0);
             }
         }
-        void SetLED(bool On)
+        void SetLED(int State = 0)
         {
-            if(On)
+            if(State == 0)
             {
-                table->PutNumber("ledMode", 0);
+                HasLEDon = true;
+                table->PutNumber("ledMode", 3);
+            }
+            else if(State == 1)
+            {
+                HasLEDon = false;
+                table->PutNumber("ledMode", 1);
             }
             else
             {
-                table->PutNumber("ledMode", 1);
+                HasLEDon = false;
+                table->PutNumber("ledMode", 2);
+                Log::Error("THE ROBOT IS KILLING PEOPLE'S EYES, KEEP IT UP AND SOMEONE MIGHT NOTICE!");
             }
         }
     private:
+        bool HasLEDon = true;
+        bool ProcessTarget = true;
         std::shared_ptr<NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
  };
 }

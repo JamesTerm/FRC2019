@@ -383,12 +383,20 @@ void Config::LoadValues(xml_document &doc){
 		return;
 	}
 
+	#pragma region LimeLight
+
 	xml_node LM = root.child("limeLight");
- 	//if(LM)
-	{ //hey look I also wrote this, and it also broke.  But this is something that is needed for the LimeLight
+ 	if(LM)
+	{
 		limelight* lime = new limelight();
 		m_activeCollection->Add(lime);
 	}
+	else
+	{
+		Log::Error("No limelight in RobotConfig...we need that");
+	}
+
+	#pragma endregion LimeLight
 		
 	AllocateDriverControls(controls);
 	AllocateOperatorControls(controls);
