@@ -20,6 +20,7 @@ Email: cooper.ryan@centaurisoft.org, ruizdylann@gmail.com
 
 #include "../Config/ActiveCollection.h"
 #include "LoopChecks.h"
+#include <frc/DriverStation.h>
 
 using namespace std;
 using namespace Util;
@@ -102,6 +103,18 @@ static void SlowStop(double left, double right, ActiveCollection *activeCollecti
 		Wait(.005);
 	}
 	StopDrive(activeCollection);
+}
+
+static char GetSelectedColor()
+{
+	if(frc::DriverStation::GetInstance().GetGameSpecificMessage().length > 0)
+	{
+		return frc::DriverStation::GetInstance().GetGameSpecificMessage()[0];
+	}
+	else
+	{
+		return 'N';
+	}
 }
 
 	static double ABSValue(double val)
