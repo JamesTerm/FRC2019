@@ -434,13 +434,14 @@ class Goal_MoveForward : public AtomicGoal
   public:
     Goal_MoveForward(ActiveCollection *activeCollection, double Dist, double MaxPowerOutput, double MaxTime)
     {
-        RealTarget = Dist;
+        RealTarget = Dist * 100;
         MaxPower = MaxPowerOutput;
         m_activeCollection = activeCollection;
         distTo = (RealTarget);
         TotalTime = MaxTime;
         IsNegative = Dist < 0;
-        enc0 = (SparkMaxItem*)activeCollection->Get("left1");
+        enc0 = activeCollection->GetEncoder("enc0");
+        //enc0 = (SparkMaxItem*)activeCollection->Get("left1");
     }
 
     virtual void Activate();
@@ -455,23 +456,23 @@ class Goal_MoveForward : public AtomicGoal
 	    double MaxPower = 0;
 
       ActiveCollection *m_activeCollection;
-      SparkMaxItem *enc0;
+      EncoderItem* enc0;
+      //SparkMaxItem *enc0;
       NavX *navx;
 
       bool IsNegative  = false;
       double P = 5; //PID constants
-	    double I = -0.0005;
-	    double D = 8;
-	    double PE = 0.07; //PID constants
-	    double IE = 0.08;
-	    double DE = 0.0005;
-      double ChangeInTime = 0;
+	    double I = 0.5;
+	    double D = 0;
+	    double PE = 3.5; //PID constants
+	    double IE = 1;
+	    double DE = -1;
 	    double Limit = 0.5;
       double Pevpower = 0;
-      double PrevEResult = 0.1;
+      double PrevEResult = 0;
 	    double MinPower = 0;
 	    double PrevE = 0, totalE = 0;
-	    double PrevEncoder = 0, totalEncoder = 0, PrevEncoderTrack = 10000;
+	    double PrevEncoder = 0, totalEncoder = 0;
 	    double enc = 0;
       double currentValue = 0;
 	    double distTo = 0;
@@ -501,21 +502,21 @@ class Goal_TurnPIDF : public AtomicGoal
 
       double TimePassed = 0;
       double TotalTime = 0;
-      double RealTarget = 89;         // 85 was working yesterday
+      double RealTarget = 0;
 	    double MaxPower = 0;
-      double Pevpower = 0.1;
+      double Pevpower = 0;
 
       ActiveCollection *m_activeCollection;
       NavX *navx;
 
       bool IsNegative  = false;
-      double P = 5; //PID constants
-	    double I = -0.0005;
-	    double D = 8;
+      double P = 15; //PID constants
+	    double I = 5;
+	    double D = 0.1;
       double Bias = 0;
 	    double Limit = 0.1;
 	    double MinPower = 0;
-	    double PrevE = 0, totalE = 0, PrevTrack = 10000;
+	    double PrevE = 0, totalE = 0;
       double currentValue = 0;
 
 	    double NumberAtTarget = 0;
@@ -593,8 +594,7 @@ class Position : public AtomicGoal
 public:
   Position(ActiveCollection *activeCollection, double Target, double MaxTime)
   {
-    Spinner = (VictorSPXItem*)activeCollection->Get("Spinner");
-    Enc = activeCollection->GetEncoder("enc_Spinner");
+    Spinner = (TalonSRXItem*)activeCollection->Get("Spinner");
     m_Status = eInactive;
     m_Calculate = Target * 100;
     MaxT = MaxTime;
@@ -604,8 +604,7 @@ public:
   virtual void Activate();
 
 private:
-  EncoderItem* Enc;
-  VictorSPXItem* Spinner;
+  TalonSRXItem* Spinner;
   double m_Calculate;
   double Bias = 0;
   double P = 10;
@@ -623,7 +622,7 @@ class Goal_REVColorSensorV3 : public AtomicGoal
 public:
   Goal_REVColorSensorV3(ActiveCollection *activeCollection, string ColorVariable, double MaxTime)
   {
-    Spinner = (VictorSPXItem*)activeCollection->Get("Spinner");
+    Spinner = (TalonSRXItem*)activeCollection->Get("Spinner");
     TargetString = (ColorVariable == "Blue" ? 1 : (ColorVariable == "Red" ? 2 : (ColorVariable == "Green" ? 3 : (ColorVariable == "Yellow" ? 4 : 0))));
     Color = (REVColorSensorV3*)activeCollection->Get("Color");
     m_Status = eInactive;
@@ -635,7 +634,7 @@ public:
   virtual void Activate();
 
   private:
-    VictorSPXItem* Spinner;
+    TalonSRXItem* Spinner;
     int TargetString = 0;
     REVColorSensorV3* Color;
     double CurrentT;
@@ -692,9 +691,9 @@ class Goal_ShooterBunch : public AtomicGoal
 public:
   Goal_ShooterBunch(ActiveCollection *activeCollection)
   {
-    MovingFloor = (VictorSPXItem*)activeCollection->Get("MovingFloor");
-    IndexL = (VictorSPXItem*)activeCollection->Get("IndexLeft");
-    IndexR = (VictorSPXItem*)activeCollection->Get("IndexRight");
+    MovingFloor = (VictorSPXItem*)activeCollection->Get("Floor");
+    IndexL = (VictorSPXItem*)activeCollection->Get("indexer0");
+    IndexR = (VictorSPXItem*)activeCollection->Get("indexer1");
     Valve = (DoubleSolenoidItem*)activeCollection->Get("valve");
     Lime = (limelight*)activeCollection->Get("Limelight");
     ShootWheel = new Goal_ShooterYeet(activeCollection, 1000, 0.8, "Shooter0", "Shooter1");

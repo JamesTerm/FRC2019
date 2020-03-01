@@ -182,9 +182,11 @@ static void SlowStop(double left, double right, ActiveCollection *activeCollecti
 		double Result = PIDCalculae(P, I, D, TotalError, Error, PrevError, ChangeInTime);
 		PrevError = Error;
 		Result = Constrain(Scale(Result, 0, (Bias)), -MaxPower, MaxPower);
-		Result = BelowMaxRate(Result, LastResult, MaxChange);
-		if(Result == LastResult)
+		if(!BelowMaxRate(Result, LastResult, MaxChange))
+		{
 			Log::General("PIDCal went over max change, Current result = " + to_string(Result));
+			Result = LastResult;
+		}
 		LastResult = Result;
 		return Result;
 	}

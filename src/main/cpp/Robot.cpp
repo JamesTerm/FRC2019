@@ -152,7 +152,7 @@ void Robot::Teleop()
 void Robot::Test()
 {
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
-	Goal_ShooterBunch *RobotShooterUse = new Goal_ShooterBunch(m_activeCollection);
+	/*Goal_ShooterBunch *RobotShooterUse = new Goal_ShooterBunch(m_activeCollection);
 	RobotShooterUse->Activate();
 	while(RobotShooterUse->GetStatus() == Goal::eActive)
 	{
@@ -160,7 +160,15 @@ void Robot::Test()
 		Log::General("Balls I think I shot: " + to_string(RobotShooterUse->numShots));
 		Wait(0.01);
 	}
-	RobotShooterUse->Terminate();
+	RobotShooterUse->Terminate();*/
+	Goal_MoveForward* Turn = new Goal_MoveForward(m_activeCollection, 10, 0.8, 20);
+	Turn->Activate();
+	while(Turn->GetStatus() == Goal::eActive)
+	{
+		Turn->Process(0.01);
+		Wait(0.01);
+	}
+	Turn->Terminate();
 }
 
 void Robot::StartCompetition() {

@@ -139,7 +139,10 @@ void Config::LoadValues(xml_document &doc){
 
 	xml_node CS = root.child("ColorSensor");
 	if(CS){
-		REVColorSensorV3 *tmp = new REVColorSensorV3("Color");
+		if(CS.attribute("name"))
+			REVColorSensorV3 *tmp = new REVColorSensorV3(CS.attribute("name").as_string());
+		else
+			REVColorSensorV3 *tmp = new REVColorSensorV3("Color");
 		m_activeCollection->Add(tmp);
 		Log::General("Added Color Sensor");
 	}
@@ -1141,6 +1144,10 @@ TeleOpGoal Config::getTeleOpGoal(string goalString){
 	else if(goalString.compare("RelativeElevatorControl") == 0)
 	{
 		return TeleOpGoal::eRelativeElevatorControl;
+	}
+	else if(goalString.compare("ShooterGoal") == 0)
+	{
+		return TeleOpGoal::eShooter;
 	}
 	else{
 		Log::Error("Error registering teleop goal " + goalString + ". Skipping this control...");

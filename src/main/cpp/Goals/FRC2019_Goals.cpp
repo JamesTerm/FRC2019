@@ -600,8 +600,8 @@ void Goal_MoveForward::Activate()
 	navx -> Reset();
     m_Status = eActive;
     Moving = true;
-    Bias = (100000);
-    BiasE = ((PE * distTo)*(1.5 * (100000/distTo)));
+    Bias = (50);
+    BiasE = ((PE * distTo)*(1.5 * (5000/distTo)));
 }
 
 Goal::Goal_Status Goal_MoveForward::Process(double dTime)
@@ -610,33 +610,24 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
     {
        if(NumberAtTarget < 100 && TimePassed < TotalTime)
     	{
-            enc = enc0->Get();
+            enc = (enc0->Get());
             currentValue = (navx->GetAngle()); //get new navx angle
-    		//Angle PIDF
+    		//Angle PID
 	    	double Error = currentValue;
-            double Result = PIDCalculae(P, I, D, totalE, Error, PrevE, dTime);
-            PrevE = Error;
-
-            Result = (Constrain(Scale(Result, MinPower, (Bias)), -MaxPower, MaxPower));
-            Result = BelowMaxRate(Result, Pevpower, Limit);
-
-	    	
+            double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, 0.5, 0.1, Pevpower, Bias);
+            //Distance PID
     		double ErrorE = distTo - enc;
-            double ResultE = PIDCalculae(PE, IE, DE, totalEncoder, ErrorE, PrevEncoderTrack, dTime);
-            PrevEncoderTrack = ErrorE;
+            double ResultE = PIDCal(PE, IE, DE, totalEncoder, ErrorE, PrevEncoder, dTime, MaxPower, Limit, PrevEResult, BiasE) * (IsNegative ? 1 : -1);
+            
+            Log::General("Result Left: " + to_string(Result + ResultE) + ", Result Right: " + to_string(Result - ResultE) + ", MaxPower: " + to_string(MaxPower) + ", Encoder Pos: " + to_string(enc) + ", Encoder Target: " + to_string(distTo));
 
-            ResultE = (Constrain(Scale(Result, MinPower, (Bias)), -MaxPower, MaxPower)) * (IsNegative? -1 : 1);
-            ResultE = BelowMaxRate(ResultE, PrevEResult, Limit);
-	    	
-	    	SetNeoDrive(ResultE + Result, -ResultE - Result, m_activeCollection); //set drive to new powers
+            SetDrive(Result + ResultE, Result - ResultE, m_activeCollection);
+	    	//SetNeoDrive(Result + ResultE, Result - ResultE, m_activeCollection); //set drive to new powers
 
 	    	if(Inrange(enc, RealTarget, 50)){
                 Log::General("In range");
 		    	NumberAtTarget++;
 	    	}
-
-            Pevpower = Result;
-            PrevEResult = ResultE;
             TimePassed += dTime;
         }
         else if(TotalTime <= TimePassed)
@@ -653,7 +644,8 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
     }
     else
     {
-    	StopNeoDrive(m_activeCollection); //once finished, stop drive
+        StopDrive(m_activeCollection);
+    	//StopNeoDrive(m_activeCollection); //once finished, stop drive
     }
     if(!Done && Moving)
          return m_Status = eActive;
@@ -667,7 +659,8 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
 void Goal_MoveForward::Terminate()
 {
     m_Status = eCompleted;
-    StopNeoDrive(m_activeCollection);
+    StopDrive(m_activeCollection);
+    //StopNeoDrive(m_activeCollection);
     Log::General("Done Moving");
 }
 
@@ -680,7 +673,7 @@ void Goal_TurnPIDF::Activate()
 	navx -> Reset();
     m_Status = eActive;
     Moving = true;
-    Bias = ((P * RealTarget)*(1.5 * (100000/RealTarget)));//Tune
+    Bias = ((P * RealTarget)*(1.5 * (1000/RealTarget)));
 }
 
 Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
@@ -689,21 +682,16 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     {
        if(NumberAtTarget < 400 && TimePassed < TotalTime)
     	{
-    		currentValue = ABSValue(navx->GetAngle()); //get new navx angle
+    		currentValue = (navx->GetAngle()); //get new navx angle
     		//Angle PIDF
 	    	double Error = RealTarget - currentValue;
-            double Result = PIDCalculae(P, I, D, totalE, Error, PrevE, dTime);
-            PrevE = Error;
+            double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias) * (IsNegative ? -1 : 1);
 
-            Result = (Constrain(Scale(Result, MinPower, (Bias)), -MaxPower, MaxPower)) * (IsNegative? -1 : 1);
-            Result = BelowMaxRate(Result, Pevpower, Limit);
-
-	    	SetNeoDrive(Result, Result, m_activeCollection); //set drive to new powers
-
+            SetNeoDrive(Result, Result, m_activeCollection); //set drive to new powers
+            //SetDrive(Result, Result, m_activeCollection);
 	    	if(Inrange(currentValue, RealTarget, 10)){
 		    	NumberAtTarget++;
 	    	}
-            Pevpower = Result;
             TimePassed += dTime;
         }
         else if(TotalTime <= TimePassed)
@@ -720,6 +708,7 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     }
     else
     {
+        //StopDrive(m_activeCollection);
     	StopNeoDrive(m_activeCollection); //once finished, stop drive
     }
     if(!Done && Moving)
@@ -739,6 +728,7 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
 void Goal_TurnPIDF::Terminate()
 {
     m_Status = eCompleted;
+    //StopDrive(m_activeCollection);
     StopNeoDrive(m_activeCollection);
     Log::General("Done Moving");
 }
