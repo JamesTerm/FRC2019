@@ -8,7 +8,7 @@
     <!-- Comment on this particular config to be printed on the console -->
     <Comment comment="A" />
     <!-- Sets whether or not to initialize the NavX -->
-    <UseNavX value="false" />
+    <UseNavX value="true" />
     <!-- Sets whether or not to initialize the camera to send back to the driver station -->
     <limeLight/>
     <ColorSensor name = "Color"/>
@@ -70,7 +70,7 @@
         </Driver>
 		<Operator slot="1">
 			<AxisControls>
-                <shooting axis="3" deadZone=".05" reversed="false" powerMultiplier=".65" bindings="Shooter0, Shooter1" useOverdrive="false"/>
+                <shooting axis="3" deadZone=".05" reversed="false" powerMultiplier=".8" bindings="Shooter0, Shooter1" useOverdrive="false"/>
 			</AxisControls>
 			<ButtonControls>
                 <IndexControl button="6" powerMultiplier=".6" bindings="indexer0, indexer1" actOnRelease="true"/>
@@ -78,7 +78,7 @@
                 <movingfloorback button="1" powerMultiplier="-.4" bindings="Floor" actOnRelease="true"/>
 			</ButtonControls>
             <GoalButtonControls>
-                <ShooterGoal-0 button ="1" goal ="ShooterGoal" params ="0"/>
+                <ShooterGoal-0 button ="2" goal ="ShooterGoal" params ="0"/>
             </GoalButtonControls>
 			<ToggleButtonControls>
                 <Intake_wrist_control button="10" powerMultiplier="1.0" bindings="IntakeDeploy"/>

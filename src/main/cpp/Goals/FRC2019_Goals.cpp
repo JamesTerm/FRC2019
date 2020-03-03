@@ -885,15 +885,18 @@ void Goal_ShooterYeet::Terminate()
 
 void Goal_ShooterBunch::Activate()
 {
+    Log::Error("Start");
     ShootWheel->Activate();
     m_Status = eActive;
+    Lime->SetLED(0);
 }
 
 Goal::Goal_Status Goal_ShooterBunch::Process(double dTime)
 {
     if(numShots < 5 && m_Status == eActive)
     {
-        ShootWheel->m_Speed = 4000;
+        Log::Error("Running");
+        ShootWheel->m_Speed = 10000;
         ShootWheel->Process(dTime);
         if(ShootWheel->Reached)
         {
@@ -929,4 +932,6 @@ void Goal_ShooterBunch::Terminate()
 {
     ShootWheel->Terminate();
     m_Status = eInactive;
+    Lime->SetLED(1);
+    Log::Error("Stop");
 }

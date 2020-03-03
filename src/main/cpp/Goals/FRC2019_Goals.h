@@ -440,8 +440,8 @@ class Goal_MoveForward : public AtomicGoal
         distTo = (RealTarget);
         TotalTime = MaxTime;
         IsNegative = Dist < 0;
-        enc0 = activeCollection->GetEncoder("enc0");
-        //enc0 = (SparkMaxItem*)activeCollection->Get("left1");
+        //enc0 = activeCollection->GetEncoder("enc0");
+        enc0 = (SparkMaxItem*)activeCollection->Get("left1");
     }
 
     virtual void Activate();
@@ -456,8 +456,8 @@ class Goal_MoveForward : public AtomicGoal
 	    double MaxPower = 0;
 
       ActiveCollection *m_activeCollection;
-      EncoderItem* enc0;
-      //SparkMaxItem *enc0;
+      //EncoderItem* enc0;
+      SparkMaxItem *enc0;
       NavX *navx;
 
       bool IsNegative  = false;
@@ -663,6 +663,7 @@ public:
   double m_Speed;
   TalonSRXItem *ShooterMotor;
   TalonSRXItem *ShooterMotor2;
+  
   bool Reached = false;
 private:
   double m_MaxSpeed;
@@ -694,8 +695,8 @@ public:
     MovingFloor = (VictorSPXItem*)activeCollection->Get("Floor");
     IndexL = (VictorSPXItem*)activeCollection->Get("indexer0");
     IndexR = (VictorSPXItem*)activeCollection->Get("indexer1");
-    Valve = (DoubleSolenoidItem*)activeCollection->Get("valve");
-    Lime = (limelight*)activeCollection->Get("Limelight");
+    Valve = (DoubleSolenoidItem*)activeCollection->Get("Valve");
+    Lime = (limelight*)activeCollection->Get("LimeLight");
     ShootWheel = new Goal_ShooterYeet(activeCollection, 1000, 0.8, "Shooter0", "Shooter1");
     m_Status = eInactive;
   }
