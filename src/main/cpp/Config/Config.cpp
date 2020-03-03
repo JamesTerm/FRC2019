@@ -485,7 +485,7 @@ void Config::AllocateComponents(xml_node &root){
 xml_node SparkMax = robot.child("SparkMax");
 	if(SparkMax){
 		for(xml_node sparkMax = SparkMax.first_child(); sparkMax; sparkMax = sparkMax.next_sibling()){
-			Log::Error("ENTERED FOR");
+			
 			string name = sparkMax.name();
 			xml_attribute channel = sparkMax.attribute("channel");
 			//TODO: Fix this line after comp and fix robot configs

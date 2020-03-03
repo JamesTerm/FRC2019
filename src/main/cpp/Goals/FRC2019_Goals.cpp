@@ -621,13 +621,13 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
             
             Log::General("Result Left: " + to_string(Result + ResultE) + ", Result Right: " + to_string(Result - ResultE) + ", MaxPower: " + to_string(MaxPower) + ", Encoder Pos: " + to_string(enc) + ", Encoder Target: " + to_string(distTo));
 
-            SetDrive(Result + ResultE, Result - ResultE, m_activeCollection);
-	    	//SetNeoDrive(Result + ResultE, Result - ResultE, m_activeCollection); //set drive to new powers
+            //SetDrive(Result + ResultE, Result - ResultE, m_activeCollection);
+	    	SetNeoDrive(Result + ResultE, Result - ResultE, m_activeCollection); //set drive to new powers
 
 	    	if(Inrange(enc, RealTarget, 20))
             {
                 Log::General("In range");
-                StopDrive(m_activeCollection);
+                StopNeoDrive(m_activeCollection);
 		    	NumberAtTarget++;
 	    	}
             TimePassed += dTime;
@@ -646,8 +646,8 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
     }
     else
     {
-        StopDrive(m_activeCollection);
-    	//StopNeoDrive(m_activeCollection); //once finished, stop drive
+        //StopDrive(m_activeCollection);
+    	StopNeoDrive(m_activeCollection); //once finished, stop drive
     }
     if(!Done && Moving)
          return m_Status = eActive;
@@ -661,8 +661,8 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
 void Goal_MoveForward::Terminate()
 {
     m_Status = eCompleted;
-    StopDrive(m_activeCollection);
-    //StopNeoDrive(m_activeCollection);
+    //StopDrive(m_activeCollection);
+    StopNeoDrive(m_activeCollection);
     Log::General("Done Moving");
 }
 

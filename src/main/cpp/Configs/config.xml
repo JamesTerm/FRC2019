@@ -78,7 +78,7 @@
                 <movingfloorback button="1" powerMultiplier="-.4" bindings="Floor" actOnRelease="true"/>
 			</ButtonControls>
             <GoalButtonControls>
-                <ShooterGoal-0 button="1" goal="ShooterGoal" params="0"/>
+                <ShooterGoal-0 button ="1" goal ="ShooterGoal" params ="0"/>
             </GoalButtonControls>
 			<ToggleButtonControls>
                 <Intake_wrist_control button="10" powerMultiplier="1.0" bindings="IntakeDeploy"/>

@@ -26,6 +26,7 @@ using namespace Components;
 
 REVColorSensorV3::REVColorSensorV3(string _name)
 	: InputComponent(_name){
+    //Fix error
 	Color = new ColorSensorV3(frc::I2C::Port::kOnboard);
 	Name = _name;
     kBlueTarget = frc::Color(0.143, 0.427, 0.429);
