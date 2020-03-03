@@ -139,10 +139,11 @@ void Config::LoadValues(xml_document &doc){
 
 	xml_node CS = root.child("ColorSensor");
 	if(CS){
+		REVColorSensorV3 *tmp;
 		if(CS.attribute("name"))
-			REVColorSensorV3 *tmp = new REVColorSensorV3(CS.attribute("name").as_string());
+			tmp = new REVColorSensorV3(CS.attribute("name").as_string());
 		else
-			REVColorSensorV3 *tmp = new REVColorSensorV3("Color");
+			tmp = new REVColorSensorV3("Color");
 		m_activeCollection->Add(tmp);
 		Log::General("Added Color Sensor");
 	}

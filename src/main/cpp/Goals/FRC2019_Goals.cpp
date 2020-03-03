@@ -547,7 +547,7 @@ void Goal_REVColorSensorV3::Terminate()
 
 void Position::Activate()
 {
-    Enc->Reset();
+    Spinner->SetQuadraturePosition(0);
     Bias = 100;
     m_Status = eActive;
 }
@@ -558,10 +558,10 @@ Goal::Goal_Status Position::Process(double dTime)
         CurrentT += dTime;
         if(m_Status == eActive)
         {
-            double Error = Enc->Get() - m_Calculate;
+            double Error = Spinner->Get() - m_Calculate;
             Spinner->Set(Constrain(PIDCal(P, I, D, TotalE, Error, LastE, dTime, 0.2, 0.05, LastResult, Bias), 0, 0.2));
         }
-        if(Inrange(Enc->Get(), m_Calculate, 100))
+        if(Inrange(Spinner->Get(), m_Calculate, 100))
         {
             Spinner->Set(0);
             return m_Status = eCompleted;
@@ -574,7 +574,7 @@ Goal::Goal_Status Position::Process(double dTime)
     else
     {
         Spinner->Set(0);
-        if(Inrange(Enc->Get(), m_Calculate, 100))
+        if(Inrange(Spinner->Get(), m_Calculate, 100))
         {
             return m_Status = eCompleted;
         }
@@ -617,7 +617,7 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
             double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, 0.5, 0.1, Pevpower, Bias);
             //Distance PID
     		double ErrorE = distTo - enc;
-            double ResultE = PIDCal(PE, IE, DE, totalEncoder, ErrorE, PrevEncoder, dTime, MaxPower, Limit, PrevEResult, BiasE) * (IsNegative ? 1 : -1);
+            double ResultE = PIDCal(PE, IE, DE, totalEncoder, ErrorE, PrevEncoder, dTime, MaxPower, Limit, PrevEResult, BiasE, ErrorTo, distTo) * (IsNegative ? 1 : -1);
             
             Log::General("Result Left: " + to_string(Result + ResultE) + ", Result Right: " + to_string(Result - ResultE) + ", MaxPower: " + to_string(MaxPower) + ", Encoder Pos: " + to_string(enc) + ", Encoder Target: " + to_string(distTo));
 
@@ -685,7 +685,7 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     		currentValue = (navx->GetAngle()); //get new navx angle
     		//Angle PIDF
 	    	double Error = RealTarget - currentValue;
-            double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias) * (IsNegative ? -1 : 1);
+            double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias, ErrorTo, RealTarget) * (IsNegative ? -1 : 1);
 
             SetNeoDrive(Result, Result, m_activeCollection); //set drive to new powers
             //SetDrive(Result, Result, m_activeCollection);

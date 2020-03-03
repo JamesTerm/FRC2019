@@ -472,7 +472,7 @@ class Goal_MoveForward : public AtomicGoal
       double PrevEResult = 0;
 	    double MinPower = 0;
 	    double PrevE = 0, totalE = 0;
-	    double PrevEncoder = 0, totalEncoder = 0;
+	    double PrevEncoder = 0, totalEncoder = 0, ErrorTo = 0;
 	    double enc = 0;
       double currentValue = 0;
 	    double distTo = 0;
@@ -516,7 +516,7 @@ class Goal_TurnPIDF : public AtomicGoal
       double Bias = 0;
 	    double Limit = 0.1;
 	    double MinPower = 0;
-	    double PrevE = 0, totalE = 0;
+	    double PrevE = 0, totalE = 0, ErrorTo  = 0;
       double currentValue = 0;
 
 	    double NumberAtTarget = 0;

@@ -107,7 +107,7 @@ static void SlowStop(double left, double right, ActiveCollection *activeCollecti
 
 static char GetSelectedColor()
 {
-	if(frc::DriverStation::GetInstance().GetGameSpecificMessage().length > 0)
+	if(frc::DriverStation::GetInstance().GetGameSpecificMessage().length() > 0)
 	{
 		return frc::DriverStation::GetInstance().GetGameSpecificMessage()[0];
 	}
@@ -175,6 +175,13 @@ static char GetSelectedColor()
 		return ((P * Error) + (I * TotalError) + (D * ((Error - PrevE) / ChangeInTime)));
 	}
 
+	static double PIDCalculae(double P, double I, double D, double& TotalError, double Error, double PrevE, double ChangeInTime, double& ErrorToTotal, double TargetPos)
+	{
+		TotalError += Error * ChangeInTime;
+		ErrorToTotal += (Error - TargetPos) * ChangeInTime;
+		return ((P * Error) + (I * TotalError) + (D * ErrorToTotal));
+	}
+
 	static bool BelowMaxRate(double Val1, double Val2, double MaxRate)
 	{
 		return ABSValue(ABSValue(Val1) - ABSValue(Val2)) < MaxRate;
@@ -193,6 +200,20 @@ static char GetSelectedColor()
 	static double PIDCal(double P, double I, double D, double& TotalError, double Error, double& PrevError, double ChangeInTime, double MaxPower, double MaxChange, double& LastResult, double Bias)
 	{
 		double Result = PIDCalculae(P, I, D, TotalError, Error, PrevError, ChangeInTime);
+		PrevError = Error;
+		Result = Constrain(Scale(Result, 0, (Bias)), -MaxPower, MaxPower);
+		if(!BelowMaxRate(Result, LastResult, MaxChange))
+		{
+			Log::General("PIDCal went over max change, Current result = " + to_string(Result));
+			Result = LastResult;
+		}
+		LastResult = Result;
+		return Result;
+	}
+
+	static double PIDCal(double P, double I, double D, double& TotalError, double Error, double& PrevError, double ChangeInTime, double MaxPower, double MaxChange, double& LastResult, double Bias, double& ErrorTo, double TargetPos)
+	{
+		double Result = PIDCalculae(P, I, D, TotalError, Error, PrevError, ChangeInTime, ErrorTo, TargetPos);
 		PrevError = Error;
 		Result = Constrain(Scale(Result, 0, (Bias)), -MaxPower, MaxPower);
 		if(!BelowMaxRate(Result, LastResult, MaxChange))

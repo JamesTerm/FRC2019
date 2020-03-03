@@ -161,14 +161,15 @@ void Robot::Test()
 		Wait(0.01);
 	}
 	RobotShooterUse->Terminate();*/
-	Goal_MoveForward* Turn = new Goal_MoveForward(m_activeCollection, 10, 0.8, 20);
-	Turn->Activate();
-	while(Turn->GetStatus() == Goal::eActive)
+	Goal_MoveForward *RobotShooterUse = new Goal_MoveForward(m_activeCollection, 1000, 0.8, 20);
+	RobotShooterUse->Activate();
+	while(RobotShooterUse->GetStatus() == Goal::eActive)
 	{
-		Turn->Process(0.01);
+		RobotShooterUse->Process(0.01);
 		Wait(0.01);
 	}
-	Turn->Terminate();
+	RobotShooterUse->Terminate();
+	//Log::General("Color: " + to_string(((REVColorSensorV3*)m_activeCollection->Get("Color"))->Get()));
 }
 
 void Robot::StartCompetition() {
