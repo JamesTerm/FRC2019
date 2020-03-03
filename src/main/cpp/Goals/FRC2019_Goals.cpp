@@ -601,7 +601,7 @@ void Goal_MoveForward::Activate()
     m_Status = eActive;
     Moving = true;
     Bias = (50);
-    BiasE = ((PE * distTo)*(1.5 * (5000/distTo)));
+    BiasE = ((PE * distTo) * 10);
 }
 
 Goal::Goal_Status Goal_MoveForward::Process(double dTime)
@@ -624,8 +624,10 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
             SetDrive(Result + ResultE, Result - ResultE, m_activeCollection);
 	    	//SetNeoDrive(Result + ResultE, Result - ResultE, m_activeCollection); //set drive to new powers
 
-	    	if(Inrange(enc, RealTarget, 50)){
+	    	if(Inrange(enc, RealTarget, 20))
+            {
                 Log::General("In range");
+                StopDrive(m_activeCollection);
 		    	NumberAtTarget++;
 	    	}
             TimePassed += dTime;

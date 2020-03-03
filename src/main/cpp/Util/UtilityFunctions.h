@@ -175,11 +175,11 @@ static char GetSelectedColor()
 		return ((P * Error) + (I * TotalError) + (D * ((Error - PrevE) / ChangeInTime)));
 	}
 
-	static double PIDCalculae(double P, double I, double D, double& TotalError, double Error, double PrevE, double ChangeInTime, double& ErrorToTotal, double TargetPos)
+	static double PIDCalculae(double P, double I, double D, double& TotalError, double Error, double PrevE, double ChangeInTime, double& ErrorTo, double Target)
 	{
 		TotalError += Error * ChangeInTime;
-		ErrorToTotal += (Error - TargetPos) * ChangeInTime;
-		return ((P * Error) + (I * TotalError) + (D * ErrorToTotal));
+		ErrorTo += (Error - Target) * ChangeInTime;
+		return ((P * Error) + (I * TotalError) + (D * (ErrorTo)));
 	}
 
 	static bool BelowMaxRate(double Val1, double Val2, double MaxRate)
@@ -204,21 +204,21 @@ static char GetSelectedColor()
 		Result = Constrain(Scale(Result, 0, (Bias)), -MaxPower, MaxPower);
 		if(!BelowMaxRate(Result, LastResult, MaxChange))
 		{
-			Log::General("PIDCal went over max change, Current result = " + to_string(Result));
+			Log::General("PIDCal went over max change, Change = " + to_string(ABSValue(ABSValue(Result) - ABSValue(LastResult))));
 			Result = LastResult;
 		}
 		LastResult = Result;
 		return Result;
 	}
 
-	static double PIDCal(double P, double I, double D, double& TotalError, double Error, double& PrevError, double ChangeInTime, double MaxPower, double MaxChange, double& LastResult, double Bias, double& ErrorTo, double TargetPos)
+	static double PIDCal(double P, double I, double D, double& TotalError, double Error, double& PrevError, double ChangeInTime, double MaxPower, double MaxChange, double& LastResult, double Bias, double& ErrorTo, double Target)
 	{
-		double Result = PIDCalculae(P, I, D, TotalError, Error, PrevError, ChangeInTime, ErrorTo, TargetPos);
+		double Result = PIDCalculae(P, I, D, TotalError, Error, PrevError, ChangeInTime, ErrorTo, Target);
 		PrevError = Error;
 		Result = Constrain(Scale(Result, 0, (Bias)), -MaxPower, MaxPower);
 		if(!BelowMaxRate(Result, LastResult, MaxChange))
 		{
-			Log::General("PIDCal went over max change, Current result = " + to_string(Result));
+			Log::General("PIDCal went over max change, Change = " + to_string(ABSValue(ABSValue(Result) - ABSValue(LastResult))));
 			Result = LastResult;
 		}
 		LastResult = Result;

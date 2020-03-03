@@ -161,7 +161,7 @@ void Robot::Test()
 		Wait(0.01);
 	}
 	RobotShooterUse->Terminate();*/
-	Goal_MoveForward *RobotShooterUse = new Goal_MoveForward(m_activeCollection, 1000, 0.8, 20);
+	Goal_MoveForward *RobotShooterUse = new Goal_MoveForward(m_activeCollection, 1, 0.8, 20);
 	RobotShooterUse->Activate();
 	while(RobotShooterUse->GetStatus() == Goal::eActive)
 	{

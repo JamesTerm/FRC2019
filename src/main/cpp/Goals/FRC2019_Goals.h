@@ -464,9 +464,9 @@ class Goal_MoveForward : public AtomicGoal
       double P = 5; //PID constants
 	    double I = 0.5;
 	    double D = 0;
-	    double PE = 3.5; //PID constants
+	    double PE = 2; //PID constants
 	    double IE = 1;
-	    double DE = -1;
+	    double DE = 0.0005;
 	    double Limit = 0.5;
       double Pevpower = 0;
       double PrevEResult = 0;
