@@ -488,9 +488,7 @@ class Goal_TurnPIDF : public AtomicGoal
   public:
     Goal_TurnPIDF(ActiveCollection *activeCollection, double Angle, double MaxPowerOutput, double MaxTime)
     {
-        Log::Error("Entered Construct");
-        navx = m_activeCollection->GetNavX();
-        Log::Error("Got Nav");
+        navx = activeCollection->GetNavX();
         Offset = navx->GetNavXRoll();
         RealTarget = Angle;
         MaxPower = MaxPowerOutput;

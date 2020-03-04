@@ -688,7 +688,6 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
 	    	double Error = RealTarget - currentValue;
             double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias, ErrorTo, RealTarget) * (IsNegative ? 1 : -1);
 
-            Log::General("Angle: " + to_string(currentValue) + ", Error: " + to_string(Error));
             SetNeoDrive(Result, Result, m_activeCollection); //set drive to new powers
             //SetDrive(Result, Result, m_activeCollection);
 	    	if(Inrange(currentValue, RealTarget, 10)){
@@ -722,7 +721,7 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     }
     else
     {
-        Log::General("Time out");
+        Log::Error("Time out");
         return m_Status = eFailed;
     }
 }

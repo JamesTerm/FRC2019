@@ -27,7 +27,7 @@ using namespace Util;
 using namespace Configuration;
 using namespace Components;
 
-/**********************************DRIVE METHODS**********************/
+/**********************************DRIVE METHODS**********************///SetDrive()
 static void SetDrive(double left, double right, ActiveCollection *activeCollection) //set left and right motor power. range: [0,1]
 {
 	VictorSPXItem *left_0 = (VictorSPXItem*)activeCollection->Get("left_0"); //creates pointers to motor objects. This robot has three left motors and three right motors
@@ -65,6 +65,7 @@ static void StopDrive(ActiveCollection *activeCollection) //sets drive power to 
 {
 	SetDrive(0, 0, activeCollection);
 }
+
 static void DriveWithTimer(double left, double right, double sec, ActiveCollection *activeCollection) //drives for desired amount of time at specified power.
 {																									//this method may not drive straight
 	SetDrive(left, right, activeCollection);
@@ -253,6 +254,7 @@ static char GetSelectedColor()
  * 		ki to hopefully stop turning exactly at zero degrees.
  * 		derivative = current error - error prior. 
  */
+/*
 static double DriveForward(double dist, double power, ActiveCollection *activeCollection, double T)
 {
 
@@ -390,7 +392,7 @@ static void MoveForwardPIDF(double Dist, double MaxPowerInput, ActiveCollection 
 	Log::General("ENC 0: " + to_string(enc0->Get()));
 	Wait(0.5);
 	Log::General("Final Error: " + to_string(RealTarget));
-}
+}*/
 
 
 /*
@@ -469,7 +471,7 @@ static void MoveForwardPIDF(double Dist, double MaxPowerInput, ActiveCollection 
  * Uses a PID loop to turn the desired amount of degrees. PID input: Navx, output: motor power
  * What's a PID loop? Read the explanation above DriveForward()
  */
-	
+/*	
 static double Turn(double target, ActiveCollection *activeCollection, double T)
 {
 	bool IsNegative = (target < 0);
@@ -576,6 +578,6 @@ static void TurnPIDF(double Target, ActiveCollection *activeCollection){	//This 
 	if(ABSValue(RealTarget) > 1){
 		TurnPIDF(-RealTarget, activeCollection);
 	}
-}
+}*/
 
 #endif /* SRC_UTIL_UTILITYFUNCTIONS_H_ */

@@ -152,7 +152,7 @@ void Robot::Teleop()
 void Robot::Test()
 {
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
-	Goal_ShooterBunch *RobotShooterUse = new Goal_ShooterBunch(m_activeCollection);
+	/*Goal_ShooterBunch *RobotShooterUse = new Goal_ShooterBunch(m_activeCollection);
 	RobotShooterUse->Activate();
 	while(RobotShooterUse->GetStatus() == Goal::eActive)
 	{
@@ -160,7 +160,9 @@ void Robot::Test()
 		Log::General("Balls I think I shot: " + to_string(RobotShooterUse->numShots));
 		Wait(0.01);
 	}
-	RobotShooterUse->Terminate();*/
+	RobotShooterUse->Terminate();
+	*/
+	
 	Log::Error("Entered");
 	Goal_TurnPIDF *RobotShooterUse = new Goal_TurnPIDF(m_activeCollection, 90, 0.8, 20);
 	Log::Error("Constructed");

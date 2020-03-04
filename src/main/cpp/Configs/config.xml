@@ -20,7 +20,7 @@
         </VictorSP>
         <!-- Region for VictorSPX CAN Items -->
         <VictorSPX>
-            <Floor channel="6" reversed="true"/>
+            <Floor channel="6" reversed="false"/>
 		    <indexer0 channel="7" reversed="true"/>
             <indexer1 channel="8"/>
         </VictorSPX>
@@ -76,7 +76,7 @@
                 <IndexControl button="6" powerMultiplier=".6" bindings="indexer0, indexer1" actOnRelease="true"/>
                 <movingfloor button="3" powerMultiplier=".4" bindings="Floor" actOnRelease="true"/>
                 <movingfloorback button="1" powerMultiplier="-.4" bindings="Floor" actOnRelease="true"/>
-                <Intake_Control button="5" powerMultiplier=".6" bindings="Intake, Floor, indexer0, indexer1" actOnRelease="true"/>
+                <Intake_Control button="5" powerMultiplier=".75" bindings="Intake" actOnRelease="true"/>
 			</ButtonControls>
             <GoalButtonControls>
                 <ShooterGoal-0 button ="2" goal ="ShooterGoal" params ="0"/>
