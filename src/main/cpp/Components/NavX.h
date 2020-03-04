@@ -31,7 +31,7 @@ public:
 		double angle = GetAngle();
 		return angle;
 	}
-	double GetRoll(){
+	double GetNavXRoll(){
 		double Angle = GetRoll();
 		return Angle;
 	}

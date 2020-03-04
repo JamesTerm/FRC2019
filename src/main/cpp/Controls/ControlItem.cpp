@@ -37,7 +37,8 @@ auto onControllerValueChanged = [&](EventArgs* e) {
 			Goal* goalToAdd = SelectTeleOpGoal(args->GetSender()->m_activeCollection, goal, args->GetValue());
 			MultitaskGoal* teleOpMasterGoal = args->GetSender()->m_activeCollection->GetActiveGoal();
 			//Add in a timeout and ControllerOverride to the the Multitask Goal
-			teleOpMasterGoal->AddGoal(new Goal_TimeOut(args->GetSender()->m_activeCollection, 7));
+			//TODO: HOLY CRAP REENABLE THIS
+			//teleOpMasterGoal->AddGoal(new Goal_TimeOut(args->GetSender()->m_activeCollection, 7));
 			teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(args->GetSender()->m_activeCollection, 1));
 			teleOpMasterGoal->AddGoal(goalToAdd);
 			//Set and activate the TeleOp Goal

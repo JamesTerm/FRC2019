@@ -152,7 +152,7 @@ void Robot::Teleop()
 void Robot::Test()
 {
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
-	/*Goal_ShooterBunch *RobotShooterUse = new Goal_ShooterBunch(m_activeCollection);
+	Goal_ShooterBunch *RobotShooterUse = new Goal_ShooterBunch(m_activeCollection);
 	RobotShooterUse->Activate();
 	while(RobotShooterUse->GetStatus() == Goal::eActive)
 	{
@@ -160,15 +160,15 @@ void Robot::Test()
 		Log::General("Balls I think I shot: " + to_string(RobotShooterUse->numShots));
 		Wait(0.01);
 	}
-	RobotShooterUse->Terminate();*/
-	Goal_MoveForward *RobotShooterUse = new Goal_MoveForward(m_activeCollection, 1, 0.8, 20);
+	RobotShooterUse->Terminate();
+	/*Goal_MoveForward *RobotShooterUse = new Goal_MoveForward(m_activeCollection, 1, 0.8, 20);
 	RobotShooterUse->Activate();
 	while(RobotShooterUse->GetStatus() == Goal::eActive)
 	{
 		RobotShooterUse->Process(0.01);
 		Wait(0.01);
 	}
-	RobotShooterUse->Terminate();
+	RobotShooterUse->Terminate();*/
 	//Log::General("Color: " + to_string(((REVColorSensorV3*)m_activeCollection->Get("Color"))->Get()));
 }
 

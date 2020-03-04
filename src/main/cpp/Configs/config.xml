@@ -27,8 +27,8 @@
         <!-- Region for TalonSRX CAN Items -->>
         <TalonSRX>
             <Spinner channel="4" reversed="false" enableEncoder="true"/>
-			<Shooter0 channel="12" reversed="true" enableEncoder="true"/>
-			<Shooter1 channel="13" reversed="false" enableEncoder="true"/>
+			<Shooter1 channel="12" reversed="true" enableEncoder="false"/>
+			<Shooter0 channel="13" reversed="false" enableEncoder="true"/>
         </TalonSRX>
         <!-- Region for SparkMax CAN Items -->
 		<SparkMax>
@@ -64,7 +64,7 @@
 		        <rightDrive axis="5" deadZone="0.08" reversed="false" powerMultiplier="0.7" bindings="right0,right1" useOverdrive="false"/>
 		    </AxisControls>
             <ButtonControls>
-            </ButtonControls>
+            </ButtonControls>  
             <ToggleButtonControls>
             </ToggleButtonControls>
         </Driver>
@@ -76,12 +76,14 @@
                 <IndexControl button="6" powerMultiplier=".6" bindings="indexer0, indexer1" actOnRelease="true"/>
                 <movingfloor button="3" powerMultiplier=".4" bindings="Floor" actOnRelease="true"/>
                 <movingfloorback button="1" powerMultiplier="-.4" bindings="Floor" actOnRelease="true"/>
+                <Intake_Control button="5" powerMultiplier=".6" bindings="Intake, Floor, indexer0, indexer1" actOnRelease="true"/>
 			</ButtonControls>
             <GoalButtonControls>
                 <ShooterGoal-0 button ="2" goal ="ShooterGoal" params ="0"/>
             </GoalButtonControls>
 			<ToggleButtonControls>
                 <Intake_wrist_control button="10" powerMultiplier="1.0" bindings="IntakeDeploy"/>
+                <Shooter_Hood_control button="9" powerMultiplier="1.0" bindings="ShooterHood"/>
 			</ToggleButtonControls>
 		</Operator>
     </Controls>
