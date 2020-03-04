@@ -818,7 +818,6 @@ void Goal_ShooterYeet::Activate()
     m_Status = eActive;
     ShooterMotor->SetQuadraturePosition(0);
     lastPos = (ShooterMotor->GetQuadraturePosition());
-    Bias = ((P * m_Speed) * 10);
 }
 
 Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
@@ -826,8 +825,9 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
     if (m_Status == eActive)
     {
         //TODO: Have Limelight modify m_Speed depending on distance from target
-        Bias = ((P * m_Speed) *  10);
-        m_Speed = 10000;
+        m_Speed = 7000;
+        Bias = ((P * m_Speed) * 5);
+        
         if((ShooterMotor->GetQuadraturePosition()) != lastPos && !FirstRun)
         {
             double EncoderValue = (ShooterMotor->GetQuadraturePosition());
@@ -840,7 +840,7 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
                 Log::Error("Result : " + to_string(Scale(Result, SlowDownBias, (Bias))));
                 double SpedSpeed = (IsNegative? Constrain(Scale(Result, SlowDownBias, (Bias)), -m_MaxSpeed, 0) : Constrain(Scale(Result, SlowDownBias, (Bias)), 0, m_MaxSpeed));
                 Log::Error("Result Scaled: " + to_string(SpedSpeed));
-                Reached = Inrange(revSpeed, m_Speed, 200);
+                Reached = Inrange(revSpeed, m_Speed, 500);
 
                 SpedSpeed = (ABSValue(ABSValue(LastResult) - ABSValue(SpedSpeed)) < 0.5? SpedSpeed : LastResult);
 
@@ -898,11 +898,16 @@ Goal::Goal_Status Goal_ShooterBunch::Process(double dTime)
 {
     if(numShots < 5 && m_Status == eActive)
     {
-        Log::Error("Target speed: " + to_string(ShootWheel->ActualSpeedTar) + ", Rate: " + to_string(-ShootWheel->revSpeed));
+        Log::Error("Target speed: " + to_string(ShootWheel->m_Speed) + ", Rate: " + to_string(-ShootWheel->revSpeed));
+        Log::Error("Reached: " + to_string(ShootWheel->Reached) + ", Number Shots: " + to_string(numShots));
         ShootWheel->Process(dTime);
         if(ShootWheel->Reached)
         {
-            numShots++;
+            if(Increment)
+            {
+                numShots++;
+                Increment = false;
+            }
             //Valve->SetForward();
             MovingFloor->Set(Speed);
             IndexL->Set(Speed);
@@ -910,6 +915,7 @@ Goal::Goal_Status Goal_ShooterBunch::Process(double dTime)
         }
         else
         {
+            Increment = true;
             //Valve->SetReverse();
             MovingFloor->Set(0);
             IndexL->Set(0);
@@ -919,7 +925,6 @@ Goal::Goal_Status Goal_ShooterBunch::Process(double dTime)
     }
     else
     {
-        ShootWheel->m_Speed = 0;
         ShootWheel->ShooterMotor->Set(0);
         ShootWheel->ShooterMotor2->Set(0);
         //Valve->SetReverse();

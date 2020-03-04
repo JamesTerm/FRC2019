@@ -666,12 +666,11 @@ public:
 class Goal_ShooterYeet : public AtomicGoal
 {
 public:
-  Goal_ShooterYeet(ActiveCollection *activeCollection, double SpeedTar, double MaxSpeed, string MotorName1, string MotorName2)
+  Goal_ShooterYeet(ActiveCollection *activeCollection, double MaxSpeed, string MotorName1, string MotorName2)
   {
     m_activeCollection = activeCollection;
-    m_Speed = SpeedTar;
-    ActualSpeedTar = SpeedTar;
     m_MaxSpeed = MaxSpeed;
+    double SpeedTar = 1;
     m_Status = eInactive;
     ShooterMotor = (TalonSRXItem*)activeCollection->Get(MotorName1);
     ShooterMotor2 = (TalonSRXItem*)activeCollection->Get(MotorName2);
@@ -685,7 +684,7 @@ public:
   double m_Speed = 0;
   TalonSRXItem *ShooterMotor;
   TalonSRXItem *ShooterMotor2;
-  double ActualSpeedTar = 0;
+  //double ActualSpeedTar = 0;
   double revSpeed = 0;
   double SpedSpeed = 0;
   bool Reached = false;
@@ -696,7 +695,7 @@ private:
   
   double LastE = 0;
   double P = 5;
-  double I = 3;
+  double I = 50;
   double D = 0;
   double LastResult = 0;
   
@@ -721,7 +720,7 @@ public:
     IndexR = (VictorSPXItem*)activeCollection->Get("indexer1");
     Valve = (DoubleSolenoidItem*)activeCollection->Get("Valve");
     Lime = (limelight*)activeCollection->Get("LimeLight");
-    ShootWheel = new Goal_ShooterYeet(activeCollection, 10000, 0.8, "Shooter0", "Shooter1");
+    ShootWheel = new Goal_ShooterYeet(activeCollection, 0.8, "Shooter0", "Shooter1");
     m_Status = eInactive;
   }
 
@@ -732,6 +731,7 @@ public:
 
 private:
   double Speed = 0.1;
+  bool Increment = false;
   DoubleSolenoidItem* Valve;
   VictorSPXItem* MovingFloor;
   VictorSPXItem* IndexL;
