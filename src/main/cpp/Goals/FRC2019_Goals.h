@@ -434,7 +434,7 @@ class Goal_MoveForward : public AtomicGoal
   public:
     Goal_MoveForward(ActiveCollection *activeCollection, double Dist, double MaxPowerOutput, double MaxTime)
     {
-        RealTarget = Dist * 4096;
+        RealTarget = Dist * 5;
         MaxPower = MaxPowerOutput;
         m_activeCollection = activeCollection;
         distTo = (RealTarget);
@@ -488,6 +488,10 @@ class Goal_TurnPIDF : public AtomicGoal
   public:
     Goal_TurnPIDF(ActiveCollection *activeCollection, double Angle, double MaxPowerOutput, double MaxTime)
     {
+        Log::Error("Entered Construct");
+        navx = m_activeCollection->GetNavX();
+        Log::Error("Got Nav");
+        Offset = navx->GetNavXRoll();
         RealTarget = Angle;
         MaxPower = MaxPowerOutput;
         m_activeCollection = activeCollection;
@@ -499,7 +503,6 @@ class Goal_TurnPIDF : public AtomicGoal
     virtual void Terminate();
 
     private:
-
       double TimePassed = 0;
       double TotalTime = 0;
       double RealTarget = 0;
@@ -509,6 +512,7 @@ class Goal_TurnPIDF : public AtomicGoal
       ActiveCollection *m_activeCollection;
       NavX *navx;
 
+      float Offset = 0;
       bool IsNegative  = false;
       double P = 15; //PID constants
 	    double I = 5;

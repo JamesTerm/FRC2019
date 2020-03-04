@@ -610,21 +610,21 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
     {
        if(NumberAtTarget < 100 && TimePassed < TotalTime)
     	{
-            enc = (enc0->Get());
-            currentValue = (navx->GetAngle()); //get new navx angle
+            enc = (enc0->GetEncoderValue());
+            currentValue = (navx->GetNavXRoll()); //get new navx angle
     		//Angle PID
 	    	double Error = currentValue;
             double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, 0.5, 0.1, Pevpower, Bias);
             //Distance PID
     		double ErrorE = distTo - enc;
-            double ResultE = PIDCal(PE, IE, DE, totalEncoder, ErrorE, PrevEncoder, dTime, MaxPower, Limit, PrevEResult, BiasE, ErrorTo, distTo) * (IsNegative ? 1 : -1);
+            double ResultE = PIDCal(PE, IE, DE, totalEncoder, ErrorE, PrevEncoder, dTime, MaxPower, Limit, PrevEResult, BiasE, ErrorTo, distTo) * (IsNegative ? -1 : 1);
             
-            Log::General("Result Left: " + to_string(Result + ResultE) + ", Result Right: " + to_string(Result - ResultE) + ", MaxPower: " + to_string(MaxPower) + ", Encoder Pos: " + to_string(enc) + ", Encoder Target: " + to_string(distTo));
+            //Log::General("Result Left: " + to_string(Result + ResultE) + ", Result Right: " + to_string(Result - ResultE) + ", MaxPower: " + to_string(MaxPower) + ", Encoder Pos: " + to_string(enc) + ", Encoder Target: " + to_string(distTo));
 
             //SetDrive(Result + ResultE, Result - ResultE, m_activeCollection);
 	    	SetNeoDrive(Result + ResultE, Result - ResultE, m_activeCollection); //set drive to new powers
 
-	    	if(Inrange(enc, RealTarget, 20))
+	    	if(Inrange(enc, RealTarget, 0.05))
             {
                 Log::General("In range");
                 StopNeoDrive(m_activeCollection);
@@ -671,7 +671,6 @@ void Goal_MoveForward::Terminate()
 
 void Goal_TurnPIDF::Activate()
 {
-    navx = m_activeCollection->GetNavX();
 	navx -> Reset();
     m_Status = eActive;
     Moving = true;
@@ -684,11 +683,12 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     {
        if(NumberAtTarget < 400 && TimePassed < TotalTime)
     	{
-    		currentValue = (navx->GetNavXRoll()); //get new navx angle
+    		currentValue = (double)(navx->GetNavXRoll() - Offset); //get new navx angle
     		//Angle PIDF
 	    	double Error = RealTarget - currentValue;
-            double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias, ErrorTo, RealTarget) * (IsNegative ? -1 : 1);
+            double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias, ErrorTo, RealTarget) * (IsNegative ? 1 : -1);
 
+            Log::General("Angle: " + to_string(currentValue) + ", Error: " + to_string(Error));
             SetNeoDrive(Result, Result, m_activeCollection); //set drive to new powers
             //SetDrive(Result, Result, m_activeCollection);
 	    	if(Inrange(currentValue, RealTarget, 10)){
@@ -744,8 +744,18 @@ void AutoPath::Activate()
         if(Actions[i] != 0)
         {
             if(Actions[i] == 1)
-            {
+            {//Shoot
                 AddSubgoal(new Goal_ShooterBunch(m_activeCollection));
+            }
+            else if(Actions[i] == 2)
+            {
+                //intake
+                //((VictorSPItem*)(m_activeCollection->Get("Intake")))->Set(-1);
+            }
+            else if(Actions[i] == 3)
+            {
+                //stop intake
+                //((VictorSPItem*)(m_activeCollection->Get("Intake")))->Set(0);
             }
         }
     }
