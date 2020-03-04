@@ -161,14 +161,20 @@ void Robot::Test()
 		Wait(0.01);
 	}
 	RobotShooterUse->Terminate();*/
-	Goal_MoveForward *RobotShooterUse = new Goal_MoveForward(m_activeCollection, 1, 0.8, 20);
+	Log::Error("Entered");
+	Goal_TurnPIDF *RobotShooterUse = new Goal_TurnPIDF(m_activeCollection, 90, 0.8, 20);
+	Log::Error("Constructed");
 	RobotShooterUse->Activate();
+	Log::Error("Activated");
 	while(RobotShooterUse->GetStatus() == Goal::eActive)
 	{
+		Log::Error("YEETING");
 		RobotShooterUse->Process(0.01);
 		Wait(0.01);
 	}
+	Log::Error("Done");
 	RobotShooterUse->Terminate();
+	Log::Error("Terminated");
 	//Log::General("Color: " + to_string(((REVColorSensorV3*)m_activeCollection->Get("Color"))->Get()));
 }
 

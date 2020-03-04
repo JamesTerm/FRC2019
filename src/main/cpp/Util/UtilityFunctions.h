@@ -38,16 +38,16 @@ static void SetDrive(double left, double right, ActiveCollection *activeCollecti
 
 	left_0->Set(left); //sets left and right motors to desired power
 	left_1->Set(left);
-	right_0->Set(right);
-	right_1->Set(right);
+	right_0->Set(-right);
+	right_1->Set(-right);
 }
 
 static void SetNeoDrive(double left, double right, ActiveCollection *activeCollection)
 {
-	SparkMaxItem *left_0 = (SparkMaxItem*)activeCollection->Get("left1"); //creates pointers to motor objects. This robot has three left motors and three right motors
-	SparkMaxItem *left_1 = (SparkMaxItem*)activeCollection->Get("left2");
-	SparkMaxItem *right_0 = (SparkMaxItem*)activeCollection->Get("right1");
-	SparkMaxItem *right_1 = (SparkMaxItem*)activeCollection->Get("right2");
+	SparkMaxItem *left_0 = (SparkMaxItem*)activeCollection->Get("left0"); //creates pointers to motor objects. This robot has three left motors and three right motors
+	SparkMaxItem *left_1 = (SparkMaxItem*)activeCollection->Get("left1");
+	SparkMaxItem *right_0 = (SparkMaxItem*)activeCollection->Get("right0");
+	SparkMaxItem *right_1 = (SparkMaxItem*)activeCollection->Get("right1");
 	
 
 	left_0->Set(left); //sets left and right motors to desired power

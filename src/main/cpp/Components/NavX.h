@@ -31,8 +31,11 @@ public:
 		double angle = GetAngle();
 		return angle;
 	}
-	double GetRoll(){
-		double Angle = GetRoll();
+	float GetNavXRoll(){
+		Log::Error("BEFORE");
+		float Angle = GetRoll();
+		Log::Error("AFTER");
+
 		return Angle;
 	}
 };
