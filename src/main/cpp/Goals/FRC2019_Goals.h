@@ -686,10 +686,11 @@ public:
   double m_Speed = 0;
   TalonSRXItem *ShooterMotor;
   TalonSRXItem *ShooterMotor2;
-  //double ActualSpeedTar = 0;
   double revSpeed = 0;
   double SpedSpeed = 0;
   bool Reached = false;
+  bool Shoot_DA_BOOL = false;
+  
 private:
   double m_MaxSpeed;
   
@@ -734,6 +735,8 @@ public:
 private:
   double Speed = 0.1;
   bool Increment = false;
+  bool Prep = false;
+  bool Shoot = false;
   DoubleSolenoidItem* Valve;
   VictorSPXItem* MovingFloor;
   VictorSPXItem* IndexL;

@@ -71,19 +71,19 @@
 		<Operator slot="1">
 			<AxisControls>
                 <shooting axis="3" deadZone=".05" reversed="false" powerMultiplier=".8" bindings="Shooter0, Shooter1" useOverdrive="false"/>
-			</AxisControls>
+                <Intake_Control axis="1" deadZone=".05" reversed="false" powerMultiplier=".6" bindings="Intake" useOverdrive="false"/>
+            </AxisControls>
 			<ButtonControls>
                 <IndexControl button="6" powerMultiplier=".6" bindings="indexer0, indexer1" actOnRelease="true"/>
                 <movingfloor button="3" powerMultiplier=".4" bindings="Floor" actOnRelease="true"/>
                 <movingfloorback button="1" powerMultiplier="-.4" bindings="Floor" actOnRelease="true"/>
-                <Intake_Control button="5" powerMultiplier=".75" bindings="Intake" actOnRelease="true"/>
 			</ButtonControls>
             <GoalButtonControls>
                 <ShooterGoal-0 button ="2" goal ="ShooterGoal" params ="0"/>
             </GoalButtonControls>
 			<ToggleButtonControls>
-                <Intake_wrist_control button="10" powerMultiplier="1.0" bindings="IntakeDeploy"/>
-                <Shooter_Hood_control button="9" powerMultiplier="1.0" bindings="ShooterHood"/>
+                <Intake_wrist_control button="9" powerMultiplier="1.0" bindings="IntakeDeploy"/>
+                <Shooter_Hood_control button="10" powerMultiplier="1.0" bindings="ShooterHood"/>
 			</ToggleButtonControls>
 		</Operator>
     </Controls>

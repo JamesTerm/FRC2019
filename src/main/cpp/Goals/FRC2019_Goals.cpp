@@ -850,6 +850,7 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
                 double SpedSpeed = (IsNegative? Constrain(Scale(Result, SlowDownBias, (Bias)), -m_MaxSpeed, 0) : Constrain(Scale(Result, SlowDownBias, (Bias)), 0, m_MaxSpeed));
                 Log::Error("Result Scaled: " + to_string(SpedSpeed));
                 Reached = Inrange(revSpeed, m_Speed, 500);
+                Shoot_DA_BOOL = Inrange(revSpeed, m_Speed, 50);
 
                 SpedSpeed = (ABSValue(ABSValue(LastResult) - ABSValue(SpedSpeed)) < 0.5? SpedSpeed : LastResult);
 
@@ -871,11 +872,6 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
             ShooterMotor2 ->Set((IsNegative? -0.1 : 0.1));
             LastResult = 0.1;
             FirstRun = false;
-        }
-        else
-        {
-            /*Log::General("Idle Speed - Real Power output: " + to_string(ShooterMotor->Get()) + ", Encoder Pos: " + to_string(ShooterMotor->GetQuadraturePosition()));
-            Log::General("");*/    
         }
 
         return eActive;
@@ -912,31 +908,45 @@ Goal::Goal_Status Goal_ShooterBunch::Process(double dTime)
         ShootWheel->Process(dTime);
         if(ShootWheel->Reached)
         {
-            if(Increment)
+            Prep = true;
+            if(ShootWheel->Shoot_DA_BOOL)
             {
-                numShots++;
-                Increment = false;
+                Shoot = true;
             }
-            //Valve->SetForward();
+        }
+        if(Prep)
+        {
             MovingFloor->Set(Speed);
             IndexL->Set(Speed);
             IndexR->Set(Speed);
+            if(Shoot)
+            {
+                if(Increment)
+                {
+                    numShots++;
+                    Increment = false;
+                }
+                Valve->SetForward();
+                Prep = false;
+                Shoot = false;
+            }
         }
         else
         {
-            Increment = true;
-            //Valve->SetReverse();
             MovingFloor->Set(0);
             IndexL->Set(0);
             IndexR->Set(0);
+            Valve->SetReverse();
+            Increment = true;
         }
+        
         return m_Status = eActive;
     }
     else
     {
         ShootWheel->ShooterMotor->Set(0);
         ShootWheel->ShooterMotor2->Set(0);
-        //Valve->SetReverse();
+        Valve->SetReverse();
         MovingFloor->Set(0);
         IndexL->Set(0);
         IndexR->Set(0);
