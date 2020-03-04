@@ -394,7 +394,6 @@ void Config::LoadValues(xml_document &doc){
 	{
 		limelight* lime = new limelight();
 		m_activeCollection->Add(lime);
-		Log::Error("Got Lime");
 	}
 	else
 	{

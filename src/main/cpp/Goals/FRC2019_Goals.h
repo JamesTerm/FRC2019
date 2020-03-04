@@ -621,6 +621,28 @@ private:
   double MaxT;
 };
 
+class Goal_Intake : public AtomicGoal
+{
+  public:
+    Goal_Intake(ActiveCollection *activeCollection, double In_Speed)
+    {
+      IntakeMotor = (VictorSPItem*)activeCollection->Get("Intake");
+      Floor = (VictorSPXItem*)activeCollection->Get("Floor");
+      IndexL = (VictorSPXItem*)activeCollection->Get("indexer0");
+      IndexR = (VictorSPXItem*)activeCollection->Get("indexer1");
+      Sped = In_Speed;
+     }
+     virtual Goal::Goal_Status Process(double dTime);
+     virtual void Terminate();
+     virtual void Activate();
+  private:
+    double Sped;
+    VictorSPItem* IntakeMotor;
+    VictorSPXItem* Floor;
+    VictorSPXItem* IndexL;
+    VictorSPXItem* IndexR;
+};
+
 class Goal_REVColorSensorV3 : public AtomicGoal
 {
 public:
@@ -664,22 +686,24 @@ public:
   virtual void Activate();
   virtual Goal::Goal_Status Process(double dTime);
   virtual void Terminate();
-  double m_Speed;
+  double m_Speed = 0;
   TalonSRXItem *ShooterMotor;
   TalonSRXItem *ShooterMotor2;
-  
+  double ActualSpeedTar = 0;
+  double revSpeed = 0;
+  double SpedSpeed = 0;
   bool Reached = false;
 private:
   double m_MaxSpeed;
-  double ActualSpeedTar = 0;
+  
   double Bias = 10;
-  double revSpeed = 0;
+  
   double LastE = 0;
   double P = 5;
-  double I = 20;
+  double I = 3;
   double D = 0;
   double LastResult = 0;
-  double SpedSpeed = 0;
+  
   double total = 0;
   double PrevE = 0;
   bool IsNegative;
@@ -701,7 +725,7 @@ public:
     IndexR = (VictorSPXItem*)activeCollection->Get("indexer1");
     Valve = (DoubleSolenoidItem*)activeCollection->Get("Valve");
     Lime = (limelight*)activeCollection->Get("LimeLight");
-    ShootWheel = new Goal_ShooterYeet(activeCollection, 1000, 0.8, "Shooter0", "Shooter1");
+    ShootWheel = new Goal_ShooterYeet(activeCollection, 10000, 0.8, "Shooter0", "Shooter1");
     m_Status = eInactive;
   }
 

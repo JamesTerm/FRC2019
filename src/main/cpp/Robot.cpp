@@ -152,7 +152,7 @@ void Robot::Teleop()
 void Robot::Test()
 {
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
-	/*Goal_ShooterBunch *RobotShooterUse = new Goal_ShooterBunch(m_activeCollection);
+	Goal_ShooterBunch *RobotShooterUse = new Goal_ShooterBunch(m_activeCollection);
 	RobotShooterUse->Activate();
 	while(RobotShooterUse->GetStatus() == Goal::eActive)
 	{
