@@ -611,7 +611,7 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
        if(NumberAtTarget < 100 && TimePassed < TotalTime)
     	{
             enc = (enc0->GetEncoderValue());
-            currentValue = (navx->GetNavXRoll()); //get new navx angle
+            currentValue = (navx->GetNavXAngle()); //get new navx angle
     		//Angle PID
 	    	double Error = currentValue;
             double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, 0.5, 0.1, Pevpower, Bias);
@@ -672,7 +672,6 @@ void Goal_MoveForward::Terminate()
 void Goal_TurnPIDF::Activate()
 {
     navx->Reset();
-    Offset = navx->GetNavXRoll();
     m_Status = eActive;
     Moving = true;
     Bias = ((P * RealTarget)*(1.5 * (1000/RealTarget)));
@@ -684,7 +683,7 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     {
        if(NumberAtTarget < 400 && TimePassed < TotalTime)
     	{
-    		currentValue = (double)ABSValue(navx->GetNavXRoll()); //get new navx angle
+    		currentValue = (double)ABSValue(navx->GetNavXAngle()); //get new navx angle
     		//Angle PIDF
 	    	double Error = RealTarget - currentValue;
             double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias, ErrorTo, RealTarget) * (IsNegative ? 1 : -1);

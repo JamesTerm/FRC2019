@@ -31,10 +31,6 @@ public:
 		double angle = GetAngle();
 		return angle;
 	}
-	float GetNavXRoll(){
-		float Angle = GetYaw();
-		return Angle;
-	}
 };
 	
 
