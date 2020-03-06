@@ -671,7 +671,8 @@ void Goal_MoveForward::Terminate()
 
 void Goal_TurnPIDF::Activate()
 {
-	navx -> Reset();
+    navx->Reset();
+    Offset = navx->GetNavXRoll();
     m_Status = eActive;
     Moving = true;
     Bias = ((P * RealTarget)*(1.5 * (1000/RealTarget)));
@@ -683,14 +684,14 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     {
        if(NumberAtTarget < 400 && TimePassed < TotalTime)
     	{
-    		currentValue = (double)(navx->GetNavXRoll() - Offset); //get new navx angle
+    		currentValue = (double)ABSValue(navx->GetNavXRoll()); //get new navx angle
     		//Angle PIDF
 	    	double Error = RealTarget - currentValue;
             double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias, ErrorTo, RealTarget) * (IsNegative ? 1 : -1);
-
+            Log::General("Error: " + to_string(Error) + ", Current Angle: " + to_string(currentValue) + ", Start Angle: " + to_string(Offset));
             SetNeoDrive(Result, Result, m_activeCollection); //set drive to new powers
             //SetDrive(Result, Result, m_activeCollection);
-	    	if(Inrange(currentValue, RealTarget, 10)){
+	    	if(Inrange(currentValue, RealTarget, 5)){
 		    	NumberAtTarget++;
 	    	}
             TimePassed += dTime;

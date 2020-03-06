@@ -130,6 +130,7 @@ void Robot::Teleop()
 	//We can test teleop auton goals here a bit later
 	//PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
 	limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
+	m_activeCollection->GetNavX()->Reset();
 
 	while (IsOperatorControl() && !IsDisabled())
 	{
@@ -142,6 +143,7 @@ void Robot::Teleop()
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
 		m_drive->Update(DeltaTime);
+		Log::General("Roll: " + to_string(m_activeCollection->GetNavX()->GetRoll()) + ", Pitch: " + to_string(m_activeCollection->GetNavX()->GetPitch()) + ", Yaw: " + to_string(m_activeCollection->GetNavX()->GetYaw()));
 		Wait(0.010); 
 	}
 }
@@ -163,21 +165,14 @@ void Robot::Test()
 	RobotShooterUse->Terminate();
 	*/
 	
-	Log::Error("Entered");
 	Goal_TurnPIDF *RobotShooterUse = new Goal_TurnPIDF(m_activeCollection, 90, 0.8, 20);
-	Log::Error("Constructed");
 	RobotShooterUse->Activate();
-	Log::Error("Activated");
 	while(RobotShooterUse->GetStatus() == Goal::eActive)
 	{
-		Log::Error("YEETING");
 		RobotShooterUse->Process(0.01);
 		Wait(0.01);
 	}
-	Log::Error("Done");
 	RobotShooterUse->Terminate();
-	Log::Error("Terminated");
-	//Log::General("Color: " + to_string(((REVColorSensorV3*)m_activeCollection->Get("Color"))->Get()));
 }
 
 void Robot::StartCompetition() {

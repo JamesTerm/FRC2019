@@ -34,7 +34,7 @@ class limelight : public NativeComponent //Inheritance or something
     public:
         limelight() : NativeComponent("LimeLight")
         {
-            SetLED();
+            SetLED(1);
             SetCamMode();
             SetPipeline();
         } 

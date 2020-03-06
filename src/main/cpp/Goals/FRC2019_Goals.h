@@ -489,8 +489,7 @@ class Goal_TurnPIDF : public AtomicGoal
     Goal_TurnPIDF(ActiveCollection *activeCollection, double Angle, double MaxPowerOutput, double MaxTime)
     {
         navx = activeCollection->GetNavX();
-        Offset = navx->GetNavXRoll();
-        RealTarget = Angle;
+        RealTarget = ABSValue(Angle);
         MaxPower = MaxPowerOutput;
         m_activeCollection = activeCollection;
         TotalTime = MaxTime;
@@ -513,8 +512,8 @@ class Goal_TurnPIDF : public AtomicGoal
       float Offset = 0;
       bool IsNegative  = false;
       double P = 15; //PID constants
-	    double I = 5;
-	    double D = 0.1;
+	    double I = 15;
+	    double D = 0;
       double Bias = 0;
 	    double Limit = 0.1;
 	    double MinPower = 0;

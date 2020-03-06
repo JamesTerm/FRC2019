@@ -32,10 +32,7 @@ public:
 		return angle;
 	}
 	float GetNavXRoll(){
-		Log::Error("BEFORE");
-		float Angle = GetRoll();
-		Log::Error("AFTER");
-
+		float Angle = GetYaw();
 		return Angle;
 	}
 };
