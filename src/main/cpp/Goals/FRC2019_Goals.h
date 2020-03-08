@@ -512,8 +512,8 @@ class Goal_TurnPIDF : public AtomicGoal
       float Offset = 0;
       bool IsNegative  = false;
       double P = 15; //PID constants
-	    double I = 15;
-	    double D = 0;
+	    double I = 5;
+	    double D = 0.1;
       double Bias = 0;
 	    double Limit = 0.1;
 	    double MinPower = 0;
@@ -621,23 +621,27 @@ private:
 class Goal_Intake : public AtomicGoal
 {
   public:
-    Goal_Intake(ActiveCollection *activeCollection, double In_Speed)
+    Goal_Intake(ActiveCollection *activeCollection, double In_Speed, bool Deploy)
     {
       IntakeMotor = (VictorSPItem*)activeCollection->Get("Intake");
       Floor = (VictorSPXItem*)activeCollection->Get("Floor");
       IndexL = (VictorSPXItem*)activeCollection->Get("indexer0");
       IndexR = (VictorSPXItem*)activeCollection->Get("indexer1");
+      Wrist = (DoubleSolenoidItem*)activeCollection->Get("IntakeDeploy");
       Sped = In_Speed;
+      DeployIntake = Deploy;
      }
      virtual Goal::Goal_Status Process(double dTime);
      virtual void Terminate();
      virtual void Activate();
   private:
+    bool DeployIntake = false;
     double Sped;
     VictorSPItem* IntakeMotor;
     VictorSPXItem* Floor;
     VictorSPXItem* IndexL;
     VictorSPXItem* IndexR;
+    DoubleSolenoidItem* Wrist;
 };
 
 class Goal_REVColorSensorV3 : public AtomicGoal
@@ -732,6 +736,7 @@ public:
   int numShots = 0;
 
 private:
+  double CurrentTime;
   double Speed = 0.1;
   bool Increment = false;
   bool Prep = false;

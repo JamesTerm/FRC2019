@@ -591,6 +591,31 @@ void Position:: Terminate()
     m_Status = eInactive;
 }
 
+/**************************Goal_Intake****************************/
+
+void Goal_Intake::Activate()
+{
+    if(DeployIntake)
+        Wrist->SetForward();
+    else
+        Wrist->SetReverse();
+    IntakeMotor->Set(Sped);
+    Floor->Set(Sped);
+    IndexL->Set(Sped);
+    IndexR->Set(Sped);    
+    m_Status = eActive;
+}
+
+Goal::Goal_Status Goal_Intake::Process(double dTime)
+{
+    return m_Status = eCompleted;
+}
+
+void Goal_Intake::Terminate()
+{
+    m_Status = eInactive;
+}
+
 /************************Goal_MoveForward*************************/
 
 void Goal_MoveForward::Activate()
@@ -675,6 +700,7 @@ void Goal_TurnPIDF::Activate()
     m_Status = eActive;
     Moving = true;
     Bias = ((P * RealTarget)*(1.5 * (1000/RealTarget)));
+    FrameworkCommunication::GetInstance().SendData("Entered", 1);
 }
 
 Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
@@ -734,6 +760,8 @@ void Goal_TurnPIDF::Terminate()
     Log::General("Done Moving");
 }
 
+
+/*********************AutoPath-Goal******************/
 void AutoPath::Activate()
 {
     for(int i = 0; i < sizeof(Actions) / sizeof(*Actions); i++)
@@ -749,12 +777,17 @@ void AutoPath::Activate()
             else if(Actions[i] == 2)
             {
                 //intake
-                //((VictorSPItem*)(m_activeCollection->Get("Intake")))->Set(-1);
+                AddSubgoal(new Goal_Intake(m_activeCollection, 0.2, true));
             }
             else if(Actions[i] == 3)
             {
-                //stop intake
-                //((VictorSPItem*)(m_activeCollection->Get("Intake")))->Set(0);
+                //stop intake and bring in intake
+                AddSubgoal(new Goal_Intake(m_activeCollection, 0, false));
+            }
+            else if(Actions[i] == 4)
+            {
+                //stop intake and NOT bring in intake
+                AddSubgoal(new Goal_Intake(m_activeCollection, 0, true));
             }
         }
     }
@@ -896,12 +929,12 @@ void Goal_ShooterBunch::Activate()
     Log::Error("Start");
     ShootWheel->Activate();
     m_Status = eActive;
-    //Lime->SetLED(1);
+    Lime->SetLED(0);
 }
 //TODO: Controller Overide
 Goal::Goal_Status Goal_ShooterBunch::Process(double dTime)
 {
-    if(numShots < 5 && m_Status == eActive)
+    if(numShots < 5 && m_Status == eActive && CurrentTime < 5)
     {
         Log::Error("Target speed: " + to_string(ShootWheel->m_Speed) + ", Rate: " + to_string(-ShootWheel->revSpeed));
         Log::Error("Reached: " + to_string(ShootWheel->Reached) + ", Number Shots: " + to_string(numShots));
@@ -939,7 +972,7 @@ Goal::Goal_Status Goal_ShooterBunch::Process(double dTime)
             Valve->SetReverse();
             Increment = true;
         }
-        
+        CurrentTime += dTime;
         return m_Status = eActive;
     }
     else
@@ -958,6 +991,6 @@ void Goal_ShooterBunch::Terminate()
 {
     ShootWheel->Terminate();
     m_Status = eInactive;
-    //Lime->SetLED(0);
+    Lime->SetLED(1);
     Log::Error("Stop");
 }
