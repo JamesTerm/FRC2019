@@ -136,6 +136,6 @@ static Goal* SelectTeleOpGoal(ActiveCollection* activeCollection, TeleOpGoal goa
     else if(goalSelected == TeleOpGoal::eRelativeElevatorControl)
         return new Goal_RelativeElevatorControl(activeCollection, params);
     else if(goalSelected == TeleOpGoal::eShooter)
-        return new Goal_ShooterBunch(activeCollection);
+        return new Goal_ShooterBunch(activeCollection, params);
 	return new Goal_TimeOut(activeCollection, params);
 }

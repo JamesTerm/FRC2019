@@ -76,7 +76,7 @@ class AtomicGoal : public Goal
 
 class CompositeGoal : public Goal
 {
-	protected:
+	public:
 	virtual void Activate();
 	virtual Goal_Status Process(double dTime);
 	virtual void Terminate();

@@ -23,8 +23,10 @@
             <Floor channel="6" reversed="false"/>
 		    <indexer0 channel="7" reversed="true"/>
             <indexer1 channel="8"/>
+            <winch0 channel="14" reversed="true"/>
+            <winch1 channel="15" reversed="true"/>
         </VictorSPX>
-        <!-- Region for TalonSRX CAN Items -->>
+        <!-- Region for TalonSRX CAN Items -->
         <TalonSRX>
             <Spinner channel="4" reversed="false" enableEncoder="true"/>
 			<Shooter1 channel="12" reversed="true" enableEncoder="false"/>
@@ -71,14 +73,16 @@
         </Driver>
 		<Operator slot="1">
 			<AxisControls>
-                <shooting axis="3" deadZone=".05" reversed="false" powerMultiplier=".8" bindings="Shooter0, Shooter1" useOverdrive="false"/>
+                <shooting axis="3" deadZone=".05" reversed="false" powerMultiplier=".68" bindings="Shooter0, Shooter1" useOverdrive="false"/>
                 <Intake_Control axis="1" deadZone=".05" reversed="false" powerMultiplier="0.7" bindings="Intake" useOverdrive="false"/>
             </AxisControls>
 			<ButtonControls>
                 <IndexControl button="6" powerMultiplier=".6" bindings="indexer0, indexer1" actOnRelease="true"/>
                 <IntakeControl button="5" powerMultiplier="0.85" isRamp = "true" bindings="Intake" actOnRelease="true"/>
                 <!--<movingfloor button="3" powerMultiplier=".4" bindings="Floor" actOnRelease="true"/>-->
-                <movingfloorback button="1" powerMultiplier="-.4" bindings="Floor" actOnRelease="true"/>
+                <!-- <shooting button = "1" powerMultiplier = "1" isRamp = "true" bindings = "Shooter0, Shooter1" actOnRelease = "true"/> -->
+                <winch button="3" powerMultiplier=".5" bindings="winch0,winch1" actOnRelease="true"/>
+                <movingfloorback button="1" powerMultiplier="-.6" bindings="Floor" actOnRelease="true"/>
 			</ButtonControls>
             <GoalButtonControls>
                 <ShooterGoal-0 button ="2" goal ="ShooterGoal" params ="0"/>

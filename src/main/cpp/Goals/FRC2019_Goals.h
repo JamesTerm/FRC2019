@@ -420,6 +420,11 @@ class AutoPath : public CompositeGoal
         else if (Angle[i] > 200)
           Angle[i] = GetMin(Angle[i], Angle[i] - 360);
       }
+      for(int i = 0; i < 10; i++)
+        {
+          Log::General(to_string(Angle[i]) + "Degrees");      
+          Log::General(to_string(Dist[i]) + "Feet");
+        }
     }
     virtual void Activate();
   private:
@@ -442,6 +447,7 @@ class Goal_MoveForward : public AtomicGoal
         IsNegative = Dist < 0;
         //enc0 = activeCollection->GetEncoder("enc0");
         enc0 = (SparkMaxItem*)activeCollection->Get("left1");
+        m_Status = eInactive;
     }
 
     virtual void Activate();
@@ -465,8 +471,8 @@ class Goal_MoveForward : public AtomicGoal
 	    double I = 0.5;
 	    double D = 0;
 	    double PE = 2; //PID constants
-	    double IE = 1;
-	    double DE = 0.0005;
+	    double IE = 0.8;
+	    double DE = 0.05;
 	    double Limit = 0.5;
       double Pevpower = 0;
       double PrevEResult = 0;
@@ -493,6 +499,7 @@ class Goal_TurnPIDF : public AtomicGoal
         MaxPower = MaxPowerOutput;
         m_activeCollection = activeCollection;
         TotalTime = MaxTime;
+        m_Status = eInactive;
     }
 
     virtual void Activate();
@@ -512,10 +519,10 @@ class Goal_TurnPIDF : public AtomicGoal
       float Offset = 0;
       bool IsNegative  = false;
       double P = 15; //PID constants
-	    double I = 5;
-	    double D = 0.1;
+	    double I = 15;
+	    double D = 1;
       double Bias = 0;
-	    double Limit = 0.1;
+	    double Limit = 0.35;
 	    double MinPower = 0;
 	    double PrevE = 0, totalE = 0, ErrorTo  = 0;
       double currentValue = 0;
@@ -599,6 +606,7 @@ public:
     m_Status = eInactive;
     m_Calculate = Target * 100;
     MaxT = MaxTime;
+    m_Status = eInactive;
   }
   virtual Goal::Goal_Status Process(double dTIme);
   virtual void Terminate();
@@ -630,6 +638,7 @@ class Goal_Intake : public AtomicGoal
       Wrist = (DoubleSolenoidItem*)activeCollection->Get("IntakeDeploy");
       Sped = In_Speed;
       DeployIntake = Deploy;
+      m_Status = eInactive;
      }
      virtual Goal::Goal_Status Process(double dTime);
      virtual void Terminate();
@@ -676,10 +685,10 @@ public:
     m_activeCollection = activeCollection;
     m_MaxSpeed = MaxSpeed;
     double SpeedTar = 1;
-    m_Status = eInactive;
     ShooterMotor = (TalonSRXItem*)activeCollection->Get(MotorName1);
     ShooterMotor2 = (TalonSRXItem*)activeCollection->Get(MotorName2);
     IsNegative = SpeedTar < 0;
+    m_Status = eInactive;
   }
   //Find what motor to get
 
@@ -693,6 +702,7 @@ public:
   double SpedSpeed = 0;
   bool Reached = false;
   bool Shoot_DA_BOOL = false;
+  bool LimeLightTrack = false;
   
 private:
   double m_MaxSpeed;
@@ -700,7 +710,7 @@ private:
   double Bias = 10;
   
   double LastE = 0;
-  double P = 5;
+  double P = 2;
   double I = 50;
   double D = 0;
   double LastResult = 0;
@@ -719,14 +729,16 @@ private:
 class Goal_ShooterBunch : public AtomicGoal
 {
 public:
-  Goal_ShooterBunch(ActiveCollection *activeCollection)
+  Goal_ShooterBunch(ActiveCollection *activeCollection, double ShootSpeed)
   {
     MovingFloor = (VictorSPXItem*)activeCollection->Get("Floor");
     IndexL = (VictorSPXItem*)activeCollection->Get("indexer0");
     IndexR = (VictorSPXItem*)activeCollection->Get("indexer1");
     Valve = (DoubleSolenoidItem*)activeCollection->Get("Valve");
     Lime = (limelight*)activeCollection->Get("LimeLight");
-    ShootWheel = new Goal_ShooterYeet(activeCollection, 0.8, "Shooter0", "Shooter1");
+    ShootWheel = new Goal_ShooterYeet(activeCollection, 1, "Shooter0", "Shooter1");
+    (ShootSpeed > 0 ? ShootWheel->m_Speed = ShootSpeed : 0);
+    (ShootSpeed > 0 ? ShootWheel->LimeLightTrack = false : ShootWheel->LimeLightTrack = true);
     m_Status = eInactive;
   }
 
@@ -737,7 +749,7 @@ public:
 
 private:
   double CurrentTime;
-  double Speed = 0.1;
+  double Speed = 0.6;
   bool Increment = false;
   bool Prep = false;
   bool Shoot = false;

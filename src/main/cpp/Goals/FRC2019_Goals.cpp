@@ -625,18 +625,20 @@ void Goal_MoveForward::Activate()
 	navx -> Reset();
     m_Status = eActive;
     Moving = true;
-    Bias = (50);
+    Bias = (5000);
     BiasE = ((PE * distTo) * 10);
 }
 
 Goal::Goal_Status Goal_MoveForward::Process(double dTime)
 {
+    Log::Error("NIGGA MOVE");
     if(!Done && m_Status == eActive)
     {
-       if(NumberAtTarget < 100 && TimePassed < TotalTime)
+       {
+       if(NumberAtTarget < 100 && TimePassed < TotalTime && (distTo != 0))
     	{
             enc = (enc0->GetEncoderValue());
-            currentValue = (navx->GetNavXAngle()); //get new navx angle
+            currentValue = navx->GetNavXAngle(); //get new navx angle
     		//Angle PID
 	    	double Error = currentValue;
             double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, 0.5, 0.1, Pevpower, Bias);
@@ -644,17 +646,17 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
     		double ErrorE = distTo - enc;
             double ResultE = PIDCal(PE, IE, DE, totalEncoder, ErrorE, PrevEncoder, dTime, MaxPower, Limit, PrevEResult, BiasE, ErrorTo, distTo) * (IsNegative ? -1 : 1);
             
-            //Log::General("Result Left: " + to_string(Result + ResultE) + ", Result Right: " + to_string(Result - ResultE) + ", MaxPower: " + to_string(MaxPower) + ", Encoder Pos: " + to_string(enc) + ", Encoder Target: " + to_string(distTo));
-
-            //SetDrive(Result + ResultE, Result - ResultE, m_activeCollection);
-	    	SetNeoDrive(Result + ResultE, Result - ResultE, m_activeCollection); //set drive to new powers
-
 	    	if(Inrange(enc, RealTarget, 0.05))
             {
                 Log::General("In range");
                 StopNeoDrive(m_activeCollection);
 		    	NumberAtTarget++;
 	    	}
+            else
+            {
+                SetNeoDrive((Result + ResultE), (Result - ResultE), m_activeCollection); //set drive to new powers
+            }
+            
             TimePassed += dTime;
         }
         else if(TotalTime <= TimePassed)
@@ -667,7 +669,7 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
             Done = true;
             Moving = false;
         }
-    
+       }
     }
     else
     {
@@ -705,20 +707,24 @@ void Goal_TurnPIDF::Activate()
 
 Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
 {
+    Log::Error("NIGGA TURNNING");
     if(!Done && m_Status == eActive)
     {
-       if(NumberAtTarget < 400 && TimePassed < TotalTime)
+       if(NumberAtTarget < 50 && TimePassed < TotalTime && (RealTarget != 0))
     	{
     		currentValue = (double)ABSValue(navx->GetNavXAngle()); //get new navx angle
     		//Angle PIDF
 	    	double Error = RealTarget - currentValue;
             double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias, ErrorTo, RealTarget) * (IsNegative ? 1 : -1);
             Log::General("Error: " + to_string(Error) + ", Current Angle: " + to_string(currentValue) + ", Start Angle: " + to_string(Offset));
-            SetNeoDrive(Result, Result, m_activeCollection); //set drive to new powers
-            //SetDrive(Result, Result, m_activeCollection);
-	    	if(Inrange(currentValue, RealTarget, 5)){
+            if(Inrange(currentValue, RealTarget, 2)){
+                StopNeoDrive(m_activeCollection);
 		    	NumberAtTarget++;
 	    	}
+            else
+            {
+                SetNeoDrive(Result, Result, m_activeCollection); //set drive to new powers
+            }
             TimePassed += dTime;
         }
         else if(TotalTime <= TimePassed)
@@ -747,7 +753,7 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     }
     else
     {
-        Log::Error("Time out");
+        Log::Error("Time out Turn");
         return m_Status = eFailed;
     }
 }
@@ -764,15 +770,15 @@ void Goal_TurnPIDF::Terminate()
 /*********************AutoPath-Goal******************/
 void AutoPath::Activate()
 {
-    for(int i = 0; i < sizeof(Actions) / sizeof(*Actions); i++)
+    for(int i = 0; i < 10/*sizeof(Actions) / sizeof(*Actions)*/; i++)
     {
-        AddSubgoal(new Goal_TurnPIDF(m_activeCollection, Angle[i], 0.6, 4));
-        AddSubgoal(new Goal_MoveForward(m_activeCollection, Dist[i], 0.6, 4));
+        AddSubgoal(new Goal_TurnPIDF(m_activeCollection, Angle[i], 0.8, 4));
+        AddSubgoal(new Goal_MoveForward(m_activeCollection, Dist[i], 0.8, 4));
         if(Actions[i] != 0)
         {
             if(Actions[i] == 1)
             {//Shoot
-                AddSubgoal(new Goal_ShooterBunch(m_activeCollection));
+                AddSubgoal(new Goal_ShooterBunch(m_activeCollection, 23000));
             }
             else if(Actions[i] == 2)
             {
@@ -791,6 +797,7 @@ void AutoPath::Activate()
             }
         }
     }
+    m_Status = eActive;
 }
 
 #pragma endregion
@@ -867,7 +874,10 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
     if (m_Status == eActive)
     {
         //TODO: Have Limelight modify m_Speed depending on distance from target
-        m_Speed = 7000;
+        if(LimeLightTrack)
+        {
+            m_Speed = 69420;//Hehe
+        }
         Bias = ((P * m_Speed) * 5);
         
         if((ShooterMotor->GetQuadraturePosition()) != lastPos && !FirstRun)
@@ -934,7 +944,7 @@ void Goal_ShooterBunch::Activate()
 //TODO: Controller Overide
 Goal::Goal_Status Goal_ShooterBunch::Process(double dTime)
 {
-    if(numShots < 5 && m_Status == eActive && CurrentTime < 5)
+    if(numShots < 5 && m_Status == eActive/* && CurrentTime < 10*/)
     {
         Log::Error("Target speed: " + to_string(ShootWheel->m_Speed) + ", Rate: " + to_string(-ShootWheel->revSpeed));
         Log::Error("Reached: " + to_string(ShootWheel->Reached) + ", Number Shots: " + to_string(numShots));
@@ -949,7 +959,8 @@ Goal::Goal_Status Goal_ShooterBunch::Process(double dTime)
         }
         if(Prep)
         {
-            MovingFloor->Set(Speed);
+            Log::General("Move Index");
+            MovingFloor->Set(0);
             IndexL->Set(Speed);
             IndexR->Set(Speed);
             if(Shoot)
@@ -992,5 +1003,11 @@ void Goal_ShooterBunch::Terminate()
     ShootWheel->Terminate();
     m_Status = eInactive;
     Lime->SetLED(1);
+    ShootWheel->ShooterMotor->Set(0);
+    ShootWheel->ShooterMotor2->Set(0);
+    Valve->SetReverse();
+    MovingFloor->Set(0);
+    IndexL->Set(0);
+    IndexR->Set(0);
     Log::Error("Stop");
 }

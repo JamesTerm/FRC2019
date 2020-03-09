@@ -131,7 +131,8 @@ void Robot::Teleop()
 	//PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
 	limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
 	m_activeCollection->GetNavX()->Reset();
-
+	((TalonSRXItem*)m_activeCollection->Get("Shooter0"))->SetQuadraturePosition(0);
+	double LastE = 0;
 	while (IsOperatorControl() && !IsDisabled())
 	{
 		const double CurrentTime = GetTime();
@@ -143,8 +144,11 @@ void Robot::Teleop()
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
 		m_drive->Update(DeltaTime);
-		Log::General("Roll: " + to_string(m_activeCollection->GetNavX()->GetRoll()) + ", Pitch: " + to_string(m_activeCollection->GetNavX()->GetPitch()) + ", Yaw: " + to_string(m_activeCollection->GetNavX()->GetYaw()));
-		Wait(0.010); 
+		double EncoderValue = (((TalonSRXItem*)m_activeCollection->Get("Shooter0"))->GetQuadraturePosition());
+    	double revSpeed = (int)(EncoderValue - LastE);
+		Log::General("Rate: " + to_string(revSpeed));
+		Wait(0.010);
+		LastE = EncoderValue;
 	}
 }
 
@@ -154,25 +158,18 @@ void Robot::Teleop()
 void Robot::Test()
 {
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
-	/*Goal_ShooterBunch *RobotShooterUse = new Goal_ShooterBunch(m_activeCollection);
-	RobotShooterUse->Activate();
-	while(RobotShooterUse->GetStatus() == Goal::eActive)
+	AutoPath* PathA = new AutoPath(m_activeCollection, Position1PathNum(0));
+	PathA->Activate();
+	Log::General("NIGGA");
+	while(PathA->GetStatus() == Goal::eActive)
 	{
-		RobotShooterUse->Process(0.01);
-		Log::General("Balls I think I shot: " + to_string(RobotShooterUse->numShots));
+		Log::General("NIGGA RUNNING");
+		PathA->Process(0.01);
 		Wait(0.01);
 	}
-	RobotShooterUse->Terminate();
-	*/
-	
-	Goal_TurnPIDF *RobotShooterUse = new Goal_TurnPIDF(m_activeCollection, 90, 0.8, 20);
-	RobotShooterUse->Activate();
-	while(RobotShooterUse->GetStatus() == Goal::eActive)
-	{
-		RobotShooterUse->Process(0.01);
-		Wait(0.01);
-	}
-	RobotShooterUse->Terminate();
+	Log::General("NIGGA DIED");
+	StopNeoDrive(m_activeCollection);
+	PathA->Terminate();
 }
 
 void Robot::StartCompetition() {
