@@ -25,117 +25,14 @@ enum TeleOpGoal{
 static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal, string autonSelected, string positionSelected)
 {
     bool isFound = true;
-    #if 0
-    if(autonSelected == "NONE") return true;
     
-	if (autonSelected == "DEBUG")
-	{
-		//goal->AddGoal(new Goal_VisionAlign(activeCollection, new VisionTarget(320, 20), 140.0)); //!120 sec timeout for DEBUG only
-        goal->AddGoal(new Goal_WaitThenDrive(activeCollection, .5, .5, 3, 5));
-        Log::General("selector");
-		return true;
-	}
+    //TODO: whatever you need to do here, if you're even using this method this year. You might need to edit params too.
 
-    if(positionSelected == "Level 1 Left")
-    {
-        if(autonSelected == "DriveStraight")
-        {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(6.0),.75));
-        }
-        else if(autonSelected == "OneHatchAuto")
-        {
-            //TODO
-        }
-        else
-        {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(6.0),.75));
-            isFound = false;
-        }
-    }
-    else if(positionSelected == "Level 1 Center")
-    {
-        if(autonSelected == "DriveStraight")
-        {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(6.0),.75));
-        }
-        else if(autonSelected == "OneHatchAuto")
-        {
-            //TODO
-        }
-        else
-        {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(6.0),.75));
-            isFound = false;
-        }
-    }
-    else if(positionSelected == "Level 1 Right")
-    {
-        if(autonSelected == "DriveStraight")
-        {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(6.0),.75));
-        }
-        else if(autonSelected == "OneHatchAuto")
-        {
-            //TODO
-        }
-        else
-        {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(6.0),.75));
-            isFound = false;
-        }
-    }
-    else if(positionSelected == "Level 2 Left")
-    {
-        if(autonSelected == "DriveStraight")
-        {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(10.0),.75));
-        }
-        else if(autonSelected == "OneHatchAuto")
-        {
-            //TODO
-        }
-        else
-        {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(10.0),.75));
-            isFound = false;
-        }
-    }
-    else if(positionSelected == "Level 2 Right")
-    {
-        if(autonSelected == "DriveStraight")
-        {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(10.0),.75));
-        }
-        else if(autonSelected == "OneHatchAuto")
-        {
-            //TODO
-        }
-        else
-        {
-            goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(10.0),.75));
-            isFound = false;
-        }
-    }
-    else
-    {
-        goal->AddGoal(new Goal_DriveStraight(activeCollection, new Feet(10.0),.75));
-        isFound = false;
-    }
-    #endif
-    
     return isFound;
 }
 
 static Goal* SelectTeleOpGoal(ActiveCollection* activeCollection, TeleOpGoal goalSelected, double params){
-	if (goalSelected == TeleOpGoal::eElevatorControl)
-		return new Goal_ElevatorControl(activeCollection, params);
-	else if (goalSelected == TeleOpGoal::eTimer)
-		return new Goal_TimeOut(activeCollection, params);
-    else if(goalSelected == TeleOpGoal::eDriveWithTimer)
-        return new Goal_DriveWithTimer(activeCollection, .5, .5, params);
-    else if(goalSelected == TeleOpGoal::eRelativeElevatorControl)
-        return new Goal_RelativeElevatorControl(activeCollection, params);
-    else if(goalSelected == TeleOpGoal::eShooter)
-        return new Goal_ShooterBunch(activeCollection);
+	
+    //TODO: whatever you need to do here, if you're even using this method this year. You might need to edit params too.
 	return new Goal_TimeOut(activeCollection, params);
 }
