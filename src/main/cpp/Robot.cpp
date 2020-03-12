@@ -160,14 +160,11 @@ void Robot::Test()
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
 	AutoPath* PathA = new AutoPath(m_activeCollection, Position1PathNum(0));
 	PathA->Activate();
-	Log::General("NIGGA");
 	while(PathA->GetStatus() == Goal::eActive)
 	{
-		Log::General("NIGGA RUNNING");
 		PathA->Process(0.01);
 		Wait(0.01);
 	}
-	Log::General("NIGGA DIED");
 	StopNeoDrive(m_activeCollection);
 	PathA->Terminate();
 }
