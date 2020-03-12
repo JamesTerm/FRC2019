@@ -217,6 +217,3 @@ void Robot::Disabled() {
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }  //!< This identifies Robot as the main Robot starting class
 #endif
-//ian is gey
-//you like dick and a balls huh
-//dick and balls huh babe 
