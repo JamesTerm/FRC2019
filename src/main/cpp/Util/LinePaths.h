@@ -17,43 +17,63 @@ Email: irobot9803@gmail.com
 
 using namespace std;
 using namespace Util;
+using namespace Logger;
 
-#define MaxPoints 10
-#define NumPoints 3
-#define MaxAutos 3
+#define NumPoints 4
 
 struct Point
 {
     double X;
     double Y;
     double Act;
+    double Speed;
 };
 
 struct Auto
 {
-    Auto(double Points[MaxPoints][NumPoints])
+    Auto(int MaxPoints, vector<double> Points)
     {
-        for(int i = 0; i < MaxPoints; i++)
+        Waypoints = new Point[MaxPoints];
+        for(int i = 0; i < MaxPoints; i+=NumPoints)
         {
-            Waypoints[i].X = Points[i][0];
-            Waypoints[i].Y = Points[i][1];
-            Waypoints[i].Act = Points[i][2];
+            Waypoints[i].X = Points[i];
+            Waypoints[i].Y = Points[i + 1];
+            Waypoints[i].Act = Points[i + 2];
+            Waypoints[i].Speed = Points[i + 3];
         }
+        Num = MaxPoints;
     }
-    int Num = MaxPoints;
-    Point *Waypoints = new Point[MaxPoints];
+    Auto()
+    {
+        Num = 0;
+        Waypoints = new Point[0];
+    }
+    int Num = 0;
+    Point* Waypoints;
 };
 
-static Auto Position1PathNum(int Path)
+static Auto Map(string Path)
 {
-    static double Path1[][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {/*5.8*/0, 5, 0}};
-    static double Path2[][3] = {{0, 0, 0}, {1, 1, 0}, {5.8, 5, 0}, {6.4, 5.5, 0}, {8.5, 5.5, 0}, {9, 5.5, 2}, {14, 5.5, 2}, {15, 5, 2}, {15, 4.5, 3}, {15, 4, 1}};
-    static double Path3[][3] = {{0, 0, 0}, {1, 1, 0}, {5.8, 5, 0}, {6.4, 5.5, 0}, {8.5, 5.5, 0}, {9, 5.5, 2}, {14, 5.5, 2}, {15, 5, 2}, {15, 4.5, 3}, {15, 4, 1}};
-    static Auto Paths[MaxAutos] = {Auto(Path1)
-                                  ,Auto(Path2)
-                                  ,Auto(Path3)};
-
-    return Paths[Path];
+    ifstream Inputfile (Path);
+    string NumberInput;
+    if(Inputfile.is_open())
+    {
+        Log::General("Found File");
+        vector<double> InputPoints;
+        getline(Inputfile, NumberInput);
+        double Length = stod(NumberInput);
+        for(int i = 0; i < Length; i++)
+        {
+            getline(Inputfile, NumberInput);
+            InputPoints.push_back(stod(NumberInput));
+        }
+        return Auto(Length, InputPoints);
+    }
+    else
+    {
+        Log::Error("File does not exist");
+        return Auto();
+    }
 }
 
 #endif /* UTIL_LinePaths_H_ */

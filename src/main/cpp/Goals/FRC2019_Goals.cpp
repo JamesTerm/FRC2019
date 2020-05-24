@@ -388,7 +388,6 @@ void Goal_TurnPIDF::Activate()
 
 Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
 {
-    Log::Error("NIGGA TURNNING");
     if(!Done && m_Status == eActive)
     {
        if(NumberAtTarget < 50 && TimePassed < TotalTime && (RealTarget != 0))
@@ -451,7 +450,7 @@ void Goal_TurnPIDF::Terminate()
 /*********************AutoPath-Goal******************/
 void AutoPath::Activate()
 {
-    for(int i = 0; i < 10/*sizeof(Actions) / sizeof(*Actions)*/; i++)
+    for(int i = 0; i < lenght; i++)
     {
         AddSubgoal(new Goal_TurnPIDF(m_activeCollection, Angle[i], 0.8, 4));
         AddSubgoal(new Goal_MoveForward(m_activeCollection, Dist[i], 0.8, 4));
@@ -459,7 +458,7 @@ void AutoPath::Activate()
         {
             if(Actions[i] == 1)
             {//Shoot
-                AddSubgoal(new Goal_ShooterBunch(m_activeCollection, 23000));
+                AddSubgoal(new Goal_ShooterBunch(m_activeCollection, 0));
             }
             else if(Actions[i] == 2)
             {

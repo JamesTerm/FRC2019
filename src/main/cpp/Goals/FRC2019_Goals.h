@@ -133,6 +133,7 @@ class AutoPath : public CompositeGoal
   public:
     AutoPath(ActiveCollection* activeCollection, Auto Path)
     {
+      lenght = Path.Num;
       m_activeCollection = activeCollection;
       Dist = new double[Path.Num];
       Angle = new double[Path.Num];
@@ -182,6 +183,7 @@ class AutoPath : public CompositeGoal
     double* Dist;
     double* Angle;
     double* Actions;
+    int lenght = 0;
     ActiveCollection* m_activeCollection;
 };
 

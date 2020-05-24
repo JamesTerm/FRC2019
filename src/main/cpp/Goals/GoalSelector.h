@@ -32,14 +32,14 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
 }
 
 static Goal* SelectTeleOpGoal(ActiveCollection* activeCollection, TeleOpGoal goalSelected, double params){
-	if (goalSelected == TeleOpGoal::eElevatorControl)
+	/*if (goalSelected == TeleOpGoal::eElevatorControl)
 		return new Goal_ElevatorControl(activeCollection, params);
-	else if (goalSelected == TeleOpGoal::eTimer)
+	else*/ if (goalSelected == TeleOpGoal::eTimer)
 		return new Goal_TimeOut(activeCollection, params);
     else if(goalSelected == TeleOpGoal::eDriveWithTimer)
         return new Goal_DriveWithTimer(activeCollection, .5, .5, params);
-    else if(goalSelected == TeleOpGoal::eRelativeElevatorControl)
-        return new Goal_RelativeElevatorControl(activeCollection, params);
+    /*else if(goalSelected == TeleOpGoal::eRelativeElevatorControl)
+        return new Goal_RelativeElevatorControl(activeCollection, params);*/
     else if(goalSelected == TeleOpGoal::eShooter)
         return new Goal_ShooterBunch(activeCollection, params);
 	return new Goal_TimeOut(activeCollection, params);

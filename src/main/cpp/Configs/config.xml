@@ -63,7 +63,7 @@
         <Driver slot="0">
             <AxisControls>
                 <leftDrive axis="1" deadZone="0.08" reversed="true" powerMultiplier="0.5" bindings="left0,left1" useOverdrive="false"/>
-		        <rightDrive axis="5" deadZone="0.08" reversed="false" powerMultiplier="0.5" bindings="right0,right1" useOverdrive="false"/>
+		        <rightDrive axis="3" deadZone="0.08" reversed="false" powerMultiplier="0.5" bindings="right0,right1" useOverdrive="false"/>
 		    </AxisControls>
             <ButtonControls>
             </ButtonControls>  
@@ -85,7 +85,7 @@
                 <movingfloorback button="1" powerMultiplier="-.6" bindings="Floor" actOnRelease="true"/>
 			</ButtonControls>
             <GoalButtonControls>
-                <ShooterGoal-0 button ="2" goal ="ShooterGoal" params ="0"/>
+                <ShooterGoal-0 button ="2" goal ="ShooterGoal" params ="23000"/>
             </GoalButtonControls>
 			<ToggleButtonControls>
                 <Intake_wrist_control button="9" powerMultiplier="1.0" bindings="IntakeDeploy"/>

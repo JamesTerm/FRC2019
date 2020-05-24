@@ -158,7 +158,7 @@ void Robot::Teleop()
 void Robot::Test()
 {
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
-	AutoPath* PathA = new AutoPath(m_activeCollection, Position1PathNum(0));
+	/*AutoPath* PathA = new AutoPath(m_activeCollection, Position1PathNum(0));
 	PathA->Activate();
 	while(PathA->GetStatus() == Goal::eActive)
 	{
@@ -166,7 +166,7 @@ void Robot::Test()
 		Wait(0.01);
 	}
 	StopNeoDrive(m_activeCollection);
-	PathA->Terminate();
+	PathA->Terminate();*/
 }
 
 void Robot::StartCompetition() {
