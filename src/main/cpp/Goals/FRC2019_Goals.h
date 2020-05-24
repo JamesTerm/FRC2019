@@ -138,12 +138,14 @@ class AutoPath : public CompositeGoal
       Dist = new double[Path.Num];
       Angle = new double[Path.Num];
       Actions = new double[Path.Num];
+      SpeedB = new double[Path.Num];
       Dist[0] = 0;
       Angle[0] = 0;
       Actions[0] = 0;
       for (int i = 1; i < Path.Num; i++)
       {
         Actions[i] = Path.Waypoints[i].Act;
+        SpeedB[i] = Path.Waypoints[i].Speed;
         float Dis = sqrt(pow(Path.Waypoints[i].X - Path.Waypoints[i-1].X, 2) + pow(Path.Waypoints[i].Y - Path.Waypoints[i-1].Y, 2));
             
         float XDIS = (Path.Waypoints[i].X - Path.Waypoints[i-1].X);
@@ -183,6 +185,7 @@ class AutoPath : public CompositeGoal
     double* Dist;
     double* Angle;
     double* Actions;
+    double* SpeedB;
     int lenght = 0;
     ActiveCollection* m_activeCollection;
 };
@@ -190,7 +193,7 @@ class AutoPath : public CompositeGoal
 class Goal_MoveForward : public AtomicGoal
 {
   public:
-    Goal_MoveForward(ActiveCollection *activeCollection, double Dist, double MaxPowerOutput, double MaxTime)
+    Goal_MoveForward(ActiveCollection *activeCollection, double Dist, double MaxPowerOutput, double MaxTime, double SpeedBias = 1)
     {
         RealTarget = Dist * 5;
         MaxPower = MaxPowerOutput;
@@ -201,6 +204,7 @@ class Goal_MoveForward : public AtomicGoal
         //enc0 = activeCollection->GetEncoder("enc0");
         enc0 = (SparkMaxItem*)activeCollection->Get("left1");
         m_Status = eInactive;
+        SBias = SpeedBias;
     }
 
     virtual void Activate();
@@ -208,7 +212,7 @@ class Goal_MoveForward : public AtomicGoal
     virtual void Terminate();
 
     private:
-
+      double SBias;
       double TimePassed = 0;
       double TotalTime = 0;
       double RealTarget = 0;         // 85 was working yesterday
@@ -245,7 +249,7 @@ class Goal_MoveForward : public AtomicGoal
 class Goal_TurnPIDF : public AtomicGoal
 {
   public:
-    Goal_TurnPIDF(ActiveCollection *activeCollection, double Angle, double MaxPowerOutput, double MaxTime)
+    Goal_TurnPIDF(ActiveCollection *activeCollection, double Angle, double MaxPowerOutput, double MaxTime, double SpeedBias = 1)
     {
         navx = activeCollection->GetNavX();
         RealTarget = ABSValue(Angle);
@@ -253,6 +257,7 @@ class Goal_TurnPIDF : public AtomicGoal
         m_activeCollection = activeCollection;
         TotalTime = MaxTime;
         m_Status = eInactive;
+        SBias = SpeedBias;
     }
 
     virtual void Activate();
@@ -260,6 +265,7 @@ class Goal_TurnPIDF : public AtomicGoal
     virtual void Terminate();
 
     private:
+      double SBias;
       double TimePassed = 0;
       double TotalTime = 0;
       double RealTarget = 0;
