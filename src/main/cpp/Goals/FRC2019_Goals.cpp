@@ -397,6 +397,7 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
             double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias, ErrorTo, RealTarget) * (IsNegative ? 1 : -1) * SBias;
             //Log::General("Error: " + to_string(Error) + ", Current Angle: " + to_string(currentValue) + ", Start Angle: " + to_string(Offset));
             if(Inrange(currentValue, RealTarget, 1)){
+                SetNeoDrive(-Result, -Result, m_activeCollection); //set drive to new powers
                 StopNeoDrive(m_activeCollection);
 		    	NumberAtTarget++;
 	    	}
@@ -458,7 +459,7 @@ void AutoPath::Activate()
             if(Actions[i] == 1)
             {
                 //intake
-                AddSubgoal(new Goal_Intake(m_activeCollection, 0.1, true));
+                AddSubgoal(new Goal_Intake(m_activeCollection, 0.2, true));
             }
             else if(Actions[i] == 2)
             {

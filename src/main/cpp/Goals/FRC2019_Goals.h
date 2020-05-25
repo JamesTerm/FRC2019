@@ -158,23 +158,26 @@ class AutoPath : public CompositeGoal
         Dist[i] = Dis;
         Angle[i] = A;
       }
-      for (int i = Path.Num - 1; i > 1; i--)
+      for(int Check = 0; Check < Path.Num; Check++)
       {
-        Angle[i] -= Angle[i - 1];
-
-        if (Inrange(ABSValue(Angle[i]), 180, 0.5))
+        for (int i = Path.Num - 1; i > 1; i--)
         {
-          Angle[i] = 0;
-          Dist[i] *= -1;
-          if (i != Path.Num - 1)
+          Angle[i] -= Angle[i - 1];
+
+          if (Inrange(ABSValue(Angle[i]), 180, 0.5))
           {
-            Angle[i + 1] += 180;
+            Angle[i] = 0;
+            Dist[i] *= -1;
+            if (i != Path.Num - 1)
+            {
+              Angle[i + 1] += 180;
+            }
           }
+          if (Angle[i] < -200)
+            Angle[i] = GetMax(Angle[i], Angle[i] + 360);
+          else if (Angle[i] > 200)
+            Angle[i] = GetMin(Angle[i], Angle[i] - 360);
         }
-        if (Angle[i] < -200)
-          Angle[i] = GetMax(Angle[i], Angle[i] + 360);
-        else if (Angle[i] > 200)
-          Angle[i] = GetMin(Angle[i], Angle[i] - 360);
       }
       /*for(int i = 0; i < lenght; i++)
         {
@@ -210,6 +213,10 @@ class Goal_MoveForward : public AtomicGoal
         enc0 = (SparkMaxItem*)activeCollection->Get("left1");
         m_Status = eInactive;
         SBias = SpeedBias;
+        if(Inrange(ABSValue(Dist), 0, 0.001))
+        {
+          TotalTime = 0;
+        }
     }
 
     virtual void Activate();
@@ -265,6 +272,10 @@ class Goal_TurnPIDF : public AtomicGoal
         TotalTime = MaxTime;
         m_Status = eInactive;
         SBias = SpeedBias;
+        if(Inrange(ABSValue(Angle), 0, 0.001))
+        {
+          TotalTime = 0;
+        }
     }
 
     virtual void Activate();
