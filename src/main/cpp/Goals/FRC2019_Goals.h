@@ -131,8 +131,9 @@ class Goal_ControllerOverride : public AtomicGoal
 class AutoPath : public CompositeGoal
 {
   public:
-    AutoPath(ActiveCollection* activeCollection, Auto Path)
+    AutoPath(ActiveCollection* activeCollection, Auto Path, double MaxTime)
     {
+      MaxT = MaxTime;
       lenght = Path.Num;
       m_activeCollection = activeCollection;
       Dist = new double[Path.Num];
@@ -144,12 +145,13 @@ class AutoPath : public CompositeGoal
       Actions[0] = 0;
       for (int i = 1; i < Path.Num; i++)
       {
-        Actions[i] = Path.Waypoints[i].Act;
-        SpeedB[i] = Path.Waypoints[i].Speed;
-        float Dis = sqrt(pow(Path.Waypoints[i].X - Path.Waypoints[i-1].X, 2) + pow(Path.Waypoints[i].Y - Path.Waypoints[i-1].Y, 2));
+        Log::General("WayPoint " + to_string(i) + ": X= " + to_string(Path.Waypoints[i]->X) + ", Y= " + to_string(Path.Waypoints[i]->Y));
+        Actions[i] = Path.Waypoints[i]->Act;
+        SpeedB[i] = Path.Waypoints[i]->Speed;
+        float Dis = sqrt(pow(Path.Waypoints[i]->X - Path.Waypoints[i-1]->X, 2) + pow(Path.Waypoints[i]->Y - Path.Waypoints[i-1]->Y, 2));
             
-        float XDIS = (Path.Waypoints[i].X - Path.Waypoints[i-1].X);
-        float YDIS = (Path.Waypoints[i].Y - Path.Waypoints[i-1].Y);
+        float XDIS = (Path.Waypoints[i]->X - Path.Waypoints[i-1]->X);
+        float YDIS = (Path.Waypoints[i]->Y - Path.Waypoints[i-1]->Y);
 
         float A = (atan2(YDIS, XDIS) / 3.1415) * 180;
 
@@ -160,7 +162,7 @@ class AutoPath : public CompositeGoal
       {
         Angle[i] -= Angle[i - 1];
 
-        if (ABSValue(Angle[i]) == 180)
+        if (Inrange(ABSValue(Angle[i]), 180, 0.5))
         {
           Angle[i] = 0;
           Dist[i] *= -1;
@@ -174,18 +176,20 @@ class AutoPath : public CompositeGoal
         else if (Angle[i] > 200)
           Angle[i] = GetMin(Angle[i], Angle[i] - 360);
       }
-      for(int i = 0; i < 10; i++)
+      /*for(int i = 0; i < lenght; i++)
         {
           Log::General(to_string(Angle[i]) + "Degrees");      
           Log::General(to_string(Dist[i]) + "Feet");
-        }
+        }*/
     }
     virtual void Activate();
+    virtual void Terminate();
   private:
     double* Dist;
     double* Angle;
     double* Actions;
     double* SpeedB;
+    double MaxT;
     int lenght = 0;
     ActiveCollection* m_activeCollection;
 };
@@ -195,6 +199,7 @@ class Goal_MoveForward : public AtomicGoal
   public:
     Goal_MoveForward(ActiveCollection *activeCollection, double Dist, double MaxPowerOutput, double MaxTime, double SpeedBias = 1)
     {
+        Log::General("Move Forward to: " + to_string(Dist) + " Feet");
         RealTarget = Dist * 5;
         MaxPower = MaxPowerOutput;
         m_activeCollection = activeCollection;
@@ -251,7 +256,9 @@ class Goal_TurnPIDF : public AtomicGoal
   public:
     Goal_TurnPIDF(ActiveCollection *activeCollection, double Angle, double MaxPowerOutput, double MaxTime, double SpeedBias = 1)
     {
+        Log::General("Turn to: " + to_string(Angle) + " Degrees");
         navx = activeCollection->GetNavX();
+        IsNegative = Angle < 0;
         RealTarget = ABSValue(Angle);
         MaxPower = MaxPowerOutput;
         m_activeCollection = activeCollection;

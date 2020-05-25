@@ -312,11 +312,10 @@ void Goal_MoveForward::Activate()
 
 Goal::Goal_Status Goal_MoveForward::Process(double dTime)
 {
-    Log::Error("NIGGA MOVE");
     if(!Done && m_Status == eActive)
     {
        {
-       if(NumberAtTarget < 100 && TimePassed < TotalTime && (distTo != 0))
+       if(NumberAtTarget < 50 && TimePassed < TotalTime && (distTo != 0))
     	{
             enc = (enc0->GetEncoderValue());
             currentValue = navx->GetNavXAngle(); //get new navx angle
@@ -325,7 +324,7 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
             double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, 0.5, 0.1, Pevpower, Bias);
             //Distance PID
     		double ErrorE = distTo - enc;
-            double ResultE = PIDCal(PE, IE, DE, totalEncoder, ErrorE, PrevEncoder, dTime, MaxPower, Limit, PrevEResult, BiasE, ErrorTo, distTo) * (IsNegative ? -1 : 1) * SBias;
+            double ResultE = PIDCal(PE, IE, DE, totalEncoder, ErrorE, PrevEncoder, dTime, MaxPower, Limit, PrevEResult, BiasE - (SBias - 1), ErrorTo, distTo) * (IsNegative ? -1 : 1);
             
 	    	if(Inrange(enc, RealTarget, 0.05))
             {
@@ -396,8 +395,8 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     		//Angle PIDF
 	    	double Error = RealTarget - currentValue;
             double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias, ErrorTo, RealTarget) * (IsNegative ? 1 : -1) * SBias;
-            Log::General("Error: " + to_string(Error) + ", Current Angle: " + to_string(currentValue) + ", Start Angle: " + to_string(Offset));
-            if(Inrange(currentValue, RealTarget, 2)){
+            //Log::General("Error: " + to_string(Error) + ", Current Angle: " + to_string(currentValue) + ", Start Angle: " + to_string(Offset));
+            if(Inrange(currentValue, RealTarget, 1)){
                 StopNeoDrive(m_activeCollection);
 		    	NumberAtTarget++;
 	    	}
@@ -428,12 +427,12 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
         return m_Status = eActive;
     else if(Done && !Moving)
     {
-        Log::General("Time out on Gyro");
+        Log::General("Time out on Gyro at Angle: " + to_string(navx->GetNavXAngle()) + "| with a target of: " + to_string(RealTarget));
         return m_Status = eCompleted;
     }
     else
     {
-        Log::Error("Time out Turn");
+        Log::Error("Time out Turn at Angle: " + to_string(navx->GetNavXAngle()) + "| with a target of: " + to_string(RealTarget));
         return m_Status = eFailed;
     }
 }
@@ -452,24 +451,24 @@ void AutoPath::Activate()
 {
     for(int i = 0; i < lenght; i++)
     {
-        AddSubgoal(new Goal_TurnPIDF(m_activeCollection, Angle[i], 0.8, 4, SpeedB[i]));
-        AddSubgoal(new Goal_MoveForward(m_activeCollection, Dist[i], 0.8, 4, SpeedB[i]));
+        AddSubgoal(new Goal_TurnPIDF(m_activeCollection, Angle[i], 0.8, MaxT, SpeedB[i]));
+        AddSubgoal(new Goal_MoveForward(m_activeCollection, Dist[i], 0.8, MaxT, SpeedB[i]));
         if(Actions[i] != 0)
         {
             if(Actions[i] == 1)
             {
-                //Shoot
-                AddSubgoal(new Goal_ShooterBunch(m_activeCollection, 0));
+                //intake
+                AddSubgoal(new Goal_Intake(m_activeCollection, 0.1, true));
             }
             else if(Actions[i] == 2)
             {
-                //intake
-                AddSubgoal(new Goal_Intake(m_activeCollection, 0.2, true));
+                //stop intake and bring in intake
+                AddSubgoal(new Goal_Intake(m_activeCollection, 0, false));
             }
             else if(Actions[i] == 3)
             {
-                //stop intake and bring in intake
-                AddSubgoal(new Goal_Intake(m_activeCollection, 0, false));
+                //Shoot
+                AddSubgoal(new Goal_ShooterBunch(m_activeCollection, 0));
             }
             else if(Actions[i] == 4)
             {
@@ -479,6 +478,12 @@ void AutoPath::Activate()
         }
     }
     m_Status = eActive;
+}
+
+void AutoPath::Terminate()
+{
+    Log::General("Auto Finished");
+    m_Status = eInactive;
 }
 
 #pragma endregion

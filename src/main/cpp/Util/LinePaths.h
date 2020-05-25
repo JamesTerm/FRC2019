@@ -33,23 +33,19 @@ struct Auto
 {
     Auto(int MaxPoints, vector<double> Points)
     {
-        Waypoints = new Point[MaxPoints];
-        for(int i = 0; i < MaxPoints; i+=NumPoints)
+        for(int i = 0; i < MaxPoints * NumPoints; i+=NumPoints)
         {
-            Waypoints[i].X = Points[i];
-            Waypoints[i].Y = Points[i + 1];
-            Waypoints[i].Act = Points[i + 2];
-            Waypoints[i].Speed = Points[i + 3];
+            Point* CheckPoint = new Point();
+            CheckPoint->X = Points[i];
+            CheckPoint->Y = Points[i + 1];
+            CheckPoint->Act = Points[i + 2];
+            CheckPoint->Speed = Points[i + 3];
+            Waypoints.push_back(CheckPoint);
         }
         Num = MaxPoints;
     }
-    Auto()
-    {
-        Num = 0;
-        Waypoints = new Point[0];
-    }
     int Num = 0;
-    Point* Waypoints;
+    vector <Point*> Waypoints;
 };
 
 static Auto Map(string Path)
@@ -62,17 +58,27 @@ static Auto Map(string Path)
         vector<double> InputPoints;
         getline(Inputfile, NumberInput);
         double Length = stod(NumberInput);
-        for(int i = 0; i < Length; i++)
+        for(int i = 0; i < Length * NumPoints; i++)
         {
             getline(Inputfile, NumberInput);
             InputPoints.push_back(stod(NumberInput));
+            Log::General("Line: " + to_string(i) + " = " + to_string(stod(NumberInput)));
         }
         return Auto(Length, InputPoints);
     }
     else
     {
-        Log::Error("File does not exist");
-        return Auto();
+        Log::Error("File does not exist, using Dud.txt");
+        ifstream DudFile("Dud.txt");
+        vector<double> InputDudPoints;
+        getline(DudFile, NumberInput);
+        double Length = stod(NumberInput);
+        for(int i = 0; i < Length * NumPoints; i++)
+        {
+            getline(DudFile, NumberInput);
+            InputDudPoints.push_back(stod(NumberInput));
+        }
+        return Auto(Length, InputDudPoints);
     }
 }
 

@@ -157,8 +157,9 @@ void Robot::Teleop()
  */
 void Robot::Test()
 {
+	string SELECTED_AUTO = "A1P3.txt";
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
-	AutoPath* PathA = new AutoPath(m_activeCollection, Map("Dud.txt"));
+	AutoPath* PathA = new AutoPath(m_activeCollection, Map(SELECTED_AUTO), 10);
 	PathA->Activate();
 	while(PathA->GetStatus() == Goal::eActive)
 	{
