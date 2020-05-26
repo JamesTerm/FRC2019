@@ -328,7 +328,6 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
             
 	    	if(Inrange(enc, RealTarget, 0.05))
             {
-                Log::General("In range");
                 StopNeoDrive(m_activeCollection);
 		    	NumberAtTarget++;
 	    	}
@@ -381,7 +380,7 @@ void Goal_TurnPIDF::Activate()
     navx->Reset();
     m_Status = eActive;
     Moving = true;
-    Bias = ((P * RealTarget)*(1.5 * (1000/RealTarget)));
+    Bias = ((P * (RealTarget))*(1.5 * (1000/RealTarget)));
     FrameworkCommunication::GetInstance().SendData("Entered", 1);
 }
 
@@ -391,13 +390,12 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     {
        if(NumberAtTarget < 50 && TimePassed < TotalTime && (RealTarget != 0))
     	{
-    		currentValue = (double)ABSValue(navx->GetNavXAngle()); //get new navx angle
+            double AngleNavX = (double)navx->GetNavXAngle();
+    		currentValue = ABSValue(AngleNavX); //get new navx angle
     		//Angle PIDF
 	    	double Error = RealTarget - currentValue;
-            double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias, ErrorTo, RealTarget) * (IsNegative ? 1 : -1) * SBias;
-            //Log::General("Error: " + to_string(Error) + ", Current Angle: " + to_string(currentValue) + ", Start Angle: " + to_string(Offset));
+            double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias, ErrorTo, RealTarget) * (IsNegative ? 1 : -1) * (SBias + 2);
             if(Inrange(currentValue, RealTarget, 1)){
-                SetNeoDrive(-Result, -Result, m_activeCollection); //set drive to new powers
                 StopNeoDrive(m_activeCollection);
 		    	NumberAtTarget++;
 	    	}
@@ -433,8 +431,28 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     }
     else
     {
-        Log::Error("Time out Turn at Angle: " + to_string(navx->GetNavXAngle()) + "| with a target of: " + to_string(RealTarget));
-        return m_Status = eFailed;
+        if(TotalTime != 0 && Attempts < 10)
+        {
+            Log::Error("Time out Turn at Angle: " + to_string(navx->GetNavXAngle()) + "| with a target of: " + to_string(RealTarget) + "! TRYING AGAIN");
+            //RealTarget = ABSValue((RealTarget * (IsNegative ? -1 : 1)) - navx->GetNavXAngle());
+            Log::Error("New Angle Target: " + to_string(RealTarget));
+            NumberAtTarget = TimePassed = totalE = 0;
+            SBias += 3;
+            Attempts++;
+            Moving = true;
+            Done = false;
+            return m_Status = eActive;
+        }
+        else if(TotalTime != 0 && Attempts >= 10)
+        {
+            Log::Error("Too many attempts to turn to: " + to_string(RealTarget));
+            return m_Status = eFailed;
+        }
+        else
+        {
+            Log::General("Skipping Due to Angle near or at zero!");
+            return m_Status = eCompleted;
+        }
     }
 }
 

@@ -157,7 +157,7 @@ void Robot::Teleop()
  */
 void Robot::Test()
 {
-	string SELECTED_AUTO = "A1P3.txt";
+	string SELECTED_AUTO = "A1P2.txt";
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
 	AutoPath* PathA = new AutoPath(m_activeCollection, Map(SELECTED_AUTO), 10);
 	PathA->Activate();

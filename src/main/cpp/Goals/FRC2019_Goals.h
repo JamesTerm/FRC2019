@@ -158,7 +158,7 @@ class AutoPath : public CompositeGoal
         Dist[i] = Dis;
         Angle[i] = A;
       }
-      for(int Check = 0; Check < Path.Num; Check++)
+      //for(int Check = 0; Check < Path.Num; Check++)
       {
         for (int i = Path.Num - 1; i > 1; i--)
         {
@@ -263,9 +263,9 @@ class Goal_TurnPIDF : public AtomicGoal
   public:
     Goal_TurnPIDF(ActiveCollection *activeCollection, double Angle, double MaxPowerOutput, double MaxTime, double SpeedBias = 1)
     {
-        Log::General("Turn to: " + to_string(Angle) + " Degrees");
-        navx = activeCollection->GetNavX();
         IsNegative = Angle < 0;
+        Log::General("Turn to: " + to_string(Angle) + " Degrees, Negative: " + to_string(IsNegative));
+        navx = activeCollection->GetNavX();
         RealTarget = ABSValue(Angle);
         MaxPower = MaxPowerOutput;
         m_activeCollection = activeCollection;
@@ -303,6 +303,7 @@ class Goal_TurnPIDF : public AtomicGoal
 	    double MinPower = 0;
 	    double PrevE = 0, totalE = 0, ErrorTo  = 0;
       double currentValue = 0;
+      int Attempts = 0;
 
 	    double NumberAtTarget = 0;
       bool Moving = false;
