@@ -267,8 +267,9 @@ class Goal_TurnPIDF : public AtomicGoal
     Goal_TurnPIDF(ActiveCollection *activeCollection, double Angle, double MaxPowerOutput, double MaxTime, double SpeedBias = 1)
     {
         IsNegative = Angle < 0;
-        Log::General("Turn to: " + to_string(Angle) + " Degrees, Negative: " + to_string(IsNegative));
+
         navx = activeCollection->GetNavX();
+        Log::General("Turn to: " + to_string(Angle) + " Degrees, Negative: " + to_string(IsNegative));
         RealTarget = ABSValue(Angle);
         MaxPower = MaxPowerOutput;
         m_activeCollection = activeCollection;
@@ -280,6 +281,8 @@ class Goal_TurnPIDF : public AtomicGoal
           TotalTime = 0;
         }
     }
+
+    void SetTarget(double Angle, double TotalT);
 
     virtual void Activate();
     virtual Goal::Goal_Status Process(double dTime);
@@ -377,6 +380,36 @@ class Goal_CurvePath : public AtomicGoal
     bool Done = false;
 };
 
+class Goal_LimelightTrack : public AtomicGoal
+{
+  public:
+    Goal_LimelightTrack(ActiveCollection* activeCollection, bool Scan, double speed, Goal_TurnPIDF* Turn, double TimeOut)
+    {
+      Time = TimeOut;
+      Speed = speed;
+      SRobo = Scan;
+      T = Turn;
+      m_activeCollection = activeCollection;
+      Log::Error("Getting Lime");
+      Lime = (limelight*)activeCollection->Get("LimeLight");
+      navx = activeCollection->GetNavX();
+    }
+
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    virtual void Terminate();
+  
+  private:
+    bool StartUp = false;
+    double Speed;
+    bool SRobo;
+    double Time;
+    double CurrentTime = 0;
+    limelight* Lime;
+    ActiveCollection* m_activeCollection;
+    NavX *navx;
+    Goal_TurnPIDF* T;
+};
 
 #pragma endregion
 #pragma endregion

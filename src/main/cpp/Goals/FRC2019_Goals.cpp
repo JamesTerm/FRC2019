@@ -384,6 +384,13 @@ void Goal_TurnPIDF::Activate()
     FrameworkCommunication::GetInstance().SendData("Entered", 1);
 }
 
+void Goal_TurnPIDF::SetTarget(double Angle, double TotalT)
+{
+    IsNegative = Angle < 0;
+    RealTarget = ABSValue(Angle);
+    TotalTime = TotalT;
+}
+
 Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
 {
     if(!Done && m_Status == eActive)
@@ -562,6 +569,78 @@ void Goal_CurvePath::Terminate()
     m_Status = eCompleted;
 }
 
+/******************Goal_LimelightTrack***************/
+
+void Goal_LimelightTrack::Activate()
+{
+    Lime->SetLED(0);
+    Lime->SetCamMode(true);
+    navx->Reset();
+    m_Status = eActive;
+}
+
+Goal::Goal_Status Goal_LimelightTrack::Process(double dTime)
+{
+    if(CurrentTime < Time)
+    {
+        Lime->SetLED(0);
+        Lime->SetCamMode(true);
+        CurrentTime += dTime;
+        if(!Lime->SeesTarget())
+        {
+            if(SRobo)
+            {
+                Log::General("Scaning for target");
+                SetNeoDrive(Speed, Speed, m_activeCollection);
+                return m_Status = eActive;
+            }
+            else
+            {
+                Log::General("Didnt See Target");
+                Lime->SetLED(1);
+                Lime->SetCamMode(false);
+                return m_Status = eFailed;
+            }
+        }
+        else
+        {
+            if(!StartUp)
+            {
+                Log::General("Found Target");
+                StartUp = true;
+            }
+            double XOff = Lime->HorizontalOffset();
+            SetNeoDrive(XOff / 100, XOff / 100, m_activeCollection);
+            if(Inrange(ABSValue(XOff), 0, 3))
+            {
+                T->SetTarget(navx->GetAngle(), Time + 2);
+                Log::General("Angle: " + to_string(navx->GetAngle()));
+                Lime->SetLED(1);
+                Lime->SetCamMode(false);
+                return m_Status = eCompleted;
+            }
+            else
+            {
+                return m_Status = eActive;
+            }
+        
+        }
+    }
+    else
+    {
+        Log::Error("Limelight failed time");
+        Lime->SetLED(1);
+        Lime->SetCamMode(false);
+        return m_Status = eFailed;
+    }
+    
+}
+
+void Goal_LimelightTrack::Terminate()
+{
+    m_Status = eCompleted;
+}
+
 /*********************AutoPath-Goal******************/
 void AutoPath::Activate()
 {
@@ -594,6 +673,16 @@ void AutoPath::Activate()
             {
                 //stop intake and NOT bring in intake
                 AddSubgoal(new Goal_Intake(m_activeCollection, 0, true));
+            }
+            else if(Actions[i] == 5)
+            {
+                Goal_TurnPIDF* Tu = new Goal_TurnPIDF(m_activeCollection, 0, 0.3, 10, 1);
+                AddSubgoal(new Goal_LimelightTrack(m_activeCollection, true, 0.1, Tu, 10));
+                //Add Goals in here
+                //*****************//
+                
+                //*****************//
+                AddSubgoal(Tu);
             }
             //Add more cases here
         }

@@ -35,8 +35,9 @@ class limelight : public NativeComponent //Inheritance or something
         limelight() : NativeComponent("LimeLight")
         {
             SetLED(1);
-            SetCamMode();
+            SetCamMode(false);
             SetPipeline();
+            Log::General("Lime Constructed");
         } 
         double HorizontalOffset()
         {
@@ -73,7 +74,18 @@ class limelight : public NativeComponent //Inheritance or something
             }
             else
             {
-                Log::Error("Turn on the led and turn on vision processing in order to get target");
+                if(ProcessTarget)
+                {
+                    Log::Error("Turn on the cam vision processing in order to get target");
+                }
+                else if(HasLEDon)
+                {
+                    Log::Error("Turn on the led for vision processing in order to get target");
+                }
+                else
+                {
+                    Log::Error("Turn on the led and turn on vision processing in order to get target");
+                }
                 return 0;
             }
         }
@@ -90,7 +102,18 @@ class limelight : public NativeComponent //Inheritance or something
             }
             else
             {
-                Log::Error("Turn on the led and turn on vision processing in order to get target");
+                if(ProcessTarget)
+                {
+                    Log::Error("Turn on the cam vision processing in order to get target");
+                }
+                else if(HasLEDon)
+                {
+                    Log::Error("Turn on the led for vision processing in order to get target");
+                }
+                else
+                {
+                    Log::Error("Turn on the led and turn on vision processing in order to get target");
+                }
                 return false;
             }
         }
@@ -110,7 +133,7 @@ class limelight : public NativeComponent //Inheritance or something
             }
             else
             {
-                ProcessTarget = true;
+                ProcessTarget = false;
                 table->PutNumber("camMode", 1);
             }    
         }
@@ -135,7 +158,7 @@ class limelight : public NativeComponent //Inheritance or something
             else if(State == 1)
             {
                 HasLEDon = false;
-                table->PutNumber("ledMode", 1);
+                table->PutNumber("ledMode", 0);
             }
             else
             {

@@ -164,12 +164,10 @@ void Robot::Test()
 	while(PathA->GetStatus() == Goal::eActive)
 	{
 		PathA->Process(0.01);
+		Log::Error("processing");
 		Wait(0.01);
 	}
 	StopNeoDrive(m_activeCollection);
-	Log::General("Left: " + to_string((((SparkMaxItem*)(m_activeCollection->Get("left1")))->GetEncoderValue())));
-	Log::General("Right: " + to_string((((SparkMaxItem*)(m_activeCollection->Get("right1")))->GetEncoderValue())));
-	Log::General("Angle: " + to_string(m_activeCollection->GetNavX()->GetNavXAngle()));
 	PathA->Terminate();
 }
 
