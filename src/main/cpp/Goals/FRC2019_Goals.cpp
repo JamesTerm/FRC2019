@@ -465,13 +465,114 @@ void Goal_TurnPIDF::Terminate()
 }
 
 
+/********************Goal_CurvePath******************/
+
+void Goal_CurvePath::Activate()
+{
+    encL -> Reset();
+    encR -> Reset();
+    navx->Reset();
+    Log::General("Left: " + to_string((encL->GetEncoderValue())));
+    Log::General("Right: " + to_string((encR->GetEncoderValue())));
+    m_Status = eActive;
+    Moving = true;
+    AngleBias = ((P * (AngleTarget))*(1.5 * (1000/AngleTarget)));
+    DistBias = ((P * DistBias) * 10);
+    DistLeft = DistRight = DistTarget;
+    if(AngleTarget != 0)
+    {
+        {
+            if(AngleTarget > 0)
+            {
+                DistRight = ((ABSValue(AngleTarget) * 3.1415) / 180) * Radi;
+                DistLeft = ((ABSValue(AngleTarget) * 3.1415) / 180) * (Radi + (Base / 2));
+                //Left faster - Right slower
+                SBiasR = DistLeft - DistRight / 0.75;
+            }
+            else
+            {
+                DistLeft = ((ABSValue(AngleTarget) * 3.1415) / 180) * Radi;
+                DistRight = ((ABSValue(AngleTarget) * 3.1415) / 180) * (Radi + (Base / 2));
+                //Right slower - Left faster
+                SBiasL = DistRight - DistLeft / 0.75;
+            }
+        }
+        if(DistTarget < 0)
+        {
+            DistLeft *= -1;
+            DistRight *= -1;
+        }
+    }
+    else
+    {
+        GyroUse = false;
+    }
+    Log::General("Left: " + to_string(DistLeft) + " | Right: " + to_string(DistRight));
+}
+
+Goal::Goal_Status Goal_CurvePath::Process(double dTime)
+{
+    if(!Done && m_Status == eActive)
+    {
+        if(NumberAtTarget < 50 && TimePassed < TotalTime)
+        {
+            double ErrorL = DistLeft - (encL->GetEncoderValue());
+            double ErrorR = DistRight - (encR->GetEncoderValue() * -1);
+            currentValue = navx->GetNavXAngle(); //get new navx angle
+            double ResultRight = PIDCal(P, I, D, totalEncoderR, ErrorR, PrevEncoderR, dTime, MaxPower, Limit, PrevEResultR, DistBias - (SBiasR - 1), ErrorR, DistRight);
+            double ResultLeft = PIDCal(P, I, D, totalEncoderL, ErrorL, PrevEncoderL, dTime, MaxPower, Limit, PrevEResultL, DistBias - (SBiasL - 1), ErrorL, DistLeft);
+            double Steer = 0;
+            
+            if(Inrange(ABSValue(encL->GetEncoderValue()), DistLeft, 0.8) && Inrange(ABSValue(encR->GetEncoderValue()), DistRight, 0.8) || Inrange(currentValue, AngleTarget, 5))
+            {
+                StopNeoDrive(m_activeCollection);
+                NumberAtTarget++;
+	    	}
+            else
+            {
+                SetNeoDrive((ResultLeft), -(ResultRight), m_activeCollection); //set drive to new powers
+            }
+            TimePassed += dTime;
+        }
+        else if(TotalTime <= TimePassed)
+        {
+            Done = true;
+            Moving = true;
+            Log::General("<!Time Out!>");
+        }
+        else
+        {
+            Done = true;
+            Moving = false;
+        }
+    }
+    if(!Done && Moving)
+         return m_Status = eActive;
+    else if(Done && !Moving)
+    {
+         return m_Status = eCompleted;
+    }
+    else
+        return m_Status = eFailed;
+}
+
+void Goal_CurvePath::Terminate()
+{
+    StopNeoDrive(m_activeCollection);
+    m_Status = eCompleted;
+}
+
 /*********************AutoPath-Goal******************/
 void AutoPath::Activate()
 {
     for(int i = 0; i < lenght; i++)
     {
-        AddSubgoal(new Goal_TurnPIDF(m_activeCollection, Angle[i], 0.8, MaxT, SpeedB[i]));
-        AddSubgoal(new Goal_MoveForward(m_activeCollection, Dist[i], 0.8, MaxT, SpeedB[i]));
+        if(TurnT[i] == 0)
+            AddSubgoal(new Goal_TurnPIDF(m_activeCollection, Angle[i], 0.8, MaxT, SpeedB[i]));
+        else
+            AddSubgoal(new Goal_CurvePath(m_activeCollection, 0, Angle[i], 0.3, 10, 0, 23, 0.005, 2));
+        AddSubgoal(new Goal_CurvePath(m_activeCollection, Dist[i], 0, 0.3, 10, 0, 23, 0.005, 2));
+        //AddSubgoal(new Goal_MoveForward(m_activeCollection, Dist[i], 0.8, MaxT, SpeedB[i]));
         if(Actions[i] != 0)
         {
             if(Actions[i] == 1)
@@ -494,6 +595,7 @@ void AutoPath::Activate()
                 //stop intake and NOT bring in intake
                 AddSubgoal(new Goal_Intake(m_activeCollection, 0, true));
             }
+            //Add more cases here
         }
     }
     m_Status = eActive;

@@ -19,7 +19,7 @@ using namespace std;
 using namespace Util;
 using namespace Logger;
 
-#define NumPoints 4
+#define NumPoints 5
 
 struct Point
 {
@@ -27,6 +27,7 @@ struct Point
     double Y;
     double Act;
     double Speed;
+    double TurnType;
 };
 
 struct Auto
@@ -40,6 +41,7 @@ struct Auto
             CheckPoint->Y = Points[i + 1];
             CheckPoint->Act = Points[i + 2];
             CheckPoint->Speed = Points[i + 3];
+            CheckPoint->TurnType = Points[i + 4];
             Waypoints.push_back(CheckPoint);
         }
         Num = MaxPoints;

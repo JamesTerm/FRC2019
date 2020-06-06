@@ -140,6 +140,7 @@ class AutoPath : public CompositeGoal
       Angle = new double[Path.Num];
       Actions = new double[Path.Num];
       SpeedB = new double[Path.Num];
+      TurnT = new double[Path.Num];
       Dist[0] = 0;
       Angle[0] = 0;
       Actions[0] = 0;
@@ -148,6 +149,7 @@ class AutoPath : public CompositeGoal
         Log::General("WayPoint " + to_string(i) + ": X= " + to_string(Path.Waypoints[i]->X) + ", Y= " + to_string(Path.Waypoints[i]->Y));
         Actions[i] = Path.Waypoints[i]->Act;
         SpeedB[i] = Path.Waypoints[i]->Speed;
+        TurnT[i] = Path.Waypoints[i]->TurnType;
         float Dis = sqrt(pow(Path.Waypoints[i]->X - Path.Waypoints[i-1]->X, 2) + pow(Path.Waypoints[i]->Y - Path.Waypoints[i-1]->Y, 2));
             
         float XDIS = (Path.Waypoints[i]->X - Path.Waypoints[i-1]->X);
@@ -192,6 +194,7 @@ class AutoPath : public CompositeGoal
     double* Angle;
     double* Actions;
     double* SpeedB;
+    double* TurnT;
     double MaxT;
     int lenght = 0;
     ActiveCollection* m_activeCollection;
@@ -308,6 +311,70 @@ class Goal_TurnPIDF : public AtomicGoal
 	    double NumberAtTarget = 0;
       bool Moving = false;
       bool Done = false;
+};
+
+class Goal_CurvePath : public AtomicGoal
+{
+  public:
+    Goal_CurvePath(ActiveCollection *activeCollection, double Dist, double Angle, double MaxPowerOutput, double MaxTime, double SpeedBias = 1, double RobotBase = 23, double Steer = 0.05, double TurnRadius = 0)
+    {
+      Log::General("Moving Curve at: " + to_string(Dist) + " at and angle of: " + to_string(Angle));
+      navx = activeCollection->GetNavX();
+      AngleTarget = (Angle);
+      DistTarget = Dist * 5;
+      MaxPower = MaxPowerOutput;
+      m_activeCollection = activeCollection;
+      TotalTime = MaxTime;
+      m_Status = eInactive;
+      SBiasR = SpeedBias;
+      SBiasL = SpeedBias;
+      Base = RobotBase;
+      encL = (SparkMaxItem*)activeCollection->Get("left1");
+      encR = (SparkMaxItem*)activeCollection->Get("right1");
+      SteerBias = Steer;
+      Radi = TurnRadius;
+    }
+
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    virtual void Terminate();
+
+  private:
+    ActiveCollection *m_activeCollection;
+    NavX *navx;
+    SparkMaxItem *encR;
+    SparkMaxItem *encL;
+
+    bool GyroUse = true;
+    double SteerBias = 0;
+    double Radi = 0;
+    double Base;
+    double AngleTarget;
+    double DistTarget;
+    double DistLeft;
+    double DistRight;
+    double MaxPower;
+    double TotalTime;
+    double TimePassed = 0;
+    double SBiasR;
+    double SBiasL;
+    double P = 0.055; //PID constants
+	  double I = 0.0002;
+	  double D = 0.01;
+    double AngleBias = 0, DistBias = 0;
+	  double Limit = 0.35;
+    double PrevEL = 0, totalEL = 0;
+    double PrevER = 0, totalER = 0;
+	  double PrevEncoderL = 0, totalEncoderL = 0;
+    double PrevEncoderR = 0, totalEncoderR = 0;
+    double PevpowerL = 0;
+    double PrevEResultL = 0;
+    double PevpowerR = 0;
+    double PrevEResultR = 0;
+    double currentValue = 0;
+    double NumberAtTarget = 0;
+    bool Moving = false;
+    bool Done = false;
 };
 
 
