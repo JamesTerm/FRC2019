@@ -141,51 +141,16 @@ class AutoPath : public CompositeGoal
       Actions = new double[Path.Num];
       SpeedB = new double[Path.Num];
       TurnT = new double[Path.Num];
-      Dist[0] = 0;
-      Angle[0] = 0;
-      Actions[0] = 0;
-      for (int i = 1; i < Path.Num; i++)
+      TurnR = new double[Path.Num];
+      for(int i = 0; i < lenght; i++)
       {
-        Log::General("WayPoint " + to_string(i) + ": X= " + to_string(Path.Waypoints[i]->X) + ", Y= " + to_string(Path.Waypoints[i]->Y));
+        Dist[i] = Path.Waypoints[i]->Dist;
+        Angle[i] = Path.Waypoints[i]->Angle;
         Actions[i] = Path.Waypoints[i]->Act;
         SpeedB[i] = Path.Waypoints[i]->Speed;
-        TurnT[i] = Path.Waypoints[i]->TurnType;
-        float Dis = sqrt(pow(Path.Waypoints[i]->X - Path.Waypoints[i-1]->X, 2) + pow(Path.Waypoints[i]->Y - Path.Waypoints[i-1]->Y, 2));
-            
-        float XDIS = (Path.Waypoints[i]->X - Path.Waypoints[i-1]->X);
-        float YDIS = (Path.Waypoints[i]->Y - Path.Waypoints[i-1]->Y);
-
-        float A = (atan2(YDIS, XDIS) / 3.1415) * 180;
-
-        Dist[i] = Dis;
-        Angle[i] = A;
+        TurnT[i] = Path.Waypoints[i]->TurnAngle;
+        TurnR[i] = Path.Waypoints[i]->TurnRadius;
       }
-      //for(int Check = 0; Check < Path.Num; Check++)
-      {
-        for (int i = Path.Num - 1; i > 1; i--)
-        {
-          Angle[i] -= Angle[i - 1];
-
-          if (Inrange(ABSValue(Angle[i]), 180, 0.5))
-          {
-            Angle[i] = 0;
-            Dist[i] *= -1;
-            if (i != Path.Num - 1)
-            {
-              Angle[i + 1] += 180;
-            }
-          }
-          if (Angle[i] < -200)
-            Angle[i] = GetMax(Angle[i], Angle[i] + 360);
-          else if (Angle[i] > 200)
-            Angle[i] = GetMin(Angle[i], Angle[i] - 360);
-        }
-      }
-      /*for(int i = 0; i < lenght; i++)
-        {
-          Log::General(to_string(Angle[i]) + "Degrees");      
-          Log::General(to_string(Dist[i]) + "Feet");
-        }*/
     }
     virtual void Activate();
     virtual void Terminate();
@@ -195,6 +160,7 @@ class AutoPath : public CompositeGoal
     double* Actions;
     double* SpeedB;
     double* TurnT;
+    double* TurnR;
     double MaxT;
     int lenght = 0;
     ActiveCollection* m_activeCollection;
@@ -361,9 +327,9 @@ class Goal_CurvePath : public AtomicGoal
     double TimePassed = 0;
     double SBiasR;
     double SBiasL;
-    double P = 0.055; //PID constants
-	  double I = 0.0002;
-	  double D = 0.01;
+    double P = 0.4; //PID constants
+	  double I = 10;
+	  double D = 0;
     double AngleBias = 0, DistBias = 0;
 	  double Limit = 0.35;
     double PrevEL = 0, totalEL = 0;

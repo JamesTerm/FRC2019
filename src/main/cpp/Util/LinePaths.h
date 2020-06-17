@@ -19,15 +19,16 @@ using namespace std;
 using namespace Util;
 using namespace Logger;
 
-#define NumPoints 5
+#define NumPoints 6
 
 struct Point
 {
-    double X;
-    double Y;
+    double Dist;
+    double Angle;
     double Act;
     double Speed;
-    double TurnType;
+    double TurnAngle;
+    double TurnRadius;
 };
 
 struct Auto
@@ -37,11 +38,12 @@ struct Auto
         for(int i = 0; i < MaxPoints * NumPoints; i+=NumPoints)
         {
             Point* CheckPoint = new Point();
-            CheckPoint->X = Points[i];
-            CheckPoint->Y = Points[i + 1];
+            CheckPoint->Dist = Points[i];
+            CheckPoint->Angle = Points[i + 1];
             CheckPoint->Act = Points[i + 2];
             CheckPoint->Speed = Points[i + 3];
-            CheckPoint->TurnType = Points[i + 4];
+            CheckPoint->TurnAngle = Points[i + 4];
+            CheckPoint->TurnRadius = Points[i + 5];
             Waypoints.push_back(CheckPoint);
         }
         Num = MaxPoints;
@@ -60,7 +62,7 @@ static Auto Map(string Path)
         vector<double> InputPoints;
         getline(Inputfile, NumberInput);
         double Length = stod(NumberInput);
-        for(int i = 0; i < Length * NumPoints; i++)
+        for(int i = 0; i < (Length); i++)
         {
             getline(Inputfile, NumberInput);
             InputPoints.push_back(stod(NumberInput));

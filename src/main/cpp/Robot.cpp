@@ -157,14 +157,14 @@ void Robot::Teleop()
  */
 void Robot::Test()
 {
-	string SELECTED_AUTO = "A1P2.txt";
+	string SELECTED_AUTO = m_activeCollection->GetAuto();
+	Log::General("!--------------- " + SELECTED_AUTO + " AUTO Selected---------------!");
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
 	AutoPath* PathA = new AutoPath(m_activeCollection, Map(SELECTED_AUTO), 10);
 	PathA->Activate();
-	while(PathA->GetStatus() == Goal::eActive)
+	while(PathA->GetStatus() == Goal::eActive && !IsDisabled())
 	{
 		PathA->Process(0.01);
-		Log::Error("processing");
 		Wait(0.01);
 	}
 	StopNeoDrive(m_activeCollection);

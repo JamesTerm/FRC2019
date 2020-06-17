@@ -63,11 +63,15 @@ namespace Configuration
 
 			void SetOverdrive(bool o) {overdrive = o;}
 			bool GetOverdrive() {return overdrive;}
+
+			void SetAuto(string Auto) {AutoSele = Auto;}
+			string GetAuto() {return AutoSele;}
 			
 	private:
 		vector<NativeComponent*> activeCollection;
 		MultitaskGoal* activeGoal;
 		bool overdrive;
+		string AutoSele;
 	};
 }
 

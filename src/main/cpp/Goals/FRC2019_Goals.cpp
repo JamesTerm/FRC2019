@@ -521,16 +521,17 @@ Goal::Goal_Status Goal_CurvePath::Process(double dTime)
 {
     if(!Done && m_Status == eActive)
     {
-        if(NumberAtTarget < 50 && TimePassed < TotalTime)
+        if(NumberAtTarget < 5 && TimePassed < TotalTime)
         {
             double ErrorL = DistLeft - (encL->GetEncoderValue());
             double ErrorR = DistRight - (encR->GetEncoderValue() * -1);
+            Log::General("Error - Left: " + to_string(ErrorL) + " | Right: " + to_string(ErrorR));
             currentValue = navx->GetNavXAngle(); //get new navx angle
             double ResultRight = PIDCal(P, I, D, totalEncoderR, ErrorR, PrevEncoderR, dTime, MaxPower, Limit, PrevEResultR, DistBias - (SBiasR - 1), ErrorR, DistRight);
             double ResultLeft = PIDCal(P, I, D, totalEncoderL, ErrorL, PrevEncoderL, dTime, MaxPower, Limit, PrevEResultL, DistBias - (SBiasL - 1), ErrorL, DistLeft);
             double Steer = 0;
             
-            if(Inrange(ABSValue(encL->GetEncoderValue()), DistLeft, 0.8) && Inrange(ABSValue(encR->GetEncoderValue()), DistRight, 0.8) || Inrange(currentValue, AngleTarget, 5))
+            if(Inrange(ABSValue(encL->GetEncoderValue()), DistLeft, 0.01) && Inrange(ABSValue(encR->GetEncoderValue()), DistRight, 0.01) || Inrange(currentValue, AngleTarget, 0.0001))
             {
                 StopNeoDrive(m_activeCollection);
                 NumberAtTarget++;
@@ -646,12 +647,10 @@ void AutoPath::Activate()
 {
     for(int i = 0; i < lenght; i++)
     {
-        if(TurnT[i] == 0)
-            AddSubgoal(new Goal_TurnPIDF(m_activeCollection, Angle[i], 0.8, MaxT, SpeedB[i]));
-        else
-            AddSubgoal(new Goal_CurvePath(m_activeCollection, 0, Angle[i], 0.3, 10, 0, 23, 0.005, 2));
-        AddSubgoal(new Goal_CurvePath(m_activeCollection, Dist[i], 0, 0.3, 10, 0, 23, 0.005, 2));
-        //AddSubgoal(new Goal_MoveForward(m_activeCollection, Dist[i], 0.8, MaxT, SpeedB[i]));
+        AddSubgoal(new Goal_CurvePath(m_activeCollection, 0, TurnT[i], 0.3, 10, 0, 23, 0.005, TurnR[i]));
+        AddSubgoal(new Goal_TurnPIDF(m_activeCollection, Angle[i], 0.8, MaxT, SpeedB[i]));
+        AddSubgoal(new Goal_MoveForward(m_activeCollection, Dist[i], 0.8, MaxT, SpeedB[i]));
+        
         if(Actions[i] != 0)
         {
             if(Actions[i] == 1)

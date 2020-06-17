@@ -135,6 +135,23 @@ void Config::LoadValues(xml_document &doc){
 
 	#pragma endregion NavX
 
+	#pragma region AutoSelection
+
+	xml_attribute Ato = root.child("Selected_Auto").attribute("AutoName");
+	if(Ato)
+	{
+		string AtoFile = Ato.as_string();
+		Log::General("Selected Auto: " + AtoFile);
+		m_activeCollection->SetAuto(AtoFile);
+	}
+	else
+	{
+		Log::Error("Auto not found");
+	}
+	
+
+	#pragma endregion AutoSelection
+
 	#pragma region ColorSen
 
 	xml_node CS = root.child("ColorSensor");
