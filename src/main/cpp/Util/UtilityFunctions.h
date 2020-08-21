@@ -139,6 +139,15 @@ static char GetSelectedColor()
 		return false;
 	}
 
+	static bool Inrange(double Target, double Value)
+	{
+		if(Value <= Target)
+		{
+			return true;
+		}
+		return false;
+	}
+
 	static double Sign(double Value){
 		if(Value < 0){
 			return -1;
@@ -217,6 +226,20 @@ static char GetSelectedColor()
 		double Result = PIDCalculae(P, I, D, TotalError, Error, PrevError, ChangeInTime, ErrorTo, Target);
 		PrevError = Error;
 		Result = Constrain(Scale(Result, 0, (Bias)), -MaxPower, MaxPower);
+		if(!BelowMaxRate(Result, LastResult, MaxChange))
+		{
+			Log::General("PIDCal went over max change, Change = " + to_string(ABSValue(ABSValue(Result) - ABSValue(LastResult))));
+			Result = LastResult;
+		}
+		LastResult = Result;
+		return Result;
+	}
+
+	static double PIDCal(double P, double I, double D, double& TotalError, double Error, double& PrevError, double ChangeInTime, double MaxPower, double MinPower, double MaxChange, double& LastResult, double Bias, double& ErrorTo, double Target)
+	{
+		double Result = PIDCalculae(P, I, D, TotalError, Error, PrevError, ChangeInTime, ErrorTo, Target);
+		PrevError = Error;
+		Result = Constrain(Scale(Result, 0, (Bias)), MinPower, MaxPower);
 		if(!BelowMaxRate(Result, LastResult, MaxChange))
 		{
 			Log::General("PIDCal went over max change, Change = " + to_string(ABSValue(ABSValue(Result) - ABSValue(LastResult))));

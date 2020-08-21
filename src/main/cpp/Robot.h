@@ -10,6 +10,7 @@
 #include <string>
 //#include <frc/WPILib.h>
 #include <frc/RobotBase.h>
+#include "frc/smartdashboard/Smartdashboard.h"
 #include <networktables/NetworkTableEntry.h>
 #include <networktables/NetworkTableInstance.h>
 #include <frc/DriverStation.h>
@@ -63,6 +64,7 @@ class Robot : public RobotBase
         const string m_driveStraight = "drive";
         MultitaskGoal* m_masterGoal;
         MultitaskGoal* m_teleOpMasterGoal;
+        std::shared_ptr<NetworkTable> AutoTable = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard");
 		nt::NetworkTableInstance m_inst; //!Network tables
         shared_ptr<NetworkTable> m_dashboardTable;
         string m_autonOptions[5] = {"DriveStraight","OnePieceAuto","TwoPieceAuto","DEBUG","NONE"};

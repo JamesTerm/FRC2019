@@ -172,7 +172,7 @@ class Goal_MoveForward : public AtomicGoal
     Goal_MoveForward(ActiveCollection *activeCollection, double Dist, double MaxPowerOutput, double MaxTime, double SpeedBias = 1)
     {
         Log::General("Move Forward to: " + to_string(Dist) + " Feet");
-        RealTarget = Dist * 5;
+        RealTarget = Dist * DistMultiplyer;
         MaxPower = MaxPowerOutput;
         m_activeCollection = activeCollection;
         distTo = (RealTarget);
@@ -193,6 +193,7 @@ class Goal_MoveForward : public AtomicGoal
     virtual void Terminate();
 
     private:
+      double DistMultiplyer = 10;
       double SBias;
       double TimePassed = 0;
       double TotalTime = 0;
@@ -232,7 +233,7 @@ class Goal_TurnPIDF : public AtomicGoal
   public:
     Goal_TurnPIDF(ActiveCollection *activeCollection, double Angle, double MaxPowerOutput, double MaxTime, double SpeedBias = 1)
     {
-        IsNegative = Angle < 0;
+        IsNegative = (Angle < 0);
 
         navx = activeCollection->GetNavX();
         Log::General("Turn to: " + to_string(Angle) + " Degrees, Negative: " + to_string(IsNegative));
@@ -267,8 +268,8 @@ class Goal_TurnPIDF : public AtomicGoal
 
       float Offset = 0;
       bool IsNegative  = false;
-      double P = 15; //PID constants
-	    double I = 15;
+      double P = 0.8; //PID constants
+	    double I = 2;
 	    double D = 1;
       double Bias = 0;
 	    double Limit = 0.35;
@@ -285,23 +286,28 @@ class Goal_TurnPIDF : public AtomicGoal
 class Goal_CurvePath : public AtomicGoal
 {
   public:
-    Goal_CurvePath(ActiveCollection *activeCollection, double Dist, double Angle, double MaxPowerOutput, double MaxTime, double SpeedBias = 1, double RobotBase = 23, double Steer = 0.05, double TurnRadius = 0)
+    Goal_CurvePath(ActiveCollection *activeCollection, double Dist, double Angle, double TurnRadius, double MaxPowerOutput, double MaxTime, double SpeedBias = 1, double Bias = 10, double RobotBase = 23)
     {
-      Log::General("Moving Curve at: " + to_string(Dist) + " at and angle of: " + to_string(Angle));
+      Log::General("Moving Curve at: " + to_string(Dist) + " at and angle of: " + to_string(Angle) + " with a radius of: " + to_string(TurnRadius));
       navx = activeCollection->GetNavX();
       AngleTarget = (Angle);
-      DistTarget = Dist * 5;
+      DistTarget = Dist;
       MaxPower = MaxPowerOutput;
       m_activeCollection = activeCollection;
       TotalTime = MaxTime;
       m_Status = eInactive;
-      SBiasR = SpeedBias;
-      SBiasL = SpeedBias;
+      DistBias = Bias;
       Base = RobotBase;
       encL = (SparkMaxItem*)activeCollection->Get("left1");
       encR = (SparkMaxItem*)activeCollection->Get("right1");
-      SteerBias = Steer;
-      Radi = TurnRadius;
+      Radi = TurnRadius * RadiusMulit;
+      Radi *= MultiExtra;
+      AngleTarget *= MultiExtra;
+
+      if((Dist == 0 && Angle == 0 && TurnRadius == 0))
+      {
+        TotalTime = 0;
+      }
     }
 
     virtual void Activate();
@@ -315,35 +321,51 @@ class Goal_CurvePath : public AtomicGoal
     SparkMaxItem *encL;
 
     bool GyroUse = true;
-    double SteerBias = 0;
     double Radi = 0;
     double Base;
     double AngleTarget;
     double DistTarget;
-    double DistLeft;
-    double DistRight;
+    double Dist;
     double MaxPower;
     double TotalTime;
     double TimePassed = 0;
-    double SBiasR;
-    double SBiasL;
-    double P = 0.4; //PID constants
-	  double I = 10;
-	  double D = 0;
+    
+    
+    double LeftSpeedMult = 0.01;
+    double RightSpeedMult = 0.01;
+
+    //Spacing: 0.1
+    //Spacing: 0.05
+    double DistMulit = 2.24;
+    double RadiusMulit = 1;
+    double MultiExtra = 1;
+
+    double LeftSpeed = 0;
+    double RightSpeed = 0;
+    double LeftAdd = 0.03;
+    double RightAdd = 0.03;
+
+    double P = 0.5; //PID constants
+	  double I = 0.1;
+	  double D = 0.01;
+
     double AngleBias = 0, DistBias = 0;
-	  double Limit = 0.35;
-    double PrevEL = 0, totalEL = 0;
-    double PrevER = 0, totalER = 0;
-	  double PrevEncoderL = 0, totalEncoderL = 0;
-    double PrevEncoderR = 0, totalEncoderR = 0;
-    double PevpowerL = 0;
-    double PrevEResultL = 0;
-    double PevpowerR = 0;
-    double PrevEResultR = 0;
+	  double Limit = 0.4;
+    double PrevE = 0, totalE = 0;
+    double PrevEncoder = 0, totalEncoder = 0;
+    double Pevpower = 0.1;
+    double PrevEResult = 0;
+
     double currentValue = 0;
     double NumberAtTarget = 0;
+    
     bool Moving = false;
     bool Done = false;
+
+    double ResultRight;
+    double ResultLeft;
+    double MinPowerL = 0;
+    double MinPowerR = 0;
 };
 
 class Goal_LimelightTrack : public AtomicGoal

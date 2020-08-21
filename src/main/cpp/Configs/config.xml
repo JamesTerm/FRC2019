@@ -10,7 +10,7 @@
     <!-- Sets whether or not to initialize the NavX -->
     <UseNavX value="true" />
     <!-- Sets the Auto to run -->
-    <Selected_Auto AutoName = "A1P1.txt"/>
+    <Selected_Auto AutoName = "A1P2.txt"/>
     <!-- Sets whether or not to initialize the camera to send back to the driver station -->
     <limeLight/>
     <ColorSensor name = "Color"/>

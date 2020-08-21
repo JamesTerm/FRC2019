@@ -307,7 +307,8 @@ void Goal_MoveForward::Activate()
     m_Status = eActive;
     Moving = true;
     Bias = (5000);
-    BiasE = ((PE * distTo) * 10);
+    BiasE = (100);
+    Log::General("Distance to: " + to_string(distTo));
 }
 
 Goal::Goal_Status Goal_MoveForward::Process(double dTime)
@@ -315,7 +316,7 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
     if(!Done && m_Status == eActive)
     {
        {
-       if(NumberAtTarget < 50 && TimePassed < TotalTime && (distTo != 0))
+       if(NumberAtTarget < 1 && TimePassed < TotalTime && (distTo != 0))
     	{
             enc = (enc0->GetEncoderValue());
             currentValue = navx->GetNavXAngle(); //get new navx angle
@@ -324,17 +325,14 @@ Goal::Goal_Status Goal_MoveForward::Process(double dTime)
             double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, 0.5, 0.1, Pevpower, Bias);
             //Distance PID
     		double ErrorE = distTo - enc;
-            double ResultE = PIDCal(PE, IE, DE, totalEncoder, ErrorE, PrevEncoder, dTime, MaxPower, Limit, PrevEResult, BiasE - (SBias - 1), ErrorTo, distTo) * (IsNegative ? -1 : 1);
-            
-	    	if(Inrange(enc, RealTarget, 0.05))
+            double ResultE = PIDCal(PE, IE, DE, totalEncoder, ErrorE, PrevEncoder, dTime, MaxPower, Limit, PrevEResult, BiasE - (SBias - 1), ErrorTo, distTo) * (IsNegative ? -3 : 3);
+            //Log::General("Error: " + to_string(ErrorE) + " | Dist: " + to_string(distTo));
+	    	if(Inrange(0, ErrorE, 0.05))
             {
-                StopNeoDrive(m_activeCollection);
-		    	NumberAtTarget++;
+                NumberAtTarget++;
 	    	}
-            else
-            {
-                SetNeoDrive((Result + ResultE), (Result - ResultE), m_activeCollection); //set drive to new powers
-            }
+
+            SetNeoDrive((Result + ResultE), (Result - ResultE), m_activeCollection); //set drive to new powers
             
             TimePassed += dTime;
         }
@@ -382,6 +380,7 @@ void Goal_TurnPIDF::Activate()
     Moving = true;
     Bias = ((P * (RealTarget))*(1.5 * (1000/RealTarget)));
     FrameworkCommunication::GetInstance().SendData("Entered", 1);
+    Log::General("Turn to: " + to_string(RealTarget));
 }
 
 void Goal_TurnPIDF::SetTarget(double Angle, double TotalT)
@@ -395,21 +394,19 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
 {
     if(!Done && m_Status == eActive)
     {
-       if(NumberAtTarget < 50 && TimePassed < TotalTime && (RealTarget != 0))
+       if(NumberAtTarget < 2 && TimePassed < TotalTime && (RealTarget != 0))
     	{
             double AngleNavX = (double)navx->GetNavXAngle();
     		currentValue = ABSValue(AngleNavX); //get new navx angle
     		//Angle PIDF
 	    	double Error = RealTarget - currentValue;
-            double Result = PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias, ErrorTo, RealTarget) * (IsNegative ? 1 : -1) * (SBias + 2);
-            if(Inrange(currentValue, RealTarget, 1)){
-                StopNeoDrive(m_activeCollection);
+            double Result = (0.025 * (IsNegative ? 1 : -1)) + (PIDCal(P, I, D, totalE, Error, PrevE, dTime, MaxPower, Limit, Pevpower, Bias, ErrorTo, RealTarget) * (IsNegative ? 1 : -1) * (SBias + 2));
+            //Log::General("Error: " + to_string(Error));
+            if(Inrange(0, Error, 3))
+            {
 		    	NumberAtTarget++;
 	    	}
-            else
-            {
-                SetNeoDrive(Result, Result, m_activeCollection); //set drive to new powers
-            }
+            SetNeoDrive(Result, Result, m_activeCollection); //set drive to new powers
             TimePassed += dTime;
         }
         else if(TotalTime <= TimePassed)
@@ -438,19 +435,19 @@ Goal::Goal_Status Goal_TurnPIDF::Process(double dTime)
     }
     else
     {
-        if(TotalTime != 0 && Attempts < 10)
+        if(TotalTime != 0 && Attempts < 1)
         {
             Log::Error("Time out Turn at Angle: " + to_string(navx->GetNavXAngle()) + "| with a target of: " + to_string(RealTarget) + "! TRYING AGAIN");
             //RealTarget = ABSValue((RealTarget * (IsNegative ? -1 : 1)) - navx->GetNavXAngle());
             Log::Error("New Angle Target: " + to_string(RealTarget));
-            NumberAtTarget = TimePassed = totalE = 0;
-            SBias += 3;
+            NumberAtTarget = TimePassed = 0;
+            SBias += 1;
             Attempts++;
             Moving = true;
             Done = false;
             return m_Status = eActive;
         }
-        else if(TotalTime != 0 && Attempts >= 10)
+        else if(TotalTime != 0 && Attempts >= 1)
         {
             Log::Error("Too many attempts to turn to: " + to_string(RealTarget));
             return m_Status = eFailed;
@@ -485,61 +482,66 @@ void Goal_CurvePath::Activate()
     Moving = true;
     AngleBias = ((P * (AngleTarget))*(1.5 * (1000/AngleTarget)));
     DistBias = ((P * DistBias) * 10);
-    DistLeft = DistRight = DistTarget;
-    if(AngleTarget != 0)
+    Dist = ((ABSValue(AngleTarget) * 3.1415) / 180) * (ABSValue(Radi)) * DistMulit;
+
+    if(AngleTarget > 0)
     {
-        {
-            if(AngleTarget > 0)
-            {
-                DistRight = ((ABSValue(AngleTarget) * 3.1415) / 180) * Radi;
-                DistLeft = ((ABSValue(AngleTarget) * 3.1415) / 180) * (Radi + (Base / 2));
-                //Left faster - Right slower
-                SBiasR = DistLeft - DistRight / 0.75;
-            }
-            else
-            {
-                DistLeft = ((ABSValue(AngleTarget) * 3.1415) / 180) * Radi;
-                DistRight = ((ABSValue(AngleTarget) * 3.1415) / 180) * (Radi + (Base / 2));
-                //Right slower - Left faster
-                SBiasL = DistRight - DistLeft / 0.75;
-            }
-        }
-        if(DistTarget < 0)
-        {
-            DistLeft *= -1;
-            DistRight *= -1;
-        }
+        LeftSpeed = (((AngleTarget) * 3.1415) / 180) * Constrain(ABSValue(Radi) + (Base / 24), 0, numeric_limits<double>::max());
+        RightSpeed = (((AngleTarget) * 3.1415) / 180) * Constrain(ABSValue(Radi) - (Base / 24), 0, numeric_limits<double>::max());
     }
     else
     {
-        GyroUse = false;
+        LeftSpeed = (((AngleTarget) * 3.1415) / 180) * Constrain(ABSValue(Radi) - (Base / 24), 0, numeric_limits<double>::max());
+        RightSpeed = (((AngleTarget) * 3.1415) / 180) * Constrain(ABSValue(Radi) + (Base / 24), 0, numeric_limits<double>::max());
     }
-    Log::General("Left: " + to_string(DistLeft) + " | Right: " + to_string(DistRight));
+    
+    if(LeftSpeed >= 1)
+    {
+        LeftSpeed /= 10;
+    }
+    if(RightSpeed >= 1)
+    {
+        RightSpeed /= 10;
+    }
+
+    LeftSpeed /= LeftAdd;
+    RightSpeed /= RightAdd;
+
+    if(LeftSpeed == 0)
+    {
+        RightSpeed *= 10;
+    }
+    else if(RightSpeed == 0)
+    {
+        LeftSpeed *= 10;
+    }
+
+    RightSpeed = ABSValue(RightSpeed);
+    LeftSpeed = ABSValue(LeftSpeed);
+
+    MinPowerL = encL->Get() * 0.01;
+    MinPowerR = encR->Get() * 0.01;
+    Log::General("Distance to travel: " + to_string(Dist) + " | Angle: " + to_string(AngleTarget) + " | Radius: " + to_string(Radi));
 }
 
 Goal::Goal_Status Goal_CurvePath::Process(double dTime)
 {
     if(!Done && m_Status == eActive)
     {
-        if(NumberAtTarget < 5 && TimePassed < TotalTime)
+        if(NumberAtTarget < 1 && TimePassed < TotalTime)
         {
-            double ErrorL = DistLeft - (encL->GetEncoderValue());
-            double ErrorR = DistRight - (encR->GetEncoderValue() * -1);
-            Log::General("Error - Left: " + to_string(ErrorL) + " | Right: " + to_string(ErrorR));
+            double DistError = (((((encL->GetEncoderValue() / 5) + ((encR->GetEncoderValue() / 5) * -1)) / 2) - Dist) / Dist);
+            double SpeedCal = -PIDCal(P, I, D, totalEncoder, DistError, PrevEncoder, dTime, 1, Limit, PrevEResult, DistBias, DistError, 1);
             currentValue = navx->GetNavXAngle(); //get new navx angle
-            double ResultRight = PIDCal(P, I, D, totalEncoderR, ErrorR, PrevEncoderR, dTime, MaxPower, Limit, PrevEResultR, DistBias - (SBiasR - 1), ErrorR, DistRight);
-            double ResultLeft = PIDCal(P, I, D, totalEncoderL, ErrorL, PrevEncoderL, dTime, MaxPower, Limit, PrevEResultL, DistBias - (SBiasL - 1), ErrorL, DistLeft);
-            double Steer = 0;
-            
-            if(Inrange(ABSValue(encL->GetEncoderValue()), DistLeft, 0.01) && Inrange(ABSValue(encR->GetEncoderValue()), DistRight, 0.01) || Inrange(currentValue, AngleTarget, 0.0001))
+            ResultRight = (RightSpeed) * SpeedCal;
+            ResultLeft = (LeftSpeed) * SpeedCal;
+            //Log::General("Error Dist: " + to_string(DistError) + " | SpeedCal: " + to_string(SpeedCal) + " | Left: " + to_string(ResultLeft) + " | Right: " + to_string(ResultRight));
+            if(Inrange(0, DistError, 0.09999))
             {
-                StopNeoDrive(m_activeCollection);
+                //StopNeoDrive(m_activeCollection);
                 NumberAtTarget++;
 	    	}
-            else
-            {
-                SetNeoDrive((ResultLeft), -(ResultRight), m_activeCollection); //set drive to new powers
-            }
+            SetNeoDrive((ResultLeft), -(ResultRight), m_activeCollection);
             TimePassed += dTime;
         }
         else if(TotalTime <= TimePassed)
@@ -558,10 +560,14 @@ Goal::Goal_Status Goal_CurvePath::Process(double dTime)
          return m_Status = eActive;
     else if(Done && !Moving)
     {
-         return m_Status = eCompleted;
+        StopNeoDrive(m_activeCollection);
+        return m_Status = eCompleted;
     }
     else
+    {
+        StopNeoDrive(m_activeCollection);
         return m_Status = eFailed;
+    }
 }
 
 void Goal_CurvePath::Terminate()
@@ -647,9 +653,11 @@ void AutoPath::Activate()
 {
     for(int i = 0; i < lenght; i++)
     {
-        AddSubgoal(new Goal_CurvePath(m_activeCollection, 0, TurnT[i], 0.3, 10, 0, 23, 0.005, TurnR[i]));
-        AddSubgoal(new Goal_TurnPIDF(m_activeCollection, Angle[i], 0.8, MaxT, SpeedB[i]));
+        AddSubgoal(new Goal_CurvePath(m_activeCollection, 0, TurnT[i],  TurnR[i], 0.8, 10, 10, 10, 23));
         AddSubgoal(new Goal_MoveForward(m_activeCollection, Dist[i], 0.8, MaxT, SpeedB[i]));
+        double NAgleTar = Angle[i];
+        
+        AddSubgoal(new Goal_TurnPIDF(m_activeCollection, -NAgleTar, 0.8, MaxT, SpeedB[i]));
         
         if(Actions[i] != 0)
         {

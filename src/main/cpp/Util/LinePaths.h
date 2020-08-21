@@ -68,7 +68,7 @@ static Auto Map(string Path)
             InputPoints.push_back(stod(NumberInput));
             Log::General("Line: " + to_string(i) + " = " + to_string(stod(NumberInput)));
         }
-        return Auto(Length, InputPoints);
+        return Auto(Length / 6, InputPoints);
     }
     else
     {
@@ -82,7 +82,7 @@ static Auto Map(string Path)
             getline(DudFile, NumberInput);
             InputDudPoints.push_back(stod(NumberInput));
         }
-        return Auto(Length, InputDudPoints);
+        return Auto(Length / 6, InputDudPoints);
     }
 }
 
