@@ -158,7 +158,7 @@ void Robot::Teleop()
 void Robot::Test()
 {
 	string SELECTED_AUTO = "";
-	if (AutoTable->GetString("Auto Selector", "").length() == 0)
+	if (AutoTable->GetString("Auto Selector", "").length() == 0 && !m_activeCollection->ConfigOverride())
 	{
 		SELECTED_AUTO = m_activeCollection->GetAuto();
 	}

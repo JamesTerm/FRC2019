@@ -148,6 +148,12 @@ void Config::LoadValues(xml_document &doc){
 	{
 		Log::Error("Auto not found");
 	}
+	xml_attribute AtoOverride = root.child("Selected_Auto").attribute("OverrideDS");
+	if(AtoOverride)
+	{
+		bool AtoFile = AtoOverride.as_bool();
+		m_activeCollection->SetAutoOverride(AtoFile);
+	}
 	
 
 	#pragma endregion AutoSelection
