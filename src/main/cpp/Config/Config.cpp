@@ -473,10 +473,23 @@ void Config::AllocateComponents(xml_node &root){
 					Log::General("Allocated PDBChannel " + pdbChannel_print + " for VictorSP " + name);
 					tmp->SetPDBChannel(pdbChannel);
 				}
+
 				int MotorGroup = victorSp.attribute("Group") ? victorSp.attribute("Group").as_int() : -1;
 				if (MotorGroup != -1)
 				{
 					m_activeCollection->GetPDBManager()->SetMotorGroup(tmp, MotorGroup);
+				}
+
+				double PersonalLowerRate = victorSp.attribute("LowerRate") ? victorSp.attribute("LowerRate").as_double() : -1;
+				if (PersonalLowerRate != -1)
+				{
+					tmp->SetLowerRate(PersonalLowerRate);
+				}
+
+				double PersonalRegenRate = victorSp.attribute("RegenRate") ? victorSp.attribute("RegenRate").as_double() : -1;
+				if (PersonalRegenRate != -1)
+				{
+					tmp->SetRegenRate(PersonalRegenRate);
 				}
 			}
 			else{
@@ -509,10 +522,23 @@ void Config::AllocateComponents(xml_node &root){
 					Log::General("Allocated PDBChannel " + to_string(pdbChannel) + " for VictorSPX " + name);
 					tmp->SetPDBChannel(pdbChannel);
 				}
+
 				int MotorGroup = victorSpx.attribute("Group") ? victorSpx.attribute("Group").as_int() : -1;
 				if (MotorGroup != -1)
 				{
 					m_activeCollection->GetPDBManager()->SetMotorGroup(tmp, MotorGroup);
+				}
+
+				double PersonalLowerRate = victorSpx.attribute("LowerRate") ? victorSpx.attribute("LowerRate").as_double() : -1;
+				if (PersonalLowerRate != -1)
+				{
+					tmp->SetLowerRate(PersonalLowerRate);
+				}
+
+				double PersonalRegenRate = victorSpx.attribute("RegenRate") ? victorSpx.attribute("RegenRate").as_double() : -1;
+				if (PersonalRegenRate != -1)
+				{
+					tmp->SetRegenRate(PersonalRegenRate);
 				}
 			}
 			else{
@@ -547,10 +573,23 @@ void Config::AllocateComponents(xml_node &root){
 					Log::General("Allocated PDBChannel " + to_string(pdbChannel) + " for SparkMax " + name);
 					tmp->SetPDBChannel(pdbChannel);
 				}
+
 				int MotorGroup = sparkMax.attribute("Group") ? sparkMax.attribute("Group").as_int() : -1;
 				if (MotorGroup != -1)
 				{
 					m_activeCollection->GetPDBManager()->SetMotorGroup(tmp, MotorGroup);
+				}
+
+				double PersonalLowerRate = sparkMax.attribute("LowerRate") ? sparkMax.attribute("LowerRate").as_double() : -1;
+				if (PersonalLowerRate != -1)
+				{
+					tmp->SetLowerRate(PersonalLowerRate);
+				}
+
+				double PersonalRegenRate = sparkMax.attribute("RegenRate") ? sparkMax.attribute("RegenRate").as_double() : -1;
+				if (PersonalRegenRate != -1)
+				{
+					tmp->SetRegenRate(PersonalRegenRate);
 				}
 			}
 			else{
@@ -586,10 +625,23 @@ void Config::AllocateComponents(xml_node &root){
 					Log::General("Allocated PDBChannel " + to_string(pdbChannel) + " for TalonSRX " + name);
 					tmp->SetPDBChannel(pdbChannel);
 				}
+
 				int MotorGroup = talonSrx.attribute("Group") ? talonSrx.attribute("Group").as_int() : -1;
 				if (MotorGroup != -1)
 				{
 					m_activeCollection->GetPDBManager()->SetMotorGroup(tmp, MotorGroup);
+				}
+
+				double PersonalLowerRate = talonSrx.attribute("LowerRate") ? talonSrx.attribute("LowerRate").as_double() : -1;
+				if (PersonalLowerRate != -1)
+				{
+					tmp->SetLowerRate(PersonalLowerRate);
+				}
+
+				double PersonalRegenRate = talonSrx.attribute("RegenRate") ? talonSrx.attribute("RegenRate").as_double() : -1;
+				if (PersonalRegenRate != -1)
+				{
+					tmp->SetRegenRate(PersonalRegenRate);
 				}
 			}
 			else{

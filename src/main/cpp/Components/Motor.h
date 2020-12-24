@@ -72,17 +72,21 @@ namespace Components
                     if (TimeTimedOut > 0)
                     {
                         TimeTimedOut -= 0.1;
-                        double NewVal = ABSVal(val) - ABSVal(LowerAmount);
-                        if (NewVal < 0)
-                        {
-                            NewVal = 0;
-                        }
-                        ReturnVal = NewVal * SignVal(val);
                     }
                     else
                     {
-                        LowerAmount += RegenRate;
+                        if (LowerAmount > 0)
+                            LowerAmount -= RegenRate;
+                        if (LowerAmount < 0)
+                            LowerAmount = 0;
                     }
+
+                    double NewVal = ABSVal(val) - ABSVal(LowerAmount);
+                    if (NewVal < 0)
+                    {
+                        NewVal = 0;
+                    }
+                    ReturnVal = NewVal * SignVal(val);
                 }
                 else
                 {
