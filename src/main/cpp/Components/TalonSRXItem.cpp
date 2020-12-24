@@ -22,7 +22,7 @@ using namespace Components;
 TalonSRXItem::TalonSRXItem() {}
 
 TalonSRXItem::TalonSRXItem(int _channel, string _name, bool _reversed, bool enableEncoder)
-	: OutputComponent(_name){
+	: Motor(_name){
 	channel = _channel;
 	reversed = _reversed;
 	talon = new TalonSRX(channel);
@@ -46,6 +46,7 @@ void TalonSRXItem::SetQuadraturePosition(int val){
 }
 
 void TalonSRXItem::Set(double val){
+	val = CalculateVal(val);
 	Log::General(name+" : "  + to_string(val));
 	if((val<0 || val>0) && !inUse)
 	{
@@ -61,16 +62,17 @@ void TalonSRXItem::Set(double val){
 	}
 }
 
-void TalonSRXItem::SetPDBChannel(int val){
-	PDBChannel = val;
-}
-
 void TalonSRXItem::DefaultSet(){
 	Log::Error("WHY DID YOU CALL THE DEFAULT SET FOR A MOTOR?!? Yell at your programmers!");
 }
 
 void TalonSRXItem::Set(DoubleSolenoid::Value value){
 	Log::Error("WHY DID YOU CALL THE DEFAULT SET FOR A MOTOR?!? Yell at your programmers!");
+}
+
+void TalonSRXItem::Stop()
+{
+	TalonSRXItem::Set(0);
 }
 
 TalonSRXItem::~TalonSRXItem() {}

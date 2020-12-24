@@ -27,6 +27,8 @@ Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com, chrisrweeks@aol
 #include "../Components/DigitalInputItem.h"
 #include "../Components/NavX.h"
 #include "../Components/SparkMaxItem.h"
+#include "../Components/PDBManager.h"
+
 
 class MultitaskGoal;
 
@@ -68,6 +70,9 @@ namespace Configuration
 			void SetAutoOverride(bool Override) {AutoOverride = Override;}
 			string GetAuto() {return AutoSele;}
 			bool ConfigOverride() {return AutoOverride;}
+
+			void SetPDP(double TimeOut, double CurrentThres, double Lower) {PDP = new PDBManager(TimeOut, CurrentThres, Lower);}
+			PDBManager* GetPDBManager() {return PDP;}
 			
 	private:
 		vector<NativeComponent*> activeCollection;
@@ -75,6 +80,7 @@ namespace Configuration
 		bool overdrive;
 		bool AutoOverride;
 		string AutoSele;
+		PDBManager* PDP;
 	};
 }
 

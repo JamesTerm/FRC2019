@@ -14,13 +14,13 @@ Email: irobot983@gmail.com
 #define SRC_COMPONENTS_TALONSPXITEM_H_
 
 #include "ctre/Phoenix.h"
-#include "OutputComponent.h"
+#include "Motor.h"
 
 using namespace std;
 using namespace frc;
 
 namespace Components{
-class VictorSPXItem : public OutputComponent{
+class VictorSPXItem : public Motor{
 private:
 	VictorSPX *victor;
 	int channel;
@@ -32,9 +32,8 @@ public:
 	virtual double Get() override;
 	virtual void Set(double val) override;
 	virtual void Set(DoubleSolenoid::Value value) override;
-	void SetPDBChannel(int val);
-	int PDBChannel;
 	virtual void DefaultSet() override;
+	virtual void Stop() override;
 	virtual ~VictorSPXItem();
 	VictorSPX *AsVictorSPX() { return victor; }
 };

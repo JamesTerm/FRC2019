@@ -9,6 +9,8 @@
     <Comment comment="A" />
     <!-- Sets whether or not to initialize the NavX -->
     <UseNavX value="true" />
+    <!-- Sets the PDBManager to regulate current -->
+    <PDBManager MaxCurrrent="10" TimeOut="2" LowerAmountBy="0.1"/>
     <!-- Sets whether or not to initialize the camera to send back to the driver station -->
     <!-- Contains assignments to ports and robot dimensions -->
     <RobotConfig>

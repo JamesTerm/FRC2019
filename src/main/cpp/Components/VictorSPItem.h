@@ -14,26 +14,24 @@ Email: dylantrwatson@gmail.com
 #ifndef SRC_COMPONENTS_VICTORSPITEM_H_
 #define SRC_COMPONENTS_VICTORSPITEM_H_
 
-#include "OutputComponent.h"
+#include "Motor.h"
 
 namespace Components
 {
-	class VictorSPItem final : public OutputComponent
+	class VictorSPItem final : public Motor
 	{
 		public:
 			VictorSPItem(){}
 			virtual ~VictorSPItem(){}
-			VictorSPItem(string name, int channel, bool reversed) : OutputComponent(name)
+			VictorSPItem(string name, int channel, bool reversed) : Motor(name)
 			{
 				victor = new VictorSP(channel);
 				Reversed = reversed;
-				PDBChannel = 20;
 			}
 
 			int GetPolarity();
 			string GetName();
 			void Stop();
-			void SetPDBChannel(int val);
 			virtual void Set(double val) override;
 			virtual double Get() override;
 			//for reference
@@ -42,7 +40,6 @@ namespace Components
 		private:
 			VictorSP *victor;
 			bool Reversed;
-			int PDBChannel;
 			virtual void DefaultSet() override;
 			virtual void Set(DoubleSolenoid::Value value) override;
 	};

@@ -21,7 +21,7 @@ using namespace Components;
 VictorSPXItem::VictorSPXItem() {}
 
 VictorSPXItem::VictorSPXItem(int _channel, string _name, bool _reversed)
-	: OutputComponent(_name){
+	: Motor(_name){
 	channel = _channel;
 	reversed = _reversed;
 	victor = new VictorSPX(channel);
@@ -35,6 +35,7 @@ double VictorSPXItem::Get(){
 }
 
 void VictorSPXItem::Set(double val){
+	val = CalculateVal(val);
 	if((val<0 || val>0) && !inUse)
 	{
 		inUse = true;
@@ -49,16 +50,17 @@ void VictorSPXItem::Set(double val){
 	}
 }
 
-void VictorSPXItem::SetPDBChannel(int val){
-	PDBChannel = val;
-}
-
 void VictorSPXItem::DefaultSet(){
 	Log::Error("WHY DID YOU CALL THE DEFAULT SET FOR A MOTOR?!? Yell at your programmers!");
 }
 
 void VictorSPXItem::Set(DoubleSolenoid::Value value){
 	Log::Error("WHY DID YOU CALL THE DEFAULT SET FOR A MOTOR?!? Yell at your programmers!");
+}
+
+void VictorSPXItem::Stop()
+{
+	VictorSPXItem::Set(0);
 }
 
 VictorSPXItem::~VictorSPXItem() {}

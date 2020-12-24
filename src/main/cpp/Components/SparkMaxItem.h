@@ -14,14 +14,13 @@ Email: irobot983@gmail.com
 #define SRC_COMPONENTS_SPARKMAXITEM_H_
 
 #include <rev/CANSparkMax.h>
-
-#include "OutputComponent.h"
+#include "Motor.h"
 
 using namespace std;
 using namespace frc;
 using namespace rev;
 namespace Components{
-class SparkMaxItem : public OutputComponent{
+class SparkMaxItem : public Motor{
 private:
 	CANSparkMax *Max;
 	int channel;
@@ -34,16 +33,14 @@ public:
 	SparkMaxItem(int _channel, string _name, bool _reversed);
 	double GetEncoderValue();
     
-	double Get();
+	virtual double Get() ;
 	int GetPolarity();
 	void Reset();
-	virtual void Set(double val) override;
-	virtual void Set(DoubleSolenoid::Value value) override;
-	void Stop();
+	virtual void Set(double val) ;
+	virtual void Set(DoubleSolenoid::Value value) ;
+	virtual void Stop() ;
 	string GetName();
-	void SetPDBChannel(int val);
-	int PDBChannel;
-	virtual void DefaultSet() override;
+	virtual void DefaultSet() ;
 	virtual ~SparkMaxItem();
 	CANSparkMax *AsSparkMax() { return Max;}
     void ResetEncoderValue(); 

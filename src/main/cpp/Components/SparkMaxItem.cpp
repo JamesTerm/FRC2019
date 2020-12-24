@@ -20,8 +20,7 @@ using namespace Components;
 
 SparkMaxItem::SparkMaxItem() {}
 
-SparkMaxItem::SparkMaxItem(int _channel, string _name, bool _reversed)
-	: OutputComponent(_name){
+SparkMaxItem::SparkMaxItem(int _channel, string _name, bool _reversed) : Motor(_name){
 	channel = _channel;
 	reversed = _reversed;
 	Max = new CANSparkMax(channel, rev::CANSparkMax::MotorType::kBrushless);
@@ -51,6 +50,7 @@ int SparkMaxItem::GetPolarity(){
 }
 
 void SparkMaxItem::Set(double val){
+	val = CalculateVal(val);
 	// Log::General(Name+" : "  + to_string(val));
 	if((val<0 || val>0) && !inUse)
 	{
@@ -76,9 +76,6 @@ void SparkMaxItem::Stop(){
 	}
 }
 
-void SparkMaxItem::SetPDBChannel(int val){
-	PDBChannel = val;
-}
 void SparkMaxItem::ResetEncoderValue(){
 	Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 24).SetPosition(0);
 

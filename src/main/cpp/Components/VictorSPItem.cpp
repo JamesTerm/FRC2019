@@ -20,6 +20,7 @@ using namespace Components;
 
 void VictorSPItem::Set(double val)
 {
+	val = CalculateVal(val);
 	if((val<0 || val>0) && !inUse)
 	{
 		inUse = true;
@@ -61,10 +62,6 @@ int VictorSPItem::GetPolarity()
 {
 	if(Reversed) return -1;
 	return 1;
-}
-
-void VictorSPItem::SetPDBChannel(int val){
-	PDBChannel = val;
 }
 
 void VictorSPItem::DefaultSet()

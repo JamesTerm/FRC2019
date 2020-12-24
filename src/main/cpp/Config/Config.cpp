@@ -135,6 +135,18 @@ void Config::LoadValues(xml_document &doc){
 
 	#pragma endregion NavX
 
+	#pragma region PDB
+
+	xml_attribute MaxCur = root.child("PDBManager").attribute("MaxCurrrent");
+	xml_attribute TimeOut = root.child("PDBManager").attribute("TimeOut");
+	xml_attribute Lower = root.child("PDBManager").attribute("LowerAmountBy");
+	if (MaxCur && TimeOut)
+	{
+		m_activeCollection->SetPDP(TimeOut.as_double(), MaxCur.as_double(), Lower.as_double());
+	}
+
+	#pragma endregion PDB
+
 	#pragma region AutoSelection
 
 	xml_attribute Ato = root.child("Selected_Auto").attribute("AutoName");
@@ -461,6 +473,11 @@ void Config::AllocateComponents(xml_node &root){
 					Log::General("Allocated PDBChannel " + pdbChannel_print + " for VictorSP " + name);
 					tmp->SetPDBChannel(pdbChannel);
 				}
+				int MotorGroup = victorSp.attribute("Group") ? victorSp.attribute("Group").as_int() : -1;
+				if (MotorGroup != -1)
+				{
+					m_activeCollection->GetPDBManager()->SetMotorGroup(tmp, MotorGroup);
+				}
 			}
 			else{
 				Log::Error("Failed to load VictorSP " + name + ". This may cause a fatal runtime error!");
@@ -492,6 +509,11 @@ void Config::AllocateComponents(xml_node &root){
 					Log::General("Allocated PDBChannel " + to_string(pdbChannel) + " for VictorSPX " + name);
 					tmp->SetPDBChannel(pdbChannel);
 				}
+				int MotorGroup = victorSpx.attribute("Group") ? victorSpx.attribute("Group").as_int() : -1;
+				if (MotorGroup != -1)
+				{
+					m_activeCollection->GetPDBManager()->SetMotorGroup(tmp, MotorGroup);
+				}
 			}
 			else{
 				Log::Error("Failed to load VictorSPX " + name + ". This may cause a fatal runtime error!");
@@ -506,7 +528,8 @@ void Config::AllocateComponents(xml_node &root){
 
 #pragma endregion SparkMax
 
-xml_node SparkMax = robot.child("SparkMax");
+	#pragma region SparkMax
+	xml_node SparkMax = robot.child("SparkMax");
 	if(SparkMax){
 		for(xml_node sparkMax = SparkMax.first_child(); sparkMax; sparkMax = sparkMax.next_sibling()){
 			
@@ -523,6 +546,11 @@ xml_node SparkMax = robot.child("SparkMax");
 				if(pdbChannel != -1){
 					Log::General("Allocated PDBChannel " + to_string(pdbChannel) + " for SparkMax " + name);
 					tmp->SetPDBChannel(pdbChannel);
+				}
+				int MotorGroup = sparkMax.attribute("Group") ? sparkMax.attribute("Group").as_int() : -1;
+				if (MotorGroup != -1)
+				{
+					m_activeCollection->GetPDBManager()->SetMotorGroup(tmp, MotorGroup);
 				}
 			}
 			else{
@@ -557,6 +585,11 @@ xml_node SparkMax = robot.child("SparkMax");
 				if(pdbChannel != -1){
 					Log::General("Allocated PDBChannel " + to_string(pdbChannel) + " for TalonSRX " + name);
 					tmp->SetPDBChannel(pdbChannel);
+				}
+				int MotorGroup = talonSrx.attribute("Group") ? talonSrx.attribute("Group").as_int() : -1;
+				if (MotorGroup != -1)
+				{
+					m_activeCollection->GetPDBManager()->SetMotorGroup(tmp, MotorGroup);
 				}
 			}
 			else{

@@ -15,13 +15,13 @@ Email: dylantrwatson@gmail.com
 #define SRC_COMPONENTS_TALONSRXITEM_H_
 
 #include <ctre/Phoenix.h>
-#include "OutputComponent.h"
+#include "Motor.h"
 
 using namespace std;
 using namespace frc;
 
 namespace Components{
-class TalonSRXItem : public OutputComponent{
+class TalonSRXItem : public Motor{
 private:
 	TalonSRX *talon;
 	int channel;
@@ -33,12 +33,11 @@ public:
 	TalonSRXItem(int channel, string name, bool reversed, bool enableEncoder);
 	int GetQuadraturePosition();
 	void SetQuadraturePosition(int val);
-	void SetPDBChannel(int val);
-	int PDBChannel;
 	virtual double Get() override;
 	virtual void Set(double val) override;
 	virtual void Set(DoubleSolenoid::Value value) override;
 	virtual void DefaultSet() override;
+	virtual void Stop() override;
 	virtual ~TalonSRXItem();
 };
 }
