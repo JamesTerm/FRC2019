@@ -42,17 +42,15 @@ namespace Components
             std::shared_ptr<NetworkTable> MotorTable = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard");
             double ABSVal(double val)
             {
-                if (val < 0)
-                    return val * -1;
-                return val;
+                return (val < 0 ? val * -1 : val);
             }
 
             int SignVal(double val)
             {
-                if (val >= 0)
-                    return 1;
-                return -1;
+                return (val >= 0 ? 1 : -1);
             }
+            double RegenRate = 0.01;
+            double PersonalLowerRate = 0;
 
         public:
 
@@ -62,7 +60,10 @@ namespace Components
             void SetPDBChannel(int val) { PDBPort = val; }
             int GetPDBChannel() {return PDBPort;}
 
-            void SetTimeOut(double Time, double lowerAmount) {TimeTimedOut = Time; LowerAmount += lowerAmount;}
+            void SetRegenRate(double Rate) {RegenRate = Rate;}
+            void SetLowerRate(double Rate) {PersonalLowerRPer = Rate;}
+
+            void SetTimeOut(double Time, double lowerAmount) {TimeTimedOut = Time; LowerAmount += (PersonalLowerRate == 0 ? lowerAmount : PersonalLowerRPer);}
             double CalculateVal(double val)
             {
                 double ReturnVal = val;
@@ -80,7 +81,7 @@ namespace Components
                     }
                     else
                     {
-                        LowerAmount = 0;
+                        LowerAmount += RegenRate;
                     }
                 }
                 else
