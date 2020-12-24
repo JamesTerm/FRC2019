@@ -61,7 +61,7 @@ namespace Components
             int GetPDBChannel() {return PDBPort;}
 
             void SetRegenRate(double Rate) {RegenRate = Rate;}
-            void SetLowerRate(double Rate) {PersonalLowerRPer = Rate;}
+            void SetLowerRate(double Rate) {PersonalLowerRate = Rate;}
 
             void SetTimeOut(double Time, double lowerAmount) {TimeTimedOut = Time; LowerAmount += (PersonalLowerRate == 0 ? lowerAmount : PersonalLowerRate);}
             double CalculateVal(double val)
