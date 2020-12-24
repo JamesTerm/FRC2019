@@ -63,7 +63,7 @@ namespace Components
             void SetRegenRate(double Rate) {RegenRate = Rate;}
             void SetLowerRate(double Rate) {PersonalLowerRPer = Rate;}
 
-            void SetTimeOut(double Time, double lowerAmount) {TimeTimedOut = Time; LowerAmount += (PersonalLowerRate == 0 ? lowerAmount : PersonalLowerRPer);}
+            void SetTimeOut(double Time, double lowerAmount) {TimeTimedOut = Time; LowerAmount += (PersonalLowerRate == 0 ? lowerAmount : PersonalLowerRate);}
             double CalculateVal(double val)
             {
                 double ReturnVal = val;
