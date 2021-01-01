@@ -1,0 +1,26 @@
+How to use:
+Basic Controlls:
+Z + Mouse Scroll = Zoom In/Out
+Mouse Scroll = Effect Cursor Bigger/Smaller
+Middle Mouse Down = Pan
+Left Moune Down = (Depending on mode which is selected by dropdown menu on top of window) Draw/Erase/Move/Set Act Number
+
+Shortcuts:
+ctrl + S = Save/Save As (if no save was made during session)
+ctrl + Z = Undo
+ctrl + N = Reset Save Keys (allows to make a new saved path when ctrl + S is pushed)
+ctrl + O = Loads existing path
+ctrl + B = Uploads path to Robot (if IP, Username, and Password are entered in the bottom left side menu)
+
+Menus:
+Top: Select Mouse Action (the selected mouse action is displayed at the bottom with the lable Mouse:<____>)
+Top Left: Select the field .png and edit size and position
+Bottom Left: Open/Save/Upload output file to robot
+	Top Menu of bottom left menu: Create RAW XYAct Path that can be loaded in to edit and/or Create a calculated file which contains Radius,Angle,Act
+Right Menu: Line Modifiers
+
+Line Modifiers:
+Simplify: Simplifies the line to straight lines
+Complexity: Adds one point between every point on line per click
+Smooth: Adds points to make a curved path
+Auto Fix: ON => Applys Simplify then Smooth when Left Mouse is unclicked
