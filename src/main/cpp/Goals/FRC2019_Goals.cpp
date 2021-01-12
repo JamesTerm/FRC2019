@@ -471,8 +471,33 @@ void Goal_TurnPIDF::Terminate()
 
 /********************Goal_CurvePath******************/
 
+void Goal_CurvePath::GetLastData()
+{
+    if (Goal_CurvePath::HasData(0))
+    {
+        totalEncoder = Goal_CurvePath::GetData(0);
+    }
+    if (Goal_CurvePath::HasData(1))
+    {
+        PrevEncoder = Goal_CurvePath::GetData(1);
+    }
+    if (Goal_CurvePath::HasData(2))
+    {
+        PrevEResult = Goal_CurvePath::GetData(2);
+    }
+}
+
+void Goal_CurvePath::SaveData()
+{
+    Goal_CurvePath::Setdata(0, totalEncoder);
+    Goal_CurvePath::Setdata(1, PrevEncoder);
+    Goal_CurvePath::Setdata(2, PrevEResult);
+}
+
 void Goal_CurvePath::Activate()
 {
+    Goal_CurvePath::GetLastData();
+
     encL -> Reset();
     encR -> Reset();
     navx->Reset();
@@ -572,6 +597,7 @@ Goal::Goal_Status Goal_CurvePath::Process(double dTime)
 
 void Goal_CurvePath::Terminate()
 {
+    Goal_CurvePath::SaveData();
     StopNeoDrive(m_activeCollection);
     m_Status = eCompleted;
 }
@@ -653,11 +679,7 @@ void AutoPath::Activate()
 {
     for(int i = 0; i < lenght; i++)
     {
-        AddSubgoal(new Goal_CurvePath(m_activeCollection, 0, TurnT[i],  TurnR[i], 0.8, 10, 10, 10, 23));
-        AddSubgoal(new Goal_MoveForward(m_activeCollection, Dist[i], 0.8, MaxT, SpeedB[i]));
-        double NAgleTar = Angle[i];
-        
-        AddSubgoal(new Goal_TurnPIDF(m_activeCollection, -NAgleTar, 0.8, MaxT, SpeedB[i]));
+        AddSubgoal(new Goal_CurvePath(m_activeCollection, 0, Angle[i], Radius[i], 0.8, 10, 10, 10, 23));
         
         if(Actions[i] != 0)
         {

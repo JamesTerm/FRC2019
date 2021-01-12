@@ -33,6 +33,7 @@ Goal::Goal_Status CompositeGoal::Process(double dTime)
 		//remove finished goals
 		while (!m_SubGoals.empty() && (m_SubGoals.front()->GetStatus() == eCompleted || m_SubGoals.front()->GetStatus() == eFailed))
 		{
+			data = m_SubGoals.front()->data;
 			m_SubGoals.pop_front();
 		}
 		if (!m_SubGoals.empty())
@@ -42,6 +43,7 @@ Goal::Goal_Status CompositeGoal::Process(double dTime)
 			//active the next goal if it isnt already
 			if (currentGoal->GetStatus() == eInactive)
 			{
+				currentGoal->data = data;
 				currentGoal->Activate();
 			}
 			newStatus = currentGoal->Process(dTime);

@@ -136,31 +136,22 @@ class AutoPath : public CompositeGoal
       MaxT = MaxTime;
       lenght = Path.Num;
       m_activeCollection = activeCollection;
-      Dist = new double[Path.Num];
+      Radius = new double[Path.Num];
       Angle = new double[Path.Num];
       Actions = new double[Path.Num];
-      SpeedB = new double[Path.Num];
-      TurnT = new double[Path.Num];
-      TurnR = new double[Path.Num];
       for(int i = 0; i < lenght; i++)
       {
-        Dist[i] = Path.Waypoints[i]->Dist;
+        Radius[i] = Path.Waypoints[i]->Radius;
         Angle[i] = Path.Waypoints[i]->Angle;
         Actions[i] = Path.Waypoints[i]->Act;
-        SpeedB[i] = Path.Waypoints[i]->Speed;
-        TurnT[i] = Path.Waypoints[i]->TurnAngle;
-        TurnR[i] = Path.Waypoints[i]->TurnRadius;
       }
     }
     virtual void Activate();
     virtual void Terminate();
   private:
-    double* Dist;
+    double* Radius;
     double* Angle;
     double* Actions;
-    double* SpeedB;
-    double* TurnT;
-    double* TurnR;
     double MaxT;
     int lenght = 0;
     ActiveCollection* m_activeCollection;
@@ -313,6 +304,8 @@ class Goal_CurvePath : public AtomicGoal
     virtual void Activate();
     virtual Goal::Goal_Status Process(double dTime);
     virtual void Terminate();
+    void GetLastData();
+    void SaveData();
 
   private:
     ActiveCollection *m_activeCollection;
@@ -351,6 +344,7 @@ class Goal_CurvePath : public AtomicGoal
 
     double AngleBias = 0, DistBias = 0;
 	  double Limit = 0.4;
+    
     double PrevE = 0, totalE = 0;
     double PrevEncoder = 0, totalEncoder = 0;
     double Pevpower = 0.1;

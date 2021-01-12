@@ -19,16 +19,13 @@ using namespace std;
 using namespace Util;
 using namespace Logger;
 
-#define NumPoints 6
+#define NumPoints 3
 
 struct Point
 {
-    double Dist;
-    double Angle;
     double Act;
-    double Speed;
-    double TurnAngle;
-    double TurnRadius;
+    double Angle;
+    double Radius;
 };
 
 struct Auto
@@ -38,12 +35,9 @@ struct Auto
         for(int i = 0; i < MaxPoints * NumPoints; i+=NumPoints)
         {
             Point* CheckPoint = new Point();
-            CheckPoint->Dist = Points[i];
-            CheckPoint->Angle = Points[i + 1];
+            CheckPoint->Angle = Points[i];
+            CheckPoint->Radius = Points[i + 1];
             CheckPoint->Act = Points[i + 2];
-            CheckPoint->Speed = Points[i + 3];
-            CheckPoint->TurnAngle = Points[i + 4];
-            CheckPoint->TurnRadius = Points[i + 5];
             Waypoints.push_back(CheckPoint);
         }
         Num = MaxPoints;
@@ -68,7 +62,7 @@ static Auto Map(string Path)
             InputPoints.push_back(stod(NumberInput));
             Log::General("Line: " + to_string(i) + " = " + to_string(stod(NumberInput)));
         }
-        return Auto(Length / 6, InputPoints);
+        return Auto(Length / NumPoints, InputPoints);
     }
     else
     {
@@ -82,7 +76,7 @@ static Auto Map(string Path)
             getline(DudFile, NumberInput);
             InputDudPoints.push_back(stod(NumberInput));
         }
-        return Auto(Length / 6, InputDudPoints);
+        return Auto(Length / NumPoints, InputDudPoints);
     }
 }
 
