@@ -29,13 +29,14 @@ namespace Components
             double Timeout = 0;
             double PDBCurentThres = 0;
             double Lower = 0;
+            bool Run = true;
             std::vector<std::vector<Motor*>> MotorGroups;
             PowerDistributionPanel PDB{0};
 
 		public:
 			
 			PDBManager(){}
-            PDBManager(double TimeOut, double CurrentThres, double LowerAmount){ Timeout = TimeOut; PDBCurentThres = CurrentThres; Lower = LowerAmount; }
+            PDBManager(double TimeOut, double CurrentThres, double LowerAmount, bool run){ Timeout = TimeOut; PDBCurentThres = CurrentThres; Lower = LowerAmount; Run = run; }
 
             void SetMotorGroup (Motor *MotorPtr, int Group)
             {

@@ -56,15 +56,16 @@ Config::Config(ActiveCollection *_activeCollection, Drive *_drive) {
 	}
 	else
 	{
-		//In simulation we should really get the message across
-		#ifdef _Win32
-		assert(false);  
-		#endif
+		backupConfig *_backup = new backupConfig(_activeCollection, _drive);
 		Log::Error("XML Config parsed with errors");
 		string desc = result.description();
 		Log::Error("Error description: " + desc);
 		Log::Error("Error offset: " + result.offset);
 		Log::Error("No config available, returning to Robot.cpp\nTHIS IS A BIG ERROR!");
+		//In simulation we should really get the message across
+		#ifdef _Win32
+		assert(false);  
+		#endif
 	}
 }
 
@@ -137,14 +138,17 @@ void Config::LoadValues(xml_document &doc){
 
 	#pragma region PDB
 
-	xml_attribute MaxCur = root.child("PDBManager").attribute("MaxCurrrent");
-	xml_attribute TimeOut = root.child("PDBManager").attribute("TimeOut");
-	xml_attribute Lower = root.child("PDBManager").attribute("LowerAmountBy");
-	if (MaxCur && TimeOut)
+	if (root.child("PDBManager"))
 	{
-		m_activeCollection->SetPDP(TimeOut.as_double(), MaxCur.as_double(), Lower.as_double());
+		xml_attribute MaxCur = root.child("PDBManager").attribute("MaxCurrrent");
+		xml_attribute TimeOut = root.child("PDBManager").attribute("TimeOut");
+		xml_attribute Lower = root.child("PDBManager").attribute("LowerAmountBy");
+		xml_attribute Run = root.child("PDBManager").attribute("Update");
+		if (MaxCur && TimeOut)
+		{
+			m_activeCollection->SetPDP(TimeOut.as_double(), MaxCur.as_double(), Lower.as_double(), Run.as_bool());
+		}
 	}
-
 	#pragma endregion PDB
 
 	#pragma region AutoSelection

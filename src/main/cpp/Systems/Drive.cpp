@@ -33,7 +33,8 @@ void Drive::AddControlOperate(ControlItem *control)
 
 void Drive::Update(double deltaTime)
 {
-	m_activeCollection->GetPDBManager()->UpdatePDB();
+	if (m_activeCollection->GetPDBManager() != nullptr)
+		m_activeCollection->GetPDBManager()->UpdatePDB();
 	if (!m_DisableDrive)
 	{
 		for (int i = 0; i < (int)m_driveControlCollection.size(); i++)

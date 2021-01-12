@@ -33,6 +33,7 @@ Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com, chrisrweeks@aol
 #include "../Limelight/limelight.h"
 #include "../Components/SparkMaxItem.h"
 #include "../Components/REVColorSensorV3.h"
+#include "backupConfig.h"
 
 using namespace System;
 using namespace pugi;

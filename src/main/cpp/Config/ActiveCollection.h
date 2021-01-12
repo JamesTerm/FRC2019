@@ -71,7 +71,7 @@ namespace Configuration
 			string GetAuto() {return AutoSele;}
 			bool ConfigOverride() {return AutoOverride;}
 
-			void SetPDP(double TimeOut, double CurrentThres, double Lower) {PDP = new PDBManager(TimeOut, CurrentThres, Lower);}
+			void SetPDP(double TimeOut, double CurrentThres, double Lower, bool run) {PDP = new PDBManager(TimeOut, CurrentThres, Lower, run);}
 			PDBManager* GetPDBManager() {return PDP;}
 			
 	private:

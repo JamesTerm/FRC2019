@@ -94,7 +94,7 @@ namespace Components
                     LowerAmount = 0;
                 }
                 MotorTable->PutNumber(name, ReturnVal);
-                
+                Log::General(name + " : Power->" + to_string(ReturnVal));
                 return ReturnVal;
             }
 

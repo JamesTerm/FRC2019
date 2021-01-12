@@ -48,6 +48,7 @@ void Robot::RobotInit()
 	Log::restartfile();
 	Log::General("Program Version: " + to_string(VERSION) + " Revision: " + REVISION, true);
 	Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
+	Log::General("Passed Config", true);
 	SmartDashboard::init(); //!< Must have this for smartdashboard to work properly
 	m_inst = nt::NetworkTableInstance::GetDefault(); //!< Network tables
 	m_dashboardTable = m_inst.GetTable("DASHBOARD_TABLE");
@@ -64,7 +65,7 @@ void Robot::Autonomous()
 {
 	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Auton);	
 	m_masterGoal = new MultitaskGoal(m_activeCollection, false);
-
+Config *config = new Config(m_activeCollection, m_drive);
 	Log::General("Autonomous Started");
 	//TODO: Make defaults set now and call the active collection
 	m_activeCollection->DoubleSolenoidDefault();
@@ -114,7 +115,7 @@ void Robot::Autonomous()
 void Robot::Teleop()
 {
 	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Teleop);
-
+Config *config = new Config(m_activeCollection, m_drive);
 
 	m_activeCollection->GetActiveGoal()->~MultitaskGoal(); //!< Destroy any pre-existing masterGoal that was not properly disposed of
 	m_teleOpMasterGoal = new MultitaskGoal(m_activeCollection, false);
@@ -129,10 +130,10 @@ void Robot::Teleop()
 	double LastTime = GetTime();
 	//We can test teleop auton goals here a bit later
 	//PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
-	limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
-	m_activeCollection->GetNavX()->Reset();
-	((TalonSRXItem*)m_activeCollection->Get("Shooter0"))->SetQuadraturePosition(0);
-	double LastE = 0;
+	if (m_activeCollection->Get("LimeLight") != nullptr)
+		limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
+	if (m_activeCollection->GetNavX() != nullptr)
+		m_activeCollection->GetNavX()->Reset();
 	while (IsOperatorControl() && !IsDisabled())
 	{
 		const double CurrentTime = GetTime();
@@ -144,11 +145,7 @@ void Robot::Teleop()
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
 		m_drive->Update(DeltaTime);
-		double EncoderValue = (((TalonSRXItem*)m_activeCollection->Get("Shooter0"))->GetQuadraturePosition());
-    	double revSpeed = (int)(EncoderValue - LastE);
-		Log::General("Rate: " + to_string(revSpeed));
 		Wait(0.010);
-		LastE = EncoderValue;
 	}
 }
 
@@ -157,6 +154,7 @@ void Robot::Teleop()
  */
 void Robot::Test()
 {
+	Config *config = new Config(m_activeCollection, m_drive);
 	string SELECTED_AUTO = "";
 	if (AutoTable->GetString("Auto Selector", "").length() == 0 && !m_activeCollection->ConfigOverride())
 	{
