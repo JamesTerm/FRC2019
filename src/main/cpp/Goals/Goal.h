@@ -58,7 +58,7 @@ class Goal
 		inline void ReActivateIfFailed() {if (m_Status==eFailed) Activate();}
 
 		// This ensures that Composite Goals can safely allocate atomic goals and let the base implementation delete them
-
+		vector<double> data;
 	protected:
 		Goal_Status m_Status;
 		//TODO see if Owner and Type are necessary
