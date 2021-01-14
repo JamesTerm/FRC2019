@@ -774,6 +774,69 @@ void Config::AllocateComponents(xml_node &root){
 
 #pragma endregion DigitalInput
 
+	#pragma region SwerveModule
+
+	xml_node Modules = robot.child("SwerveModules");
+	if (Modules)
+	{
+		for(xml_node module = Modules.first_child(); module; module = module.next_sibling())
+		{
+			string name = module.name();
+			string SwivelName = module.attribute("swivel").as_string();
+			string WheelName = module.attribute("wheel").as_string();
+			if (m_activeCollection->Get(SwivelName) != nullptr && m_activeCollection->Get(WheelName) != nullptr)
+			{
+				string SwivelEnc = module.attribute("swivelEnc").as_string();
+				string WheelEnc = module.attribute("wheelEnc").as_string();
+				if (m_activeCollection->GetEncoder(SwivelEnc) != nullptr && m_activeCollection->GetEncoder(WheelEnc) != nullptr)
+				{
+					double Ticksperrev = module.attribute("swivelTicks").as_double();
+					double WheelTicksperrev = module.attribute("wheelTicks").as_double();
+					SwerveModule *tmp = new SwerveModule(name, (Motor*)m_activeCollection->Get(SwivelName), (Motor*)m_activeCollection->Get(WheelName), m_activeCollection->GetEncoder(SwivelEnc), m_activeCollection->GetEncoder(WheelEnc), Ticksperrev, WheelTicksperrev);
+					m_activeCollection->Add(tmp);
+					Log::General("Added Swerve Module :" + name);
+				}
+				else
+				{
+					Log::Error("Swerve Module " + name + " cannot find one or both encoders specified in the config!");
+				}
+			}
+			else
+			{
+				Log::Error("Swerve Module " + name + " cannot find one or both motors specified in the config!");
+			}
+		}
+	}
+
+	#pragma endregion SwerveModule
+
+	#pragma region SwerveManager
+
+	if (Modules)
+	{
+		xml_node Man = robot.child("SwerveManager");
+		if (Man)
+		{
+			string name = Man.attribute("name").as_string();
+			string LeftF = Man.attribute("LF").as_string();
+			string RightF = Man.attribute("RF").as_string();
+			string LeftB = Man.attribute("LB").as_string();
+			string RightB = Man.attribute("RB").as_string();
+			if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
+			{
+				SwerveManager *Manager = new SwerveManager(name, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB));
+				m_activeCollection->Add(Manager);
+				Log::General("Added Swerve Manager");
+			}
+			else
+			{
+				Log::Error("Swerve Manager cannot find one or more swerve modules specified in the code!");
+			}
+		}
+	}
+
+	#pragma endregion SwerveManager
+
 }
 
 void Config::AllocateDriverControls(xml_node &controls){
@@ -992,6 +1055,46 @@ void Config::AllocateDriverControls(xml_node &controls){
 	}
 
 	#pragma endregion
+
+	#pragma region SwerveControl
+
+	xml_node Swerve = drive.child("SwerveControl");
+	if (Swerve)
+	{
+		string drivemode = Swerve.attribute("driveMode").as_string();
+		string name = Swerve.attribute("name").as_string();
+		int H = Swerve.attribute("H-Axis").as_int();
+		int V = Swerve.attribute("V-Axis").as_int();
+		int S = Swerve.attribute("S-Axis").as_int();
+		int dz = Swerve.attribute("deadZone").as_int();
+		int mult = Swerve.attribute("powerMultiplier").as_int();
+		bool reversed = Swerve.attribute("reversed").as_bool();
+		double length = Swerve.attribute("length").as_double();
+		double width = Swerve.attribute("width").as_double();
+		string ManagerName = Swerve.attribute("manager").as_string();
+
+		SwerveControl::DriveCalculation Cal;
+		if (drivemode.compare("Field") == 0)
+		{
+			Cal = SwerveControl::DriveCalculation::Field_Oriented;
+		}
+		else
+		{
+			Cal = SwerveControl::DriveCalculation::Robot_Oriented;
+		}
+		if (m_activeCollection->Get(ManagerName) != nullptr)
+		{
+			SwerveControl *Control = new SwerveControl(m_driveJoy, Cal, name, V, H, S, dz, reversed, mult, m_activeCollection, (SwerveManager*)m_activeCollection->Get(ManagerName),length, width);
+			m_drive->AddControlDrive(Control);
+			Log::General("Added swerve control that is " + drivemode + " oriented");
+		}
+		else
+		{
+			Log::Error("Swerve control cannot find manager with name " + ManagerName);
+		}
+	}
+
+	#pragma endregion SwerveControl
 }
 
 void Config::AllocateOperatorControls(xml_node &controls){

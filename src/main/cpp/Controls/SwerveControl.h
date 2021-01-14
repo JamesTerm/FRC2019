@@ -6,8 +6,8 @@ Project:     BroncBotzFRC2019
 Copyright (c) BroncBotz.
 All rights reserved.
 
-Author(s):	Dylan Watson
-Email:	dylantrwatson@gmail.com
+Author(s):	Ian Poll
+Email:	irobot9803@gmail.com
 \*********************************************************************/
 
 

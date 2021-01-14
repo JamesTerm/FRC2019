@@ -27,6 +27,7 @@ Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com, chrisrweeks@aol
 #include "../Controls/AxisControl.h"
 #include "../Controls/ToggleButtonControl.h"
 #include "../Controls/GoalButtonControl.h"
+#include "../Controls/SwerveControl.h"
 #include "../Pugi/pugixml.h"
 #include "../Goals/GoalSelector.h"
 #include "../Util/Log.h"
