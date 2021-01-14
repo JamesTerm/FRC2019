@@ -30,6 +30,23 @@ public:
     TEventArgs(T1 value, T2 sender) { this->value = value; this->sender = sender; }
 };
 
+template<class T1, class T2, class T3, class T4>
+class IEventArgs : public EventArgs
+{
+private:
+    T1 vertical;
+    T2 horizontal;
+    T3 spin;
+    T4 sender;
+
+public:
+    T1 GetVValue() { return vertical; }
+    T2 GetHValue() { return horizontal; }
+    T3 GetSValue() { return spin; }
+    T4 GetSender() { return sender; }
+    IEventArgs(T1 vertical, T2 horizontal, T3 spin, T4 sender) { this->vertical = vertical; this->horizontal = horizontal; this->spin = spin; this->sender = sender; }
+};
+
 template<class T1>
 class SenderEventArgs : public EventArgs
 {

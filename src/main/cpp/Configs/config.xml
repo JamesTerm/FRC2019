@@ -57,6 +57,9 @@
         <DigitalInput>
             <!--limSwitch channel="4"/-->
         </DigitalInput>
+        <SwerveModules>
+        <!--Add stuff-->
+        </SwerveModules>
     </RobotConfig>
 
     <!-- Root of all control definitions -->
@@ -67,6 +70,9 @@
                 <leftDrive axis="1" deadZone="0.08" reversed="true" powerMultiplier="0.5" bindings="left0,left1" useOverdrive="false"/>
 		        <rightDrive axis="3" deadZone="0.08" reversed="false" powerMultiplier="0.5" bindings="right0,right1" useOverdrive="false"/>
 		    </AxisControls>
+            <SwerveControl>
+            <!--Add stuff-->
+            </SwerveControl>
             <ButtonControls>
             </ButtonControls>  
             <ToggleButtonControls>

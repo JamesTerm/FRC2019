@@ -15,6 +15,7 @@ Email: irobot9803@gmail.com
 
 #include "ctre/Phoenix.h"
 #include "OutputComponent.h"
+#include "../Util/PIDProfile.h"
 
 #include <frc/RobotBase.h>
 #include "frc/smartdashboard/Smartdashboard.h"

@@ -14,6 +14,7 @@ Email:	dylantrwatson@gmail.com
 
 #include "ControlItem.h"
 #include "GoalButtonControl.h"
+#include "SwerveControl.h"
 #include "../Goals/GoalSelector.h"
 #include "../Goals/FRC2019_Goals.h"
 
@@ -50,14 +51,27 @@ auto onControllerValueChanged = [&](EventArgs* e) {
 		}
 		args->GetSender()->SetToComponents(args->GetValue());
 		SmartDashboard::PutNumber(args->GetSender()->name, args->GetValue());
-	}catch(exception &e){
-		Log::Error("Known Exception Thrown in onControllerValueChanged in a Control! This can cause fatal Runtime Errors! Check your logs and XML.");
-		SmartDashboard::PutString("OnValueChangedStatus", "Error");
-		//TODO: Make this the append instead
-		Log::Error(e.what());
 	}catch(...){
-		Log::Error("UnknownException Thrown in onControllerValueChanged in a Control! This can cause fatal Runtime Errors! Check your XML and yell at the programmers!");
-		SmartDashboard::PutString("OnValueChangedStatus", "Error");
+		try{
+			auto SwerveArgs = (IEventArgs<double, double, double, ControlItem*>*)e;
+			Log::General(" EVENT "+SwerveArgs->GetSender()->name);
+
+			SwerveControl *DT = (SwerveControl*)(SwerveArgs->GetSender());
+			DT->GetManager()->Set(SwerveArgs->GetVValue(), SwerveArgs->GetHValue(), SwerveArgs->GetSValue());
+
+			SmartDashboard::PutNumber(SwerveArgs->GetSender()->name, SwerveArgs->GetVValue());
+		}
+		catch(exception &e)
+		{
+			Log::Error("Known Exception Thrown in onControllerValueChanged in a Control! This can cause fatal Runtime Errors! Check your logs and XML.");
+			SmartDashboard::PutString("OnValueChangedStatus", "Error");
+			//TODO: Make this the append instead
+			Log::Error(e.what());
+		}
+		catch(...){
+			Log::Error("UnknownException Thrown in onControllerValueChanged in a Control! This can cause fatal Runtime Errors! Check your XML and yell at the programmers!");
+			SmartDashboard::PutString("OnValueChangedStatus", "Error");
+		}
 	}
 };
 

@@ -20,6 +20,7 @@ Email:	dylantrwatson@gmail.com
 #include "../Global.h"
 #include "../Config/ActiveCollection.h"
 #include "../Util/SmartDashboard.h"
+#include "../Components/Swerve/SwerveManager.h"
 
 using namespace frc;
 using namespace std;
