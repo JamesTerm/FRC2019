@@ -65,9 +65,6 @@ namespace Components
             double EncRevTicks = 0;
             double WheelEncRevTicks = 0;
 
-            double LastWheelEncoderVal = 0;
-            double LastResult = 0;
-
             double D_Time = 0;
     };
 }

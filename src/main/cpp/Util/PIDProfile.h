@@ -188,6 +188,45 @@ namespace Util
 				return PIDCal(Pval, Ival, Dval, _TotalE, Current, _PrevE, D_Time, MaxPower, MinPower, MaxChange, _PrevR, BiasV, _ErrorTo, Target);
             };
 
+			double CalSpeed(double SPEEEED, double MotorPower, double Enc, double D_Time)
+			{
+				if (SPEEEED != 0)
+    			{
+        			if (Inrange(MotorPower, 0, 0.01))
+        			{
+            			if (LastWheelEncoderVal == 0)
+            			{
+                			LastWheelEncoderVal = Enc;
+            			}
+            			double rate = (LastWheelEncoderVal - Enc);
+            			double Error = rate - SPEEEED;
+
+    			        double Result = Calculate(SPEEEED, Error, D_Time);
+            			double Scaled = Scale(Result, 0.1, (GetP() * SPEEEED * 5));
+            			double SpedSpeed = (SPEEEED < 0 ? Constrain(Scaled, -1, 0) : Constrain(Scaled, 0, 1));
+            			SpedSpeed = (ABSValue(ABSValue(LastResult) - ABSValue(SpedSpeed)) < 0.5? SpedSpeed : LastResult);
+
+						LastResult = SpedSpeed;
+			            LastWheelEncoderVal = Enc;
+			            
+						SpeedReached = Inrange(SPEEEED, rate, 50);
+			            return (SpedSpeed);
+        			}
+        			else
+        			{
+						SpeedReached = false;
+            			return (SPEEEED > 0 ? 0.1 : -0.1);
+        			}
+    			}
+    			else
+    			{
+					SpeedReached = false;
+        			return (0);
+    			}
+			};
+
+			bool ReachedSpeed() {return SpeedReached;};
+
             virtual ~PIDProfile(){};
 
         private:
@@ -204,6 +243,11 @@ namespace Util
             double MinPower = -1;
             double MaxPower = 1;
             double MaxChange = 0.5;
+
+			double LastWheelEncoderVal = 0;
+            double LastResult = 0;
+
+			bool SpeedReached = false;
     };
 }
 
