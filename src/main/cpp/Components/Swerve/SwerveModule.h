@@ -46,6 +46,7 @@ namespace Components
             bool SetTargetWheel(double Target);
             bool SetTargetSwivel(double Target);
             bool SetTarget(double Wheel_Target, double Swivel_Target);
+            bool SetSpeedTarget(double SPEEEEED);
 
             virtual void DefaultSet();
 			virtual void Set(DoubleSolenoid::Value value);
@@ -53,6 +54,7 @@ namespace Components
 
             PIDProfile *WheelPID;
             PIDProfile *SwivelPID;
+            PIDProfile *SpeedPID;
 
         private:
             Motor *Swivel;
@@ -62,6 +64,9 @@ namespace Components
 
             double EncRevTicks = 0;
             double WheelEncRevTicks = 0;
+
+            double LastWheelEncoderVal = 0;
+            double LastResult = 0;
 
             double D_Time = 0;
     };

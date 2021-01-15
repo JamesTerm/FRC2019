@@ -62,15 +62,23 @@ void SwerveManager::Set(double rawV, double rawH, double rawS)
     double frontRightAngle = atan2 (b, d) / piVal;
     double frontLeftAngle = atan2 (b, c) / piVal;
 
-    FL->Set(frontLeftSpeed);
-    FR->Set(frontRightSpeed);
-    BL->Set(backLeftSpeed);
-    BR->Set(backRightSpeed);
-
-    FL->SetTargetSwivel(frontLeftAngle);
-    FR->SetTargetSwivel(frontRightAngle);
-    BL->SetTargetSwivel(backLeftAngle);
-    BR->SetTargetSwivel(backRightAngle);
+    if (FL->SetTargetSwivel(frontLeftAngle) &&
+        FR->SetTargetSwivel(frontRightAngle) &&
+        BL->SetTargetSwivel(backLeftAngle) &&
+        BR->SetTargetSwivel(backRightAngle))
+    {
+        FL->Set(frontLeftSpeed);
+        FR->Set(frontRightSpeed);
+        BL->Set(backLeftSpeed);
+        BR->Set(backRightSpeed);
+    }
+    else
+    {
+        FL->Set(frontLeftSpeed / 5);
+        FR->Set(frontRightSpeed / 5);
+        BL->Set(backLeftSpeed / 5);
+        BR->Set(backRightSpeed / 5);
+    }
 }
 
 bool SwerveManager::SetSwivelTarget(double Target)

@@ -42,7 +42,7 @@ namespace Controls
             double CalculateDeadZone(double Axis, double dz)
             {
                 if (abs(Axis) > dz)
-                    return ((1 / (1 - dz)) * (Axis - dz));
+                    return ((1 / (1 - dz)) * (abs(Axis) - dz)) * (Axis > 0 ? 1 : -1);
                 return 0;
             };
 
