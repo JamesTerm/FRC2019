@@ -38,4 +38,10 @@ string EncoderItem::GetName(){
 	return name;
 }
 
+void EncoderItem::DeleteComponent()
+{
+	delete encoder;
+	delete this;
+}
+
 EncoderItem::~EncoderItem() {}

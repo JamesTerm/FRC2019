@@ -28,6 +28,7 @@ public:
 	PotentiometerItem(int _channel, string _name);
 	virtual string GetName() override;
 	virtual double Get() override;
+	virtual void DeleteComponent() override;
 	virtual ~PotentiometerItem();
 };
 }

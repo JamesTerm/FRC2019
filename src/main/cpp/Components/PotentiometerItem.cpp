@@ -32,4 +32,10 @@ double PotentiometerItem::Get(){
 	return apt->Get() - initPosition; //init position it subtracted to return the delta from startup position.
 }
 
+void PotentiometerItem::DeleteComponent()
+{
+	delete apt;
+	delete this;
+}
+
 PotentiometerItem::~PotentiometerItem() {}

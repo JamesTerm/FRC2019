@@ -64,6 +64,12 @@ int VictorSPItem::GetPolarity()
 	return 1;
 }
 
+void VictorSPItem::DeleteComponent()
+{
+	delete victor;
+	delete this;
+}
+
 void VictorSPItem::DefaultSet()
 {
 	Log::Error("WHY DID YOU CALL THE DEFAULT SET FOR A MOTOR?!? Yell at your programmers!");

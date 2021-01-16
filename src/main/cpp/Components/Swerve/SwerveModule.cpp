@@ -37,6 +37,14 @@ SwerveModule::SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, Encod
     SwerveModule::ResetEncs();
 }
 
+void SwerveModule::DeleteComponent()
+{
+    delete WheelPID;
+    delete SwivelPID;
+    delete SpeedPID;
+    delete this;
+}
+
 void SwerveModule::Set(double val)
 {
     Wheel->Set(val);

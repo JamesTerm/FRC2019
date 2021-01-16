@@ -46,3 +46,17 @@ void Drive::Update(double deltaTime)
 			(*m_operateControlCollection[i]).Update(deltaTime);
 	}
 }
+
+void Drive::DeleteAll()
+{
+	if (m_activeCollection->GetPDBManager() != nullptr)
+		m_activeCollection->GetPDBManager()->DeleteComponent();
+	for (int i = 0; i < (int)m_driveControlCollection.size(); i++)
+		m_driveControlCollection[i]->DeleteComponent();
+	
+	for (int i = 0; i < (int)m_operateControlCollection.size(); i++)
+		m_operateControlCollection[i]->DeleteComponent();
+
+	m_operateControlCollection.clear();
+	m_driveControlCollection.clear();
+}

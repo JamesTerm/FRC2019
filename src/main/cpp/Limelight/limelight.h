@@ -167,6 +167,7 @@ class limelight : public NativeComponent //Inheritance or something
                 Log::Error("THE ROBOT IS KILLING PEOPLE'S EYES, KEEP IT UP AND SOMEONE MIGHT NOTICE!");
             }
         }
+        void DeleteComponent() {delete this;};
     private:
         bool HasLEDon = true;
         bool ProcessTarget = true;

@@ -39,6 +39,7 @@ public:
 	REVColorSensorV3(string _name);
 	frc::Color GetColor();
 	virtual double Get() override;
+	virtual void DeleteComponent() override;
 	string GetColorMatch();
 	
 	uint32_t GetProximity();

@@ -22,6 +22,12 @@ DigitalInputItem::DigitalInputItem(int _channel, string name) : InputComponent(n
 
 }
 
+void DigitalInputItem::DeleteComponent()
+{
+	delete din;
+	delete this;
+}
+
 double DigitalInputItem::Get()
 {
 	return din->Get();

@@ -88,6 +88,8 @@ namespace Components
                 }
             }
 
+            virtual void DeleteComponent() {delete this;};
+
 			virtual ~PDBManager(){}
 	};
 }

@@ -24,6 +24,11 @@ SwerveManager::SwerveManager(string name, SwerveModule *FrontLeft, SwerveModule 
     BR = BackRight;
 }
 
+void SwerveManager::DeleteComponent()
+{
+    delete this;
+}
+
 void SwerveManager::Set(double val)
 {
     FL->Set(val);

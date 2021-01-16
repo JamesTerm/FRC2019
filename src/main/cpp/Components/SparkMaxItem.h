@@ -39,6 +39,7 @@ public:
 	virtual void Set(double val) ;
 	virtual void Set(DoubleSolenoid::Value value) ;
 	virtual void Stop() ;
+	virtual void DeleteComponent() override;
 	string GetName();
 	virtual void DefaultSet() ;
 	virtual ~SparkMaxItem();

@@ -36,6 +36,12 @@ DoubleSolenoidItem::DoubleSolenoidItem(string _name, int _forwardChannel, int _r
 	
 }
 
+void DoubleSolenoidItem::DeleteComponent()
+{
+	delete solenoid;
+	delete this;
+}
+
 void DoubleSolenoidItem::DefaultSet(){
 	Set(_default);
 }

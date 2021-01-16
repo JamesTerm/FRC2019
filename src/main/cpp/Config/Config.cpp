@@ -45,6 +45,10 @@ using namespace frc;
 **/ 
 Config::Config(ActiveCollection *_activeCollection, Drive *_drive) {
 //? make doc a member variable?
+
+	_activeCollection->DeleteAll();
+	_drive->DeleteAll();
+
 	xml_document doc;
 	xml_parse_result result = doc.load_file("config.xml");
 	m_activeCollection = _activeCollection;
@@ -56,16 +60,23 @@ Config::Config(ActiveCollection *_activeCollection, Drive *_drive) {
 	}
 	else
 	{
-		backupConfig *_backup = new backupConfig(_activeCollection, _drive);
-		Log::Error("XML Config parsed with errors");
-		string desc = result.description();
-		Log::Error("Error description: " + desc);
-		Log::Error("Error offset: " + result.offset);
-		Log::Error("No config available, returning to Robot.cpp\nTHIS IS A BIG ERROR!");
-		//In simulation we should really get the message across
-		#ifdef _Win32
-		assert(false);  
-		#endif
+		try
+		{
+			Log::General("xml not found...loading backup config");
+			backupConfig *_backup = new backupConfig(_activeCollection, _drive);
+		}
+		catch(...)
+		{
+			Log::Error("XML Config and backup config parsed with errors");
+			string desc = result.description();
+			Log::Error("Error description: " + desc);
+			Log::Error("Error offset: " + result.offset);
+			Log::Error("No config available, returning to Robot.cpp\nTHIS IS A BIG ERROR!");
+			//In simulation we should really get the message across
+			#ifdef _Win32
+			assert(false);  
+			#endif
+		}
 	}
 }
 

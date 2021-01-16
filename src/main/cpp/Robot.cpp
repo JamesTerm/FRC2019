@@ -37,6 +37,11 @@ Robot::~Robot()
 	m_activeCollection = nullptr;
 }
 
+void Robot::LoadConfig()
+{
+	Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
+}
+
 /*
  * Initialization method of the robot
  * This runs right after Robot() when the code is started
@@ -46,9 +51,8 @@ void Robot::RobotInit()
 {
 	FrameworkCommunication::GetInstance();
 	Log::restartfile();
+	Robot::LoadConfig();
 	Log::General("Program Version: " + to_string(VERSION) + " Revision: " + REVISION, true);
-	Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
-	Log::General("Passed Config", true);
 	SmartDashboard::init(); //!< Must have this for smartdashboard to work properly
 	m_inst = nt::NetworkTableInstance::GetDefault(); //!< Network tables
 	m_dashboardTable = m_inst.GetTable("DASHBOARD_TABLE");
@@ -63,9 +67,9 @@ void Robot::RobotInit()
  */
 void Robot::Autonomous()
 {
+	Robot::LoadConfig();
 	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Auton);	
 	m_masterGoal = new MultitaskGoal(m_activeCollection, false);
-Config *config = new Config(m_activeCollection, m_drive);
 	Log::General("Autonomous Started");
 	//TODO: Make defaults set now and call the active collection
 	m_activeCollection->DoubleSolenoidDefault();
@@ -114,9 +118,8 @@ Config *config = new Config(m_activeCollection, m_drive);
 //TODO: Potentially make a "test" tag in the config that can toggle this?
 void Robot::Teleop()
 {
+	Robot::LoadConfig();
 	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Teleop);
-Config *config = new Config(m_activeCollection, m_drive);
-
 	m_activeCollection->GetActiveGoal()->~MultitaskGoal(); //!< Destroy any pre-existing masterGoal that was not properly disposed of
 	m_teleOpMasterGoal = new MultitaskGoal(m_activeCollection, false);
 	//m_teleOpMasterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
@@ -154,7 +157,7 @@ Config *config = new Config(m_activeCollection, m_drive);
  */
 void Robot::Test()
 {
-	Config *config = new Config(m_activeCollection, m_drive);
+	Robot::LoadConfig();
 	string SELECTED_AUTO = "";
 	if (AutoTable->GetString("Auto Selector", "").length() == 0 && !m_activeCollection->ConfigOverride())
 	{
@@ -174,7 +177,6 @@ void Robot::Test()
 		PathA->Process(0.0001);
 		Wait(0.0001);
 	}
-	StopNeoDrive(m_activeCollection);
 	PathA->Terminate();
 }
 

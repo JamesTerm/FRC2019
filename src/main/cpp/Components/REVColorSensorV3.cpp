@@ -97,4 +97,10 @@ double REVColorSensorV3::Get(){
   return Color;
 }
 
+void REVColorSensorV3::DeleteComponent()
+{
+  delete Color;
+  delete this;
+}
+
 REVColorSensorV3::~REVColorSensorV3() {}

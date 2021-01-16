@@ -142,9 +142,9 @@ private:
 };
 
 #else
-#include "frc/SmartDashboard/SmartDashboard.h"
+#include <frc/SmartDashboard/SmartDashboard.h>
 
-namespace SmartDashboard
+namespace SmartDashboard_depreciated
 {
 inline void init()
 {

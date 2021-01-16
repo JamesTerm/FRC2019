@@ -76,6 +76,12 @@ void SparkMaxItem::Stop(){
 	}
 }
 
+void SparkMaxItem::DeleteComponent()
+{
+	delete Max;
+	delete this;
+}
+
 void SparkMaxItem::ResetEncoderValue(){
 	Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 24).SetPosition(0);
 

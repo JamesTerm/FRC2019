@@ -43,6 +43,8 @@ namespace Components
             void ResetSwivelEnc();
             void ResetWheelEnc();
 
+            virtual void DeleteComponent() override;
+
             SwerveModule* Get(ModuleLoc Loc)
             {
                 if (Loc == 0)

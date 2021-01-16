@@ -37,6 +37,7 @@ public:
 	void SetReverse();
 	void SetOff();
 	virtual void Set(double value) override;
+	virtual void DeleteComponent() override;
 	virtual double Get() override;
 	DoubleSolenoid::Value GetState();
 	DoubleSolenoid::Value GetDefaultValue();

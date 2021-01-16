@@ -172,3 +172,12 @@ vector<NativeComponent*> ActiveCollection::GetRawComponent(){
 void ActiveCollection::AddEvent(Event *event){
 	EventMap.push_back(event);
 }
+
+void ActiveCollection::DeleteAll()
+{
+	for(int i = 0; i < activeCollection.size(); i++)
+	{
+		activeCollection[i]->DeleteComponent();
+	}
+	activeCollection.clear();
+}

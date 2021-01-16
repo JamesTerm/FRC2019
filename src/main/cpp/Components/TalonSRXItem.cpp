@@ -75,5 +75,11 @@ void TalonSRXItem::Stop()
 	TalonSRXItem::Set(0);
 }
 
+void TalonSRXItem::DeleteComponent()
+{
+	delete talon;
+	delete this;
+}
+
 TalonSRXItem::~TalonSRXItem() {}
 

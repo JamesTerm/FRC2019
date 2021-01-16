@@ -50,7 +50,7 @@ namespace Components
 
             virtual void DefaultSet();
 			virtual void Set(DoubleSolenoid::Value value);
-
+            virtual void DeleteComponent() override;
 
             PIDProfile *WheelPID;
             PIDProfile *SwivelPID;

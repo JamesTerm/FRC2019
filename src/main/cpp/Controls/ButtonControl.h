@@ -43,6 +43,7 @@ public:
 	void SetAmpRegulation(int _powerPort, double _ampLimit);
 	virtual ~ButtonControl();
 	int getSign(double val);
+	virtual void DeleteComponent() override;
 	virtual double Update(double _dTime) override;
 };
 }

@@ -68,16 +68,24 @@ static Auto Map(string Path)
     {
         Log::Error("File does not exist, using Dud.txt");
         ifstream DudFile("Dud.txt");
-        vector<double> InputDudPoints;
-        getline(DudFile, NumberInput);
-        double Length = stod(NumberInput);
-        for(int i = 0; i < Length * NumPoints; i++)
+        if (DudFile.is_open())
         {
+            vector<double> InputDudPoints;
             getline(DudFile, NumberInput);
-            InputDudPoints.push_back(stod(NumberInput));
+            double Length = stod(NumberInput);
+            for(int i = 0; i < Length * NumPoints; i++)
+            {
+                getline(DudFile, NumberInput);
+                InputDudPoints.push_back(stod(NumberInput));
+            }
+            return Auto(Length / NumPoints, InputDudPoints);
         }
-        return Auto(Length / NumPoints, InputDudPoints);
     }
+    vector<double> DeadPoints;
+    DeadPoints.push_back(0);
+    DeadPoints.push_back(0);
+    DeadPoints.push_back(0);
+    return Auto(0, DeadPoints);
 }
 
 #endif /* UTIL_LinePaths_H_ */

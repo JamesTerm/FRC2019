@@ -60,6 +60,8 @@ namespace Configuration
 			void AddEvent(Event *event);
 			vector<Event*> EventMap;
 
+			void DeleteAll();
+
 			void SetActiveGoal(MultitaskGoal* g) {activeGoal = g;}
 			MultitaskGoal* GetActiveGoal() {return activeGoal;}
 
@@ -76,11 +78,11 @@ namespace Configuration
 			
 	private:
 		vector<NativeComponent*> activeCollection;
-		MultitaskGoal* activeGoal;
+		MultitaskGoal* activeGoal = nullptr;
 		bool overdrive;
-		bool AutoOverride;
+		bool AutoOverride = false;
 		string AutoSele;
-		PDBManager* PDP;
+		PDBManager* PDP = nullptr;
 	};
 }
 

@@ -38,6 +38,7 @@ public:
 	virtual void Set(DoubleSolenoid::Value value) override;
 	virtual void DefaultSet() override;
 	virtual void Stop() override;
+	virtual void DeleteComponent() override;
 	virtual ~TalonSRXItem();
 };
 }

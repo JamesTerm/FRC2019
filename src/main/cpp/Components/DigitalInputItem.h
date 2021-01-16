@@ -30,6 +30,7 @@ namespace Components
 	        bool GetBool();
 	        virtual double Get() override;
 	        virtual string GetName() override;
+			virtual void DeleteComponent() override;
 	        virtual ~DigitalInputItem();
     };
 }

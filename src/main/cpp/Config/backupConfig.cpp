@@ -64,7 +64,7 @@ void backupConfig::SetComponents()
 void backupConfig::SetControls()
 {
 	backupConfig::AddAxisControl("leftDrive", "left0,left1", 1, 0.5, false, false, false, false, 0.08, backupConfig::JoystickControler::Driver);
-	backupConfig::AddAxisControl("rightDrive", "right0,right1", 1, 0.5, false, false, false, false, 0.08, backupConfig::JoystickControler::Driver);
+	backupConfig::AddAxisControl("rightDrive", "right0,right1", 5, 0.5, false, false, false, false, 0.08, backupConfig::JoystickControler::Driver);
 }
 
 backupConfig::~backupConfig(){}

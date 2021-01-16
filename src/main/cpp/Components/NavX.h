@@ -31,6 +31,7 @@ public:
 		double angle = GetAngle();
 		return angle;
 	}
+	virtual void DeleteComponent() {delete this;};
 };
 	
 

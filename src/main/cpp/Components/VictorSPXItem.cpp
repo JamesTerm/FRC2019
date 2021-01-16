@@ -63,4 +63,10 @@ void VictorSPXItem::Stop()
 	VictorSPXItem::Set(0);
 }
 
+void VictorSPXItem::DeleteComponent()
+{
+	delete victor;
+	delete this;
+}
+
 VictorSPXItem::~VictorSPXItem() {}

@@ -30,6 +30,7 @@ public:
 	EncoderItem(string _name, int _aChannel, int _bChannel, bool _reversed);
 	virtual string GetName() override;
 	void Reset();
+	virtual void DeleteComponent() override;
 	virtual ~EncoderItem();
 };
 }

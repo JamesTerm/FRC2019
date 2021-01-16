@@ -32,6 +32,12 @@ ButtonControl::ButtonControl(Joystick *_joy, string _name, int _button, bool _ac
 	isOverdrive = _isOverdrive;
 }
 
+void ButtonControl::DeleteComponent()
+{
+	delete pdp;
+	delete this;
+}
+
 double ButtonControl::Update(double _dTime){
 	double val = joy->GetRawButton(button); //*< Value recieved from the button
 	double tmp = val; //*< Temporary value to consistantly hold the original value of the button -> not affected by reversing the ButtonControl

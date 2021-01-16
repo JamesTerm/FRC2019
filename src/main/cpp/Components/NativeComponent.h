@@ -27,9 +27,9 @@ namespace Components
 	{
 		public:
 			string name;
+			virtual void DeleteComponent() = 0;
 			NativeComponent(){}
 			NativeComponent(string _name){ name = _name; }
-
 			virtual ~NativeComponent(){}
 	};
 }

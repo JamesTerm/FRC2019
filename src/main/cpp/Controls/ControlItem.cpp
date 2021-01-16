@@ -115,5 +115,10 @@ void ControlItem::SetToComponents(double val)
 	}
 }
 
+void ControlItem::DeleteComponent()
+{
+	delete this;
+}
+
 ControlItem::~ControlItem() {}
 

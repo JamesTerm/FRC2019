@@ -48,6 +48,7 @@ namespace Controls
 			string name;
 			Event ValueChanged;
 			void SetToComponents(double val);
+			virtual void DeleteComponent();
 			virtual ~ControlItem();
 	};
 }

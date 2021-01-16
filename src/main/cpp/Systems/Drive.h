@@ -37,6 +37,7 @@ namespace System
 	        void AddControlOperate(ControlItem *control);
 			void SetUseDrive(bool enable) { m_DisableDrive = !enable; }
 			void SetUseOperator(bool enable) { m_DisableOperator = !enable; }
+			void DeleteAll();
 	private:
 			bool m_DisableDrive=false;
 			bool m_DisableOperator=false;
