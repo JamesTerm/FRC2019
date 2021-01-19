@@ -30,7 +30,7 @@ private:
 
 public:
 	TalonSRXItem();
-	TalonSRXItem(int channel, string name, bool reversed, bool enableEncoder);
+	TalonSRXItem(int channel, string name, bool reversed, bool enableEncoder, bool Real);
 	int GetQuadraturePosition();
 	void SetQuadraturePosition(int val);
 	virtual double Get() override;

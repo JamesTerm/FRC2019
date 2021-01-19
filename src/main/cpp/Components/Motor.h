@@ -17,16 +17,6 @@ Email: irobot9803@gmail.com
 #include "OutputComponent.h"
 #include "../Util/PIDProfile.h"
 
-#include <frc/RobotBase.h>
-#include "frc/smartdashboard/Smartdashboard.h"
-#include <networktables/NetworkTableEntry.h>
-#include <networktables/NetworkTableInstance.h>
-#include <frc/DriverStation.h>
-#include <frc/livewindow/LiveWindow.h>
-#include <frc/shuffleboard/Shuffleboard.h>
-#include <hal/DriverStation.h>
-#include <networktables/NetworkTable.h>
-
 
 using namespace std;
 using namespace frc;
@@ -40,7 +30,6 @@ namespace Components
             int PDBPort = 0;
             double TimeTimedOut = 0;
             double LowerAmount = 0;
-            std::shared_ptr<NetworkTable> MotorTable = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard");
             double ABSVal(double val)
             {
                 return (val < 0 ? val * -1 : val);
@@ -94,8 +83,7 @@ namespace Components
                     TimeTimedOut = 0;
                     LowerAmount = 0;
                 }
-                MotorTable->PutNumber(name, ReturnVal);
-                Log::General(name + " : Power->" + to_string(ReturnVal));
+                OutputTable->PutNumber(name, ReturnVal);
                 return ReturnVal;
             }
 

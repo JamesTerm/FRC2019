@@ -26,7 +26,7 @@ namespace Components
 
         public:
 	        DigitalInputItem(){}
-	        DigitalInputItem(int _channel, string name);
+	        DigitalInputItem(int _channel, string name, bool Real);
 	        bool GetBool();
 	        virtual double Get() override;
 	        virtual string GetName() override;

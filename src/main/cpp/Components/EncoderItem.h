@@ -27,7 +27,7 @@ private:
 public:
 	virtual double Get() override;
 	EncoderItem();
-	EncoderItem(string _name, int _aChannel, int _bChannel, bool _reversed);
+	EncoderItem(string _name, int _aChannel, int _bChannel, bool _reversed, bool Real);
 	virtual string GetName() override;
 	void Reset();
 	virtual void DeleteComponent() override;

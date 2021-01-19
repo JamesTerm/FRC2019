@@ -49,6 +49,7 @@ private:
     double Version = 0.1;
     bool useNavX = false;
 	bool useLimelight = false;
+	bool Real = false;
 	int DriverSlot = 0;
 	int OperatorSlot = 1;
 
@@ -71,27 +72,27 @@ private:
 				    m_activeCollection->Add(tmp);
                     Log::General("Added VictorSPX " + Name + ", Channel: " + to_string(Channel) + ", Reversed: " + to_string(Reversed));};
 
-    void AddSparkMax(string Name, int Channel, bool Reversed){SparkMaxItem *tmp = new SparkMaxItem(Channel, Name, Reversed);
+    void AddSparkMax(string Name, int Channel, bool Reversed){SparkMaxItem *tmp = new SparkMaxItem(Channel, Name, Reversed, Real);
 			    	m_activeCollection->Add(tmp);
                     Log::General("Added Spark Max " + Name + ", Channel: " + to_string(Channel) + ", Reversed: " + to_string(Reversed));};
 
-    void AddTalonSRX(string Name, int Channel, bool Reversed, bool enableEncoder){TalonSRXItem *tmp = new TalonSRXItem(Channel, Name, Reversed, enableEncoder);
+    void AddTalonSRX(string Name, int Channel, bool Reversed, bool enableEncoder){TalonSRXItem *tmp = new TalonSRXItem(Channel, Name, Reversed, enableEncoder, Real);
 			    	m_activeCollection->Add(tmp);
                     Log::General("Added TalonSRX " + Name + ", Channel: " + to_string(Channel) + ", Reversed: " + to_string(Reversed) + ", encoder: " + to_string(enableEncoder));};
 
-    void AddPotentiometer(string Name, int Channel){PotentiometerItem *tmp = new PotentiometerItem(Channel, Name);
+    void AddPotentiometer(string Name, int Channel){PotentiometerItem *tmp = new PotentiometerItem(Channel, Name, Real);
 				    m_activeCollection->Add(tmp);
                     Log::General("Added Potentiometer " + Name + ", Channel: " + to_string(Channel));};
 
-    void AddEncoder(string Name, int ChannelA, int ChannelB, bool reversed){EncoderItem *tmp = new EncoderItem(Name, ChannelA, ChannelB, reversed);
+    void AddEncoder(string Name, int ChannelA, int ChannelB, bool reversed){EncoderItem *tmp = new EncoderItem(Name, ChannelA, ChannelB, reversed, Real);
 				    m_activeCollection->Add(tmp);
                     Log::General("Added Encoder " + Name + ", A-Channel: " + to_string(ChannelA) + ", B-Channel: " + to_string(ChannelB) + ", Reversed: " + to_string(reversed));};
 
-    void AddDoubleSolenoid(string Name, int fChannel, int rChannel, DoubleSolenoid::Value _def, bool reversed){DoubleSolenoidItem *tmp = new DoubleSolenoidItem(Name , fChannel, rChannel, _def, reversed);
+    void AddDoubleSolenoid(string Name, int fChannel, int rChannel, DoubleSolenoid::Value _def, bool reversed){DoubleSolenoidItem *tmp = new DoubleSolenoidItem(Name , fChannel, rChannel, _def, reversed, Real);
 			    	m_activeCollection->Add(tmp);
 			    	Log::General("Added DoubleSolenoid " + Name + ", F-Channel: " + to_string(fChannel) + ", R-Channel: " + to_string(rChannel) + ", Default: " + to_string(_def) + ", Reversed: " + to_string(reversed));};
 
-    void AddDigitalInput(string Name, int Channel){DigitalInputItem *tmp = new DigitalInputItem(Channel, Name);
+    void AddDigitalInput(string Name, int Channel){DigitalInputItem *tmp = new DigitalInputItem(Channel, Name, Real);
 			    	m_activeCollection->Add(tmp);
 			    	Log::General("Added DigitalInput " + Name + ", Channel: " + to_string(Channel));};
 

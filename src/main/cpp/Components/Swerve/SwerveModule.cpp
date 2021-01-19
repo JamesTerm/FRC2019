@@ -21,6 +21,8 @@ using namespace Components;
 
 SwerveModule::SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, EncoderItem* SwivelEnc, EncoderItem* WheelEnc, double TicksPerRev, double WheelTicks) : OutputComponent(name)
 {
+
+    GetType = SwerveModule::InputType::EncoderType;
     Swivel = SwivelMtr;
     Wheel = WheelMtr;
 
@@ -29,6 +31,23 @@ SwerveModule::SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, Encod
 
     EncRevTicks = TicksPerRev;
     WheelEncRevTicks = WheelTicks;
+
+    WheelPID = new PIDProfile(1, 0, 0);
+    SwivelPID = new PIDProfile(1, 0, 0);
+    SpeedPID = new PIDProfile(1, 0, 0);
+
+    SwerveModule::ResetEncs();
+}
+
+SwerveModule::SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, double TicksPerRev, double WheelTicks) : OutputComponent(name)
+{
+    Swivel = SwivelMtr;
+    Wheel = WheelMtr;
+
+    EncRevTicks = TicksPerRev;
+    WheelEncRevTicks = WheelTicks;
+
+    GetType = SwerveModule::InputType::MotorType;
 
     WheelPID = new PIDProfile(1, 0, 0);
     SwivelPID = new PIDProfile(1, 0, 0);
@@ -73,22 +92,34 @@ double SwerveModule::GetSwivel()
 
 double SwerveModule::GetEnc()
 {
-    return WheelEncoder->Get();
+    if (GetType == SwerveModule::InputType::EncoderType)
+        return WheelEncoder->Get();
+    else
+        return ((SparkMaxItem*)Wheel)->GetEncoderValue();
 }
 
 double SwerveModule::GetSwivelEnc()
 {
-    return SwivelEncoder->Get();
+    if (GetType == SwerveModule::InputType::EncoderType)
+        return SwivelEncoder->Get();
+    else
+        return ((TalonSRXItem*)Swivel)->GetQuadraturePosition();
 }
 
 void SwerveModule::ResetSwivelEnc()
 {
-    SwivelEncoder->Reset();
+    if (GetType == SwerveModule::InputType::EncoderType)
+        SwivelEncoder->Reset();
+    else
+        ((TalonSRXItem*)Swivel)->SetQuadraturePosition(0);
 }
 
 void SwerveModule::ResetWheelEnc()
 {
-    WheelEncoder->Reset();
+    if (GetType == SwerveModule::InputType::EncoderType)
+        WheelEncoder->Reset();
+    else
+        ((SparkMaxItem*)Wheel)->Reset();
 }
 
 void SwerveModule::ResetEncs()
@@ -109,21 +140,21 @@ void SwerveModule::SetDeltaTime(double Time)
     D_Time = Time;
 }
 
-void SwerveModule::ProcessMotor(Motor *Subject, EncoderItem *Enc, PIDProfile *Profile, double Target, double TickRev)
+void SwerveModule::ProcessMotor(Motor *Subject, double Enc, PIDProfile *Profile, double Target, double TickRev)
 {
-    Subject->Set(Profile->Calculate(Target, (Enc->Get() / TickRev) * 360, D_Time));
+    Subject->Set(Profile->Calculate(Target, (Enc / TickRev) * 360, D_Time));
 }
 
 bool SwerveModule::SetTargetSwivel(double Target)
 {
-    SwerveModule::ProcessMotor(Swivel, SwivelEncoder, SwivelPID, Target, EncRevTicks);
-    return SwivelPID->Inrange(Target, SwivelEncoder->Get(), 0.1);
+    SwerveModule::ProcessMotor(Swivel, SwerveModule::GetSwivelEnc(), SwivelPID, Target, EncRevTicks);
+    return SwivelPID->Inrange(Target, SwerveModule::GetSwivelEnc(), 0.1);
 }
 
 bool SwerveModule::SetTargetWheel(double Target)
 {
-    SwerveModule::ProcessMotor(Wheel, WheelEncoder, WheelPID, Target, WheelEncRevTicks);
-    return WheelPID->Inrange(Target, WheelEncoder->Get(), 0.1);
+    SwerveModule::ProcessMotor(Wheel, SwerveModule::GetEnc(), WheelPID, Target, WheelEncRevTicks);
+    return WheelPID->Inrange(Target, SwerveModule::GetEnc(), 0.1);
 }
 
 bool SwerveModule::SetTarget(double Wheel_Target, double Swivel_Target)

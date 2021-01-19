@@ -30,7 +30,7 @@ private:
 
 public:
 	SparkMaxItem();
-	SparkMaxItem(int _channel, string _name, bool _reversed);
+	SparkMaxItem(int _channel, string _name, bool _reversed, bool Real);
 	double GetEncoderValue();
     
 	virtual double Get() ;

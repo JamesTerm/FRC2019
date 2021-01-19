@@ -59,6 +59,8 @@ void backupConfig::SetComponents()
 	backupConfig::AddVictor("left1", 3, false);
 	backupConfig::AddVictor("right0", 4, false);
 	backupConfig::AddVictor("right1", 1, false);
+	backupConfig::AddSparkMax("test", 5, false);
+	backupConfig::AddEncoder("Test", 1, 2, false);
 }
 
 void backupConfig::SetControls()

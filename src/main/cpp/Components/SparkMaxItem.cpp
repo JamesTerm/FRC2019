@@ -20,13 +20,20 @@ using namespace Components;
 
 SparkMaxItem::SparkMaxItem() {}
 
-SparkMaxItem::SparkMaxItem(int _channel, string _name, bool _reversed) : Motor(_name){
+SparkMaxItem::SparkMaxItem(int _channel, string _name, bool _reversed, bool Real) : Motor(_name){
 	channel = _channel;
 	reversed = _reversed;
 	Max = new CANSparkMax(channel, rev::CANSparkMax::MotorType::kBrushless);
 	Max->SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 	Name = _name;
 	Offset = 0;
+	FromTable(Real);
+	if (UseTable)
+	{
+		Log::General("Using Table values");
+		OutputTable->PutNumber(name + "-Encoder", 0);
+		OutputTable->PutBoolean(name + "-Reset", true);
+	}
 }
 
 double SparkMaxItem::Get(){
@@ -34,11 +41,13 @@ double SparkMaxItem::Get(){
 }
 
 double SparkMaxItem:: GetEncoderValue(){
-	return Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 24).GetPosition() - Offset;
+	return (UseTable ? OutputTable->GetNumber(name + "-Encoder", 0) : (Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 24).GetPosition() - Offset));
 }
 
 void SparkMaxItem::Reset(){
 	Offset = Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 24).GetPosition();
+	if (UseTable)
+		OutputTable->PutBoolean(name + "-Reset", true);
 }
 
 string SparkMaxItem::GetName(){

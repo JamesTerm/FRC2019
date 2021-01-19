@@ -15,11 +15,16 @@ Email: dylantrwatson@gmail.com
 
 using namespace Components;
 
-DigitalInputItem::DigitalInputItem(int _channel, string name) : InputComponent(name)
+DigitalInputItem::DigitalInputItem(int _channel, string name, bool Real) : InputComponent(name)
 {
 	channel = _channel;
 	din = new DigitalInput(channel);
-
+	FromTable(Real);
+	if (UseTable)
+	{
+		Log::General("Using Table values");
+		OutputTable->PutBoolean(name, false);
+	}
 }
 
 void DigitalInputItem::DeleteComponent()
@@ -30,7 +35,10 @@ void DigitalInputItem::DeleteComponent()
 
 double DigitalInputItem::Get()
 {
-	return din->Get();
+	if (!UseTable)
+		return din->Get();
+	else
+		return 	OutputTable->GetBoolean(name, false) ? 0 : 1;
 }
 
 bool DigitalInputItem::GetBool()

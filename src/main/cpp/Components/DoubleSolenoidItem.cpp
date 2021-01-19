@@ -24,7 +24,7 @@ using namespace Util;
 
 DoubleSolenoidItem::DoubleSolenoidItem() {}
 
-DoubleSolenoidItem::DoubleSolenoidItem(string _name, int _forwardChannel, int _reverseChannel, DoubleSolenoid::Value _default, bool _reversed)
+DoubleSolenoidItem::DoubleSolenoidItem(string _name, int _forwardChannel, int _reverseChannel, DoubleSolenoid::Value _default, bool _reversed, bool Real)
 	: OutputComponent(_name){
 	forwardChannel = _forwardChannel;
 	reverseChannel = _reverseChannel;
@@ -33,7 +33,12 @@ DoubleSolenoidItem::DoubleSolenoidItem(string _name, int _forwardChannel, int _r
 	solenoid = new DoubleSolenoid(forwardChannel, reverseChannel);
 	//TODO: THIS MAY BE BROKEN
 	//DefaultSet();
-	
+	FromTable(Real);
+	if (UseTable)
+	{
+		Log::General("Using Table values");
+		OutputTable->PutBoolean(name, false);
+	}
 }
 
 void DoubleSolenoidItem::DeleteComponent()
@@ -121,10 +126,12 @@ void DoubleSolenoidItem::Set(bool value){
 
 void DoubleSolenoidItem::SetForward(){
 	solenoid->Set(DoubleSolenoid::Value::kForward);
+	OutputTable->PutBoolean(name, true);
 }
 
 void DoubleSolenoidItem::SetReverse(){
 	solenoid->Set(DoubleSolenoid::Value::kReverse);
+	OutputTable->PutBoolean(name, false);
 }
 
 void DoubleSolenoidItem::SetOff(){

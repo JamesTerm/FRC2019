@@ -18,6 +18,8 @@ Email: dylantrwatson@gmail.com
 
 #include "../Global.h"
 
+#include <networktables/NetworkTableInstance.h>
+
 using namespace frc;
 using namespace std;
 
@@ -28,9 +30,13 @@ namespace Components
 		public:
 			string name;
 			virtual void DeleteComponent() = 0;
+			void FromTable(bool Yes) { UseTable = !Yes; }
 			NativeComponent(){}
 			NativeComponent(string _name){ name = _name; }
 			virtual ~NativeComponent(){}
+			std::shared_ptr<NetworkTable> OutputTable = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard");
+		protected:
+			bool UseTable = false;
 	};
 }
 

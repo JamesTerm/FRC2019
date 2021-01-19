@@ -580,7 +580,7 @@ void Config::AllocateComponents(xml_node &root){
 			bool reversed = sparkMax.attribute("reversed").as_bool();
 			int pdbChannel = sparkMax.attribute("pdbChannel") ? sparkMax.attribute("pdbChannel").as_int() : -1;
 			if(channel){
-				SparkMaxItem *tmp = new SparkMaxItem(channel.as_int(), name, reversed);
+				SparkMaxItem *tmp = new SparkMaxItem(channel.as_int(), name, reversed, true);
 				m_activeCollection->Add(tmp);
 				string reversed_print = reversed ? "true" : "false";
 				Log::General("Added SparkMax " + name + ", Channel: " + to_string(channel.as_int()) + ", Reversed: " + reversed_print);
@@ -631,7 +631,7 @@ void Config::AllocateComponents(xml_node &root){
 			bool enableEncoder = talonSrx.attribute("enableEncoder").as_bool();
 			int pdbChannel = talonSrx.attribute("pdbChannel") ? talonSrx.attribute("pdbChannel").as_int() : -1;
 			if(channel){
-				TalonSRXItem *tmp = new TalonSRXItem(channel.as_int(), name, reversed, enableEncoder);
+				TalonSRXItem *tmp = new TalonSRXItem(channel.as_int(), name, reversed, enableEncoder, true);
 				m_activeCollection->Add(tmp);
 				string reversed_print = reversed ? "true" : "false" ;
 				string enableEncoder_print = enableEncoder ? "true" : "false" ;
@@ -680,7 +680,7 @@ void Config::AllocateComponents(xml_node &root){
 			string name = pot.name();
 			xml_attribute channel = pot.attribute("channel");
 			if(channel){
-				PotentiometerItem *tmp = new PotentiometerItem(channel.as_int(), name);
+				PotentiometerItem *tmp = new PotentiometerItem(channel.as_int(), name, true);
 				m_activeCollection->Add(tmp);
 				Log::General("Added Potentiometer " + name + ", Channel: " + to_string(channel.as_int()));
 			}
@@ -705,7 +705,7 @@ void Config::AllocateComponents(xml_node &root){
 			xml_attribute bChannel = encoder.attribute("bChannel");
 			bool reversed = encoder.attribute("reversed").as_bool();
 			if(aChannel && bChannel){
-				EncoderItem *tmp = new EncoderItem(name, aChannel.as_int(), bChannel.as_int(), reversed);
+				EncoderItem *tmp = new EncoderItem(name, aChannel.as_int(), bChannel.as_int(), reversed, true);
 				m_activeCollection->Add(tmp);
 				string reversed_print = reversed ? "true" : "false" ;
 				Log::General("Added Encoder " + name + ", A-Channel: " + to_string(aChannel.as_int()) + ", B-Channel: " + to_string(bChannel.as_int()) + ", Reversed: " + reversed_print);
@@ -745,7 +745,7 @@ void Config::AllocateComponents(xml_node &root){
 			}
 			string reversed_print = reversed ? "true" : "false";
 			if(fChannel && rChannel){
-				DoubleSolenoidItem *tmp = new DoubleSolenoidItem(name , fChannel.as_int(), rChannel.as_int(), _def, reversed);
+				DoubleSolenoidItem *tmp = new DoubleSolenoidItem(name , fChannel.as_int(), rChannel.as_int(), _def, reversed, true);
 				m_activeCollection->Add(tmp);
 				Log::General("Added DoubleSolenoid " + name + ", F-Channel: " + to_string(fChannel.as_int()) + ", R-Channel: " + to_string(rChannel.as_int()) + ", Default: " + to_string(_def) + ", Reversed: " + reversed_print);
 			}
@@ -770,7 +770,7 @@ void Config::AllocateComponents(xml_node &root){
 			string name = di.name();
 			xml_attribute channel = di.attribute("channel");
 			if(channel){
-				DigitalInputItem *tmp = new DigitalInputItem(channel.as_int(), name);
+				DigitalInputItem *tmp = new DigitalInputItem(channel.as_int(), name, true);
 				m_activeCollection->Add(tmp);
 				Log::General("Added DigitalInput " + name + ", Channel: " + to_string(channel.as_int()));
 			}

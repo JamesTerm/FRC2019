@@ -29,7 +29,7 @@ private:
 
 public:
 	DoubleSolenoidItem();
-	DoubleSolenoidItem(string _name, int _forwardChannel, int _reverseChannel, DoubleSolenoid::Value _default, bool _reversed);
+	DoubleSolenoidItem(string _name, int _forwardChannel, int _reverseChannel, DoubleSolenoid::Value _default, bool _reversed, bool Real);
 	virtual void DefaultSet() override;
 	virtual void Set(DoubleSolenoid::Value value) override;
 	void Set(bool value);

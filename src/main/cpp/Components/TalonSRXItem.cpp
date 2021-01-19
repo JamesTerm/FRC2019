@@ -21,14 +21,23 @@ using namespace Components;
 
 TalonSRXItem::TalonSRXItem() {}
 
-TalonSRXItem::TalonSRXItem(int _channel, string _name, bool _reversed, bool enableEncoder)
+TalonSRXItem::TalonSRXItem(int _channel, string _name, bool _reversed, bool enableEncoder, bool Real)
 	: Motor(_name){
 	channel = _channel;
 	reversed = _reversed;
 	talon = new TalonSRX(channel);
 	encoderEnabled = enableEncoder;
+	FromTable(Real);
 	if(enableEncoder)
+	{
 		talon->ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, 10);
+		if (UseTable)
+		{
+			Log::General("Using Table values");
+			OutputTable->PutNumber(name + "-Encoder", 0);
+			OutputTable->PutBoolean(name + "-Reset", true);
+		}
+	}
 }
 
 double TalonSRXItem::Get(){
@@ -38,11 +47,15 @@ double TalonSRXItem::Get(){
 }
 
 int TalonSRXItem::GetQuadraturePosition(){
-	return encoderEnabled ? talon->GetSensorCollection().GetQuadraturePosition() : -1;
+	return encoderEnabled ? (UseTable ? OutputTable->GetNumber(name + "-Encoder", 0) : talon->GetSensorCollection().GetQuadraturePosition()) : -1;
 }
 
 void TalonSRXItem::SetQuadraturePosition(int val){
 	talon->GetSensorCollection().SetQuadraturePosition(val, 10);
+	if (UseTable)
+	{
+		OutputTable->PutBoolean(name + "-Reset", true);
+	}
 }
 
 void TalonSRXItem::Set(double val){

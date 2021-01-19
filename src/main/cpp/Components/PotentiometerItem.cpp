@@ -17,11 +17,17 @@ using namespace Components;
 
 PotentiometerItem::PotentiometerItem() {}
 
-PotentiometerItem::PotentiometerItem(int _channel, string _name)
+PotentiometerItem::PotentiometerItem(int _channel, string _name, bool Real)
 	: InputComponent(_name){
 	channel = _channel;
 	apt = new AnalogPotentiometer(channel);
 	initPosition = apt->Get();
+	FromTable(Real);
+	if (UseTable)
+	{
+		Log::General("Using Table values");
+		OutputTable->PutNumber(_name, 0);
+	}
 }
 
 string PotentiometerItem::GetName(){
@@ -29,7 +35,7 @@ string PotentiometerItem::GetName(){
 }
 
 double PotentiometerItem::Get(){
-	return apt->Get() - initPosition; //init position it subtracted to return the delta from startup position.
+	return (UseTable ? OutputTable->GetNumber(name, 0) : apt->Get() - initPosition); //init position it subtracted to return the delta from startup position.
 }
 
 void PotentiometerItem::DeleteComponent()

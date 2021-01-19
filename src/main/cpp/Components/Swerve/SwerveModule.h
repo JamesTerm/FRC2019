@@ -15,6 +15,8 @@ Email: irobot9803@gmail.com
 
 #include "../Motor.h"
 #include "../EncoderItem.h"
+#include "../SparkMaxItem.h"
+#include "../TalonSRXItem.h"
 
 using namespace std;
 using namespace frc;
@@ -26,7 +28,7 @@ namespace Components
     {
         public:
             SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, EncoderItem* SwivelEnc, EncoderItem* WheelEnc, double TicksPerRev, double WheelTicks);
-            
+            SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, double TicksPerRev, double WheelTicks);
             void Set(double val, double SwivelVal);
             void SetSwivel(double SwivelVal);
             double GetSwivel();
@@ -42,7 +44,7 @@ namespace Components
 
             void ResetPID();
             void SetDeltaTime(double Time);
-            void ProcessMotor(Motor *Subject, EncoderItem *Enc, PIDProfile *Profile, double Target, double TickRev);
+            void ProcessMotor(Motor *Subject, double Enc, PIDProfile *Profile, double Target, double TickRev);
             bool SetTargetWheel(double Target);
             bool SetTargetSwivel(double Target);
             bool SetTarget(double Wheel_Target, double Swivel_Target);
@@ -57,6 +59,14 @@ namespace Components
             PIDProfile *SpeedPID;
 
         private:
+            enum InputType
+            {
+                EncoderType = 0,
+                MotorType = 1
+            };
+
+            InputType GetType;
+
             Motor *Swivel;
             Motor *Wheel;
             EncoderItem *SwivelEncoder;

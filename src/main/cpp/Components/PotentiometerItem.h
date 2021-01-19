@@ -25,7 +25,7 @@ private:
 
 public:
 	PotentiometerItem();
-	PotentiometerItem(int _channel, string _name);
+	PotentiometerItem(int _channel, string _name, bool Real);
 	virtual string GetName() override;
 	virtual double Get() override;
 	virtual void DeleteComponent() override;
