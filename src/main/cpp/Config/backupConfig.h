@@ -32,6 +32,8 @@ Email: irobot9803@gmail.com
 #include "../Limelight/limelight.h"
 #include "../Components/SparkMaxItem.h"
 #include "../Components/REVColorSensorV3.h"
+#include "../Components/Swerve/SwerveManager.h"
+#include "../Components/Swerve/SwerveModule.h"
 #include "Config.h"
 
 using namespace System;
@@ -96,6 +98,43 @@ private:
 			    	m_activeCollection->Add(tmp);
 			    	Log::General("Added DigitalInput " + Name + ", Channel: " + to_string(Channel));};
 
+	void AddSwerveModule(string Name, string SwivelMotor, string WheelMotor, double Ticksperrev, double WheelTicksperrev)
+	{
+		if (m_activeCollection->Get(SwivelMotor) != nullptr && m_activeCollection->Get(WheelMotor) != nullptr)
+		{
+			SwerveModule *tmp = new SwerveModule(Name, (Motor*)m_activeCollection->Get(SwivelMotor), (Motor*)m_activeCollection->Get(WheelMotor), Ticksperrev, WheelTicksperrev);
+			m_activeCollection->Add(tmp);
+			Log::General("Added Swerve Module :" + Name);
+		}
+	};
+
+	void AddSwerveManager(string name, string LeftF, string RightF, string LeftB, string RightB)
+	{
+		if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
+		{
+			SwerveManager *Manager = new SwerveManager(name, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB));
+			m_activeCollection->Add(Manager);
+			Log::General("Added Swerve Manager");
+		}
+	};
+
+	void AddSwerveControl(string name, SwerveControl::DriveCalculation Cal, int H, int V, int S, double dz, double mult, bool reversed, double length, double width, string ManagerName, JoystickControler Person)
+	{
+		if (m_activeCollection->Get(ManagerName) != nullptr)
+		{
+			SwerveControl *tmp = new SwerveControl((Person == JoystickControler::Driver ? m_driveJoy : m_operatorJoy), Cal, name, V, H, S, dz, reversed, mult, m_activeCollection, (SwerveManager*)m_activeCollection->Get(ManagerName), length, width);
+			string Mode = (Cal == SwerveControl::DriveCalculation::Field_Oriented ? "FIELD" : "ROBOT");
+			Log::General("Added swerve control that is " + Mode + " oriented");
+			if (Person == JoystickControler::Driver)
+				m_drive->AddControlDrive(tmp);
+			else
+				m_drive->AddControlOperate(tmp);
+		}
+		else
+		{
+			Log::Error("Swerve control cannot find manager with name " + ManagerName);
+		}
+	};
 
     void AddAxisControl(string name, string bind_string, int channel, double multiply, bool reversed, bool useOverdrive, bool bind_event, bool isLift, double deadZone, JoystickControler Person)
     {

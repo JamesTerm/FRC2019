@@ -47,4 +47,9 @@ double SwerveControl::Update(double _dTime)
     return (rawH + rawV + rawS) / 3;
 }
 
+void SwerveControl::DeleteComponent()
+{
+    delete this;
+}
+
 SwerveControl::~SwerveControl() {}

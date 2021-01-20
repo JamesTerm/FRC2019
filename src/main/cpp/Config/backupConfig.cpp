@@ -55,18 +55,27 @@ void backupConfig::SetInfo()
 
 void backupConfig::SetComponents()
 {
-	backupConfig::AddVictor("left0", 2, false);
-	backupConfig::AddVictor("left1", 3, false);
-	backupConfig::AddVictor("right0", 4, false);
-	backupConfig::AddVictor("right1", 1, false);
-	backupConfig::AddSparkMax("test", 5, false);
-	backupConfig::AddEncoder("Test", 1, 2, false);
+	backupConfig::AddSparkMax("WheelFL", 3, false);
+	backupConfig::AddSparkMax("WheelFR", 4, false);
+	backupConfig::AddSparkMax("WheelBL", 5, false);
+	backupConfig::AddSparkMax("WheelBR", 6, false);
+
+	backupConfig::AddTalonSRX("SwivelFL", 7, false, true);
+	backupConfig::AddTalonSRX("SwivelFR", 7, false, true);
+	backupConfig::AddTalonSRX("SwivelBL", 7, false, true);
+	backupConfig::AddTalonSRX("SwivelBR", 7, false, true);
+
+	backupConfig::AddSwerveModule("FL", "SwivelFL", "WheelFL", 4096, 24);
+	backupConfig::AddSwerveModule("FR", "SwivelFR", "WheelFR", 4096, 24);
+	backupConfig::AddSwerveModule("BL", "SwivelBL", "WheelBL", 4096, 24);
+	backupConfig::AddSwerveModule("BR", "SwivelBR", "WheelBR", 4096, 24);
+
+	backupConfig::AddSwerveManager("SwerveDT", "FL", "FR", "BL", "BR");
 }
 
 void backupConfig::SetControls()
 {
-	backupConfig::AddAxisControl("leftDrive", "left0,left1", 1, 0.5, false, false, false, false, 0.08, backupConfig::JoystickControler::Driver);
-	backupConfig::AddAxisControl("rightDrive", "right0,right1", 5, 0.5, false, false, false, false, 0.08, backupConfig::JoystickControler::Driver);
+	backupConfig::AddSwerveControl("SwerveControl", SwerveControl::DriveCalculation::Robot_Oriented, 0, 1, 4, 0.08, 1, false, 10, 10, "SwerveDT", backupConfig::JoystickControler::Driver);
 }
 
 backupConfig::~backupConfig(){}

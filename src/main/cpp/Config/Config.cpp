@@ -797,19 +797,22 @@ void Config::AllocateComponents(xml_node &root){
 			string WheelName = module.attribute("wheel").as_string();
 			if (m_activeCollection->Get(SwivelName) != nullptr && m_activeCollection->Get(WheelName) != nullptr)
 			{
+				double Ticksperrev = module.attribute("swivelTicks").as_double();
+				double WheelTicksperrev = module.attribute("wheelTicks").as_double();
+					
 				string SwivelEnc = module.attribute("swivelEnc").as_string();
 				string WheelEnc = module.attribute("wheelEnc").as_string();
 				if (m_activeCollection->GetEncoder(SwivelEnc) != nullptr && m_activeCollection->GetEncoder(WheelEnc) != nullptr)
 				{
-					double Ticksperrev = module.attribute("swivelTicks").as_double();
-					double WheelTicksperrev = module.attribute("wheelTicks").as_double();
 					SwerveModule *tmp = new SwerveModule(name, (Motor*)m_activeCollection->Get(SwivelName), (Motor*)m_activeCollection->Get(WheelName), m_activeCollection->GetEncoder(SwivelEnc), m_activeCollection->GetEncoder(WheelEnc), Ticksperrev, WheelTicksperrev);
 					m_activeCollection->Add(tmp);
 					Log::General("Added Swerve Module :" + name);
 				}
 				else
 				{
-					Log::Error("Swerve Module " + name + " cannot find one or both encoders specified in the config!");
+					SwerveModule *tmp = new SwerveModule(name, (Motor*)m_activeCollection->Get(SwivelName), (Motor*)m_activeCollection->Get(WheelName), Ticksperrev, WheelTicksperrev);
+					m_activeCollection->Add(tmp);
+					Log::General("Added Swerve Module :" + name);
 				}
 			}
 			else
@@ -1077,8 +1080,8 @@ void Config::AllocateDriverControls(xml_node &controls){
 		int H = Swerve.attribute("H-Axis").as_int();
 		int V = Swerve.attribute("V-Axis").as_int();
 		int S = Swerve.attribute("S-Axis").as_int();
-		int dz = Swerve.attribute("deadZone").as_int();
-		int mult = Swerve.attribute("powerMultiplier").as_int();
+		double dz = Swerve.attribute("deadZone").as_double();
+		double mult = Swerve.attribute("powerMultiplier").as_double();
 		bool reversed = Swerve.attribute("reversed").as_bool();
 		double length = Swerve.attribute("length").as_double();
 		double width = Swerve.attribute("width").as_double();

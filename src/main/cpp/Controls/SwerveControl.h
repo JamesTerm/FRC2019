@@ -34,7 +34,7 @@ namespace Controls
 			virtual ~SwerveControl();
 
             SwerveManager *GetManager(){return SwerveDrive;};
-
+            virtual void DeleteComponent() override;
 		private:
 			SwerveManager *SwerveDrive;
             DriveCalculation Cal;

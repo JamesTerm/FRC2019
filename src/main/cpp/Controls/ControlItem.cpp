@@ -25,34 +25,37 @@ using namespace Controls;
 
 auto onControllerValueChanged = [&](EventArgs* e) {
 	try{
-		auto args = (TEventArgs<double, ControlItem*>*)e;
-	Log::General(" EVENT "+args->GetSender()->name);
+		if (e->Type == 0)
+		{
+			auto args = (TEventArgs<double, ControlItem*>*)e;
+			Log::General(" EVENT "+args->GetSender()->name);
 
-		//If the sender is a GoalButtonControl
-		if (dynamic_cast<GoalButtonControl*>(args->GetSender())) {
-			//Reset the active TeleOpGoal
-			args->GetSender()->m_activeCollection->GetActiveGoal()->Reset();
-			TeleOpGoal goal = ((GoalButtonControl*)(args->GetSender()))->m_goal;
-			SmartDashboard::PutString("GoalButtonControl Status", "Control Found");
-			//Convert from TeleOpGoal[enum] to a Goal[class]
-			Goal* goalToAdd = SelectTeleOpGoal(args->GetSender()->m_activeCollection, goal, args->GetValue());
-			MultitaskGoal* teleOpMasterGoal = args->GetSender()->m_activeCollection->GetActiveGoal();
-			//Add in a timeout and ControllerOverride to the the Multitask Goal
-			//TODO: HOLY CRAP REENABLE THIS
-			//teleOpMasterGoal->AddGoal(new Goal_TimeOut(args->GetSender()->m_activeCollection, 7));
-			teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(args->GetSender()->m_activeCollection, 1));
-			teleOpMasterGoal->AddGoal(goalToAdd);
-			//Set and activate the TeleOp Goal
-			args->GetSender()->m_activeCollection->SetActiveGoal(teleOpMasterGoal);
-			args->GetSender()->m_activeCollection->GetActiveGoal()->Activate();
-			((GoalButtonControl*)(args->GetSender()))->m_goalSet = true;
-			SmartDashboard::PutString("GoalButtonControl Status", "GoalActivated");
-			return;
+			//If the sender is a GoalButtonControl
+			if (dynamic_cast<GoalButtonControl*>(args->GetSender())) {
+				//Reset the active TeleOpGoal
+				args->GetSender()->m_activeCollection->GetActiveGoal()->Reset();
+				TeleOpGoal goal = ((GoalButtonControl*)(args->GetSender()))->m_goal;
+				SmartDashboard::PutString("GoalButtonControl Status", "Control Found");
+				//Convert from TeleOpGoal[enum] to a Goal[class]
+				Goal* goalToAdd = SelectTeleOpGoal(args->GetSender()->m_activeCollection, goal, args->GetValue());
+				MultitaskGoal* teleOpMasterGoal = args->GetSender()->m_activeCollection->GetActiveGoal();
+				//Add in a timeout and ControllerOverride to the the Multitask Goal
+				//TODO: HOLY CRAP REENABLE THIS
+				//teleOpMasterGoal->AddGoal(new Goal_TimeOut(args->GetSender()->m_activeCollection, 7));
+				teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(args->GetSender()->m_activeCollection, 1));
+				teleOpMasterGoal->AddGoal(goalToAdd);
+				//Set and activate the TeleOp Goal
+				args->GetSender()->m_activeCollection->SetActiveGoal(teleOpMasterGoal);
+				args->GetSender()->m_activeCollection->GetActiveGoal()->Activate();
+				((GoalButtonControl*)(args->GetSender()))->m_goalSet = true;
+				SmartDashboard::PutString("GoalButtonControl Status", "GoalActivated");
+				return;
+			}
+			args->GetSender()->SetToComponents(args->GetValue());
+			SmartDashboard::PutNumber(args->GetSender()->name, args->GetValue());
 		}
-		args->GetSender()->SetToComponents(args->GetValue());
-		SmartDashboard::PutNumber(args->GetSender()->name, args->GetValue());
-	}catch(...){
-		try{
+		else if (e->Type == 1)
+		{
 			auto SwerveArgs = (IEventArgs<double, double, double, ControlItem*>*)e;
 			Log::General(" EVENT "+SwerveArgs->GetSender()->name);
 
@@ -61,17 +64,21 @@ auto onControllerValueChanged = [&](EventArgs* e) {
 
 			SmartDashboard::PutNumber(SwerveArgs->GetSender()->name, SwerveArgs->GetVValue());
 		}
-		catch(exception &e)
+		else
 		{
-			Log::Error("Known Exception Thrown in onControllerValueChanged in a Control! This can cause fatal Runtime Errors! Check your logs and XML.");
-			SmartDashboard::PutString("OnValueChangedStatus", "Error");
-			//TODO: Make this the append instead
-			Log::Error(e.what());
+			Log::Error("FAILED EVENT");
 		}
-		catch(...){
-			Log::Error("UnknownException Thrown in onControllerValueChanged in a Control! This can cause fatal Runtime Errors! Check your XML and yell at the programmers!");
-			SmartDashboard::PutString("OnValueChangedStatus", "Error");
-		}
+	}
+	catch(exception &e)
+	{
+		Log::Error("Known Exception Thrown in onControllerValueChanged in a Control! This can cause fatal Runtime Errors! Check your logs and XML.");
+		SmartDashboard::PutString("OnValueChangedStatus", "Error");
+		//TODO: Make this the append instead
+		Log::Error(e.what());
+	}
+	catch(...){
+		Log::Error("UnknownException Thrown in onControllerValueChanged in a Control! This can cause fatal Runtime Errors! Check your XML and yell at the programmers!");
+		SmartDashboard::PutString("OnValueChangedStatus", "Error");
 	}
 };
 
