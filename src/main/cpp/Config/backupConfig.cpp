@@ -61,9 +61,9 @@ void backupConfig::SetComponents()
 	backupConfig::AddSparkMax("WheelBR", 6, false);
 
 	backupConfig::AddTalonSRX("SwivelFL", 7, false, true);
-	backupConfig::AddTalonSRX("SwivelFR", 7, false, true);
-	backupConfig::AddTalonSRX("SwivelBL", 7, false, true);
-	backupConfig::AddTalonSRX("SwivelBR", 7, false, true);
+	backupConfig::AddTalonSRX("SwivelFR", 8, false, true);
+	backupConfig::AddTalonSRX("SwivelBL", 9, false, true);
+	backupConfig::AddTalonSRX("SwivelBR", 10, false, true);
 
 	backupConfig::AddSwerveModule("FL", "SwivelFL", "WheelFL", 4096, 24);
 	backupConfig::AddSwerveModule("FR", "SwivelFR", "WheelFR", 4096, 24);
