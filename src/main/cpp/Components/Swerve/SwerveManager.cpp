@@ -10,7 +10,10 @@ Author(s): Ian Poll
 Email: irobot9803@gmail.com
 \********************************************************************/
 
+#define _USE_MATH_DEFINES
+
 #include "SwerveManager.h"
+#include <cmath>
 
 using namespace std;
 using namespace frc;
@@ -47,7 +50,7 @@ void SwerveManager::SetSwivel(double val)
 
 void SwerveManager::Set(double rawV, double rawH, double rawS)
 {
-    double piVal = 2 * acos(0);
+    double piVal = M_PI;
 
     double r = sqrt((Length * Length) + (Width * Width));
     rawV *= -1;
@@ -62,10 +65,10 @@ void SwerveManager::Set(double rawV, double rawH, double rawS)
     double frontRightSpeed = sqrt ((b * b) + (d * d));
     double frontLeftSpeed = sqrt ((b * b) + (c * c));
 
-    double backRightAngle = atan2 (a, d) / piVal;
-    double backLeftAngle = atan2 (a, c) / piVal;
-    double frontRightAngle = atan2 (b, d) / piVal;
-    double frontLeftAngle = atan2 (b, c) / piVal;
+    double backRightAngle = (atan2 (a, d) / piVal) * 180;
+    double backLeftAngle = (atan2 (a, c) / piVal) * 180;
+    double frontRightAngle = (atan2 (b, d) / piVal) * 180;
+    double frontLeftAngle = (atan2 (b, c) / piVal) * 180;
 
     if (FL->SetTargetSwivel(frontLeftAngle) &&
         FR->SetTargetSwivel(frontRightAngle) &&
@@ -83,6 +86,7 @@ void SwerveManager::Set(double rawV, double rawH, double rawS)
         FR->Set(frontRightSpeed / 5);
         BL->Set(backLeftSpeed / 5);
         BR->Set(backRightSpeed / 5);
+        Log::General("Waiting for swivel motors to get their shit together");
     }
 }
 

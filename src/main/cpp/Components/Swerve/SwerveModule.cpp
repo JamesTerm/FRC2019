@@ -142,7 +142,9 @@ void SwerveModule::SetDeltaTime(double Time)
 
 void SwerveModule::ProcessMotor(Motor *Subject, double Enc, PIDProfile *Profile, double Target, double TickRev)
 {
-    Subject->Set(Profile->Calculate(Target, (Enc / TickRev) * 360, D_Time));
+    double ValOut = Profile->Calculate(Target, (Enc / TickRev) * 360, D_Time);
+    Log::General("----------------------------ValOut: " + to_string(ValOut) + " --------Target: " + to_string(Target) + " --------D_Time: " + to_string(D_Time));
+    Subject->Set(ValOut);
 }
 
 bool SwerveModule::SetTargetSwivel(double Target)

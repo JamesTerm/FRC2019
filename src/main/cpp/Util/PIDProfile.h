@@ -185,7 +185,7 @@ namespace Util
 
             double Calculate(double Target, double Current, double D_Time)
             {
-				return PIDCal(Pval, Ival, Dval, _TotalE, Current, _PrevE, D_Time, MaxPower, MinPower, MaxChange, _PrevR, BiasV, _ErrorTo, Target);
+				return PIDCal(Pval, Ival, Dval, _TotalE, (Current - Target), _PrevE, D_Time, MaxPower, MinPower, MaxChange, _PrevR, BiasV, _ErrorTo, Target);
             };
 
 			double CalSpeed(double SPEEEED, double MotorPower, double Enc, double D_Time)
