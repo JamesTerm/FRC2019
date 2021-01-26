@@ -53,7 +53,6 @@ void SwerveManager::Set(double rawV, double rawH, double rawS)
     double piVal = M_PI;
 
     double r = sqrt((Length * Length) + (Width * Width));
-    rawV *= -1;
 
     double a = rawH - rawS * (Length / r);
     double b = rawH + rawS * (Length / r);
@@ -65,15 +64,46 @@ void SwerveManager::Set(double rawV, double rawH, double rawS)
     double frontRightSpeed = sqrt ((b * b) + (d * d));
     double frontLeftSpeed = sqrt ((b * b) + (c * c));
 
-    double backRightAngle = (atan2 (a, d) / piVal) * 180;
-    double backLeftAngle = (atan2 (a, c) / piVal) * 180;
-    double frontRightAngle = (atan2 (b, d) / piVal) * 180;
-    double frontLeftAngle = (atan2 (b, c) / piVal) * 180;
+    double backRightAngle = (atan2 (a, d) * 180) / piVal;
+    double backLeftAngle = (atan2 (a, c) * 180)  / piVal;
+    double frontRightAngle = (atan2 (b, d) * 180)/ piVal;
+    double frontLeftAngle = (atan2 (b, c) * 180) / piVal;
 
-    if (FL->SetTargetSwivel(frontLeftAngle) &&
-        FR->SetTargetSwivel(frontRightAngle) &&
-        BL->SetTargetSwivel(backLeftAngle) &&
-        BR->SetTargetSwivel(backRightAngle))
+    double MaxVal = frontLeftSpeed;
+    MaxVal = SwerveManager::GetMax(MaxVal, frontRightSpeed);
+    MaxVal = SwerveManager::GetMax(MaxVal, backLeftSpeed);
+    MaxVal = SwerveManager::GetMax(MaxVal, backRightSpeed);
+
+    if (MaxVal > 1)
+    {
+        backRightSpeed /= MaxVal;
+        backLeftSpeed /= MaxVal;
+        frontRightSpeed /= MaxVal;
+        frontLeftSpeed /= MaxVal;
+    }
+
+    if(abs(rawS) < 0.01)
+    {
+        backRightSpeed *= (backRightAngle >= 0 ? 1 : -1);
+        backLeftSpeed *= (backLeftAngle >= 0 ? 1 : -1);
+        frontRightSpeed *= (frontRightAngle >= 0 ? 1 : -1);
+        frontLeftSpeed *= (frontLeftAngle >= 0 ? 1 : -1);
+
+        backRightAngle = abs(backRightAngle);
+        backLeftAngle = abs(backLeftAngle);
+        frontRightAngle = abs(frontRightAngle);
+        frontLeftAngle = abs(frontLeftAngle);
+    }
+
+    bool SFL = FL->SetTargetSwivel(frontLeftAngle);
+    bool SFR = FR->SetTargetSwivel(frontRightAngle);
+    bool SBL = BL->SetTargetSwivel(backLeftAngle);
+    bool SBR = BR->SetTargetSwivel(backRightAngle);
+
+    if (SFL &&
+        SFR &&
+        SBL &&
+        SBR)
     {
         FL->Set(frontLeftSpeed);
         FR->Set(frontRightSpeed);
@@ -82,10 +112,10 @@ void SwerveManager::Set(double rawV, double rawH, double rawS)
     }
     else
     {
-        FL->Set(frontLeftSpeed / 5);
-        FR->Set(frontRightSpeed / 5);
-        BL->Set(backLeftSpeed / 5);
-        BR->Set(backRightSpeed / 5);
+        FL->Set(0);
+        FR->Set(0);
+        BL->Set(0);
+        BR->Set(0);
         Log::General("Waiting for swivel motors to get their shit together");
     }
 }

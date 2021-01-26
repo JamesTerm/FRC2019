@@ -49,7 +49,7 @@ public:
 private:
     bool AtCompVal = false;
     double Version = 0.1;
-    bool useNavX = false;
+    bool useNavX = true;
 	bool useLimelight = false;
 	bool Real = false;
 	int DriverSlot = 0;

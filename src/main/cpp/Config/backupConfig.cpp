@@ -35,7 +35,7 @@ void backupConfig::SetInfo()
     Log::General("Backup Config Version: " + to_string(Version), true);
 
 	if(useNavX){
-		m_activeCollection->Add(new NavX());
+		m_activeCollection->Add(new NavX(true));
 		Log::General("NavX detected");
 	}
 	else
@@ -75,7 +75,7 @@ void backupConfig::SetComponents()
 
 void backupConfig::SetControls()
 {
-	backupConfig::AddSwerveControl("SwerveControl", SwerveControl::DriveCalculation::Robot_Oriented, 0, 1, 4, 0.08, 1, false, 10, 10, "SwerveDT", backupConfig::JoystickControler::Driver);
+	backupConfig::AddSwerveControl("SwerveControl", SwerveControl::DriveCalculation::Field_Oriented, 0, 1, 4, 0.08, 1, false, 10, 10, "SwerveDT", backupConfig::JoystickControler::Driver);
 }
 
 backupConfig::~backupConfig(){}

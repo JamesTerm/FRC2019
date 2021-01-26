@@ -70,6 +70,8 @@ namespace Components
             virtual void DefaultSet();
 			virtual void Set(DoubleSolenoid::Value value);
 
+            double GetMax(double Val1, double Val2) {return (Val1 > Val2 ? Val1 : Val2); };
+
         private:
             SwerveModule *FL;
             SwerveModule *FR;

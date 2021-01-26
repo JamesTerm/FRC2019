@@ -50,6 +50,7 @@ void Robot::LoadConfig()
 void Robot::RobotInit()
 {
 	FrameworkCommunication::GetInstance();
+	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", false);
 	Log::restartfile();
 	Robot::LoadConfig();
 	Log::General("Program Version: " + to_string(VERSION) + " Revision: " + REVISION, true);
@@ -68,6 +69,7 @@ void Robot::RobotInit()
 void Robot::Autonomous()
 {
 	Robot::LoadConfig();
+	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", true);
 	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Auton);	
 	m_masterGoal = new MultitaskGoal(m_activeCollection, false);
 	Log::General("Autonomous Started");
@@ -119,6 +121,7 @@ void Robot::Autonomous()
 void Robot::Teleop()
 {
 	Robot::LoadConfig();
+	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", true);
 	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Teleop);
 	m_activeCollection->GetActiveGoal()->~MultitaskGoal(); //!< Destroy any pre-existing masterGoal that was not properly disposed of
 	m_teleOpMasterGoal = new MultitaskGoal(m_activeCollection, false);
@@ -158,6 +161,7 @@ void Robot::Teleop()
 void Robot::Test()
 {
 	Robot::LoadConfig();
+	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", true);
 	string SELECTED_AUTO = "";
 	if (AutoTable->GetString("Auto Selector", "").length() == 0 && !m_activeCollection->ConfigOverride())
 	{
@@ -193,12 +197,14 @@ void Robot::StartCompetition() {
       Disabled();
       m_ds.InDisabled(false);
       while (IsDisabled()) m_ds.WaitForData();
-    } else if (IsAutonomous()) {
+    }
+	else if (IsAutonomous()) {
       m_ds.InAutonomous(true);
       Autonomous();
       m_ds.InAutonomous(false);
       while (IsAutonomous() && IsEnabled()) m_ds.WaitForData();
-    } else if (IsTest()) {
+    }
+	else if (IsTest()) {
       lw.SetEnabled(true);
       frc::Shuffleboard::EnableActuatorWidgets();
       m_ds.InTest(true);
@@ -207,7 +213,8 @@ void Robot::StartCompetition() {
       while (IsTest() && IsEnabled()) m_ds.WaitForData();
       lw.SetEnabled(false);
       frc::Shuffleboard::DisableActuatorWidgets();
-    } else {
+    }
+	else {
       m_ds.InOperatorControl(true);
       Teleop();
       m_ds.InOperatorControl(false);
@@ -219,6 +226,7 @@ void Robot::StartCompetition() {
 void Robot::EndCompetition() { m_exit = true; }
 
 void Robot::Disabled() { 
+	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", false);
 	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Disabled);
  }
 

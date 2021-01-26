@@ -10,7 +10,10 @@ Author(s):	Ian Poll
 Email:	irobot9803@gmail.com
 \*********************************************************************/
 
+#define _USE_MATH_DEFINES
+
 #include "SwerveControl.h"
+#include <cmath>
 
 using namespace std;
 using namespace Controls;
@@ -30,6 +33,8 @@ SwerveControl::SwerveControl(Joystick *_joy, DriveCalculation _Cal, string _name
     Mult = _powerMultiplier;
     DeadZone = _deadZone;
     Reversed = _reversed;
+
+    m_Collection = ac;
 }
 
 double SwerveControl::Update(double _dTime)
@@ -38,9 +43,19 @@ double SwerveControl::Update(double _dTime)
     SwerveDrive->SetL(Length);
     SwerveDrive->SetW(Width);
 
-    double rawH = CalculateDeadZone((*joy).GetRawAxis(HAxis), DeadZone) * (Mult);
+    double rawH = -CalculateDeadZone((*joy).GetRawAxis(HAxis), DeadZone) * (Mult);
     double rawV = CalculateDeadZone((*joy).GetRawAxis(VAxis), DeadZone) * (Reversed ? -Mult : Mult);
-    double rawS = CalculateDeadZone((*joy).GetRawAxis(SAxis), DeadZone) * (Mult);
+    double rawS = -CalculateDeadZone((*joy).GetRawAxis(SAxis), DeadZone) * (Mult);
+    rawV *= -1;
+
+    if (Cal == SwerveControl::DriveCalculation::Field_Oriented)
+    {
+        double gyro = m_Collection->GetNavX()->GetNavXAngle() * M_PI / 180;
+
+        double temp = rawH * cos(gyro) + rawV * sin(gyro); 
+        rawV = -rawH * sin(gyro) + rawV * cos(gyro); 
+        rawH = temp;
+    }
 
     ValueChanged(new IEventArgs<double, double, double, SwerveControl*>(rawV, rawH, rawS, this));
 

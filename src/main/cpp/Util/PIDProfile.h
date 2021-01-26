@@ -49,6 +49,11 @@ namespace Util
                 BiasV = BiasVal;
             };
 
+			void SetMaxChange(double Change)
+			{
+				MaxChange = Change;
+			};
+
             void SetMax(double Max)
             {
                 MaxPower = Max;
@@ -166,7 +171,7 @@ namespace Util
         		Result = Constrain(Scale(Result, 0, (Bias)), MinPower, MaxPower);
         		if(!BelowMaxRate(Result, LastResult, MaxChange))
 	        	{
-	        		Log::General("PIDCal went over max change, Change = " + to_string(ABSValue(ABSValue(Result) - ABSValue(LastResult))));
+	        		Log::General("!!!!ERROR:-------------PIDCal went over max change, Change = " + to_string(ABSValue(ABSValue(Result) - ABSValue(LastResult))) + "!!!!");
 	        		Result = LastResult;
 	        	}
         		LastResult = Result;
@@ -242,7 +247,7 @@ namespace Util
 
             double MinPower = -1;
             double MaxPower = 1;
-            double MaxChange = 0.5;
+            double MaxChange = 1.5;
 
 			double LastWheelEncoderVal = 0;
             double LastResult = 0;

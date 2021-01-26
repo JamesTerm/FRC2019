@@ -21,6 +21,7 @@ namespace Components{
 class NavX : public AHRS, public NativeComponent{
 public:
 	NavX() : AHRS(SerialPort::Port::kMXP, AHRS::SerialDataType::kProcessedData, 50), NativeComponent("NavX"){}
+	NavX(bool Fake) : AHRS(SerialPort::Port::kMXP, AHRS::SerialDataType::kProcessedData, 50), NativeComponent("NavX"){FakeRun = true; SetUP();}
 	NavX(SPI::Port spiPortId, uint8_t updateRateHz) : AHRS(spiPortId, updateRateHz), NativeComponent("NavX"){}
 	NavX(SPI::Port spiPortId, int spiBitRate, uint8_t updateRateHz) : AHRS(spiPortId, spiBitRate, updateRateHz), NativeComponent("NavX"){}
 	NavX(I2C::Port i2CPortId, uint8_t updateRateHz): AHRS(i2CPortId, updateRateHz), NativeComponent("NavX"){}
@@ -28,10 +29,30 @@ public:
 	NavX* GetRawComponent(){return this;}
 	virtual ~NavX(){}
 	double GetNavXAngle(){
-		double angle = GetAngle();
-		return angle;
+		if (FakeRun)
+		{
+			return nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetNumber("NavX-Y", 0);
+		}
+		else
+		{
+			double angle = GetAngle();
+			return angle;
+		}
+	}
+	void ResetNav()
+	{
+		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("NavX-Reset", true);
 	}
 	virtual void DeleteComponent() {delete this;};
+private:
+	bool FakeRun = false;
+	void SetUP()
+	{
+		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutNumber("NavX-Y", 0);
+		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutNumber("NavX-X", 0);
+		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutNumber("NavX-Z", 0);
+		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("NavX-Reset", true);
+	}
 };
 	
 

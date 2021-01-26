@@ -49,9 +49,14 @@ SwerveModule::SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, doubl
 
     GetType = SwerveModule::InputType::MotorType;
 
-    WheelPID = new PIDProfile(1, 0, 0);
-    SwivelPID = new PIDProfile(1, 0, 0);
-    SpeedPID = new PIDProfile(1, 0, 0);
+    WheelPID = new PIDProfile(0.2, 0, 0.002);
+    SwivelPID = new PIDProfile(0.5, 0, 0);
+    SpeedPID = new PIDProfile(0.2, 0, 0.002);
+/*
+    OutputTable->PutNumber("SwivelP", 0);
+    OutputTable->PutNumber("SwivelI", 0);
+    OutputTable->PutNumber("SwivelD", 0);*/
+    
 
     SwerveModule::ResetEncs();
 }
@@ -142,21 +147,26 @@ void SwerveModule::SetDeltaTime(double Time)
 
 void SwerveModule::ProcessMotor(Motor *Subject, double Enc, PIDProfile *Profile, double Target, double TickRev)
 {
-    double ValOut = Profile->Calculate(Target, (Enc / TickRev) * 360, D_Time);
-    Log::General("----------------------------ValOut: " + to_string(ValOut) + " --------Target: " + to_string(Target) + " --------D_Time: " + to_string(D_Time));
+    double ValOut = -Profile->Calculate(Target, (Enc / TickRev) * 360, D_Time);
+    Log::General("----------------------------ValOut: " + to_string(ValOut) + " --------Target: " + to_string(Target) + " --------Current: " + to_string((Enc / TickRev) * 360) + " --------D_Time: " + to_string(D_Time));
     Subject->Set(ValOut);
 }
 
 bool SwerveModule::SetTargetSwivel(double Target)
 {
+    /*
+    SwivelPID->SetP(OutputTable->GetNumber("SwivelP", 0));
+    SwivelPID->SetI(OutputTable->GetNumber("SwivelI", 0));
+    SwivelPID->SetD(OutputTable->GetNumber("SwivelD", 0));
+*/
     SwerveModule::ProcessMotor(Swivel, SwerveModule::GetSwivelEnc(), SwivelPID, Target, EncRevTicks);
-    return SwivelPID->Inrange(Target, SwerveModule::GetSwivelEnc(), 0.1);
+    return SwivelPID->Inrange(Target, (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360, 2);
 }
 
 bool SwerveModule::SetTargetWheel(double Target)
 {
     SwerveModule::ProcessMotor(Wheel, SwerveModule::GetEnc(), WheelPID, Target, WheelEncRevTicks);
-    return WheelPID->Inrange(Target, SwerveModule::GetEnc(), 0.1);
+    return WheelPID->Inrange(Target, (SwerveModule::GetEnc() / EncRevTicks) * 360, 1);
 }
 
 bool SwerveModule::SetTarget(double Wheel_Target, double Swivel_Target)
