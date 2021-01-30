@@ -161,7 +161,7 @@ bool SwerveModule::SetTargetSwivel(double Target)
     SwivelPID->SetD(OutputTable->GetNumber("SwivelD", 0));
 */
     SwerveModule::ProcessMotor(Swivel, SwerveModule::GetSwivelEnc(), SwivelPID, Target, EncRevTicks);
-    return SwivelPID->Inrange(Target, (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360, 5);
+    return (SwivelPID->ABSValue(Target - (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360) > 45 ? SwivelPID->Inrange(Target, (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360, 5) : true);
 }
 
 bool SwerveModule::SetTargetWheel(double Target)

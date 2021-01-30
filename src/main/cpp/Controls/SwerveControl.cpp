@@ -56,6 +56,11 @@ double SwerveControl::Update(double _dTime)
         rawV = -rawH * sin(gyro) + rawV * cos(gyro); 
         rawH = temp;
     }
+    else if (Cal == SwerveControl::DriveCalculation::Warthog)
+    {
+        rawS = rawH;
+        rawH = 0;
+    }
 
     ValueChanged(new IEventArgs<double, double, double, SwerveControl*>(rawV, rawH, rawS, this));
 

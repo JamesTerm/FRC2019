@@ -70,12 +70,12 @@ void backupConfig::SetComponents()
 	backupConfig::AddSwerveModule("BL", "SwivelBL", "WheelBL", 4096, 24);
 	backupConfig::AddSwerveModule("BR", "SwivelBR", "WheelBR", 4096, 24);
 
-	backupConfig::AddSwerveManager("SwerveDT", false, "FL", "FR", "BL", "BR");
+	backupConfig::AddSwerveManager("SwerveDT", true, 0.8, "FL", "FR", "BL", "BR");
 }
 
 void backupConfig::SetControls()
 {
-	backupConfig::AddSwerveControl("SwerveControl", SwerveControl::DriveCalculation::Robot_Oriented, 0, 1, 4, 0.08, 1, false, 10, 10, "SwerveDT", backupConfig::JoystickControler::Driver);
+	backupConfig::AddSwerveControl("SwerveControl", SwerveControl::DriveCalculation::Warthog, 0, 1, 4, 0.08, 0.8, false, 10, 10, "SwerveDT", backupConfig::JoystickControler::Driver);
 }
 
 backupConfig::~backupConfig(){}

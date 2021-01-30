@@ -1,0 +1,10 @@
+ManifestFileVersion: 0
+CRC: 1306197213
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: robotstest
+      Dependencies: {}
+    Info_1:
+      Name: fieldtest
+      Dependencies: {}

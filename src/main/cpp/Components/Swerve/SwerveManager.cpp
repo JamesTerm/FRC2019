@@ -75,7 +75,7 @@ void SwerveManager::Set(double rawV, double rawH, double rawS)
     MaxVal = SwerveManager::GetMax(MaxVal, backLeftSpeed);
     MaxVal = SwerveManager::GetMax(MaxVal, backRightSpeed);
 
-    if (MaxVal > 1)
+    if (MaxVal > MaxValParam)
     {
         backRightSpeed /= MaxVal;
         backLeftSpeed /= MaxVal;

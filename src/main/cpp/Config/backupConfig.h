@@ -118,6 +118,17 @@ private:
 		}
 	};
 
+	void AddSwerveManager(string name, bool Wait, double Max, string LeftF, string RightF, string LeftB, string RightB)
+	{
+		if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
+		{
+			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB));
+			Manager->SetMaxPow(Max);
+			m_activeCollection->Add(Manager);
+			Log::General("Added Swerve Manager");
+		}
+	};
+
 	void AddSwerveControl(string name, SwerveControl::DriveCalculation Cal, int H, int V, int S, double dz, double mult, bool reversed, double length, double width, string ManagerName, JoystickControler Person)
 	{
 		if (m_activeCollection->Get(ManagerName) != nullptr)

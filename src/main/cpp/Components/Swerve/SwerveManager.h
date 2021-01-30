@@ -69,6 +69,10 @@ namespace Components
 			virtual double Get();
             virtual void DefaultSet();
 			virtual void Set(DoubleSolenoid::Value value);
+            void SetMaxPow(double Max)
+            {
+                MaxValParam = Max;
+            }
 
             double GetMax(double Val1, double Val2) {return (Val1 > Val2 ? Val1 : Val2); };
 
@@ -80,6 +84,7 @@ namespace Components
 
             double Length = 0;
             double Width = 0;
+            double MaxValParam = 1;
             bool WaitSwivel = false;
     };
 }
