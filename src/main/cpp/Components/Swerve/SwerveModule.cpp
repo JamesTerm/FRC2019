@@ -50,7 +50,8 @@ SwerveModule::SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, doubl
     GetType = SwerveModule::InputType::MotorType;
 
     WheelPID = new PIDProfile(0.2, 0, 0.002);
-    SwivelPID = new PIDProfile(0.5, 0, 0);
+    SwivelPID = new PIDProfile(0.8, 0.01, 0);
+    SwivelPID->SetBias(1000);
     SpeedPID = new PIDProfile(0.2, 0, 0.002);
 /*
     OutputTable->PutNumber("SwivelP", 0);
@@ -71,7 +72,7 @@ void SwerveModule::DeleteComponent()
 
 void SwerveModule::Set(double val)
 {
-    Wheel->Set(val);
+    Wheel->Set(val * Dir);
 }
 
 void SwerveModule::SetSwivel(double SwivelVal)
@@ -160,11 +161,12 @@ bool SwerveModule::SetTargetSwivel(double Target)
     SwivelPID->SetD(OutputTable->GetNumber("SwivelD", 0));
 */
     SwerveModule::ProcessMotor(Swivel, SwerveModule::GetSwivelEnc(), SwivelPID, Target, EncRevTicks);
-    return SwivelPID->Inrange(Target, (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360, 2);
+    return SwivelPID->Inrange(Target, (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360, 5);
 }
 
 bool SwerveModule::SetTargetWheel(double Target)
 {
+    Target *= Dir;
     SwerveModule::ProcessMotor(Wheel, SwerveModule::GetEnc(), WheelPID, Target, WheelEncRevTicks);
     return WheelPID->Inrange(Target, (SwerveModule::GetEnc() / EncRevTicks) * 360, 1);
 }
@@ -176,6 +178,7 @@ bool SwerveModule::SetTarget(double Wheel_Target, double Swivel_Target)
 
 bool SwerveModule::SetSpeedTarget(double SPEEEED)
 {
+    SPEEEED *= Dir;
     SwerveModule::Set(WheelPID->CalSpeed(SPEEEED, SwerveModule::Get(), SwerveModule::GetEnc(), D_Time));
     return WheelPID->ReachedSpeed();
 }

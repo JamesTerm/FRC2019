@@ -108,11 +108,11 @@ private:
 		}
 	};
 
-	void AddSwerveManager(string name, string LeftF, string RightF, string LeftB, string RightB)
+	void AddSwerveManager(string name, bool Wait, string LeftF, string RightF, string LeftB, string RightB)
 	{
 		if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
 		{
-			SwerveManager *Manager = new SwerveManager(name, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB));
+			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB));
 			m_activeCollection->Add(Manager);
 			Log::General("Added Swerve Manager");
 		}

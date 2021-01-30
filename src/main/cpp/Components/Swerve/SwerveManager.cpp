@@ -19,12 +19,13 @@ using namespace std;
 using namespace frc;
 using namespace Components;
 
-SwerveManager::SwerveManager(string name, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight) : OutputComponent(name)
+SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight) : OutputComponent(name)
 {
     FL = FrontLeft;
     FR = FrontRight;
     BL = BackLeft;
     BR = BackRight;
+    WaitSwivel = Wait;
 }
 
 void SwerveManager::DeleteComponent()
@@ -82,28 +83,15 @@ void SwerveManager::Set(double rawV, double rawH, double rawS)
         frontLeftSpeed /= MaxVal;
     }
 
-    if(abs(rawS) < 0.01)
-    {
-        backRightSpeed *= (backRightAngle >= 0 ? 1 : -1);
-        backLeftSpeed *= (backLeftAngle >= 0 ? 1 : -1);
-        frontRightSpeed *= (frontRightAngle >= 0 ? 1 : -1);
-        frontLeftSpeed *= (frontLeftAngle >= 0 ? 1 : -1);
-
-        backRightAngle = abs(backRightAngle);
-        backLeftAngle = abs(backLeftAngle);
-        frontRightAngle = abs(frontRightAngle);
-        frontLeftAngle = abs(frontLeftAngle);
-    }
-
     bool SFL = FL->SetTargetSwivel(frontLeftAngle);
     bool SFR = FR->SetTargetSwivel(frontRightAngle);
     bool SBL = BL->SetTargetSwivel(backLeftAngle);
     bool SBR = BR->SetTargetSwivel(backRightAngle);
 
-    if (SFL &&
+    if ((SFL &&
         SFR &&
         SBL &&
-        SBR)
+        SBR) || !WaitSwivel)
     {
         FL->Set(frontLeftSpeed);
         FR->Set(frontRightSpeed);

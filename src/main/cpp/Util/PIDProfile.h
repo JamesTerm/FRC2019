@@ -164,10 +164,10 @@ namespace Util
 		        return (V1 < V2 ? V1 : V2);
 	        };
 
-            double PIDCal(double P, double I, double D, double& TotalError, double Error, double& PrevError, double ChangeInTime, double MaxPower, double MinPower, double MaxChange, double& LastResult, double Bias, double& ErrorTo, double Target)
+            double PIDCal(double P, double I, double D, double Target, double Current, double& LastResult, double& TotalError, double& PrevError, double& ErrorTo, double ChangeInTime, double MaxPower, double MinPower, double MaxChange, double Bias)
 	        {
-        		double Result = PIDCalculae(P, I, D, TotalError, Error, PrevError, ChangeInTime, ErrorTo, Target);
-        		PrevError = Error;
+        		double Result = PIDCalculae(P, I, D, TotalError, (Current - Target), PrevError, ChangeInTime, ErrorTo, Target);
+        		PrevError = (Current - Target);
         		Result = Constrain(Scale(Result, 0, (Bias)), MinPower, MaxPower);
         		if(!BelowMaxRate(Result, LastResult, MaxChange))
 	        	{
@@ -190,7 +190,7 @@ namespace Util
 
             double Calculate(double Target, double Current, double D_Time)
             {
-				return PIDCal(Pval, Ival, Dval, _TotalE, (Current - Target), _PrevE, D_Time, MaxPower, MinPower, MaxChange, _PrevR, BiasV, _ErrorTo, Target);
+				return PIDCal(Pval, Ival, Dval, Target, Current, _PrevR, _TotalE, _PrevE, _ErrorTo, D_Time, MaxPower, MinPower, MaxChange, BiasV);
             };
 
 			double CalSpeed(double SPEEEED, double MotorPower, double Enc, double D_Time)

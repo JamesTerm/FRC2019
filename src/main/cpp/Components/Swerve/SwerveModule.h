@@ -76,6 +76,7 @@ namespace Components
             double WheelEncRevTicks = 0;
 
             double D_Time = 0;
+            double Dir = 1;
     };
 }
 

@@ -27,7 +27,7 @@ namespace Components
         public:
             enum ModuleLoc{Front_Left = 0,Front_Right = 1,Back_Left = 2,Back_Right = 3};
 
-            SwerveManager(string name, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight);
+            SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight);
 
             void Set(double rawV, double rawH, double rawS);
             void SetSwivel(double val);
@@ -80,6 +80,7 @@ namespace Components
 
             double Length = 0;
             double Width = 0;
+            bool WaitSwivel = false;
     };
 }
 

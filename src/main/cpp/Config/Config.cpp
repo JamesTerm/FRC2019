@@ -832,13 +832,14 @@ void Config::AllocateComponents(xml_node &root){
 		if (Man)
 		{
 			string name = Man.attribute("name").as_string();
+			bool WaitB = Man.attribute("wait").as_bool();
 			string LeftF = Man.attribute("LF").as_string();
 			string RightF = Man.attribute("RF").as_string();
 			string LeftB = Man.attribute("LB").as_string();
 			string RightB = Man.attribute("RB").as_string();
 			if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
 			{
-				SwerveManager *Manager = new SwerveManager(name, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB));
+				SwerveManager *Manager = new SwerveManager(name, WaitB, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB));
 				m_activeCollection->Add(Manager);
 				Log::General("Added Swerve Manager");
 			}
