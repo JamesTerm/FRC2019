@@ -31,15 +31,22 @@ struct Point
 
 struct Auto
 {
-    Auto(int MaxPoints, vector<double> Points)
+    Auto(int MaxPoints, vector<double> Points, bool Offset = false)
     {
+        int Xoff = 0;
+        int Yoff = 0;
         if (Points.size() % 3 == 0)
         {
+            if (Offset)
+            {
+                Xoff = Points[0];
+                Yoff = Points[1];
+            }
             for(int i = 0; i < MaxPoints * NumPoints; i+=NumPoints)
             {
                 Point* CheckPoint = new Point();
-                CheckPoint->Angle = Points[i];
-                CheckPoint->Radius = Points[i + 1];
+                CheckPoint->Angle = Points[i] - Xoff;
+                CheckPoint->Radius = Points[i + 1] - Yoff;
                 CheckPoint->Act = Points[i + 2];
                 Waypoints.push_back(CheckPoint);
             }
@@ -115,7 +122,7 @@ static Auto Map(string Path)
     }
     Log::Error("Files don't not exist, using backup Path");
     vector<double> InputBack = backupPath1();
-    return Auto(InputBack.size() / NumPoints, InputBack);
+    return Auto(InputBack.size() / NumPoints, InputBack, true);
 }
 
 #endif /* UTIL_LinePaths_H_ */
