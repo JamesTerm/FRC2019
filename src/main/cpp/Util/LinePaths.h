@@ -33,8 +33,8 @@ struct Auto
 {
     Auto(int MaxPoints, vector<double> Points, bool Offset = false)
     {
-        int Xoff = 0;
-        int Yoff = 0;
+        double Xoff = 0;
+        double Yoff = 0;
         if (Points.size() % 3 == 0)
         {
             if (Offset)
