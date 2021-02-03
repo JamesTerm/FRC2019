@@ -27,8 +27,17 @@ namespace Components
     class SwerveModule : public OutputComponent
     {
         public:
+            enum Location
+            {
+                Front_Left = 0,
+                Front_Right = 1,
+                Back_Left = 2,
+                Back_Right = 3
+            };
+
             SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, EncoderItem* SwivelEnc, EncoderItem* WheelEnc, double TicksPerRev, double WheelTicks);
             SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, double TicksPerRev, double WheelTicks);
+            void SetLocation(Location Loc) {ModuleLoc = Loc;};
             void Set(double val, double SwivelVal);
             void SetSwivel(double SwivelVal);
             double GetSwivel();
@@ -37,10 +46,15 @@ namespace Components
 
             double GetEnc();
             double GetSwivelEnc();
+            double GetSwivelTarget() {return CurrentSwivelTarget;};
+            double GetWheelTarget() {return CurrentWheelTarget;};
 
             void ResetEncs();
             void ResetWheelEnc();
             void ResetSwivelEnc();
+
+            double GetWheelTicks(){return WheelEncRevTicks;};
+            double GetSwivelTicks(){return EncRevTicks;};
 
             void ResetPID();
             void SetDeltaTime(double Time);
@@ -50,9 +64,36 @@ namespace Components
             bool SetTarget(double Wheel_Target, double Swivel_Target);
             bool SetSpeedTarget(double SPEEEEED);
 
+            bool PointingIn(double Angle)
+            {
+                switch(ModuleLoc)
+                {
+                    case  Location::Front_Left:
+                        return (Angle <= -90 || (Angle == 180));
+                    break;
+                    case  Location::Front_Right:
+                        return (Angle >= 90 || (Angle == -180)); 
+                    break;
+                    case  Location::Back_Left:
+                        return (Angle >= -90 && Angle <= 0);
+                    break;
+                    case  Location::Back_Right:
+                        return (Angle >= 0 && Angle <= 90); 
+                    break;
+                }
+                return false;
+            };
+
+            bool IsPointingIn()
+            {
+                return PointingIn(GetSwivelTarget());
+            }
+
             virtual void DefaultSet();
 			virtual void Set(DoubleSolenoid::Value value);
             virtual void DeleteComponent() override;
+
+            Location GetLocation() {return ModuleLoc;};
 
             PIDProfile *WheelPID;
             PIDProfile *SwivelPID;
@@ -72,8 +113,12 @@ namespace Components
             EncoderItem *SwivelEncoder;
             EncoderItem *WheelEncoder;
 
+            Location ModuleLoc = Location::Front_Left;
+
             double EncRevTicks = 0;
             double WheelEncRevTicks = 0;
+            double CurrentSwivelTarget = 0;
+            double CurrentWheelTarget = 0;
 
             double D_Time = 0;
             double Dir = 1;

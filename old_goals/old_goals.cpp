@@ -70,7 +70,7 @@ void Goal_RelativeElevatorControl::Terminate()
 void Goal_Turn::Activate()
 {
     Goal_Wait_ac::Activate();
-    m_navx->Reset();
+    m_navx->ResetNav();
 }
 
 Goal::Goal_Status Goal_Turn::Process(double dTime)

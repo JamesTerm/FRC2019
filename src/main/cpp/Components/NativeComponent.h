@@ -38,6 +38,13 @@ namespace Components
 		protected:
 			bool UseTable = false;
 	};
+
+	
+    struct double_Vector2
+    {
+        double X = 0;
+        double Y = 0;
+    };
 }
 
 #endif /* SRC_COMPONENTS_NATIVECOMPONENT_H_ */

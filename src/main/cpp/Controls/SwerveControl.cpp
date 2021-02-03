@@ -50,7 +50,7 @@ double SwerveControl::Update(double _dTime)
 
     if (Cal == SwerveControl::DriveCalculation::Field_Oriented)
     {
-        double gyro = m_Collection->GetNavX()->GetNavXAngle() * M_PI / 180;
+        double gyro = m_Collection->GetNavX()->GetConstAngle() * M_PI / 180;
 
         double temp = rawH * cos(gyro) + rawV * sin(gyro); 
         rawV = -rawH * sin(gyro) + rawV * cos(gyro); 

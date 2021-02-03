@@ -501,7 +501,7 @@ static double Turn(double target, ActiveCollection *activeCollection, double T)
 	target = ABSValue(target);
 	NavX *navx = activeCollection->GetNavX();
 	
-	navx->Reset(); //reset navx angle
+	navx->ResetNav(); //reset navx angle
 	Wait(.25);
 
 	cout << "initial angle = " << navx->GetAngle() << endl;

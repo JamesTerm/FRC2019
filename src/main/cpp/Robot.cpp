@@ -139,7 +139,7 @@ void Robot::Teleop()
 	if (m_activeCollection->Get("LimeLight") != nullptr)
 		limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
 	if (m_activeCollection->GetNavX() != nullptr)
-		m_activeCollection->GetNavX()->Reset();
+		m_activeCollection->GetNavX()->ResetNav();
 	while (IsOperatorControl() && !IsDisabled())
 	{
 		const double CurrentTime = GetTime();
@@ -174,7 +174,7 @@ void Robot::Test()
 	
 	Log::General("!--------------- " + SELECTED_AUTO + " AUTO Selected---------------!");
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
-	AutoPath* PathA = new AutoPath(m_activeCollection, Map(SELECTED_AUTO), 10);
+	AutoPath* PathA = new AutoPath(m_activeCollection, Map(SELECTED_AUTO), 10, true);
 	PathA->Activate();
 	while(PathA->GetStatus() == Goal::eActive && !IsDisabled())
 	{

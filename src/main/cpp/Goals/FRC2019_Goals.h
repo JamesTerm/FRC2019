@@ -131,10 +131,11 @@ class Goal_ControllerOverride : public AtomicGoal
 class AutoPath : public CompositeGoal
 {
   public:
-    AutoPath(ActiveCollection* activeCollection, Auto Path, double MaxTime)
+    AutoPath(ActiveCollection* activeCollection, Auto Path, double MaxTime, bool Swerve)
     {
       MaxT = MaxTime;
       lenght = Path.Num;
+      IsSwerve = Swerve;
       m_activeCollection = activeCollection;
       Radius = new double[Path.Num];
       Angle = new double[Path.Num];
@@ -154,7 +155,28 @@ class AutoPath : public CompositeGoal
     double* Actions;
     double MaxT;
     int lenght = 0;
+    bool IsSwerve = false;
     ActiveCollection* m_activeCollection;
+};
+
+class Goal_SwerveCord : public AtomicGoal
+{
+  public:
+    Goal_SwerveCord(ActiveCollection *activeCollection, string SwerveControlComp, double X_Target, double Y_Target)
+    {
+      DT = (SwerveManager*)activeCollection->Get(SwerveControlComp);
+      X = X_Target;
+      Y = Y_Target;
+    }
+
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    virtual void Terminate();
+
+  private:
+    SwerveManager *DT;
+    double X = 0;
+    double Y = 0;
 };
 
 class Goal_MoveForward : public AtomicGoal

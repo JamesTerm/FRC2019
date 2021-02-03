@@ -108,6 +108,35 @@ private:
 		}
 	};
 
+	void AddSwerveModule(string Name, string SwivelMotor, string WheelMotor, double Ticksperrev, double WheelTicksperrev, SwerveModule::Location Loc)
+	{
+		if (m_activeCollection->Get(SwivelMotor) != nullptr && m_activeCollection->Get(WheelMotor) != nullptr)
+		{
+			SwerveModule *tmp = new SwerveModule(Name, (Motor*)m_activeCollection->Get(SwivelMotor), (Motor*)m_activeCollection->Get(WheelMotor), Ticksperrev, WheelTicksperrev);
+			tmp->SetLocation(Loc);
+			m_activeCollection->Add(tmp);
+			string Loca = "robot";
+
+			switch(Loc)
+                {
+                    case  SwerveModule::Location::Front_Left:
+                        Loca = "Front Left";
+                    break;
+                    case  SwerveModule::Location::Front_Right:
+                        Loca = "Front Right";
+                    break;
+                    case  SwerveModule::Location::Back_Left:
+                        Loca = "Back Left";
+                    break;
+                    case  SwerveModule::Location::Back_Right:
+                        Loca = "Back Right";
+                    break;
+                }
+
+			Log::General("Added Swerve Module :" + Name + " in " + Loca);
+		}
+	};
+
 	void AddSwerveManager(string name, bool Wait, string LeftF, string RightF, string LeftB, string RightB)
 	{
 		if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
@@ -125,7 +154,49 @@ private:
 			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB));
 			Manager->SetMaxPow(Max);
 			m_activeCollection->Add(Manager);
-			Log::General("Added Swerve Manager");
+			Log::General("Added Swerve Manager with a max speed of: " + to_string(Max));
+		}
+	};
+
+	void AddSwerveManager(string name, bool Wait, double Max, string LeftF, string RightF, string LeftB, string RightB, NavX *Nav)
+	{
+		if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
+		{
+			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB), Nav);
+			Manager->SetMaxPow(Max);
+			m_activeCollection->Add(Manager);
+			Log::General("Added Swerve Manager with location");
+		}
+	};
+
+	void AddSwerveManager(string name, bool Wait, double Max, string Modules, NavX *Nav)
+	{
+		istringstream ss(Modules);
+    	string word;
+		vector<SwerveModule*> Parts;
+		bool AllHere = true;
+    	while (ss >> word) 
+    	{
+			if(m_activeCollection->Get(word) != nullptr)
+			{
+				Parts.push_back((SwerveModule*)m_activeCollection->Get(word));
+			}
+			else
+			{
+				AllHere = false;
+			}
+    	}
+
+		if (AllHere)
+		{
+			SwerveManager *Manager = new SwerveManager(name, Wait, Parts, Nav);
+			Manager->SetMaxPow(Max);
+			m_activeCollection->Add(Manager);
+			Log::General("Added Swerve Manager with location");
+		}
+		else
+		{
+			Log::Error("One or modules not found!");
 		}
 	};
 

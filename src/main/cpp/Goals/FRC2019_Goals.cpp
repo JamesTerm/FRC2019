@@ -375,7 +375,7 @@ void Goal_MoveForward::Terminate()
 
 void Goal_TurnPIDF::Activate()
 {
-    navx->Reset();
+    navx->ResetNav();
     m_Status = eActive;
     Moving = true;
     Bias = ((P * (RealTarget))*(1.5 * (1000/RealTarget)));
@@ -468,6 +468,22 @@ void Goal_TurnPIDF::Terminate()
     Log::General("Done Moving");
 }
 
+/********************Goal_SwerveCord*****************/
+
+void Goal_SwerveCord::Activate()
+{
+    m_Status = eActive;
+}
+
+ Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
+ {
+    return m_Status = eActive;
+ }
+
+ void Goal_SwerveCord::Terminate()
+{
+    m_Status = eCompleted;
+}
 
 /********************Goal_CurvePath******************/
 
@@ -500,7 +516,7 @@ void Goal_CurvePath::Activate()
 
     encL -> Reset();
     encR -> Reset();
-    navx->Reset();
+    navx->ResetNav();
     Log::General("Left: " + to_string((encL->GetEncoderValue())));
     Log::General("Right: " + to_string((encR->GetEncoderValue())));
     m_Status = eActive;
@@ -608,7 +624,7 @@ void Goal_LimelightTrack::Activate()
 {
     Lime->SetLED(0);
     Lime->SetCamMode(true);
-    navx->Reset();
+    navx->ResetNav();
     m_Status = eActive;
 }
 
@@ -679,8 +695,14 @@ void AutoPath::Activate()
 {
     for(int i = 0; i < lenght; i++)
     {
-        AddSubgoal(new Goal_CurvePath(m_activeCollection, 0, Angle[i], Radius[i], 0.8, 10, 10, 10, 23));
-        
+        if (!IsSwerve)
+        {
+            AddSubgoal(new Goal_CurvePath(m_activeCollection, 0, Angle[i], Radius[i], 0.8, 10, 10, 10, 23));
+        }
+        else
+        {
+            AddSubgoal(new Goal_SwerveCord(m_activeCollection, "SwerveDT", Angle[i], Radius[i]));
+        }
         if(Actions[i] != 0)
         {
             if(Actions[i] == 1)

@@ -149,17 +149,13 @@ void SwerveModule::SetDeltaTime(double Time)
 void SwerveModule::ProcessMotor(Motor *Subject, double Enc, PIDProfile *Profile, double Target, double TickRev)
 {
     double ValOut = -Profile->Calculate(Target, (Enc / TickRev) * 360, D_Time);
-    Log::General("----------------------------ValOut: " + to_string(ValOut) + " --------Target: " + to_string(Target) + " --------Current: " + to_string((Enc / TickRev) * 360) + " --------D_Time: " + to_string(D_Time));
+    //Log::General("----------------------------ValOut: " + to_string(ValOut) + " --------Target: " + to_string(Target) + " --------Current: " + to_string((Enc / TickRev) * 360) + " --------D_Time: " + to_string(D_Time));
     Subject->Set(ValOut);
 }
 
 bool SwerveModule::SetTargetSwivel(double Target)
 {
-    /*
-    SwivelPID->SetP(OutputTable->GetNumber("SwivelP", 0));
-    SwivelPID->SetI(OutputTable->GetNumber("SwivelI", 0));
-    SwivelPID->SetD(OutputTable->GetNumber("SwivelD", 0));
-*/
+    CurrentSwivelTarget = Target;
     SwerveModule::ProcessMotor(Swivel, SwerveModule::GetSwivelEnc(), SwivelPID, Target, EncRevTicks);
     return (SwivelPID->ABSValue(Target - (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360) > 45 ? SwivelPID->Inrange(Target, (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360, 5) : true);
 }
@@ -167,6 +163,7 @@ bool SwerveModule::SetTargetSwivel(double Target)
 bool SwerveModule::SetTargetWheel(double Target)
 {
     Target *= Dir;
+    CurrentWheelTarget = Target;
     SwerveModule::ProcessMotor(Wheel, SwerveModule::GetEnc(), WheelPID, Target, WheelEncRevTicks);
     return WheelPID->Inrange(Target, (SwerveModule::GetEnc() / EncRevTicks) * 360, 1);
 }

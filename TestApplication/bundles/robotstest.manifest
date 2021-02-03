@@ -1,17 +1,19 @@
 ManifestFileVersion: 0
-CRC: 3743530587
+CRC: 1981495907
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 2b39ea199fe8a4b6c061a0656fe1af8f
+    Hash: 2df75c3e3c7711dafbc02a771adb650e
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 6219a3996f8d7d88637ae6e3e87881f5
+    Hash: b7c0e0ecd1ae2fe263a94fa37f8c1939
 HashAppended: 0
 ClassTypes:
 - Class: 1
   Script: {instanceID: 0}
 - Class: 4
+  Script: {instanceID: 0}
+- Class: 20
   Script: {instanceID: 0}
 - Class: 21
   Script: {instanceID: 0}
@@ -33,17 +35,47 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 65
   Script: {instanceID: 0}
+- Class: 81
+  Script: {instanceID: 0}
+- Class: 84
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 3dd5367b365d6ea40b4c5afa6fe928af, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: bd57068cfc6e04547b97562f47262919, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8e303b496298aa54cb694a65332fda3c, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 9399fe0c9ba772b49aca6cd1c4bbfcf0, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 09607b18f92686f4487df1195f63087e, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 817dbae2e7ba03c4bbd6c8f79d5907dd, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: e4141cfae6fe14b4ea403d9362f826ae, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 2ce06023d05b33543971a0b0e1e1063d, type: 3}
 - Class: 115
+  Script: {instanceID: 0}
+- Class: 120
+  Script: {instanceID: 0}
+- Class: 128
   Script: {instanceID: 0}
 - Class: 134
   Script: {instanceID: 0}
@@ -53,11 +85,20 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 153
   Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 222
+  Script: {instanceID: 0}
+- Class: 223
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
 Assets:
 - Assets/ROBOTPARTS/DTBody.prefab
 - Assets/ROBOTPARTS/Warthog Variant.prefab
 - Assets/ROBOTPARTS/DTSwerveBody.prefab
 - Assets/ROBOTPARTS/GroundWheel.physicMaterial
+- Assets/ROBOTPARTS/RobotCam.prefab
 - Assets/ROBOTPARTS/Lift.prefab
 - Assets/ROBOTPARTS/Slip.physicMaterial
 - Assets/ROBOTPARTS/DTBodyWithEncoders Variant.prefab

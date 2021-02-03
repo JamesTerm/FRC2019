@@ -15,6 +15,7 @@ Email: irobot9803@gmail.com
 #ifndef SRC_UTIL_LINEPATHS_H_
 #define SRC_UTIL_LINEPATHS_H_
 
+
 using namespace std;
 using namespace Util;
 using namespace Logger;
@@ -32,19 +33,50 @@ struct Auto
 {
     Auto(int MaxPoints, vector<double> Points)
     {
-        for(int i = 0; i < MaxPoints * NumPoints; i+=NumPoints)
+        if (Points.size() % 3 == 0)
+        {
+            for(int i = 0; i < MaxPoints * NumPoints; i+=NumPoints)
+            {
+                Point* CheckPoint = new Point();
+                CheckPoint->Angle = Points[i];
+                CheckPoint->Radius = Points[i + 1];
+                CheckPoint->Act = Points[i + 2];
+                Waypoints.push_back(CheckPoint);
+            }
+            Num = MaxPoints;
+        }
+        else
         {
             Point* CheckPoint = new Point();
-            CheckPoint->Angle = Points[i];
-            CheckPoint->Radius = Points[i + 1];
-            CheckPoint->Act = Points[i + 2];
             Waypoints.push_back(CheckPoint);
         }
-        Num = MaxPoints;
     }
     int Num = 0;
     vector <Point*> Waypoints;
 };
+
+static vector<double> backupPath1()
+{
+    vector<double> InputBackupPoints;
+    string BackupInputString = "5 -4.333792 -0.4807693 0 -1.43544 1.346154 0 2.328297 0.2060437 0 -1.380494 -2.486264 0 -3.976649 -0.9752747 0 ";
+    istringstream ss(BackupInputString);
+    string word;
+    int index = 0;
+    int Pointsnum = 0;
+    while (ss >> word) 
+    {
+        if (index == 0)
+        {
+            Pointsnum = stod(word);
+        }
+        else
+        {
+            InputBackupPoints.push_back(stod(word));
+        }
+        index++;
+    }
+    return InputBackupPoints;
+}
 
 static Auto Map(string Path)
 {
@@ -56,20 +88,20 @@ static Auto Map(string Path)
         vector<double> InputPoints;
         getline(Inputfile, NumberInput);
         double Length = stod(NumberInput);
-        for(int i = 0; i < (Length); i++)
+        for(int i = 0; i < (Length * NumPoints); i++)
         {
             getline(Inputfile, NumberInput);
             InputPoints.push_back(stod(NumberInput));
             Log::General("Line: " + to_string(i) + " = " + to_string(stod(NumberInput)));
         }
-        return Auto(Length / NumPoints, InputPoints);
+        return Auto(Length, InputPoints);
     }
     else
     {
-        Log::Error("File does not exist, using Dud.txt");
         ifstream DudFile("Dud.txt");
         if (DudFile.is_open())
         {
+            Log::Error("File does not exist, using Dud.txt");
             vector<double> InputDudPoints;
             getline(DudFile, NumberInput);
             double Length = stod(NumberInput);
@@ -78,14 +110,12 @@ static Auto Map(string Path)
                 getline(DudFile, NumberInput);
                 InputDudPoints.push_back(stod(NumberInput));
             }
-            return Auto(Length / NumPoints, InputDudPoints);
+            return Auto(Length, InputDudPoints);
         }
     }
-    vector<double> DeadPoints;
-    DeadPoints.push_back(0);
-    DeadPoints.push_back(0);
-    DeadPoints.push_back(0);
-    return Auto(0, DeadPoints);
+    Log::Error("Files don't not exist, using backup Path");
+    vector<double> InputBack = backupPath1();
+    return Auto(InputBack.size() / NumPoints, InputBack);
 }
 
 #endif /* UTIL_LinePaths_H_ */
