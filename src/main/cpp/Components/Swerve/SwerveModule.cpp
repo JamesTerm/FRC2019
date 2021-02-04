@@ -43,6 +43,7 @@ SwerveModule::SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, doubl
 {
     Swivel = SwivelMtr;
     Wheel = WheelMtr;
+    ((SparkMaxItem*)Wheel)->SetEncoderRev(WheelTicks);
 
     EncRevTicks = TicksPerRev;
     WheelEncRevTicks = WheelTicks;
@@ -134,6 +135,31 @@ void SwerveModule::ResetEncs()
     SwerveModule::ResetWheelEnc();
 }
 
+void SwerveModule::UpdateWheelRate()
+{
+    double Pos = 0;
+    if (GetType == SwerveModule::InputType::EncoderType)
+        Pos = WheelEncoder->Get();
+    else
+        Pos = ((SparkMaxItem*)Wheel)->GetEncoderValue();
+    double LastPos = Pos;
+    if (LastWheelTick != LastPos)
+    {
+        Pos -= LastWheelTick;
+        Pos = abs(Pos);
+        Pos *= WheelPID->Sign(Wheel->Get());
+        Pos /= WheelEncRevTicks;
+        LastWheelTick = LastPos;
+        Pos *= WheelDi;
+        Pos /= D_Time;
+        LastSpeed = Pos;
+    }
+    else
+    {
+        LastSpeed = 0;
+    }
+    OutputTable->PutNumber(name + "-Speed", LastSpeed);
+}
 
 void SwerveModule::ResetPID()
 {

@@ -42,16 +42,18 @@ namespace Components
             void SetSwivelAt(SwerveModule::Location Loc, double Power);
             void SetWheelAt(SwerveModule::Location Loc, double Power);
 
+            void SetWheelDiameter(double Diameter);
+
             void SetL(double L) {Length = L;};
             void SetW(double W) {Width = W;};
-            void SetWheelDiameter(double Di) {WheelDi = Di;};
 
             void SetDelta(double D_Time);
             void ResetPID();
             void ResetSwivelEnc();
             void ResetWheelEnc();
 
-            void UpdateLoc(double DirY, double DirX, double DirS);
+            void UpdateLoc();
+            void UpdateModules();
 
             virtual void DeleteComponent() override;
 
@@ -67,6 +69,8 @@ namespace Components
                 return nullptr;
             };
 
+            vector<SwerveModule*> GetModules();
+
             virtual void Set(double val);
 			virtual double Get();
             virtual void DefaultSet();
@@ -78,15 +82,6 @@ namespace Components
             double_Vector2* GetBotPos() {return Pos;};
 
             double GetMax(double Val1, double Val2) {return (Val1 > Val2 ? Val1 : Val2); };
-
-            bool CheckSame();
-            bool CheckDiff();
-            vector<SwerveModule*> GetModules();
-            vector<vector<SwerveModule*>> GetGroups();
-            double DiffHeading();
-            bool HasVal(int val, vector<int> V);
-            SwerveModule* GetExtreme(double forwardAngle);
-            double CalNewAngle(double OgAngle, double RotAngle);
 
             double GetEnc()
             {
@@ -107,8 +102,7 @@ namespace Components
             double Width = 0;
             double WheelAngle = 0;
             double_Vector2 *Pos;
-            double LastHeading = 0;
-            double LastMag = 0;
+            double Del_Time = 0;
             double MaxValParam = 1;
             bool WaitSwivel = false;
     };

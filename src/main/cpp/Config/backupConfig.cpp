@@ -65,17 +65,17 @@ void backupConfig::SetComponents()
 	backupConfig::AddTalonSRX("SwivelBL", 9, false, true);
 	backupConfig::AddTalonSRX("SwivelBR", 10, false, true);
 
-	backupConfig::AddSwerveModule("FL", "SwivelFL", "WheelFL", 4096, 24, SwerveModule::Location::Front_Left);
-	backupConfig::AddSwerveModule("FR", "SwivelFR", "WheelFR", 4096, 24, SwerveModule::Location::Front_Right);
-	backupConfig::AddSwerveModule("BL", "SwivelBL", "WheelBL", 4096, 24, SwerveModule::Location::Back_Left);
-	backupConfig::AddSwerveModule("BR", "SwivelBR", "WheelBR", 4096, 24, SwerveModule::Location::Back_Right);
+	backupConfig::AddSwerveModule("FL", "SwivelFL", "WheelFL", 4096, 4096, SwerveModule::Location::Front_Left);
+	backupConfig::AddSwerveModule("FR", "SwivelFR", "WheelFR", 4096, 4096, SwerveModule::Location::Front_Right);
+	backupConfig::AddSwerveModule("BL", "SwivelBL", "WheelBL", 4096, 4096, SwerveModule::Location::Back_Left);
+	backupConfig::AddSwerveModule("BR", "SwivelBR", "WheelBR", 4096, 4096, SwerveModule::Location::Back_Right);
 
 	backupConfig::AddSwerveManager("SwerveDT", true, 0.8, "FL FR BL BR", m_activeCollection->GetNavX());
 }
 
 void backupConfig::SetControls()
 {
-	backupConfig::AddSwerveControl("SwerveControl", SwerveControl::DriveCalculation::Warthog, 0, 1, 4, 0.08, 0.8, false, 10, 10, "SwerveDT", backupConfig::JoystickControler::Driver);
+	backupConfig::AddSwerveControl("SwerveControl", SwerveControl::DriveCalculation::Robot_Oriented, 0, 1, 4, 0.08, 0.8, false, 10, 10, "SwerveDT", backupConfig::JoystickControler::Driver);
 }
 
 backupConfig::~backupConfig(){}

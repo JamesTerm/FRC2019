@@ -41,11 +41,11 @@ double SparkMaxItem::Get(){
 }
 
 double SparkMaxItem:: GetEncoderValue(){
-	return (UseTable ? OutputTable->GetNumber(name + "-Encoder", 0) : (Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 24).GetPosition() - Offset));
+	return (UseTable ? OutputTable->GetNumber(name + "-Encoder", 0) : (Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, EncTicks).GetPosition() - Offset));
 }
 
 void SparkMaxItem::Reset(){
-	Offset = Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 24).GetPosition();
+	Offset = Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, EncTicks).GetPosition();
 	if (UseTable)
 		OutputTable->PutBoolean(name + "-Reset", true);
 }

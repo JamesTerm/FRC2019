@@ -46,7 +46,7 @@ SwerveManager::SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerv
     Pos = new double_Vector2();
     RobotNav = Nav;
     WaitSwivel = Wait;
-    OutputTable->PutNumber("Wheel", 0.018);
+    OutputTable->PutNumber("Wheel", 10);
 }
 
 void SwerveManager::DeleteComponent()
@@ -71,61 +71,57 @@ void SwerveManager::SetSwivel(double val)
     }
 }
 
-void SwerveManager::UpdateLoc(double DirY, double DirX, double DirS)
+void SwerveManager::UpdateModules()
 {
-    double joymag = sqrt((DirY * DirY) + (DirX * DirX));
-
-    if (RobotNav != nullptr && joymag > 0)
+    for(int i = 0; i < Modules.size(); i++)
     {
-        double angle = ((atan2(DirY, DirX) * 180) / M_PI) - 90;
-        if (angle < -180)
-        {
-            angle += 360;
-        }
-        if (abs(angle) == 180)
-        {
-            angle = 180;
-        }
-
-        double Heading = RobotNav->GetConstAngle();
-        if (CheckSame())
-        {
-            Heading -= Modules.at(0)->GetSwivelTarget();
-        }
-        else
-        {
-            if(!CheckDiff())
-            {
-                Heading -= DiffHeading();
-            }
-            else
-            {
-                SwerveModule *AngleExt = GetExtreme(angle);    
-                Heading -= AngleExt->GetSwivelTarget() - (DirS < 0 ? 90 : 0);
-            }
-        }
-        LastHeading = Heading;
-        OutputTable->PutNumber("Heading", Heading);
-        
-        double Mag = SwerveManager::GetEnc();
-        double Change = (Mag - LastMag);
-        LastMag = Mag;
-        double RadHeading = (Heading * M_PI) / 180;
-
-        double WheelAngle = (Change / Modules.at(0)->GetWheelTicks()) * 360;
-        WheelAngle = (WheelAngle * M_PI) / 180;
-        double WheelDiCal = OutputTable->GetNumber("Wheel", 0);
-        double Dist = WheelAngle * (WheelDiCal / 2);
-
-        Pos->X += -Dist * sin(RadHeading);
-        Pos->Y += -Dist * cos(RadHeading);
+        Modules.at(i)->UpdateWheelRate();
     }
-    else
+}
+
+void SwerveManager::UpdateLoc()
+{
+    if (RobotNav != nullptr)
     {
-        OutputTable->PutNumber("Heading", 0);
-        OutputTable->PutNumber("MagMove", 0);
-    }
+        SwerveManager::SetWheelDiameter(OutputTable->GetNumber("Wheel", 1));
 
+        double FL_B = sin(SwerveManager::Get(SwerveModule::Location::Front_Left)->GetSwivelTarget() * M_PI / 180) * SwerveManager::Get(SwerveModule::Location::Front_Left)->GetWheelRate();
+        double FR_B = sin(SwerveManager::Get(SwerveModule::Location::Front_Right)->GetSwivelTarget() * M_PI / 180) * SwerveManager::Get(SwerveModule::Location::Front_Right)->GetWheelRate();
+        double BL_A = sin(SwerveManager::Get(SwerveModule::Location::Back_Left)->GetSwivelTarget() * M_PI / 180) * SwerveManager::Get(SwerveModule::Location::Back_Left)->GetWheelRate();
+        double BR_A = sin(SwerveManager::Get(SwerveModule::Location::Back_Right)->GetSwivelTarget() * M_PI / 180) * SwerveManager::Get(SwerveModule::Location::Back_Right)->GetWheelRate();
+    
+        double FR_C = cos(SwerveManager::Get(SwerveModule::Location::Front_Right)->GetSwivelTarget() * M_PI / 180) * SwerveManager::Get(SwerveModule::Location::Front_Right)->GetWheelRate();
+        double BR_C = cos(SwerveManager::Get(SwerveModule::Location::Front_Right)->GetSwivelTarget() * M_PI / 180) * SwerveManager::Get(SwerveModule::Location::Back_Right)->GetWheelRate();
+        double FL_D = cos(SwerveManager::Get(SwerveModule::Location::Front_Left)->GetSwivelTarget() * M_PI / 180) * SwerveManager::Get(SwerveModule::Location::Front_Left)->GetWheelRate();
+        double BL_D = cos(SwerveManager::Get(SwerveModule::Location::Back_Left)->GetSwivelTarget() * M_PI / 180) * SwerveManager::Get(SwerveModule::Location::Back_Left)->GetWheelRate();
+    
+        double A = (BR_A + BL_A) / 2;
+        double B = (FL_B + FR_B) / 2;
+
+        double C = (FR_C + BR_C) / 2;
+        double D = (FL_D + BL_D) / 2;
+
+        double R1 = (B - A) / Length;
+        double R2 = (C - D) / Width;
+        double R = (R1 + R2) / 2;
+
+        double F1 = R * (Length / 2) + A;
+        double F2 = -R * (Length / 2) + B;
+        double F = (F1 + F2) / 2;
+
+        double L1 = R * (Width / 2) + C;
+        double L2 = -R * (Width / 2) + D;
+        double L = (L1 + L2) / 2;
+
+        double gyro = -RobotNav->GetConstAngle() * M_PI / 180;
+
+        double temp = F * cos(gyro) + L * sin(gyro);
+        L = -F * sin(gyro) + L * cos(gyro);
+        F = temp;
+
+        Pos->Y += L * Del_Time;
+        Pos->X -= F * Del_Time;
+    }
     OutputTable->PutNumber("Loc-X", Pos->X);
     OutputTable->PutNumber("Loc-Y", Pos->Y);
 }
@@ -184,7 +180,6 @@ void SwerveManager::Set(double rawV, double rawH, double rawS)
         SwerveManager::Set(0);
         Log::General("Waiting for swivel motors to get their shit together");
     }
-    SwerveManager::UpdateLoc(rawV, rawH, rawS);
 }
 
 bool SwerveManager::SetSwivelTargetAt(SwerveModule::Location Loc, double Target)
@@ -227,6 +222,14 @@ void SwerveManager::SetWheelAt(SwerveModule::Location Loc, double Power)
     }
 }
 
+void SwerveManager::SetWheelDiameter(double Diameter)
+{
+    for(int i = 0; i < Modules.size(); i++)
+    {
+        Modules.at(i)->SetWheelSize(Diameter);
+    }
+}
+
 bool SwerveManager::SetSwivelTarget(double Target)
 {
     bool Finished = true;
@@ -255,6 +258,7 @@ bool SwerveManager::SetTarget(double Wheel_Target, double Swivel_Target)
 
 void SwerveManager::SetDelta(double D_Time)
 {
+    Del_Time = D_Time;
     for(int i = 0; i < Modules.size(); i++)
     {
         Modules.at(i)->SetDeltaTime(D_Time);
@@ -295,148 +299,9 @@ double SwerveManager::Get()
     return Sum / Modules.size();
 }
 
-bool SwerveManager::CheckSame()
-{
-    vector<SwerveModule*> SwivelTargets = SwerveManager::GetModules();
-    double Tar = SwivelTargets.at(0)->GetSwivelTarget();
-
-    for(int i = 0; i < SwivelTargets.size(); i++)
-    {
-        if (SwivelTargets.at(i)->GetSwivelTarget() != Tar)
-            return false;
-    }
-    return true;
-}
-
-bool SwerveManager::CheckDiff()
-{
-    vector<SwerveModule*> SwivelTargets = SwerveManager::GetModules();
-
-    for(int i = 0; i < SwivelTargets.size(); i++)
-    {
-        for(int j = 0; j < SwivelTargets.size(); j++)
-        {
-            if(j != i)
-            {
-                if (SwivelTargets.at(i)->GetSwivelTarget() == SwivelTargets.at(j)->GetSwivelTarget())
-                {
-                    return false;
-                }
-            }
-        }
-    }
-    return true;
-}
-
 vector<SwerveModule*> SwerveManager::GetModules()
 {
     return Modules;
-}
-
-vector<vector<SwerveModule*>> SwerveManager::GetGroups()
-{
-    vector<vector<SwerveModule*>> Groups;
-    vector<SwerveModule*> SwivelTargets = SwerveManager::GetModules();
-    vector<int> IndexsAdded;
-
-    for(int a = 0; a < SwivelTargets.size(); a++)
-    {
-        vector<SwerveModule*> Pairs;
-        if (!HasVal(a, IndexsAdded))
-        {
-            double Tar = SwivelTargets.at(a)->GetSwivelTarget();
-            Pairs.push_back(SwivelTargets.at(a));
-            for(int i = 0; i < SwivelTargets.size(); i++)
-            {
-                if (!HasVal(i, IndexsAdded))
-                {
-                    if(SwivelTargets.at(i)->GetSwivelTarget() == Tar)
-                    {
-                        Pairs.push_back(SwivelTargets.at(i));
-                        IndexsAdded.push_back(i);
-                    }
-                }
-            }
-            Groups.push_back(Pairs);
-        }
-    }
-
-    return Groups;
-}
-
-double SwerveManager::DiffHeading()
-{
-    vector<vector<SwerveModule*>> Headings = SwerveManager::GetGroups();
-    vector<bool> PointingOut;
-    double Heading = 0;
-    for(int i = 0; i < Headings.size(); i++)
-    {
-        bool PointingOutbool = true;
-        for(int j = 0; j < Headings.at(i).size(); j++)
-        {
-            PointingOutbool = PointingOutbool && !Headings.at(i).at(j)->IsPointingIn();
-        }
-        PointingOut.push_back(PointingOutbool);
-    }
-
-    bool AllOut = true;
-    for(int i = 0; i < PointingOut.size(); i++)
-    {
-        AllOut = AllOut && PointingOut.at(i);
-    }
-
-    if(!AllOut)
-    {
-        for(int i = 0; i < PointingOut.size(); i++)
-        {
-            if (PointingOut.at(i))
-            {
-                Heading = Headings.at(i).at(0)->GetSwivelTarget();
-            }
-        }
-    }
-
-    return Heading;
-}
-
-bool SwerveManager::HasVal(int val, vector<int> V)
-{
-    for(int i = 0; i < V.size(); i++)
-    {
-        if (V.at(i) == val)
-            return true;
-    }
-    return false;
-}
-
-SwerveModule* SwerveManager::GetExtreme(double forwardAngle)
-{
-    vector<SwerveModule*> Headings = SwerveManager::GetModules();
-    double MaxAngle = -360;
-    int index = 0;
-    for(int i = 0; i < Headings.size(); i++)
-    {
-        if(!Headings.at(i)->IsPointingIn())
-        {
-            double AngleSwivel = CalNewAngle(Headings.at(i)->GetSwivelTarget(), forwardAngle);
-            if((AngleSwivel) > MaxAngle)
-            {
-                index = i;
-                MaxAngle = (AngleSwivel);
-            }
-        }
-    }
-    return Headings.at(index);
-}
-
-double SwerveManager::CalNewAngle(double OgAngle, double RotAngle)
-{
-    double NewA = OgAngle + RotAngle;
-    if (NewA > 180)
-    {
-        NewA -= 360;
-    }
-    return NewA;
 }
 
 void SwerveManager::DefaultSet()

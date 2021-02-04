@@ -48,6 +48,9 @@ namespace Components
             double GetSwivelEnc();
             double GetSwivelTarget() {return CurrentSwivelTarget;};
             double GetWheelTarget() {return CurrentWheelTarget;};
+            void UpdateWheelRate();
+            double GetWheelRate() {return LastSpeed;};
+            void SetWheelSize(double Diameter) {WheelDi = Diameter;};
 
             void ResetEncs();
             void ResetWheelEnc();
@@ -119,6 +122,9 @@ namespace Components
             double WheelEncRevTicks = 0;
             double CurrentSwivelTarget = 0;
             double CurrentWheelTarget = 0;
+            double LastWheelTick = 0;
+            double WheelDi = 0;
+            double LastSpeed = 0;
 
             double D_Time = 0;
             double Dir = 1;

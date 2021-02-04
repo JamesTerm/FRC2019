@@ -27,6 +27,7 @@ private:
 	bool reversed;
 	string Name;
 	double Offset;
+	double EncTicks = 24;
 
 public:
 	SparkMaxItem();
@@ -36,6 +37,7 @@ public:
 	virtual double Get() ;
 	int GetPolarity();
 	void Reset();
+	void SetEncoderRev(double ticks) {EncTicks = ticks;};
 	virtual void Set(double val) ;
 	virtual void Set(DoubleSolenoid::Value value) ;
 	virtual void Stop() ;

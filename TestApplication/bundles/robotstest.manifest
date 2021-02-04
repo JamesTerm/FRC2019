@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1981495907
+CRC: 1750178763
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 2df75c3e3c7711dafbc02a771adb650e
+    Hash: e491eae8e36c41704f22efe1038e3806
   TypeTreeHash:
     serializedVersion: 2
-    Hash: b7c0e0ecd1ae2fe263a94fa37f8c1939
+    Hash: dd48c936a4a8bd8749e00d759ffa58b9
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -81,6 +81,8 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 135
   Script: {instanceID: 0}
+- Class: 137
+  Script: {instanceID: 0}
 - Class: 146
   Script: {instanceID: 0}
 - Class: 153
@@ -99,6 +101,7 @@ Assets:
 - Assets/ROBOTPARTS/DTSwerveBody.prefab
 - Assets/ROBOTPARTS/GroundWheel.physicMaterial
 - Assets/ROBOTPARTS/RobotCam.prefab
+- Assets/ROBOTPARTS/Warthog FUN Variant.prefab
 - Assets/ROBOTPARTS/Lift.prefab
 - Assets/ROBOTPARTS/Slip.physicMaterial
 - Assets/ROBOTPARTS/DTBodyWithEncoders Variant.prefab

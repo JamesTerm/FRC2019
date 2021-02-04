@@ -42,6 +42,8 @@ double SwerveControl::Update(double _dTime)
     SwerveDrive->SetDelta(_dTime);
     SwerveDrive->SetL(Length);
     SwerveDrive->SetW(Width);
+    SwerveDrive->UpdateModules();
+    SwerveDrive->UpdateLoc();
 
     double rawH = -CalculateDeadZone((*joy).GetRawAxis(HAxis), DeadZone) * (Mult);
     double rawV = CalculateDeadZone((*joy).GetRawAxis(VAxis), DeadZone) * (Reversed ? -Mult : Mult);
@@ -52,8 +54,8 @@ double SwerveControl::Update(double _dTime)
     {
         double gyro = m_Collection->GetNavX()->GetConstAngle() * M_PI / 180;
 
-        double temp = rawH * cos(gyro) + rawV * sin(gyro); 
-        rawV = -rawH * sin(gyro) + rawV * cos(gyro); 
+        double temp = rawH * cos(gyro) + rawV * sin(gyro);
+        rawV = -rawH * sin(gyro) + rawV * cos(gyro);
         rawH = temp;
     }
     else if (Cal == SwerveControl::DriveCalculation::Warthog)
