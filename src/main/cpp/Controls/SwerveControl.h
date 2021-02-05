@@ -27,7 +27,7 @@ namespace Controls
 	{
         
 		public:
-            enum DriveCalculation {Robot_Oriented = 0, Field_Oriented = 1, Warthog = 2};
+            enum DriveCalculation {Robot_Oriented = 0, Field_Oriented = 1, Warthog = 2, Warthog_Field_Oriented = 3};
 
 			SwerveControl(Joystick *_joy, DriveCalculation _Cal, string _name, int _axisV, int _axisH, int _axisS, double _deadZone, bool _reversed, double _powerMultiplier, ActiveCollection* ac, SwerveManager *Manager, double _Length, double _Width);
 			virtual double Update(double _dTime) override;

@@ -63,6 +63,17 @@ double SwerveControl::Update(double _dTime)
         rawS = rawH;
         rawH = 0;
     }
+    else if (Cal == SwerveControl::DriveCalculation::Warthog_Field_Oriented)
+    {
+        double gyro = m_Collection->GetNavX()->GetConstAngle() * M_PI / 180;
+
+        double temp = rawH * cos(gyro) + rawV * sin(gyro);
+        rawV = -rawH * sin(gyro) + rawV * cos(gyro);
+        rawH = temp;
+        
+        rawS = rawH;
+        rawH = 0;
+    }
 
     ValueChanged(new IEventArgs<double, double, double, SwerveControl*>(rawV, rawH, rawS, this));
 

@@ -50,7 +50,7 @@ using namespace frc;
 
     void Log::restartfile()
     {
-        file_.open(filename); //opens file then clears it
+        file_.open(filename, std::ios_base::app); //opens file
         cout << "File " + filename + " created" << endl;
     }
 
