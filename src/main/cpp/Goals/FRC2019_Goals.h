@@ -172,6 +172,7 @@ class Goal_SwerveCord : public AtomicGoal
     virtual void Activate();
     virtual Goal::Goal_Status Process(double dTime);
     virtual void Terminate();
+    void Savedata();
 
   private:
     SwerveManager *DT;

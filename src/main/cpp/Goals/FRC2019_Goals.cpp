@@ -479,23 +479,41 @@ void Goal_SwerveCord::Activate()
     Yaxis->SetBackgroundInfo(Goal_SwerveCord::GetData(8), Goal_SwerveCord::GetData(9), Goal_SwerveCord::GetData(10), Goal_SwerveCord::GetData(11));
 }
 
- Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
- {
-     if(m_Status == eActive)
-     {
-
-     }
-     if(Xaxis->Inrange(DT->GetBotPos()->X, X, 0.01) && Yaxis->Inrange(DT->GetBotPos()->Y, Y, 0.01))
-     {
-         delete Xaxis;
-         delete Yaxis;
-         return m_Status = eCompleted;
-     }
-     return m_Status = eActive;
- }
-
- void Goal_SwerveCord::Terminate()
+void Goal_SwerveCord::Savedata()
 {
+    Goal_SwerveCord::Setdata(4, Xaxis->GetTotalError());
+    Goal_SwerveCord::Setdata(5, Xaxis->GetLastError());
+    Goal_SwerveCord::Setdata(6, Xaxis->GetLastResult());
+    Goal_SwerveCord::Setdata(7, Xaxis->GetErrorTo());
+
+    Goal_SwerveCord::Setdata(8, Yaxis->GetTotalError());
+    Goal_SwerveCord::Setdata(9, Yaxis->GetLastError());
+    Goal_SwerveCord::Setdata(10, Yaxis->GetLastResult());
+    Goal_SwerveCord::Setdata(11, Yaxis->GetErrorTo());
+    
+    delete Xaxis;
+    delete Yaxis;    
+}
+
+Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
+{
+    if(m_Status == eActive)
+    {
+        double XPower = Xaxis->Calculate(X, DT->GetBotPos()->X, dTime);
+        double YPower = Yaxis->Calculate(Y, DT->GetBotPos()->Y, dTime);
+        DT->Set(YPower, XPower, 0);
+    }
+    if(Xaxis->Inrange(DT->GetBotPos()->X, X, 0.01) && Yaxis->Inrange(DT->GetBotPos()->Y, Y, 0.01))
+    {
+        Goal_SwerveCord::Savedata();
+        return m_Status = eCompleted;
+    }
+    return m_Status = eActive;
+}
+
+void Goal_SwerveCord::Terminate()
+{
+    Goal_SwerveCord::Savedata();
     m_Status = eCompleted;
 }
 
