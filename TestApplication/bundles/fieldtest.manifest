@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 126637288
+CRC: 3289394244
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: ea967ab7d60fbf2397b48b66a8cb0baa
+    Hash: ecf23b1dfd601ecebfca1d3f3aaa4eb7
   TypeTreeHash:
     serializedVersion: 2
-    Hash: fafe6bc3a74648760edcd5713f614301
+    Hash: 1c45c534f40d4cc21ef459f4c143dd30
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -37,6 +37,8 @@ ClassTypes:
   Script: {fileID: 11500000, guid: 4cce4e7a4238bd44c94c60f52198984a, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 3aabdf0def452f7489ddc3e8b218f3ee, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
@@ -57,6 +59,7 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/FIELDPARTS/Terrain.prefab
+- Assets/FIELDPARTS/LimeLightTarget.prefab
 - Assets/FIELDPARTS/ScoreTarget.prefab
 - Assets/FIELDPARTS/NewLayer.terrainlayer
 Dependencies: []

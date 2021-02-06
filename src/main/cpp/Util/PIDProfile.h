@@ -187,6 +187,20 @@ namespace Util
             double GetTotalError() {return _TotalE;};
             double GetLastError() {return _PrevE;};
             double GetLastResult() {return _PrevR;};
+			double GetErrorTo() {return _ErrorTo;};
+            
+            void SetTotalError(double val) { _TotalE = val;};
+            void SetLastError(double val) { _PrevE = val;};
+            void SetLastResult(double val) { _PrevR = val;};
+			void SetErrorTo(double val) { _ErrorTo = val;};
+
+			void SetBackgroundInfo(double TotalError, double LastError, double LastResult, double ErrorTo)
+			{
+				SetTotalError(TotalError);
+				SetLastError(LastError);
+				SetLastResult(LastResult);
+				SetErrorTo(ErrorTo);
+			};
 
             double Calculate(double Target, double Current, double D_Time)
             {

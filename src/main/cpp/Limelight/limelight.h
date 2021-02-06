@@ -39,11 +39,22 @@ class limelight : public NativeComponent //Inheritance or something
             SetPipeline();
             Log::General("Lime Constructed");
         } 
+        limelight(bool Fake) : NativeComponent("LimeLight")
+        {
+            IsFake = Fake;
+            SetLED(1);
+            SetCamMode(false);
+            SetPipeline();
+            Log::General("Lime Constructed");
+        } 
         double HorizontalOffset()
         {
             if(ProcessTarget && HasLEDon)
             {
-                return table->GetNumber("tx", 0.0);
+                if (!IsFake)
+                    return table->GetNumber("tx", 0.0);
+                else
+                    return (OutputTable->GetNumber("LimeLight-tx", 0.0));
             }
             else
             {
@@ -55,7 +66,10 @@ class limelight : public NativeComponent //Inheritance or something
         {
             if(ProcessTarget && HasLEDon)
             {
-                return (table->GetNumber("ty", 0.0));
+                if (!IsFake)
+                    return (table->GetNumber("ty", 0.0));
+                else
+                    return (OutputTable->GetNumber("LimeLight-ty", 0.0));
             }
             else
             {
@@ -67,10 +81,17 @@ class limelight : public NativeComponent //Inheritance or something
         {
             if(ProcessTarget && HasLEDon)
             {
-                double robotheight = TargetHeight - 42;
-                double radianAngle = (tan(((VerticalOffset()) * 3.1415) / 180));
-                Log::General("angle: " + to_string(radianAngle) + "  :: Limelight input: " + to_string(VerticalOffset()));
-                return (robotheight / (radianAngle)) + 5;
+                if (!IsFake)
+                {
+                    double robotheight = TargetHeight - 42;
+                    double radianAngle = (tan(((VerticalOffset()) * 3.1415) / 180));
+                    Log::General("angle: " + to_string(radianAngle) + "  :: Limelight input: " + to_string(VerticalOffset()));
+                    return (robotheight / (radianAngle)) + 5;
+                }
+                else
+                {
+                    return OutputTable->GetNumber("LimeLight-Distance", 0);
+                }
             }
             else
             {
@@ -93,7 +114,11 @@ class limelight : public NativeComponent //Inheritance or something
         {
             if(ProcessTarget && HasLEDon)
             {
-                int Present = table->GetNumber("tv", 0.0);
+                int Present = 0;
+                if(!IsFake)
+                    Present = table->GetNumber("tv", 0.0);
+                else
+                    Present = OutputTable->GetNumber("LimeLight-tv", 0);
                 if(Present > 0)
                 {
                     return true;
@@ -154,16 +179,19 @@ class limelight : public NativeComponent //Inheritance or something
             {
                 HasLEDon = true;
                 table->PutNumber("ledMode", 3);
+                OutputTable->PutNumber("LimeLight-ledMode", 3);
             }
             else if(State == 1)
             {
                 HasLEDon = false;
                 table->PutNumber("ledMode", 0);
+                OutputTable->PutNumber("LimeLight-ledMode", 0);
             }
             else
             {
                 HasLEDon = false;
                 table->PutNumber("ledMode", 2);
+                OutputTable->PutNumber("LimeLight-ledMode", 2);
                 Log::Error("THE ROBOT IS KILLING PEOPLE'S EYES, KEEP IT UP AND SOMEONE MIGHT NOTICE!");
             }
         }
@@ -171,6 +199,7 @@ class limelight : public NativeComponent //Inheritance or something
     private:
         bool HasLEDon = true;
         bool ProcessTarget = true;
+        bool IsFake = false;
         std::shared_ptr<NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
  };
 }

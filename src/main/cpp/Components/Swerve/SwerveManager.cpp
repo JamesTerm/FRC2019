@@ -27,6 +27,7 @@ SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, Sw
     Modules.push_back(BackRight);
     Pos = new double_Vector2();
     WaitSwivel = Wait;
+    OutputTable->PutNumber("Wheel", 1.4);
 }
 
 SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, NavX *Nav) : OutputComponent(name)
@@ -38,6 +39,7 @@ SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, Sw
     Pos = new double_Vector2();
     RobotNav = Nav;
     WaitSwivel = Wait;
+    OutputTable->PutNumber("Wheel", 1.4);
 }
 
 SwerveManager::SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerve_Modules, NavX *Nav) : OutputComponent(name)
@@ -46,7 +48,7 @@ SwerveManager::SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerv
     Pos = new double_Vector2();
     RobotNav = Nav;
     WaitSwivel = Wait;
-    OutputTable->PutNumber("Wheel", 10);
+    OutputTable->PutNumber("Wheel", 1.4);
 }
 
 void SwerveManager::DeleteComponent()

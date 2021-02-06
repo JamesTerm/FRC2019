@@ -9,10 +9,11 @@ All rights reserved.
 Author(s): Ian Poll
 Email: irobot9803@gmail.com
 \********************************************************************/
-
+#define _USE_MATH_DEFINES
 #include <iostream>
 
 #include "SwerveModule.h"
+#include <cmath>
 
 using namespace std;
 using namespace frc;
@@ -150,7 +151,7 @@ void SwerveModule::UpdateWheelRate()
         Pos *= WheelPID->Sign(Wheel->Get());
         Pos /= WheelEncRevTicks;
         LastWheelTick = LastPos;
-        Pos *= WheelDi;
+        Pos *= WheelDi * M_PI;
         Pos /= D_Time;
         LastSpeed = Pos;
     }

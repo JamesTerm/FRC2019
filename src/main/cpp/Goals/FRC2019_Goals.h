@@ -175,6 +175,8 @@ class Goal_SwerveCord : public AtomicGoal
 
   private:
     SwerveManager *DT;
+    PIDProfile *Xaxis;
+    PIDProfile *Yaxis;
     double X = 0;
     double Y = 0;
 };

@@ -473,11 +473,25 @@ void Goal_TurnPIDF::Terminate()
 void Goal_SwerveCord::Activate()
 {
     m_Status = eActive;
+    Xaxis = new PIDProfile(1, 0, 0);
+    Xaxis->SetBackgroundInfo(Goal_SwerveCord::GetData(4), Goal_SwerveCord::GetData(5), Goal_SwerveCord::GetData(6), Goal_SwerveCord::GetData(7));
+    Yaxis = new PIDProfile(1, 0, 0);
+    Yaxis->SetBackgroundInfo(Goal_SwerveCord::GetData(8), Goal_SwerveCord::GetData(9), Goal_SwerveCord::GetData(10), Goal_SwerveCord::GetData(11));
 }
 
  Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
  {
-    return m_Status = eActive;
+     if(m_Status == eActive)
+     {
+
+     }
+     if(Xaxis->Inrange(DT->GetBotPos()->X, X, 0.01) && Yaxis->Inrange(DT->GetBotPos()->Y, Y, 0.01))
+     {
+         delete Xaxis;
+         delete Yaxis;
+         return m_Status = eCompleted;
+     }
+     return m_Status = eActive;
  }
 
  void Goal_SwerveCord::Terminate()
