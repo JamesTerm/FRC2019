@@ -10,6 +10,8 @@ All rights reserved.
 Author(s): Chris Weeks
 Email: chrisrweeks@aol.com
 \********************************************************************/
+
+#define _USE_MATH_DEFINES
 #include "FRC2019_Goals.h"
 
 using namespace std;
@@ -509,9 +511,17 @@ Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
     if(m_Status == eActive)
     {
         DT->UpdateSystem(dTime);
-        Log::General("---------------Target Pos: " + to_string(X) + "," + to_string(Y) + " --Pos: " + to_string(DT->GetBotPos()->X) + "," + to_string(DT->GetBotPos()->Y));
         double XPower = Xaxis->Calculate(X, DT->GetBotPos()->X, dTime);
         double YPower = -Yaxis->Calculate(Y, DT->GetBotPos()->Y, dTime);
+
+        double gyro = m_activeCollection->GetNavX()->GetConstAngle() * M_PI / 180;
+
+        double temp = XPower * cos(gyro) + YPower * sin(gyro);
+        YPower = -XPower * sin(gyro) + YPower * cos(gyro);
+        XPower = temp;
+        
+        Log::General("---------------Target Pos: " + to_string(X) + "," + to_string(Y) + " --Pos: " + to_string(DT->GetBotPos()->X) + "," + to_string(DT->GetBotPos()->Y) + " --Power: " + to_string(XPower) + "," + to_string(YPower));
+        
         DT->Set(YPower, XPower, 0);
     }
     if(Xaxis->Inrange(DT->GetBotPos()->X, X, 0.01) && Yaxis->Inrange(DT->GetBotPos()->Y, Y, 0.01))

@@ -13,7 +13,7 @@ Email: chrisrweeks@aol.com
 #pragma once
 
 #include <iostream>
-#include "cmath"
+#include <cmath>
 #include "Goal.h"
 #include "../Util/VisionTarget.h"
 #include "../Util/Units/Distances.h"
@@ -165,10 +165,11 @@ class Goal_SwerveCord : public AtomicGoal
     Goal_SwerveCord(ActiveCollection *activeCollection, string SwerveControlComp, double X_Target, double Y_Target)
     {
       DT = (SwerveManager*)activeCollection->Get(SwerveControlComp);
+      m_activeCollection = activeCollection;
       X = X_Target;
       Y = Y_Target;
-      Xaxis = new PIDProfile(0.5f, 0, 0);
-      Yaxis = new PIDProfile(0.5f, 0, 0);
+      Xaxis = new PIDProfile(2, 0, 0);
+      Yaxis = new PIDProfile(2, 0, 0);
     }
 
     virtual void Activate();
@@ -178,6 +179,7 @@ class Goal_SwerveCord : public AtomicGoal
 
   private:
     SwerveManager *DT;
+    ActiveCollection* m_activeCollection;
     PIDProfile *Xaxis;
     PIDProfile *Yaxis;
     double X = 0;
