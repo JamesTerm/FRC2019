@@ -185,7 +185,7 @@ namespace Util
             double GetBias() {return BiasV;};
             
             double GetTotalError() {return _TotalE;};
-            double GetLastError() {return _PrevE;};
+            double GetLastErrorV() {return _PrevE;};
             double GetLastResult() {return _PrevR;};
 			double GetErrorTo() {return _ErrorTo;};
             

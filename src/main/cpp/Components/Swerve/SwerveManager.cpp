@@ -19,36 +19,42 @@ using namespace std;
 using namespace frc;
 using namespace Components;
 
-SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight) : OutputComponent(name)
+SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, double _Length, double _Width) : OutputComponent(name)
 {
     Modules.push_back(FrontLeft);
     Modules.push_back(BackLeft);
     Modules.push_back(FrontRight);
     Modules.push_back(BackRight);
+    SwerveManager::SetL(_Length);
+    SwerveManager::SetW(_Width);
     Pos = new double_Vector2();
     WaitSwivel = Wait;
     OutputTable->PutNumber("Wheel", 1.4);
 }
 
-SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, NavX *Nav) : OutputComponent(name)
+SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, NavX *Nav, double _Length, double _Width) : OutputComponent(name)
 {
     Modules.push_back(FrontLeft);
     Modules.push_back(BackLeft);
     Modules.push_back(FrontRight);
     Modules.push_back(BackRight);
+    SwerveManager::SetL(_Length);
+    SwerveManager::SetW(_Width);
     Pos = new double_Vector2();
     RobotNav = Nav;
     WaitSwivel = Wait;
     OutputTable->PutNumber("Wheel", 1.4);
 }
 
-SwerveManager::SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerve_Modules, NavX *Nav) : OutputComponent(name)
+SwerveManager::SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerve_Modules, NavX *Nav, double _Length, double _Width) : OutputComponent(name)
 {
     Modules = Swerve_Modules;
     Pos = new double_Vector2();
+    SwerveManager::SetL(_Length);
+    SwerveManager::SetW(_Width);
     RobotNav = Nav;
     WaitSwivel = Wait;
-    OutputTable->PutNumber("Wheel", 1.4);
+    OutputTable->PutNumber("Wheel", 1.5);
 }
 
 void SwerveManager::DeleteComponent()
@@ -182,6 +188,13 @@ void SwerveManager::Set(double rawV, double rawH, double rawS)
         SwerveManager::Set(0);
         Log::General("Waiting for swivel motors to get their shit together");
     }
+}
+
+void SwerveManager::UpdateSystem(double D_Time)
+{
+    SwerveManager::SetDelta(D_Time);
+    SwerveManager::UpdateModules();
+    SwerveManager::UpdateLoc();
 }
 
 bool SwerveManager::SetSwivelTargetAt(SwerveModule::Location Loc, double Target)

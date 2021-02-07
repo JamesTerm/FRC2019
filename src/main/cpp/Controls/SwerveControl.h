@@ -29,7 +29,7 @@ namespace Controls
 		public:
             enum DriveCalculation {Robot_Oriented = 0, Field_Oriented = 1, Warthog = 2, Warthog_Field_Oriented = 3};
 
-			SwerveControl(Joystick *_joy, DriveCalculation _Cal, string _name, int _axisV, int _axisH, int _axisS, double _deadZone, bool _reversed, double _powerMultiplier, ActiveCollection* ac, SwerveManager *Manager, double _Length, double _Width);
+			SwerveControl(Joystick *_joy, DriveCalculation _Cal, string _name, int _axisV, int _axisH, int _axisS, double _deadZone, bool _reversed, double _powerMultiplier, ActiveCollection* ac, SwerveManager *Manager);
 			virtual double Update(double _dTime) override;
 			virtual ~SwerveControl();
 
@@ -50,9 +50,6 @@ namespace Controls
             int HAxis;
             int VAxis;
             int SAxis;
-
-            double Length;
-            double Width;
 
             double Mult;
             double DeadZone = 0;

@@ -473,40 +473,50 @@ void Goal_TurnPIDF::Terminate()
 void Goal_SwerveCord::Activate()
 {
     m_Status = eActive;
-    Xaxis = new PIDProfile(1, 0, 0);
     Xaxis->SetBackgroundInfo(Goal_SwerveCord::GetData(4), Goal_SwerveCord::GetData(5), Goal_SwerveCord::GetData(6), Goal_SwerveCord::GetData(7));
-    Yaxis = new PIDProfile(1, 0, 0);
     Yaxis->SetBackgroundInfo(Goal_SwerveCord::GetData(8), Goal_SwerveCord::GetData(9), Goal_SwerveCord::GetData(10), Goal_SwerveCord::GetData(11));
 }
 
 void Goal_SwerveCord::Savedata()
 {
-    Goal_SwerveCord::Setdata(4, Xaxis->GetTotalError());
-    Goal_SwerveCord::Setdata(5, Xaxis->GetLastError());
-    Goal_SwerveCord::Setdata(6, Xaxis->GetLastResult());
-    Goal_SwerveCord::Setdata(7, Xaxis->GetErrorTo());
-
-    Goal_SwerveCord::Setdata(8, Yaxis->GetTotalError());
-    Goal_SwerveCord::Setdata(9, Yaxis->GetLastError());
-    Goal_SwerveCord::Setdata(10, Yaxis->GetLastResult());
-    Goal_SwerveCord::Setdata(11, Yaxis->GetErrorTo());
-    
-    delete Xaxis;
-    delete Yaxis;    
+    if (Xaxis != nullptr)
+    {
+        Goal_SwerveCord::Setdata(4, Xaxis->GetTotalError());
+        Goal_SwerveCord::Setdata(5, Xaxis->GetLastErrorV());
+        Goal_SwerveCord::Setdata(6, Xaxis->GetLastResult());
+        Goal_SwerveCord::Setdata(7, Xaxis->GetErrorTo());
+        
+        delete Xaxis;
+    }
+    if (Yaxis != nullptr)
+    {
+        Goal_SwerveCord::Setdata(8, Yaxis->GetTotalError());
+        Goal_SwerveCord::Setdata(9, Yaxis->GetLastErrorV());
+        Goal_SwerveCord::Setdata(10, Yaxis->GetLastResult());
+        Goal_SwerveCord::Setdata(11, Yaxis->GetErrorTo());
+        
+        delete Yaxis;
+    }
 }
 
 Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
 {
+    if (done)
+    {
+        Goal_SwerveCord::Savedata();
+        return m_Status = eCompleted;
+    }
     if(m_Status == eActive)
     {
+        DT->UpdateSystem(dTime);
+        Log::General("---------------Target Pos: " + to_string(X) + "," + to_string(Y) + " --Pos: " + to_string(DT->GetBotPos()->X) + "," + to_string(DT->GetBotPos()->Y));
         double XPower = Xaxis->Calculate(X, DT->GetBotPos()->X, dTime);
-        double YPower = Yaxis->Calculate(Y, DT->GetBotPos()->Y, dTime);
+        double YPower = -Yaxis->Calculate(Y, DT->GetBotPos()->Y, dTime);
         DT->Set(YPower, XPower, 0);
     }
     if(Xaxis->Inrange(DT->GetBotPos()->X, X, 0.01) && Yaxis->Inrange(DT->GetBotPos()->Y, Y, 0.01))
     {
-        Goal_SwerveCord::Savedata();
-        return m_Status = eCompleted;
+        done = true;
     }
     return m_Status = eActive;
 }

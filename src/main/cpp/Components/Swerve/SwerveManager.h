@@ -27,9 +27,9 @@ namespace Components
     {
         public:
 
-            SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight);
-            SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, NavX *Nav);
-            SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerve_Modules, NavX *Nav);
+            SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, double _Length, double _Width);
+            SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, NavX *Nav, double _Length, double _Width);
+            SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerve_Modules, NavX *Nav, double _Length, double _Width);
 
             void Set(double rawV, double rawH, double rawS);
             void SetSwivel(double val);
@@ -54,6 +54,8 @@ namespace Components
 
             void UpdateLoc();
             void UpdateModules();
+
+            void UpdateSystem(double D_Time);
 
             virtual void DeleteComponent() override;
 

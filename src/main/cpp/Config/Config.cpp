@@ -837,9 +837,12 @@ void Config::AllocateComponents(xml_node &root){
 			string RightF = Man.attribute("RF").as_string();
 			string LeftB = Man.attribute("LB").as_string();
 			string RightB = Man.attribute("RB").as_string();
+			
+			double length = Man.attribute("length").as_double();
+			double width = Man.attribute("width").as_double();
 			if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
 			{
-				SwerveManager *Manager = new SwerveManager(name, WaitB, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB));
+				SwerveManager *Manager = new SwerveManager(name, WaitB, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB), length, width);
 				m_activeCollection->Add(Manager);
 				Log::General("Added Swerve Manager");
 			}
@@ -1084,8 +1087,6 @@ void Config::AllocateDriverControls(xml_node &controls){
 		double dz = Swerve.attribute("deadZone").as_double();
 		double mult = Swerve.attribute("powerMultiplier").as_double();
 		bool reversed = Swerve.attribute("reversed").as_bool();
-		double length = Swerve.attribute("length").as_double();
-		double width = Swerve.attribute("width").as_double();
 		string ManagerName = Swerve.attribute("manager").as_string();
 
 		SwerveControl::DriveCalculation Cal;
@@ -1099,7 +1100,7 @@ void Config::AllocateDriverControls(xml_node &controls){
 		}
 		if (m_activeCollection->Get(ManagerName) != nullptr)
 		{
-			SwerveControl *Control = new SwerveControl(m_driveJoy, Cal, name, V, H, S, dz, reversed, mult, m_activeCollection, (SwerveManager*)m_activeCollection->Get(ManagerName),length, width);
+			SwerveControl *Control = new SwerveControl(m_driveJoy, Cal, name, V, H, S, dz, reversed, mult, m_activeCollection, (SwerveManager*)m_activeCollection->Get(ManagerName));
 			m_drive->AddControlDrive(Control);
 			Log::General("Added swerve control that is " + drivemode + " oriented");
 		}

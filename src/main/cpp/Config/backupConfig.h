@@ -137,39 +137,39 @@ private:
 		}
 	};
 
-	void AddSwerveManager(string name, bool Wait, string LeftF, string RightF, string LeftB, string RightB)
+	void AddSwerveManager(string name, bool Wait, string LeftF, string RightF, string LeftB, string RightB, double _Length, double _Width)
 	{
 		if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
 		{
-			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB));
+			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB), _Length, _Width);
 			m_activeCollection->Add(Manager);
 			Log::General("Added Swerve Manager");
 		}
 	};
 
-	void AddSwerveManager(string name, bool Wait, double Max, string LeftF, string RightF, string LeftB, string RightB)
+	void AddSwerveManager(string name, bool Wait, double Max, string LeftF, string RightF, string LeftB, string RightB, double _Length, double _Width)
 	{
 		if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
 		{
-			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB));
+			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB), _Length, _Width);
 			Manager->SetMaxPow(Max);
 			m_activeCollection->Add(Manager);
 			Log::General("Added Swerve Manager with a max speed of: " + to_string(Max));
 		}
 	};
 
-	void AddSwerveManager(string name, bool Wait, double Max, string LeftF, string RightF, string LeftB, string RightB, NavX *Nav)
+	void AddSwerveManager(string name, bool Wait, double Max, string LeftF, string RightF, string LeftB, string RightB, NavX *Nav, double _Length, double _Width)
 	{
 		if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
 		{
-			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB), Nav);
+			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB), Nav, _Length, _Width);
 			Manager->SetMaxPow(Max);
 			m_activeCollection->Add(Manager);
 			Log::General("Added Swerve Manager with location");
 		}
 	};
 
-	void AddSwerveManager(string name, bool Wait, double Max, string Modules, NavX *Nav)
+	void AddSwerveManager(string name, bool Wait, double Max, string Modules, NavX *Nav, double _Length, double _Width)
 	{
 		istringstream ss(Modules);
     	string word;
@@ -189,7 +189,7 @@ private:
 
 		if (AllHere)
 		{
-			SwerveManager *Manager = new SwerveManager(name, Wait, Parts, Nav);
+			SwerveManager *Manager = new SwerveManager(name, Wait, Parts, Nav, _Length, _Width);
 			Manager->SetMaxPow(Max);
 			m_activeCollection->Add(Manager);
 			Log::General("Added Swerve Manager with location");
@@ -200,11 +200,11 @@ private:
 		}
 	};
 
-	void AddSwerveControl(string name, SwerveControl::DriveCalculation Cal, int H, int V, int S, double dz, double mult, bool reversed, double length, double width, string ManagerName, JoystickControler Person)
+	void AddSwerveControl(string name, SwerveControl::DriveCalculation Cal, int H, int V, int S, double dz, double mult, bool reversed, string ManagerName, JoystickControler Person)
 	{
 		if (m_activeCollection->Get(ManagerName) != nullptr)
 		{
-			SwerveControl *tmp = new SwerveControl((Person == JoystickControler::Driver ? m_driveJoy : m_operatorJoy), Cal, name, V, H, S, dz, reversed, mult, m_activeCollection, (SwerveManager*)m_activeCollection->Get(ManagerName), length, width);
+			SwerveControl *tmp = new SwerveControl((Person == JoystickControler::Driver ? m_driveJoy : m_operatorJoy), Cal, name, V, H, S, dz, reversed, mult, m_activeCollection, (SwerveManager*)m_activeCollection->Get(ManagerName));
 			string Mode = (Cal == SwerveControl::DriveCalculation::Field_Oriented ? "FIELD" : "ROBOT");
 			Log::General("Added swerve control that is " + Mode + " oriented");
 			if (Person == JoystickControler::Driver)

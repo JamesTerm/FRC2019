@@ -62,7 +62,7 @@ class Goal
 
 		vector<double> data;
 		bool HasData(int index) { return (index >= 0 && index < data.size()); }
-		void Setdata(int index, double dataVal) { if(index >= 0 && index < data.size()) {data.at(index) = dataVal;} else {for(int i = data.size() - 1; i < index; i++) {data.push_back(0);} data.at(index) = dataVal;}}
+		void Setdata(int index, double dataVal);
 		double GetData(int index) { return HasData(index) ? data.at(index) : 0; }
 	protected:
 		Goal_Status m_Status;

@@ -17,6 +17,24 @@ Email: chrisrweeks@aol.com
 
 using namespace std;
 
+
+void Goal::Setdata(int index, double dataVal)
+{
+	if(index >= 0 && index < data.size())
+	{
+		data.at(index) = dataVal;
+	}
+	else
+	{
+		for(int i = data.size() - 1; i < index + 1; i++)
+		{
+			data.push_back(0);
+		}
+		data.at(index) = dataVal;
+	}
+}
+
+
 /***************************************************************************************************************/
 /*												CompositeGoal													*/
 /***************************************************************************************************************/
