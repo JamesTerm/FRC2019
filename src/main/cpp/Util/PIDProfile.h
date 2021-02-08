@@ -32,6 +32,14 @@ namespace Util
                 SetBias(P * 100); //Defalt value has been used and gives an ok result (it depends on what this is used for i.e. drive train or shooter or turret)
             };
 
+			PIDProfile(double P, double I, double D, double Bias)
+            {
+                SetP(P);
+                SetI(I);
+                SetD(D);
+                SetBias(Bias);
+            };
+
             void SetP(double P)
             {
                 Pval = P;

@@ -524,7 +524,7 @@ Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
         
         DT->Set(YPower, XPower, 0);
     }
-    if(Xaxis->Inrange(DT->GetBotPos()->X, X, 0.01) && Yaxis->Inrange(DT->GetBotPos()->Y, Y, 0.01))
+    if(Xaxis->Inrange(DT->GetBotPos()->X, X, 0.1) && Yaxis->Inrange(DT->GetBotPos()->Y, Y, 0.1))
     {
         done = true;
     }
