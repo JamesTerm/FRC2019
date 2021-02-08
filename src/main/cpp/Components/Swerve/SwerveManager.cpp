@@ -134,6 +134,12 @@ void SwerveManager::UpdateLoc()
     OutputTable->PutNumber("Loc-Y", Pos->Y);
 }
 
+void SwerveManager::ResetLoc()
+{
+    Pos->X = 0;
+    Pos->Y = 0;
+}
+
 void SwerveManager::Set(double rawV, double rawH, double rawS)
 {
     double piVal = M_PI;

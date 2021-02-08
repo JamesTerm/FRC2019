@@ -475,34 +475,42 @@ void Goal_TurnPIDF::Terminate()
 void Goal_SwerveCord::Activate()
 {
     m_Status = eActive;
-    Xaxis->SetBackgroundInfo(Goal_SwerveCord::GetData(4), Goal_SwerveCord::GetData(5), Goal_SwerveCord::GetData(6), Goal_SwerveCord::GetData(7));
-    Yaxis->SetBackgroundInfo(Goal_SwerveCord::GetData(8), Goal_SwerveCord::GetData(9), Goal_SwerveCord::GetData(10), Goal_SwerveCord::GetData(11));
+    Xaxis->SetBackgroundInfo(0, Goal_SwerveCord::GetData(4), Goal_SwerveCord::GetData(5), 0);
+    Yaxis->SetBackgroundInfo(0, Goal_SwerveCord::GetData(6), Goal_SwerveCord::GetData(7), 0);
+    Y -= Goal_SwerveCord::GetData(8);
+    X -= Goal_SwerveCord::GetData(9);
 }
 
 void Goal_SwerveCord::Savedata()
 {
     if (Xaxis != nullptr)
     {
-        Goal_SwerveCord::Setdata(4, Xaxis->GetTotalError());
-        Goal_SwerveCord::Setdata(5, Xaxis->GetLastErrorV());
-        Goal_SwerveCord::Setdata(6, Xaxis->GetLastResult());
-        Goal_SwerveCord::Setdata(7, Xaxis->GetErrorTo());
+        Goal_SwerveCord::Setdata(4, Xaxis->GetLastErrorV());
+        Goal_SwerveCord::Setdata(5, Xaxis->GetLastResult());
         
         delete Xaxis;
     }
     if (Yaxis != nullptr)
     {
-        Goal_SwerveCord::Setdata(8, Yaxis->GetTotalError());
-        Goal_SwerveCord::Setdata(9, Yaxis->GetLastErrorV());
-        Goal_SwerveCord::Setdata(10, Yaxis->GetLastResult());
-        Goal_SwerveCord::Setdata(11, Yaxis->GetErrorTo());
+        Goal_SwerveCord::Setdata(6, Yaxis->GetLastErrorV());
+        Goal_SwerveCord::Setdata(7, Yaxis->GetLastResult());
         
         delete Yaxis;
     }
+
+    Goal_SwerveCord::Setdata(8, Y);
+    Goal_SwerveCord::Setdata(9, X);
+    DT->ResetLoc();
 }
 
 Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
 {
+    DT->UpdateSystem(dTime);
+    double Xpos = Xaxis->RoundTo(DT->GetBotPos()->X, 2);
+    double Ypos = Yaxis->RoundTo(DT->GetBotPos()->Y, 2);
+    double XTar = Xaxis->RoundTo(X, 2);
+    double YTar = Yaxis->RoundTo(Y, 2);
+    
     if (done)
     {
         Goal_SwerveCord::Savedata();
@@ -510,9 +518,9 @@ Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
     }
     if(m_Status == eActive)
     {
-        DT->UpdateSystem(dTime);
-        double XPower = Xaxis->Calculate(X, DT->GetBotPos()->X, dTime);
-        double YPower = -Yaxis->Calculate(Y, DT->GetBotPos()->Y, dTime);
+        
+        double XPower = Xaxis->Calculate(XTar, Xpos, dTime);
+        double YPower = -Yaxis->Calculate(YTar, Ypos, dTime);
 
         double gyro = m_activeCollection->GetNavX()->GetConstAngle() * M_PI / 180;
 
@@ -520,13 +528,18 @@ Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
         YPower = -XPower * sin(gyro) + YPower * cos(gyro);
         XPower = temp;
         
-        Log::General("---------------Target Pos: " + to_string(X) + "," + to_string(Y) + " --Pos: " + to_string(DT->GetBotPos()->X) + "," + to_string(DT->GetBotPos()->Y) + " --Power: " + to_string(XPower) + "," + to_string(YPower));
+        Log::General("---------------Target Pos: " + to_string(XTar) + "," + to_string(YTar) + " --Pos: " + to_string(Xpos) + "," + to_string(Ypos) + " --Power: " + to_string(XPower) + "," + to_string(YPower));
         
         DT->Set(YPower, XPower, 0);
     }
-    if(Xaxis->Inrange(DT->GetBotPos()->X, X, 0.1) && Yaxis->Inrange(DT->GetBotPos()->Y, Y, 0.1))
+    if(Xaxis->Inrange(Xpos, XTar, 0.2) && Yaxis->Inrange(Ypos, YTar, 0.2))
     {
+        Log::General("---------------------In Range");
         done = true;
+    }
+    else
+    {
+        Log::General("---------------------Distance: " + to_string(Xaxis->Distance(Xpos, XTar)) + "," + to_string(Yaxis->Distance(Ypos, YTar)));
     }
     return m_Status = eActive;
 }

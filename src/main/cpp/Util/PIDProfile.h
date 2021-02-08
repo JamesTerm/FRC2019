@@ -172,6 +172,22 @@ namespace Util
 		        return (V1 < V2 ? V1 : V2);
 	        };
 
+			double RoundTo(double Val, int DecimalPlaces)
+			{
+				int Places = 1;
+				for(int i = 0; i < DecimalPlaces; i++)
+				{
+					Places *= 10;
+				}
+				int Whole = (int)(Val * Places + 0.5);
+				return (double)Whole / (double)Places; 
+			};
+
+			double Distance(double Val, double OtherVal)
+			{
+				return ABSValue(ABSValue(Val) - ABSValue(OtherVal));
+			};
+
             double PIDCal(double P, double I, double D, double Target, double Current, double& LastResult, double& TotalError, double& PrevError, double& ErrorTo, double ChangeInTime, double MaxPower, double MinPower, double MaxChange, double Bias)
 	        {
         		double Result = PIDCalculae(P, I, D, TotalError, (Current - Target), PrevError, ChangeInTime, ErrorTo, Target);

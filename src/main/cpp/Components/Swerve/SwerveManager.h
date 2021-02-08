@@ -53,6 +53,7 @@ namespace Components
             void ResetWheelEnc();
 
             void UpdateLoc();
+            void ResetLoc();
             void UpdateModules();
 
             void UpdateSystem(double D_Time);
