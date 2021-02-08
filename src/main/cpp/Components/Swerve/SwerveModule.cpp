@@ -155,10 +155,7 @@ void SwerveModule::UpdateWheelRate()
         Pos /= D_Time;
         LastSpeed = Pos;
     }
-    else
-    {
-        LastSpeed = 0;
-    }
+    LastSpeed *= abs(SwerveModule::Get()) > 0 ? 1 : 0;
     OutputTable->PutNumber(name + "-Speed", LastSpeed);
 }
 
@@ -189,7 +186,6 @@ bool SwerveModule::SetTargetSwivel(double Target)
 
 bool SwerveModule::SetTargetWheel(double Target)
 {
-    Target *= Dir;
     CurrentWheelTarget = Target;
     SwerveModule::ProcessMotor(Wheel, SwerveModule::GetEnc(), WheelPID, Target, WheelEncRevTicks);
     return WheelPID->Inrange(Target, (SwerveModule::GetEnc() / EncRevTicks) * 360, 1);
@@ -202,7 +198,6 @@ bool SwerveModule::SetTarget(double Wheel_Target, double Swivel_Target)
 
 bool SwerveModule::SetSpeedTarget(double SPEEEED)
 {
-    SPEEEED *= Dir;
     SwerveModule::Set(WheelPID->CalSpeed(SPEEEED, SwerveModule::Get(), SwerveModule::GetEnc(), D_Time));
     return WheelPID->ReachedSpeed();
 }

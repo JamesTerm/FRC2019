@@ -45,8 +45,8 @@ struct Auto
             for(int i = 0; i < MaxPoints * NumPoints; i+=NumPoints)
             {
                 Point* CheckPoint = new Point();
-                CheckPoint->Angle = Points[i] - Xoff;
-                CheckPoint->Radius = Points[i + 1] - Yoff;
+                CheckPoint->Angle = Points[i];// - Xoff;
+                CheckPoint->Radius = Points[i + 1];// - Yoff;
                 CheckPoint->Act = Points[i + 2];
                 Waypoints.push_back(CheckPoint);
             }
@@ -65,7 +65,7 @@ struct Auto
 static vector<double> backupPath1()
 {
     vector<double> InputBackupPoints;
-    string BackupInputString = "5 -4.333792 -0.4807693 0 -1.43544 1.346154 0 2.328297 0.2060437 0 -1.380494 -2.486264 0 -3.976649 -0.9752747 0 ";
+    string BackupInputString = "5 0 0 0 10 0 0 10 10 0 0 10 0 0 0 0 ";
     istringstream ss(BackupInputString);
     string word;
     int index = 0;

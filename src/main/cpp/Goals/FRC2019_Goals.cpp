@@ -477,8 +477,6 @@ void Goal_SwerveCord::Activate()
     m_Status = eActive;
     Xaxis->SetBackgroundInfo(0, Goal_SwerveCord::GetData(4), Goal_SwerveCord::GetData(5), 0);
     Yaxis->SetBackgroundInfo(0, Goal_SwerveCord::GetData(6), Goal_SwerveCord::GetData(7), 0);
-    Y -= Goal_SwerveCord::GetData(8);
-    X -= Goal_SwerveCord::GetData(9);
 }
 
 void Goal_SwerveCord::Savedata()
@@ -500,7 +498,8 @@ void Goal_SwerveCord::Savedata()
 
     Goal_SwerveCord::Setdata(8, Y);
     Goal_SwerveCord::Setdata(9, X);
-    DT->ResetLoc();
+    //DT->ResetLoc();
+    DT->Set(0, 0, 0);
 }
 
 Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
@@ -532,7 +531,7 @@ Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
         
         DT->Set(YPower, XPower, 0);
     }
-    if(Xaxis->Inrange(Xpos, XTar, 0.2) && Yaxis->Inrange(Ypos, YTar, 0.2))
+    if(Xaxis->Inrange(Xpos, XTar, 0.01) && Yaxis->Inrange(Ypos, YTar, 0.01))
     {
         Log::General("---------------------In Range");
         done = true;
@@ -805,7 +804,7 @@ void AutoPath::Activate()
     }
     if (IsSwerve)
     {
-        AddSubgoal(new Goal_SwerveCord(m_activeCollection, "SwerveDT", 0, 0));
+        AddSubgoal(new Goal_SwerveCord(m_activeCollection, "SwerveDT", Angle[lenght - 1], Radius[lenght - 1]));
     }
     m_Status = eActive;
 }
