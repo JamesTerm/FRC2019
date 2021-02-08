@@ -97,7 +97,7 @@ namespace Util
 
 	        bool Inrange(double a, double v, double T)
         	{
-		        if (ABSValue(roundValue(a)) < ABSValue(v) + T && ABSValue(roundValue(a)) > ABSValue(v) - T)
+		        if (Distance(a, v) <= T)
 	        	{
 	        		return true;
 	        	}
@@ -106,7 +106,7 @@ namespace Util
 
         	bool Inrange(double Target, double Value)
         	{
-		        if(Value <= Target)
+		        if(Distance(Value, Target) <= Target)
 	        	{
 	        		return true;
         		}

@@ -803,6 +803,10 @@ void AutoPath::Activate()
             //Add more cases here
         }
     }
+    if (IsSwerve)
+    {
+        AddSubgoal(new Goal_SwerveCord(m_activeCollection, "SwerveDT", 0, 0));
+    }
     m_Status = eActive;
 }
 
