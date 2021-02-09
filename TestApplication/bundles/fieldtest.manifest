@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3289394244
+CRC: 465612337
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: ecf23b1dfd601ecebfca1d3f3aaa4eb7
+    Hash: f7a5f06f7dffd458fc5cc5e59f74aa81
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 1c45c534f40d4cc21ef459f4c143dd30
+    Hash: 524e0532c8a6df1221ad6806730589d0
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -25,6 +25,8 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
 - Class: 65
   Script: {instanceID: 0}
 - Class: 114
@@ -38,10 +40,16 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
 - Class: 114
+  Script: {fileID: 16342205, guid: 0472bdc8d6d15384d98f22ee34302f9c, type: 3}
+- Class: 114
+  Script: {fileID: 185759285, guid: 0472bdc8d6d15384d98f22ee34302f9c, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 3aabdf0def452f7489ddc3e8b218f3ee, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 128
+  Script: {instanceID: 0}
+- Class: 134
   Script: {instanceID: 0}
 - Class: 154
   Script: {instanceID: 0}
@@ -61,5 +69,7 @@ Assets:
 - Assets/FIELDPARTS/Terrain.prefab
 - Assets/FIELDPARTS/LimeLightTarget.prefab
 - Assets/FIELDPARTS/ScoreTarget.prefab
+- Assets/FIELDPARTS/Floor.prefab
 - Assets/FIELDPARTS/NewLayer.terrainlayer
-Dependencies: []
+Dependencies:
+- C:/Users/irobo/Desktop/AssetBundles/robotstest
