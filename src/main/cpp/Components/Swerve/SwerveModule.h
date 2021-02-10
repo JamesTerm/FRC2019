@@ -125,6 +125,7 @@ namespace Components
             double LastWheelTick = 0;
             double WheelDi = 0;
             double LastSpeed = 0;
+            double LastChange = 0;
 
             double D_Time = 0;
             double Dir = 1;

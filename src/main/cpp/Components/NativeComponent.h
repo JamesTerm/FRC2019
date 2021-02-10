@@ -44,6 +44,9 @@ namespace Components
     {
         double X = 0;
         double Y = 0;
+
+		double LastX = 0;
+		double LastY = 0;
     };
 }
 

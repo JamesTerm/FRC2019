@@ -31,6 +31,8 @@ namespace Components
             SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, NavX *Nav, double _Length, double _Width);
             SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerve_Modules, NavX *Nav, double _Length, double _Width);
 
+            void TableSetUp();
+
             void Set(double rawV, double rawH, double rawS);
             void SetSwivel(double val);
             bool SetSwivelTarget(double Target);
@@ -83,6 +85,7 @@ namespace Components
                 MaxValParam = Max;
             }
             double_Vector2* GetBotPos() {return Pos;};
+            double_Vector2* GetSimPos() {return SimPos;};
 
             double GetMax(double Val1, double Val2) {return (Val1 > Val2 ? Val1 : Val2); };
 
@@ -105,6 +108,7 @@ namespace Components
             double Width = 0;
             double WheelAngle = 0;
             double_Vector2 *Pos;
+            double_Vector2 *SimPos = nullptr;
             double Del_Time = 0;
             double MaxValParam = 1;
             bool WaitSwivel = false;

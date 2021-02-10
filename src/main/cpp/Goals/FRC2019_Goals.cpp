@@ -499,14 +499,15 @@ void Goal_SwerveCord::Savedata()
     Goal_SwerveCord::Setdata(8, Y);
     Goal_SwerveCord::Setdata(9, X);
     //DT->ResetLoc();
-    DT->Set(0, 0, 0);
+    DT->Set(0);
+    DT->SetSwivel(0);
 }
 
 Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
 {
     DT->UpdateSystem(dTime);
-    double Xpos = Xaxis->RoundTo(DT->GetBotPos()->X, 2);
-    double Ypos = Yaxis->RoundTo(DT->GetBotPos()->Y, 2);
+    double Xpos = Xaxis->RoundTo(DT->GetSimPos()->X, 2);
+    double Ypos = Yaxis->RoundTo(DT->GetSimPos()->Y, 2);
     double XTar = Xaxis->RoundTo(X, 2);
     double YTar = Yaxis->RoundTo(Y, 2);
     
@@ -531,7 +532,7 @@ Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
         
         DT->Set(YPower, XPower, 0);
     }
-    if(Xaxis->Inrange(Xpos, XTar, 0.01) && Yaxis->Inrange(Ypos, YTar, 0.01))
+    if(Xaxis->Inrange(Xpos, XTar, 0.1) && Yaxis->Inrange(Ypos, YTar, 0.1))
     {
         Log::General("---------------------In Range");
         done = true;

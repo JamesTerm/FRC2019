@@ -29,7 +29,7 @@ SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, Sw
     SwerveManager::SetW(_Width);
     Pos = new double_Vector2();
     WaitSwivel = Wait;
-    OutputTable->PutNumber("Wheel", 1.4);
+    SwerveManager::TableSetUp();
 }
 
 SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, NavX *Nav, double _Length, double _Width) : OutputComponent(name)
@@ -43,7 +43,7 @@ SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, Sw
     Pos = new double_Vector2();
     RobotNav = Nav;
     WaitSwivel = Wait;
-    OutputTable->PutNumber("Wheel", 1.4);
+    SwerveManager::TableSetUp();
 }
 
 SwerveManager::SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerve_Modules, NavX *Nav, double _Length, double _Width) : OutputComponent(name)
@@ -54,11 +54,22 @@ SwerveManager::SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerv
     SwerveManager::SetW(_Width);
     RobotNav = Nav;
     WaitSwivel = Wait;
-    OutputTable->PutNumber("Wheel", 1.5);
+    SwerveManager::TableSetUp();
+}
+
+void SwerveManager::TableSetUp()
+{
+    OutputTable->PutNumber("Wheel", 1.35);
+    OutputTable->PutNumber("BotX", 0);
+    OutputTable->PutNumber("BotY", 0);
+    OutputTable->PutNumber("BotZ", 0);
+    SimPos = new double_Vector2();
 }
 
 void SwerveManager::DeleteComponent()
 {
+    if(SimPos != nullptr)
+        delete SimPos;
     delete Pos;
     delete this;
 }
@@ -127,11 +138,25 @@ void SwerveManager::UpdateLoc()
         L = -F * sin(gyro) + L * cos(gyro);
         F = temp;
 
-        Pos->Y += L * Del_Time;
-        Pos->X -= F * Del_Time;
+        /*Pos->Y += L * Del_Time;
+        Pos->X -= F * Del_Time;*/
+
+        /*double ChangeX = 0;
+        double ChangeY = 0;
+        if(abs(L) != 0 && abs(F) != 0)
+        {
+            ChangeX = Pos->LastX - F;
+            ChangeY = Pos->LastY - L;
+            Pos->LastX = F;
+            Pos->LastY = L;
+        }*/
+        Pos->Y += L;
+        Pos->X -= F;
     }
     OutputTable->PutNumber("Loc-X", Pos->X);
     OutputTable->PutNumber("Loc-Y", Pos->Y);
+    SimPos->X = OutputTable->GetNumber("BotX", 0);
+    SimPos->Y = OutputTable->GetNumber("BotZ", 0);
 }
 
 void SwerveManager::ResetLoc()
