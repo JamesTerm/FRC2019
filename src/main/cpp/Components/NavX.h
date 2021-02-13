@@ -54,7 +54,14 @@ public:
 	
 	void ResetFakeNav()
 	{
-		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("NavX-Reset", true);
+		OutputTable->PutBoolean("NavX-Reset", true);
+	}
+
+	virtual void UpdateComponent() override
+	{
+		OutputTable->PutNumber("NavX-Y", GetYaw());
+		OutputTable->PutNumber("NavX-X", GetPitch());
+		OutputTable->PutNumber("NavX-Z", GetRoll());
 	}
 	virtual void DeleteComponent() {delete this;};
 private:
@@ -62,15 +69,10 @@ private:
 	double RefAngle = 0;
 	void SetUP()
 	{
-		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutNumber("NavX-Y", 0);
-		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutNumber("NavX-X", 0);
-		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutNumber("NavX-Z", 0);
-		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("NavX-Reset", true);
-
-		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutNumber("Dis-Y", 0);
-		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutNumber("Dis-X", 0);
-		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutNumber("Dis-Z", 0);
-		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("Dis-Reset", true);
+		OutputTable->PutNumber("NavX-Y", 0);
+		OutputTable->PutNumber("NavX-X", 0);
+		OutputTable->PutNumber("NavX-Z", 0);
+		OutputTable->PutBoolean("NavX-Reset", true);
 	}
 };
 	
