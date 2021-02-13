@@ -1,6 +1,0 @@
-!spawns in field
-spawn field 0
-!spawns in robot
-spawn robot 3
-clear
-speed 20
