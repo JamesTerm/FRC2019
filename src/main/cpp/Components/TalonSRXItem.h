@@ -39,6 +39,7 @@ public:
 	virtual void DefaultSet() override;
 	virtual void Stop() override;
 	virtual void DeleteComponent() override;
+	virtual void UpdateComponent() override;
 	virtual ~TalonSRXItem();
 };
 }

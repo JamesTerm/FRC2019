@@ -54,6 +54,7 @@ void Drive::DeleteAll()
 {
 	if (m_activeCollection->GetPDBManager() != nullptr)
 		m_activeCollection->GetPDBManager()->DeleteComponent();
+	m_activeCollection->UpdateComponents();
 	for (int i = 0; i < (int)m_driveControlCollection.size(); i++)
 		m_driveControlCollection[i]->DeleteComponent();
 	

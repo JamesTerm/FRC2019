@@ -94,5 +94,13 @@ void TalonSRXItem::DeleteComponent()
 	delete this;
 }
 
+void TalonSRXItem::UpdateComponent()
+{
+	if (!UseTable)
+	{
+		OutputTable->PutNumber(name + "-Encoder", TalonSRXItem::GetQuadraturePosition());
+	}
+}
+
 TalonSRXItem::~TalonSRXItem() {}
 

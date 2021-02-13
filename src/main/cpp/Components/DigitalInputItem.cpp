@@ -61,6 +61,14 @@ string DigitalInputItem::GetName()
 	return name;
 }
 
+void DigitalInputItem::UpdateComponent()
+{
+	if (!UseTable)
+	{
+		OutputTable->PutBoolean(name + "-value", DigitalInputItem::GetBool());
+	}
+}
+
 DigitalInputItem::~DigitalInputItem() 
 {
 }

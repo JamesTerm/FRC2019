@@ -53,4 +53,12 @@ void EncoderItem::DeleteComponent()
 	delete this;
 }
 
+void EncoderItem::UpdateComponent()
+{
+	if (!UseTable)
+	{
+		OutputTable->PutNumber(name + "-Encoder", EncoderItem::Get());
+	}
+}
+
 EncoderItem::~EncoderItem() {}

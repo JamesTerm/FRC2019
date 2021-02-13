@@ -44,4 +44,12 @@ void PotentiometerItem::DeleteComponent()
 	delete this;
 }
 
+void PotentiometerItem::UpdateComponent()
+{
+	if (!UseTable)
+	{
+		OutputTable->PutNumber(name + "-Encoder", PotentiometerItem::Get());
+	}
+}
+
 PotentiometerItem::~PotentiometerItem() {}

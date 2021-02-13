@@ -75,6 +75,8 @@ namespace Configuration
 
 			void SetPDP(double TimeOut, double CurrentThres, double Lower, bool run) {PDP = new PDBManager(TimeOut, CurrentThres, Lower, run);}
 			PDBManager* GetPDBManager() {return PDP;}
+
+			void UpdateComponents();
 			
 	private:
 		vector<NativeComponent*> activeCollection;

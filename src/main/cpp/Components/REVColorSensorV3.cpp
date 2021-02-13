@@ -103,4 +103,12 @@ void REVColorSensorV3::DeleteComponent()
   delete this;
 }
 
+void REVColorSensorV3::UpdateComponent()
+{
+  if (!UseTable)
+	{
+		OutputTable->PutNumber(name + "-Color", REVColorSensorV3::Get());
+	}
+}
+
 REVColorSensorV3::~REVColorSensorV3() {}

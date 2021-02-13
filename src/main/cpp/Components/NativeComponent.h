@@ -31,6 +31,7 @@ namespace Components
 			string name;
 			virtual void DeleteComponent() = 0;
 			void FromTable(bool Yes) { UseTable = !Yes; }
+			virtual void UpdateComponent();
 			NativeComponent(){}
 			NativeComponent(string _name){ name = _name; }
 			virtual ~NativeComponent(){}

@@ -160,10 +160,10 @@ void SwerveModule::UpdateWheelRate()
         Pos = LastChange;
     }
     
-    Pos = abs(Pos) * /*WheelPID->Sign*/(SwerveModule::Get());
+    Pos = abs(Pos) * WheelPID->Sign(SwerveModule::Get());
     Pos /= WheelEncRevTicks;
     Pos *= WheelDi * M_PI;
-    //Pos /= D_Time;
+    Pos /= D_Time;
     Pos *= abs(SwerveModule::Get()) > 0 ? 1 : 0;
     
     LastSpeed = Pos;

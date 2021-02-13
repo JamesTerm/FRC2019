@@ -29,6 +29,7 @@ public:
 	virtual string GetName() override;
 	virtual double Get() override;
 	virtual void DeleteComponent() override;
+	virtual void UpdateComponent() override;
 	virtual ~PotentiometerItem();
 };
 }

@@ -40,11 +40,13 @@ public:
 	frc::Color GetColor();
 	virtual double Get() override;
 	virtual void DeleteComponent() override;
+	virtual void UpdateComponent() override;
 	string GetColorMatch();
 	
 	uint32_t GetProximity();
 	void ConfigureColorSensor();
 	virtual string GetName() override;
+
 	virtual ~REVColorSensorV3();
 	ColorSensorV3 *GetREVColorSensorV3() { return Color;}
     void ConfigureProximitySensor();

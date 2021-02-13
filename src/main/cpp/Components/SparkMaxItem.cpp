@@ -91,6 +91,14 @@ void SparkMaxItem::DeleteComponent()
 	delete this;
 }
 
+void SparkMaxItem::UpdateComponent()
+{
+	if (!UseTable)
+	{
+		OutputTable->PutNumber(name + "-Encoder", SparkMaxItem::GetEncoderValue());
+	}
+}
+
 void SparkMaxItem::ResetEncoderValue(){
 	Max->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 24).SetPosition(0);
 

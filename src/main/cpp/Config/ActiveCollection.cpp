@@ -181,3 +181,11 @@ void ActiveCollection::DeleteAll()
 	}
 	activeCollection.clear();
 }
+
+void ActiveCollection::UpdateComponents()
+{
+	for(int i = 0; i < activeCollection.size(); i++)
+	{
+		activeCollection[i]->UpdateComponent();
+	}
+}
