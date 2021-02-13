@@ -40,7 +40,7 @@ public:
 	frc::Color GetColor();
 	virtual double Get() override;
 	virtual void DeleteComponent() override;
-	virtual void UpdateComponent() override;
+	void UpdateComponent() override;
 	string GetColorMatch();
 	
 	uint32_t GetProximity();
