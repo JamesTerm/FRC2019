@@ -4,5 +4,8 @@ https://drive.google.com/file/d/1NtE4CXnaLxa_Lj7T8TPv2s7h25m5mCWj/view?usp=shari
 Robot Tester V1.6.5 -
 https://drive.google.com/file/d/1mGyXbX9-Ri6ENnZ71MKuXWbvnk502hZ8/view?usp=sharing
 
+Robot Tester V1.6.5 (Apple) -
+https://drive.google.com/drive/folders/1DeV7Wq5kHcfEA4D4V1gCvIe7ASN3zZTu?usp=sharing
+
 Robot Tester DevPackage for Unity 2020.2.0b10:
 https://drive.google.com/file/d/1hVsZggfaIB0p4X5gdm9NpuDbc_wO0Wlh/view?usp=sharing
