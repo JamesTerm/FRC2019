@@ -1,6 +1,7 @@
 #pragma once
 
 #include <networktables/NetworkTableEntry.h>
+#include "LoopChecks.h"
 
 using namespace std;
 

@@ -18,6 +18,8 @@ chrisrweeks@aol.com
 #include "Util/FrameworkCommunication.h"
 using namespace std;
 
+#ifdef __Use_RobotBase_Depreciated__
+
 /**
  * Constructor
  */
@@ -232,4 +234,5 @@ void Robot::Disabled() {
 
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }  //!< This identifies Robot as the main Robot starting class
+#endif
 #endif

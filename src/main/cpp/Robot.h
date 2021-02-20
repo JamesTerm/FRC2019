@@ -1,3 +1,8 @@
+#pragma once
+
+//#define __Use_RobotBase_Depreciated__
+#ifdef __Use_RobotBase_Depreciated__
+
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -5,7 +10,6 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-#pragma once
 
 #include <string>
 //#include <frc/WPILib.h>
@@ -72,3 +76,5 @@ class Robot : public RobotBase
         string m_positionOptions[5] = {"Level 1 Left", "Level 1 Center", "Level 1 Right", "Level 2 Left", "Level 2 Right"};
         std::atomic<bool> m_exit = false;
 };
+
+#endif
