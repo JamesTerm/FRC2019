@@ -32,6 +32,8 @@
 
 #include "Util/RobotStatus.h"
 #include "Util/FrameworkCommunication.h"
+//Simulation includes
+#include "Simulation/Modules/Robot/SwerveRobot/Simulator_Interface.h"
 
 using namespace frc;
 using namespace System;
@@ -63,7 +65,7 @@ private:
    	frc::Timer m_Timer; //use frc timer to take advantage of stepping in simulation (works fine for actual roboRIO too)
 	double m_LastTime=0.0;  //used for time slices
 	double m_simLastTime=0.0;  //for simulation time slices
-
+    Module::Robot::Simulator_Interface m_simulation;
     #pragma endregion
     void LoadConfig()
     {
@@ -94,7 +96,7 @@ private:
         m_simLastTime = CurrentTime;
         //sanity check
         //frc::SmartDashboard::PutNumber("time_delta",DeltaTime);
-        //TODO
+        m_simulation.TimeSlice(DeltaTime);
     }
 
  public:
@@ -174,9 +176,13 @@ private:
     void TestPeriodic() override
     {}
     void SimulationInit () override
-    {}
+    {
+        m_simulation.SimulationInit();
+    }
     void SimulationPeriodic () override
-    {}
+    {
+        SimulatorTimeSlice();
+    }
 };
 
 #ifndef RUNNING_FRC_TESTS
