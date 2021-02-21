@@ -128,6 +128,8 @@ private:
         m_dashboardTable->PutStringArray("AUTON_OPTIONS", m_autonOptions);
         m_dashboardTable->PutStringArray("POSITION_OPTIONS", m_positionOptions);
         // Util::FrameworkCommunication::GetInstance().SendData("MESSAGE","yeetus");//? Temporary
+        //Give active collection to simultion to access motors and encoders:
+        m_simulation.ActiveCollection_Init(m_activeCollection);
     }
     void RobotPeriodic() override
     {}

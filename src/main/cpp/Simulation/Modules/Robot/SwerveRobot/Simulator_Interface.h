@@ -16,6 +16,8 @@ class Simulator_Interface
 public:
     //This is exclusive for SimulationInit() to call, anything in here will not be called on the real robot
     void SimulationInit();
+    //Robot passes active collection over once it is instantiated
+    void ActiveCollection_Init(void *active_collection);
     //This is exclusively for SimulationPeriodic() to call, anything in here will not be called on the real robot
     void TimeSlice(double dTime_s);
 private:
