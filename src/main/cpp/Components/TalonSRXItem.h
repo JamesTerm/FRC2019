@@ -33,6 +33,10 @@ public:
 	TalonSRXItem(int channel, string name, bool reversed, bool enableEncoder, bool Real);
 	int GetQuadraturePosition();
 	void SetQuadraturePosition(int val);
+	//for simulation
+	void sim_SetQuadratureRawPosition(double new_pos);   //in native units
+    void sim_SetQuadratureVelocity(double newRate_s); //in seconds
+
 	virtual double Get() override;
 	virtual void Set(double val) override;
 	virtual void Set(DoubleSolenoid::Value value) override;

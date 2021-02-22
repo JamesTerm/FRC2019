@@ -57,6 +57,18 @@ void TalonSRXItem::SetQuadraturePosition(int val){
 		OutputTable->PutBoolean(name + "-Reset", true);
 	}
 }
+void TalonSRXItem::sim_SetQuadratureRawPosition(double new_pos)
+{
+	//we factor our own inverse DPP
+	//talon->GetSimCollection().SetQuadratureRawPosition((int)(new_pos*(1.0/m_DPP)));    
+	//For now DPP must be managed by the caller
+	talon->GetSimCollection().SetQuadratureRawPosition((int)(new_pos));    
+}
+void TalonSRXItem::sim_SetQuadratureVelocity(double newRate_s)
+{
+	//in native units per 100ms
+	talon->GetSimCollection().SetQuadratureVelocity((int)(newRate_s*10.0));
+}
 
 void TalonSRXItem::Set(double val){
 	val = CalculateVal(val);

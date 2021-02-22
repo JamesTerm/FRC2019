@@ -10,6 +10,7 @@
 #include <wpi/math>
 #include "../../../../Components/SparkMaxItem.h"
 #include "../../../../Components/TalonSRXItem.h"
+#include "../../../../Config/ActiveCollection.h"
 //use properties for encoder reading conversions
 #include "../../../Properties/RegistryV1.h"
 
@@ -20,7 +21,7 @@
 #include "SimulatedOdometry.h"
 
 namespace Module {
-#if 0
+
 namespace Output
 {
 
@@ -66,6 +67,8 @@ private:
             std::shared_ptr<frc::sim::EncoderSim> m_driveEncoder_sim=nullptr;
             std::shared_ptr<frc::sim::EncoderSim> m_turningEncoder_sim=nullptr;
             size_t m_ThisSectionIndex;  //see section order (mostly used for diagnostics)
+            double m_TalonDPP=1.0;
+            double m_SparkDPP=1.0;
 
             #pragma region _EncoderTranslation_
             class EncoderTranslation_Direct
@@ -243,7 +246,7 @@ private:
                 #endif
             }
         public:
-            void Init(size_t index,const Framework::Base::asset_manager *props=nullptr)
+            void Init(size_t index,const Framework::Base::asset_manager *props, Configuration::ActiveCollection *collection)
             {
                 m_ThisSectionIndex=index;
                 m_Converter.Init(props); //This must happen before getting the distance per pulse below
@@ -277,8 +280,11 @@ private:
                 }
                 else
                 {
-                    m_drive_motor->SetEncoderRev(m_Converter.Drive_GetDistancePerPulse(m_ThisSectionIndex));
-                    m_swivel_motor->SetDistancePerPulse(m_Converter.Swivel_GetDistancePerPulse(m_ThisSectionIndex));
+                    //Note: Leave out setting the DPP, as this we cannot manage it here... instead just cache for simulation
+                    //m_drive_motor->SetEncoderRev(m_Converter.Drive_GetDistancePerPulse(m_ThisSectionIndex));
+                    //m_swivel_motor->SetDistancePerPulse(m_Converter.Swivel_GetDistancePerPulse(m_ThisSectionIndex));
+                    m_SparkDPP=m_Converter.Drive_GetDistancePerPulse(m_ThisSectionIndex);
+                    m_TalonDPP=m_Converter.Swivel_GetDistancePerPulse(m_ThisSectionIndex);
                 }
                 //Grab if we need to reverse direction (broken up to step through code)
                 //TODO provide reverse direction for SparkMax and TalonSRX
@@ -305,7 +311,6 @@ private:
                 }
             }
             //This is managed elsewhere, keeping for reference
-            #if 0
             void TimeSlice(double dTime_s, double drive_voltage, double swivel_voltage, Robot::SwerveVelocities &physicalOdometry)
             {
                 if (UseFallbackSim())
@@ -332,6 +337,8 @@ private:
                     physicalOdometry.Velocity.AsArray[m_ThisSectionIndex+4]=
                         m_Converter.Swivel_ReadEncoderToPosition(m_turningEncoder->GetDistance(),m_ThisSectionIndex);
                 }
+                #if 0
+                //For reference... the motors methods would need to be altered
                 else
                 {
                     physicalOdometry.Velocity.AsArray[m_ThisSectionIndex]=
@@ -361,8 +368,8 @@ private:
                         m_Converter.Swivel_ReadEncoderToPosition(m_swivel_motor->GetEncoderPosition(),m_ThisSectionIndex);
                     #endif
                 }
+                #endif
             }
-            #endif
             void SimulatorTimeSlice(double dTime_s, double drive_velocity, double swivel_distance) 
             {
                 //Note:  this slice does not start until init is complete (solved higher level)
@@ -375,8 +382,8 @@ private:
                 }
                 else
                 {
-                    m_SparkMaxSimDevice->GetDouble("Velocity").Set(driveRate);
-                    m_swivel_motor->sim_SetQuadratureRawPosition(swivelPos);
+                    m_SparkMaxSimDevice->GetDouble("Velocity").Set(driveRate*(1.0/m_SparkDPP));
+                    m_swivel_motor->sim_SetQuadratureRawPosition(swivelPos*(1.0/m_TalonDPP));
                     m_TestSwivelPos=swivel_distance;
                    //frc::SmartDashboard::PutNumber("Test",m_drive_motor->GetEncoderVelocity());
                     #if 0
@@ -398,10 +405,10 @@ private:
     public:
         WheelModules(WheelModule_Interface *parent) : m_pParent(parent)
         {}
-        void Init(const Framework::Base::asset_manager *props=nullptr)
+        void Init(const Framework::Base::asset_manager *props, Configuration::ActiveCollection *collection)
         {
             for (size_t i=0;i<4;i++)
-                Module[i].Init(i,props);
+                Module[i].Init(i,props,collection);
             m_StartSimulation = true;
         }
         void TimeSlice(double dTime_s)
@@ -424,9 +431,9 @@ private:
     };
     WheelModules m_WheelModule=this;
 public:
-    void Init(const Framework::Base::asset_manager *props=nullptr)
+    void Init(const Framework::Base::asset_manager *props, Configuration::ActiveCollection *collection)
     {
-        m_WheelModule.Init(props);
+        m_WheelModule.Init(props,collection);
     }
     void TimeSlice(double dTime_s)
     {
@@ -454,20 +461,21 @@ class WPI_Output_Internal
 {
 private:
     WheelModule_Interface m_Implementation;
-    std::shared_ptr<frc::AnalogGyro> m_Gyro;
+    frc::AnalogGyro *m_Gyro;
     std::shared_ptr<frc::sim::AnalogGyroSim> m_SimGyro;
     std::function<double ()> m_OurSimGyroCallback=nullptr;
 public:
-    void Init(const Framework::Base::asset_manager *props=nullptr)
+    void Init(const Framework::Base::asset_manager *props, Configuration::ActiveCollection *collection)
     {
-        m_Implementation.Init(props);
+        m_Implementation.Init(props,collection);
    		using namespace ::properties::registry_v1;
 		const bool HaveGyro = props ? props->get_bool(csz_Misc_have_gyro, false) : false;
         if (HaveGyro)
         {
             using namespace frc;
             const int channel=0;
-            m_Gyro=std::make_shared<frc::AnalogGyro>(channel);
+            //m_Gyro=std::make_shared<frc::AnalogGyro>(channel);
+            //TODO
             if (RobotBase::IsSimulation())
                 m_SimGyro = std::make_shared<sim::AnalogGyroSim>(*m_Gyro);
         }
@@ -508,9 +516,8 @@ public:
     }
 };
 
-
 }
-#endif
+
 namespace Robot {
 
 class Simulator_Interface_Internal
