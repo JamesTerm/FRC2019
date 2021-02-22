@@ -27,6 +27,7 @@ private:
 	int channel;
 	bool reversed;
 	bool encoderEnabled;
+	int Offset = 0;
 
 public:
 	TalonSRXItem();

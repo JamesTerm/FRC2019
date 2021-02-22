@@ -21,12 +21,12 @@ PotentiometerItem::PotentiometerItem(int _channel, string _name, bool Real)
 	: InputComponent(_name){
 	channel = _channel;
 	apt = new AnalogPotentiometer(channel);
-	initPosition = apt->Get();
+	initPosition = OutputTable->GetNumber(_name + "-int", apt->Get());
 	FromTable(Real);
-	if (UseTable)
 	{
 		Log::General("Using Table values");
 		OutputTable->PutNumber(_name, 0);
+		OutputTable->PutNumber(_name + "-int", initPosition);
 	}
 }
 

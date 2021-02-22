@@ -27,6 +27,7 @@ namespace Components
 			{
 				victor = new VictorSP(channel);
 				Reversed = reversed;
+				InitProfiles();
 			}
 			int GetPolarity();
 			string GetName();

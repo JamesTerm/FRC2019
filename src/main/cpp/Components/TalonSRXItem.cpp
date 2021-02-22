@@ -28,10 +28,11 @@ TalonSRXItem::TalonSRXItem(int _channel, string _name, bool _reversed, bool enab
 	talon = new WPI_TalonSRX(channel);
 	encoderEnabled = enableEncoder;
 	FromTable(Real);
+	InitProfiles();
+	Offset = OutputTable->GetNumber(name + "-Encoder", 0);
 	if(enableEncoder)
 	{
 		talon->ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, 10);
-		if (UseTable)
 		{
 			Log::General("Using Table values");
 			OutputTable->PutNumber(name + "-Encoder", 0);
@@ -47,7 +48,7 @@ double TalonSRXItem::Get(){
 }
 
 int TalonSRXItem::GetQuadraturePosition(){
-	return encoderEnabled ? (UseTable ? OutputTable->GetNumber(name + "-Encoder", 0) : talon->GetSensorCollection().GetQuadraturePosition()) : -1;
+	return (encoderEnabled ? (UseTable ? OutputTable->GetNumber(name + "-Encoder", 0) : talon->GetSensorCollection().GetQuadraturePosition()) : -1) - Offset;
 }
 
 void TalonSRXItem::SetQuadraturePosition(int val){
@@ -102,6 +103,7 @@ void TalonSRXItem::Stop()
 
 void TalonSRXItem::DeleteComponent()
 {
+	CleanUpProfiles();
 	delete talon;
 	delete this;
 }

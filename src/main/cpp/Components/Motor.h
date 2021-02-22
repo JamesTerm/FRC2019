@@ -30,6 +30,7 @@ namespace Components
             int PDBPort = 0;
             double TimeTimedOut = 0;
             double LowerAmount = 0;
+            double CurrentPowerTarget = 0;
             double ABSVal(double val)
             {
                 return (val < 0 ? val * -1 : val);
@@ -42,6 +43,9 @@ namespace Components
             double RegenRate = 0.01;
             double PersonalLowerRate = 0;
 
+            PIDProfile *PositionProfile = nullptr;
+            PIDProfile *PowerProfile = nullptr;
+
         public:
 
             Motor() : OutputComponent(){}
@@ -49,6 +53,42 @@ namespace Components
 
             void SetPDBChannel(int val) { PDBPort = val; }
             int GetPDBChannel() {return PDBPort;}
+
+            void InitProfiles(double Ppos = 0.8, double Ipos = 0.01, double Dpos = 0, double Pspe = 0.8, double Ispe = 0, double Dspe = 0)
+            {
+                PositionProfile = new PIDProfile(Ppos, Ipos, Dpos);
+                PowerProfile = new PIDProfile(Pspe, Ispe, Dspe);
+            }
+
+            void CleanUpProfiles()
+            {
+                if(PositionProfile != nullptr)
+                {
+                    delete PositionProfile;
+                }
+                if(PowerProfile != nullptr)
+                {
+                    delete PowerProfile;
+                }
+            }
+
+            PIDProfile* GetPositionProfile(){return PositionProfile;};
+            PIDProfile* GetPowerProfile(){return PowerProfile;};
+
+            void SetPower(double Power, double Time)
+            {
+                if(Power != CurrentPowerTarget)
+                {
+                    CurrentPowerTarget = Power;
+                    PowerProfile->Reset();
+                }
+                Set(PowerProfile->Calculate(Power, Get(), Time));
+            }
+
+            void SetPosition(double Target, double CurrentPosition, double Time)
+            {
+                Set(PositionProfile->Calculate(Target, CurrentPosition, Time));
+            }
 
             void SetRegenRate(double Rate) {RegenRate = Rate;}
             void SetLowerRate(double Rate) {PersonalLowerRate = Rate;}

@@ -32,11 +32,6 @@ SwerveModule::SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, Encod
 
     EncRevTicks = TicksPerRev;
     WheelEncRevTicks = WheelTicks;
-
-    WheelPID = new PIDProfile(1, 0, 0);
-    SwivelPID = new PIDProfile(1, 0, 0);
-    SpeedPID = new PIDProfile(1, 0, 0);
-
     SwerveModule::ResetEncs();
 }
 
@@ -51,10 +46,8 @@ SwerveModule::SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, doubl
 
     GetType = SwerveModule::InputType::MotorType;
 
-    WheelPID = new PIDProfile(0.2, 0, 0.002);
-    SwivelPID = new PIDProfile(0.8, 0.01, 0);
-    SwivelPID->SetBias(1000);
-    SpeedPID = new PIDProfile(0.2, 0, 0.002);
+    Swivel->GetPositionProfile()->SetBias(1000);
+
 /*
     OutputTable->PutNumber("SwivelP", 0);
     OutputTable->PutNumber("SwivelI", 0);
@@ -66,9 +59,6 @@ SwerveModule::SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, doubl
 
 void SwerveModule::DeleteComponent()
 {
-    delete WheelPID;
-    delete SwivelPID;
-    delete SpeedPID;
     delete this;
 }
 
@@ -160,7 +150,7 @@ void SwerveModule::UpdateWheelRate()
         Pos = LastChange;
     }
     
-    Pos = abs(Pos) * WheelPID->Sign(SwerveModule::Get());
+    Pos = abs(Pos) * Wheel->GetPowerProfile()->Sign(SwerveModule::Get());
     Pos /= WheelEncRevTicks;
     Pos *= WheelDi * M_PI;
     Pos /= D_Time;
@@ -172,8 +162,8 @@ void SwerveModule::UpdateWheelRate()
 
 void SwerveModule::ResetPID()
 {
-    WheelPID->Reset();
-    SwivelPID->Reset();
+    Wheel->GetPositionProfile()->Reset();
+    Swivel->GetPositionProfile()->Reset();
 }
 
 void SwerveModule::SetDeltaTime(double Time)
@@ -181,9 +171,9 @@ void SwerveModule::SetDeltaTime(double Time)
     D_Time = Time;
 }
 
-void SwerveModule::ProcessMotor(Motor *Subject, double Enc, PIDProfile *Profile, double Target, double TickRev)
+void SwerveModule::ProcessMotor(Motor *Subject, double Enc, double Target, double TickRev)
 {
-    double ValOut = -Profile->Calculate(Target, (Enc / TickRev) * 360, D_Time);
+    double ValOut = -Subject->GetPositionProfile()->Calculate(Target, (Enc / TickRev) * 360, D_Time);
     //Log::General("----------------------------ValOut: " + to_string(ValOut) + " --------Target: " + to_string(Target) + " --------Current: " + to_string((Enc / TickRev) * 360) + " --------D_Time: " + to_string(D_Time));
     Subject->Set(ValOut);
 }
@@ -191,15 +181,15 @@ void SwerveModule::ProcessMotor(Motor *Subject, double Enc, PIDProfile *Profile,
 bool SwerveModule::SetTargetSwivel(double Target)
 {
     CurrentSwivelTarget = Target;
-    SwerveModule::ProcessMotor(Swivel, SwerveModule::GetSwivelEnc(), SwivelPID, Target, EncRevTicks);
-    return (SwivelPID->ABSValue(Target - (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360) > 45 ? SwivelPID->Inrange(Target, (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360, 5) : true);
+    SwerveModule::ProcessMotor(Swivel, SwerveModule::GetSwivelEnc(), Target, EncRevTicks);
+    return (Swivel->GetPositionProfile()->ABSValue(Target - (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360) > 45 ? Swivel->GetPositionProfile()->Inrange(Target, (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360, 5) : true);
 }
 
 bool SwerveModule::SetTargetWheel(double Target)
 {
     CurrentWheelTarget = Target;
-    SwerveModule::ProcessMotor(Wheel, SwerveModule::GetEnc(), WheelPID, Target, WheelEncRevTicks);
-    return WheelPID->Inrange(Target, (SwerveModule::GetEnc() / EncRevTicks) * 360, 1);
+    SwerveModule::ProcessMotor(Wheel, SwerveModule::GetEnc(), Target, WheelEncRevTicks);
+    return Wheel->GetPositionProfile()->Inrange(Target, (SwerveModule::GetEnc() / EncRevTicks) * 360, 1);
 }
 
 bool SwerveModule::SetTarget(double Wheel_Target, double Swivel_Target)
@@ -209,8 +199,8 @@ bool SwerveModule::SetTarget(double Wheel_Target, double Swivel_Target)
 
 bool SwerveModule::SetSpeedTarget(double SPEEEED)
 {
-    SwerveModule::Set(WheelPID->CalSpeed(SPEEEED, SwerveModule::Get(), SwerveModule::GetEnc(), D_Time));
-    return WheelPID->ReachedSpeed();
+    SwerveModule::Set(Wheel->GetPowerProfile()->CalSpeed(SPEEEED, SwerveModule::Get(), SwerveModule::GetEnc(), D_Time));
+    return Wheel->GetPowerProfile()->ReachedSpeed();
 }
 
 void SwerveModule::DefaultSet()

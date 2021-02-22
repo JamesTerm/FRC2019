@@ -71,11 +71,33 @@ void backupConfig::SetComponents()
 	backupConfig::AddSwerveModule("BR", "SwivelBR", "WheelBR", 4096, 4096, SwerveModule::Location::Back_Right);
 
 	backupConfig::AddSwerveManager("SwerveDT", true, 0.8, "FL FR BL BR", m_activeCollection->GetNavX(), 3, 3);
+
+	backupConfig::AddVictorSPX("Intake", 11, false);
+	backupConfig::AddVictorSPX("Revolver", 12, false);
+	backupConfig::AddVictorSPX("Shooter", 13, false);
+	backupConfig::AddVictorSPX("Cover", 14, false);
+
+	backupConfig::AddVictorSPX("PullUp-Left", 15, false);
+	backupConfig::AddVictorSPX("PullUp-Right", 16, false);
+
+	backupConfig::AddEncoder("RevolverEncoder", 1, 2, false);
+	backupConfig::AddEncoder("CoverEncoder", 3, 4, false);
+	backupConfig::AddEncoder("ShooterEncoder", 5, 6, false);
+
+	backupConfig::AddDoubleSolenoid("IntakePiston", 1, 2, DoubleSolenoid::Value::kReverse, false);
 }
 
 void backupConfig::SetControls()
 {
 	backupConfig::AddSwerveControl("SwerveControl", SwerveControl::DriveCalculation::Robot_Oriented, 0, 1, 4, 0.08, 0.8, false, "SwerveDT", backupConfig::JoystickControler::Driver);
+
+	backupConfig::AddAxisControl("IntakeControl", "Intake", 1, 0.8, false, false, false, false, 0.01, backupConfig::JoystickControler::Operator);
+	backupConfig::AddAxisControl("RevolverControl", "Revolver", 0, 0.8, false, false, false, false, 0.01, backupConfig::JoystickControler::Operator);
+
+	backupConfig::AddAxisControl("ShooterControl", "PullUp-Left, PullUp-Right", 2, 0.5, false, false, false, false, 0.01, backupConfig::JoystickControler::Operator);
+	
+	backupConfig::AddToggleControl("IntakeControl", "IntakePiston", 1, 1, false, false, backupConfig::JoystickControler::Operator);
+
 }
 
 backupConfig::~backupConfig(){}
