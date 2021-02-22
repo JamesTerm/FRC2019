@@ -24,7 +24,7 @@ EncoderItem::EncoderItem(string _name, int _aChannel, int _bChannel, bool _rever
 	reversed = _reversed;
 	encoder = new Encoder(aChannel, bChannel, reversed);
 	FromTable(Real);
-	if (UseTable)
+	Offset = OutputTable->GetNumber(name, 0);
 	{
 		Log::General("Using Table values");
 		OutputTable->PutNumber(name, 0);
@@ -34,13 +34,12 @@ EncoderItem::EncoderItem(string _name, int _aChannel, int _bChannel, bool _rever
 
 void EncoderItem::Reset(){
 	encoder->Reset();
-	if (UseTable)
-		OutputTable->PutBoolean(name + "-Reset", true);
+	OutputTable->PutBoolean(name + "-Reset", true);
 }
 
 double EncoderItem::Get(){
 	double input = (UseTable ? OutputTable->GetNumber(name, 0) : (double)encoder->Get());
-	return input;
+	return input - Offset;
 }
 
 string EncoderItem::GetName(){
@@ -57,7 +56,7 @@ void EncoderItem::UpdateComponent()
 {
 	if (!UseTable)
 	{
-		OutputTable->PutNumber(name + "-Encoder", EncoderItem::Get());
+		OutputTable->PutNumber(name, EncoderItem::Get());
 	}
 }
 

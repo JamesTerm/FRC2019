@@ -26,9 +26,9 @@ SparkMaxItem::SparkMaxItem(int _channel, string _name, bool _reversed, bool Real
 	Max = new CANSparkMax(channel, rev::CANSparkMax::MotorType::kBrushless);
 	Max->SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 	Name = _name;
-	Offset = 0;
+	Offset = OutputTable->GetNumber(name + "-Encoder", 0);
+	InitProfiles();
 	FromTable(Real);
-	if (UseTable)
 	{
 		Log::General("Using Table values");
 		OutputTable->PutNumber(name + "-Encoder", 0);
@@ -87,6 +87,7 @@ void SparkMaxItem::Stop(){
 
 void SparkMaxItem::DeleteComponent()
 {
+	CleanUpProfiles();
 	delete Max;
 	delete this;
 }

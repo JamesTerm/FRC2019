@@ -22,6 +22,7 @@ private:
 	int aChannel;
 	int bChannel;
 	bool reversed;
+	int Offset = 0;
 	Encoder *encoder;
 
 public:

@@ -61,7 +61,7 @@ namespace Components
 
             void ResetPID();
             void SetDeltaTime(double Time);
-            void ProcessMotor(Motor *Subject, double Enc, PIDProfile *Profile, double Target, double TickRev);
+            void ProcessMotor(Motor *Subject, double Enc, double Target, double TickRev);
             bool SetTargetWheel(double Target);
             bool SetTargetSwivel(double Target);
             bool SetTarget(double Wheel_Target, double Swivel_Target);
@@ -97,10 +97,6 @@ namespace Components
             virtual void DeleteComponent() override;
 
             Location GetLocation() {return ModuleLoc;};
-
-            PIDProfile *WheelPID;
-            PIDProfile *SwivelPID;
-            PIDProfile *SpeedPID;
 
         private:
             enum InputType

@@ -66,6 +66,7 @@ int VictorSPItem::GetPolarity()
 
 void VictorSPItem::DeleteComponent()
 {
+	CleanUpProfiles();
 	delete victor;
 	delete this;
 }

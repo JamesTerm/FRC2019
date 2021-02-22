@@ -150,8 +150,8 @@ void SwerveManager::UpdateLoc()
             Pos->LastX = F;
             Pos->LastY = L;
         }*/
-        Pos->Y += L;
-        Pos->X -= F;
+        Pos->Y += L * 0.00063;
+        Pos->X -= F * 0.00063;
     }
     OutputTable->PutNumber("Loc-X", Pos->X);
     OutputTable->PutNumber("Loc-Y", Pos->Y);

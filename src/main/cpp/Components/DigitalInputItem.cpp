@@ -65,7 +65,7 @@ void DigitalInputItem::UpdateComponent()
 {
 	if (!UseTable)
 	{
-		OutputTable->PutBoolean(name + "-value", DigitalInputItem::GetBool());
+		OutputTable->PutBoolean(name, DigitalInputItem::GetBool());
 	}
 }
 
