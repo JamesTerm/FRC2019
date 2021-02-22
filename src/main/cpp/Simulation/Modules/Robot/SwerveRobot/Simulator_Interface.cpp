@@ -592,6 +592,7 @@ private:
     SimulatedOdometry m_Simulation;
    	SwerveVelocities m_Voltage;
     Output::WPI_Output_Internal m_Output;
+    Robot::Inv_Swerve_Drive m_ExtractVelocity;
     void SetHooks(bool enable)
 	{
         if (enable)
@@ -614,6 +615,79 @@ private:
 			m_Simulation.SetVoltageCallback(nullptr);
         }
     }
+
+	void UpdateVariables()
+	{
+		using namespace frc;
+        m_ExtractVelocity.InterpolateVelocities(m_Simulation.GetCurrentVelocities());
+		Vec2D linear_velocity(m_ExtractVelocity.GetLocalVelocityX(),m_ExtractVelocity.GetLocalVelocityY());
+		Vec2D velocity_normalized=linear_velocity;
+		double magnitude = velocity_normalized.normalize();
+		SmartDashboard::PutNumber("linear_velocity_x", linear_velocity.x());
+		SmartDashboard::PutNumber("linear_velocity_y", linear_velocity.y());
+		//Entity variables-------------------------------------------
+		SmartDashboard::PutNumber("Velocity", Meters2Feet(magnitude));
+		SmartDashboard::PutNumber("Rotation Velocity", m_ExtractVelocity.GetAngularVelocity());
+		const Vec2D position = m_Simulation.Vision_GetCurrentPosition();
+		SmartDashboard::PutNumber("X_ft", Meters2Feet(position.x()));
+		SmartDashboard::PutNumber("Y_ft", Meters2Feet(position.y()));
+		//If it is angle acceleration is being setpoint driven we read this (e.g. AI controlled)
+		if (false)
+		{
+			//m_current_state.bits.IntendedOrientation = m_robot.Get_IntendedOrientation();
+			//SmartDashboard::PutNumber("Travel_Heading", RAD_2_DEG(m_robot.Get_IntendedOrientation()));
+		}
+		else
+		{
+			//TeleOp controlled, point forward if we are rotating in place, otherwise, point to the direction of travel
+			//Like with the kinematics if we are not moving we do not update the intended orientation (using this)
+			//This is just cosmetic, but may be handy to keep for teleop
+			if (!IsZero(linear_velocity.x() + linear_velocity.y(), 0.02))
+			{
+				//m_current_state.bits.IntendedOrientation = atan2(velocity_normalized[0], velocity_normalized[1]);
+				//for swerve the direction of travel is not necessarily the heading, so we show this as well as heading
+				SmartDashboard::PutNumber("Travel_Heading", RAD_2_DEG(atan2(velocity_normalized[0], velocity_normalized[1])));
+			}
+			else if (!IsZero(m_ExtractVelocity.GetAngularVelocity()))
+			{
+				//point forward locally when rotating in place
+				//m_current_state.bits.IntendedOrientation = entity.GetCurrentHeading();
+				SmartDashboard::PutNumber("Travel_Heading", RAD_2_DEG(m_Simulation.GyroMag_GetCurrentHeading()));
+			}
+		}
+		SmartDashboard::PutNumber("Heading", RAD_2_DEG(m_Simulation.GyroMag_GetCurrentHeading()));
+		//To make this interesting, we keep the SmartDashboard to show the intended velocities...
+		//SmartDashboard::PutNumber("setpoint_angle", RAD_2_DEG(entity.Get_IntendedOrientation()));
+		//kinematic variables-------------------------------------------
+		const Module::Robot::SwerveVelocities &cv = m_Simulation.GetCurrentVelocities();
+		//const Module::Robot::SwerveVelocities &iv = m_robot.GetIntendedVelocities();
+		const Module::Robot::SwerveVelocities &vo = m_Voltage;
+
+		// SmartDashboard::PutNumber("Wheel_fl_Velocity", Meters2Feet(iv.Velocity.AsArray[0]));
+		// SmartDashboard::PutNumber("Wheel_fr_Velocity", Meters2Feet(iv.Velocity.AsArray[1]));
+		// SmartDashboard::PutNumber("Wheel_rl_Velocity", Meters2Feet(iv.Velocity.AsArray[2]));
+		// SmartDashboard::PutNumber("Wheel_rr_Velocity", Meters2Feet(iv.Velocity.AsArray[3]));
+		SmartDashboard::PutNumber("Wheel_fl_Voltage", vo.Velocity.AsArray[0]);
+		SmartDashboard::PutNumber("Wheel_fr_Voltage", vo.Velocity.AsArray[1]);
+		SmartDashboard::PutNumber("Wheel_rl_Voltage", vo.Velocity.AsArray[2]);
+		SmartDashboard::PutNumber("Wheel_rr_Voltage", vo.Velocity.AsArray[3]);
+		SmartDashboard::PutNumber("wheel_fl_Encoder", Meters2Feet(cv.Velocity.AsArray[0]));
+		SmartDashboard::PutNumber("wheel_fr_Encoder", Meters2Feet(cv.Velocity.AsArray[1]));
+		SmartDashboard::PutNumber("wheel_rl_Encoder", Meters2Feet(cv.Velocity.AsArray[2]));
+		SmartDashboard::PutNumber("wheel_rr_Encoder", Meters2Feet(cv.Velocity.AsArray[3]));
+
+		//For the angles either show raw or use simple dial using 180 to -180 with a 45 tick interval
+		//its not perfect, but it gives a good enough direction to tell (especially when going down)
+		SmartDashboard::PutNumber("Swivel_fl_Voltage", vo.Velocity.AsArray[4]);
+		SmartDashboard::PutNumber("Swivel_fr_Voltage", vo.Velocity.AsArray[5]);
+		SmartDashboard::PutNumber("Swivel_rl_Voltage", vo.Velocity.AsArray[6]);
+		SmartDashboard::PutNumber("Swivel_rr_Voltage", vo.Velocity.AsArray[7]);
+		SmartDashboard::PutNumber("swivel_fl_Raw", RAD_2_DEG(cv.Velocity.AsArray[4]));
+		SmartDashboard::PutNumber("swivel_fr_Raw", RAD_2_DEG(cv.Velocity.AsArray[5]));
+		SmartDashboard::PutNumber("swivel_rl_Raw", RAD_2_DEG(cv.Velocity.AsArray[6]));
+		SmartDashboard::PutNumber("swivel_rr_Raw", RAD_2_DEG(cv.Velocity.AsArray[7]));
+	}
+
 public:
     Simulator_Interface_Internal()
     {
@@ -658,6 +732,7 @@ public:
 		//This call is skipped in real robot code as it physically happens instead
         m_Simulation.TimeSlice(dTime_s);
         m_Output.SimulatorTimeSlice(dTime_s);
+        UpdateVariables();
     }
 };
 
