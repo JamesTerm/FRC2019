@@ -171,7 +171,10 @@ private:
                     //This has the common nested as the default, so basically the individual property will return if present
                     //then the common property, then finally the default constant
                     const double enc_resolution= m_props->get_number(Name.c_str(), m_props->get_number(CommonName.c_str(),kEncoderResolution));
-                    return Pi2 / kEncoderResolution;
+                    //I've had a difficult time making sure this was correct... the most important thing to keep in mind is that I work in
+                    //radians, so using this on the simulation side should yield the correct amount of ticks that would be there physically
+                    //and that is the most important number to get right
+                    return Pi2 / enc_resolution;
                 }
                 double GetGearReduction(size_t wheelSection,bool IsSwivel) const
                 {
