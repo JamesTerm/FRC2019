@@ -52,7 +52,7 @@ class Robot : public frc::TimedRobot
 private:
     #pragma region _members_
     Drive *m_drive;
-    ActiveCollection *m_activeCollection; //!< Pointer to the only instantiation of the ActiveCollection Class in the program
+    ActiveCollection *m_activeCollection=nullptr; //!< Pointer to the only instantiation of the ActiveCollection Class in the program
     const string m_driveStraight = "drive";
     MultitaskGoal* m_masterGoal;
     MultitaskGoal* m_teleOpMasterGoal;
@@ -66,10 +66,16 @@ private:
 	double m_LastTime=0.0;  //used for time slices
 	double m_simLastTime=0.0;  //for simulation time slices
     Module::Robot::Simulator_Interface m_simulation;
+    bool m_IsConfigLoaded=false;
     #pragma endregion
     void LoadConfig()
     {
-        Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
+        //This only needs to happen one time!
+        if (!m_IsConfigLoaded)
+        {
+            m_IsConfigLoaded=true;
+            Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
+        }
     }
     void TimeSlice()
     {

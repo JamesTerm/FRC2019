@@ -13,7 +13,8 @@
 #include "../../../../Config/ActiveCollection.h"
 //use properties for encoder reading conversions
 #include "../../../Properties/RegistryV1.h"
-
+//Used for fake run reads of encoder and gyro
+#include <networktables/NetworkTableInstance.h>
 
 #include "Simulator_Interface.h"
 #include "../DriveKinematics/Vehicle_Drive.h"
@@ -59,6 +60,7 @@ private:
         class WheelModule
         {
         private:
+            #pragma region _members_
             Components::SparkMaxItem *m_drive_motor=nullptr;            
             Components::TalonSRXItem *m_swivel_motor=nullptr;
             std::shared_ptr<frc::Encoder> m_driveEncoder=nullptr;  //Note... need two channels per encoder
@@ -69,6 +71,10 @@ private:
             size_t m_ThisSectionIndex;  //see section order (mostly used for diagnostics)
             double m_TalonDPP=1.0;
             double m_SparkDPP=1.0;
+            double m_DrivePosition=0.0; //need position reading for some callers which use position
+            std::shared_ptr<NetworkTable> m_OutputTable = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard");
+            std::string m_WheelName;  //for smartdashboard
+            std::string m_SwivelName;  //   . . .
 
             #pragma region _EncoderTranslation_
             class EncoderTranslation_Direct
@@ -234,7 +240,7 @@ private:
             //Testing, for simulation this can bypass the swivel encoders
             double m_TestSwivelPos=0.0;
             #pragma endregion
-
+            #pragma endregion
             bool UseFallbackSim() const
             {
                 //override to test actual controllers in the simulation (will need to be open loop, unless we can get vendors to work properly)
@@ -261,9 +267,21 @@ private:
                 }
                 else
                 {
-                    //TODO----
-                    m_drive_motor=nullptr;
-                    m_swivel_motor=nullptr;
+                    //These are hard coded in backupConfig.cpp so we'll just hard codde them here
+                    const char *const module_prefix[4]={"FL","FR","BL","BR"};
+                    //We do not have access to the actual type of object on sparks so we'll dynamic cast for it
+                    std::string name="Wheel";
+                    name+=module_prefix[index];
+                    m_WheelName=name;
+                    Components::NativeComponent *nc=collection->Get(name);
+                    assert(nc);
+                    m_drive_motor=dynamic_cast<Components::SparkMaxItem *>(nc);
+                    assert(m_drive_motor);
+                    name ="Swivel";
+                    name+=module_prefix[index];
+                    m_SwivelName=name;
+                    m_swivel_motor=collection->GetTalon(name);
+                    assert(m_swivel_motor);
                 }
 
                 if (UseFallbackSim())
@@ -396,6 +414,18 @@ private:
                     }
                     #endif
                 }
+                //put on the fake run
+                m_OutputTable->PutNumber(m_SwivelName + "-Encoder", swivelPos*(1.0/m_TalonDPP));
+                m_DrivePosition+= (driveRate*(1.0/m_SparkDPP)) * dTime_s;
+                m_OutputTable->PutNumber(m_WheelName + "-Encoder", m_DrivePosition);
+            }
+            double GetDriveVoltage() const
+            {
+                return m_drive_motor->Get();
+            }
+            double GetSwivelVoltage() const
+            {
+                return m_swivel_motor->Get();
             }
         };
 
@@ -428,6 +458,15 @@ private:
                 m_pParent->m_OurSimCallback().Velocity.AsArray[i],
                 m_pParent->m_OurSimCallback().Velocity.AsArray[i+4]);
         }
+        double GetDriveVoltage(size_t index) const
+        {
+            return Module[index].GetDriveVoltage();
+        }
+        double GetSwivelVoltage(size_t index) const
+        {
+            return Module[index].GetSwivelVoltage();
+        }
+
     };
     WheelModules m_WheelModule=this;
 public:
@@ -455,15 +494,24 @@ public:
     {
         return m_PhysicalOdometry;
     }
+    double GetDriveVoltage(size_t index) const
+    {
+        return m_WheelModule.GetDriveVoltage(index);
+    }
+    double GetSwivelVoltage(size_t index) const
+    {
+        return m_WheelModule.GetSwivelVoltage(index);
+    }
 };
 
 class WPI_Output_Internal
 {
 private:
     WheelModule_Interface m_Implementation;
-    frc::AnalogGyro *m_Gyro;
+    std::shared_ptr<frc::AnalogGyro> m_Gyro;
     std::shared_ptr<frc::sim::AnalogGyroSim> m_SimGyro;
     std::function<double ()> m_OurSimGyroCallback=nullptr;
+    std::shared_ptr<NetworkTable> m_OutputTable = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard");
 public:
     void Init(const Framework::Base::asset_manager *props, Configuration::ActiveCollection *collection)
     {
@@ -474,8 +522,8 @@ public:
         {
             using namespace frc;
             const int channel=0;
-            //m_Gyro=std::make_shared<frc::AnalogGyro>(channel);
-            //TODO
+            //TODO use analog gyro for now since the Nav-x is using fake run, but switch to Nav-x at some point for proper simulation
+            m_Gyro=std::make_shared<frc::AnalogGyro>(channel);
             if (RobotBase::IsSimulation())
                 m_SimGyro = std::make_shared<sim::AnalogGyroSim>(*m_Gyro);
         }
@@ -489,7 +537,12 @@ public:
         m_Implementation.SimulatorTimeSlice(dTime_s);
         //Note: this should be normalized to 360, but GEMO
         if ((m_Gyro)&&(m_OurSimGyroCallback))
-            m_SimGyro->SetAngle(RAD_2_DEG(m_OurSimGyroCallback()));
+        {
+            const double angle_deg=RAD_2_DEG(m_OurSimGyroCallback());
+            m_SimGyro->SetAngle(angle_deg);
+            //fake run uses this
+            m_OutputTable->PutNumber("NavX-Y", angle_deg);
+        }
     }
     void SetSimOdometry(std::function<Robot::SwerveVelocities ()> callback)
     {
@@ -514,6 +567,14 @@ public:
         assert(m_Gyro);
         return DEG_2_RAD(m_Gyro->GetAngle());
     }
+    double GetDriveVoltage(size_t index) const
+    {
+        return m_Implementation.GetDriveVoltage(index);
+    }
+    double GetSwivelVoltage(size_t index) const
+    {
+        return m_Implementation.GetSwivelVoltage(index);
+    }
 };
 
 }
@@ -527,6 +588,7 @@ private:
     properties::script_loader m_script_loader;
     SimulatedOdometry m_Simulation;
    	SwerveVelocities m_Voltage;
+    Output::WPI_Output_Internal m_Output;
     void SetHooks(bool enable)
 	{
         if (enable)
@@ -538,6 +600,9 @@ private:
 						z;\
 					});
             HOOK(m_Simulation.SetVoltageCallback,, return m_Voltage);
+            HOOK(m_Output.SetVoltageCallback,, return m_Voltage);
+            HOOK(m_Output.SetSimOdometry,,return m_Simulation.GetCurrentVelocities());
+            HOOK(m_Output.SetSimOdometry_heading,,return m_Simulation.GyroMag_GetCurrentHeading());
    			//done with these macros
 			#undef HOOK
         }
@@ -566,15 +631,30 @@ public:
     void SimulationInit()
     {
         //pass the properties into the simulation
-   		m_script_loader.load_script(m_properties);
         m_Simulation.Init(&m_properties);
         Reset();
     }
+    void ActiveCollection_Init(Configuration::ActiveCollection *collection)
+    {
+        //Note... it turns out this is called before Simulation, but this should be more robust to handle either case
+   		m_script_loader.load_script(m_properties); 
+        m_Output.Init(&m_properties,collection);
+    }
     void TimeSlice(double dTime_s)
     {
+        const bool can_run=nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("RUN_ROBOT", false);
+        if (!can_run)
+            return;
+        //Grab the voltage from motors (they are being set externally)
+        for (size_t i=0;i<4;i++)
+        {
+            m_Voltage.Velocity.AsArray[i]=m_Output.GetDriveVoltage(i);
+            m_Voltage.Velocity.AsArray[i+4]=m_Output.GetSwivelVoltage(i);
+        }
    		//The simulation already is hooked to m_Voltage its ready to simulate
 		//This call is skipped in real robot code as it physically happens instead
         m_Simulation.TimeSlice(dTime_s);
+        m_Output.SimulatorTimeSlice(dTime_s);
     }
 };
 
@@ -582,12 +662,14 @@ public:
 
 void Simulator_Interface::SimulationInit()
 {
-    m_interface = std::make_shared<Simulator_Interface_Internal>();
+    assert(m_interface);
     m_interface->SimulationInit();
 }
 void Simulator_Interface::ActiveCollection_Init(void *active_collection)
 {
-
+    //Note... it turns out this is called before Simulation, but this should be more robust to handle either case
+    m_interface = std::make_shared<Simulator_Interface_Internal>();
+    m_interface->ActiveCollection_Init((Configuration::ActiveCollection *)active_collection);
 }
 void Simulator_Interface::TimeSlice(double dTime_s)
 {

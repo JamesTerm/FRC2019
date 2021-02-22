@@ -23,7 +23,7 @@ using namespace frc;
 namespace Components{
 class TalonSRXItem : public Motor{
 private:
-	TalonSRX *talon;
+	WPI_TalonSRX *talon;
 	int channel;
 	bool reversed;
 	bool encoderEnabled;

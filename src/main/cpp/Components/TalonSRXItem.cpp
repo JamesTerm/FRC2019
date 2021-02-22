@@ -25,7 +25,7 @@ TalonSRXItem::TalonSRXItem(int _channel, string _name, bool _reversed, bool enab
 	: Motor(_name){
 	channel = _channel;
 	reversed = _reversed;
-	talon = new TalonSRX(channel);
+	talon = new WPI_TalonSRX(channel);
 	encoderEnabled = enableEncoder;
 	FromTable(Real);
 	if(enableEncoder)
