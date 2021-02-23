@@ -39,6 +39,14 @@ Robot::~Robot()
 
 void Robot::LoadConfig()
 {
+	if(nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("0A-RESET_ROBOT_VALUES", false))
+	{
+		vector<string> KeysNT = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetKeys();
+		for(int i = 0; i < KeysNT.size(); i++)
+			nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->Delete(KeysNT.at(i));
+	}
+	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("0A-RESET_ROBOT_VALUES", false);
+	
 	Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
 }
 

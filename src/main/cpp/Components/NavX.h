@@ -20,12 +20,12 @@ Email: dylantrwatson@gmail.com
 namespace Components{
 class NavX : public AHRS, public NativeComponent{
 public:
-	NavX() : AHRS(SerialPort::Port::kMXP, AHRS::SerialDataType::kProcessedData, 50), NativeComponent("NavX"){}
-	NavX(bool Fake) : AHRS(SerialPort::Port::kMXP, AHRS::SerialDataType::kProcessedData, 50), NativeComponent("NavX"){FakeRun = true; SetUP();}
-	NavX(SPI::Port spiPortId, uint8_t updateRateHz) : AHRS(spiPortId, updateRateHz), NativeComponent("NavX"){}
-	NavX(SPI::Port spiPortId, int spiBitRate, uint8_t updateRateHz) : AHRS(spiPortId, spiBitRate, updateRateHz), NativeComponent("NavX"){}
-	NavX(I2C::Port i2CPortId, uint8_t updateRateHz): AHRS(i2CPortId, updateRateHz), NativeComponent("NavX"){}
-	NavX(SerialPort::Port serialPortId, SerialDataType dataType, uint8_t updateRateHz) : AHRS(serialPortId, dataType, updateRateHz), NativeComponent("NavX"){}
+	NavX() : AHRS(SerialPort::Port::kMXP, AHRS::SerialDataType::kProcessedData, 50), NativeComponent("NavX"){GetLast();}
+	NavX(bool Fake) : AHRS(SerialPort::Port::kMXP, AHRS::SerialDataType::kProcessedData, 50), NativeComponent("NavX"){FakeRun = true; SetUP(); GetLast();}
+	NavX(SPI::Port spiPortId, uint8_t updateRateHz) : AHRS(spiPortId, updateRateHz), NativeComponent("NavX"){GetLast();}
+	NavX(SPI::Port spiPortId, int spiBitRate, uint8_t updateRateHz) : AHRS(spiPortId, spiBitRate, updateRateHz), NativeComponent("NavX"){GetLast();}
+	NavX(I2C::Port i2CPortId, uint8_t updateRateHz): AHRS(i2CPortId, updateRateHz), NativeComponent("NavX"){GetLast();}
+	NavX(SerialPort::Port serialPortId, SerialDataType dataType, uint8_t updateRateHz) : AHRS(serialPortId, dataType, updateRateHz), NativeComponent("NavX"){GetLast();}
 	NavX* GetRawComponent(){return this;}
 	virtual ~NavX(){}
 	double GetNavXAngle(){
@@ -73,6 +73,10 @@ private:
 		OutputTable->PutNumber("NavX-X", 0);
 		OutputTable->PutNumber("NavX-Z", 0);
 		OutputTable->PutBoolean("NavX-Reset", true);
+	}
+	void GetLast()
+	{
+		RefAngle = OutputTable->GetNumber("NavX-Y", 0);
 	}
 };
 	
