@@ -485,15 +485,11 @@ void Goal_SwerveCord::Savedata()
     {
         Goal_SwerveCord::Setdata(4, Xaxis->GetLastErrorV());
         Goal_SwerveCord::Setdata(5, Xaxis->GetLastResult());
-        
-        delete Xaxis;
     }
     if (Yaxis != nullptr)
     {
         Goal_SwerveCord::Setdata(6, Yaxis->GetLastErrorV());
         Goal_SwerveCord::Setdata(7, Yaxis->GetLastResult());
-        
-        delete Yaxis;
     }
 
     Goal_SwerveCord::Setdata(8, Y);

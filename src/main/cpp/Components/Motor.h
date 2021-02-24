@@ -54,10 +54,11 @@ namespace Components
             void SetPDBChannel(int val) { PDBPort = val; }
             int GetPDBChannel() {return PDBPort;}
 
-            void InitProfiles(double Ppos = 0.8, double Ipos = 0.01, double Dpos = 0, double Pspe = 0.8, double Ispe = 0, double Dspe = 0)
+            void InitProfiles(double Ppos = 0.8, double Ipos = 0.01, double Dpos = 0, double Pspe = 3, double Ispe = 0, double Dspe = 0)
             {
                 PositionProfile = new PIDProfile(Ppos, Ipos, Dpos);
                 PowerProfile = new PIDProfile(Pspe, Ispe, Dspe);
+                PowerProfile->SetMaxChange(0.15);
             }
 
             void CleanUpProfiles()
@@ -82,7 +83,9 @@ namespace Components
                     CurrentPowerTarget = Power;
                     PowerProfile->Reset();
                 }
-                Set(PowerProfile->Calculate(Power, Get(), Time));
+                double Current = Get();
+                Current += -PowerProfile->Calculate(Power, Get(), Time);
+                Set(Current);
             }
 
             void SetPosition(double Target, double CurrentPosition, double Time)

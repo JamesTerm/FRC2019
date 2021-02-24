@@ -44,6 +44,9 @@ namespace Components
             virtual void Set(double val);
 			virtual double Get();
 
+            Motor* GetWheelMtr() {return Wheel;};
+            Motor* GetSwivelMtr() {return Swivel;};
+
             double GetEnc();
             double GetSwivelEnc();
             double GetSwivelTarget() {return CurrentSwivelTarget;};
