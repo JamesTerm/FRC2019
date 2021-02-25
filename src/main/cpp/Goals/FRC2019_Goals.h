@@ -187,6 +187,24 @@ class Goal_SwerveCord : public AtomicGoal
     bool done = false;
 };
 
+class Goal_MotorPosition : public AtomicGoal
+{
+  public:
+    Goal_MotorPosition(ActiveCollection *activeCollection)
+    {
+      m_activeCollection = activeCollection;
+    }
+
+    virtual void Activate();
+    virtual Goal::Goal_Status Process(double dTime);
+    virtual void Terminate();
+  private:
+    double TargetPos = 0;
+    ActiveCollection *m_activeCollection;
+    Motor* Subject = nullptr;
+    EncoderItem* Position = nullptr;
+};
+
 class Goal_MoveForward : public AtomicGoal
 {
   public:

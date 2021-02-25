@@ -16,11 +16,13 @@ using namespace Controls;
 
 GoalButtonControl::GoalButtonControl() {}
 
-GoalButtonControl::GoalButtonControl(Joystick *_joy, string _name, int _button, ActiveCollection* ac, TeleOpGoal _goal, double _target, bool _reversed, double _powerMultiplier)
+GoalButtonControl::GoalButtonControl(Joystick *_joy, string _name, int _button, ActiveCollection* ac, TeleOpGoal _goal, double _target, int KeyID, vector<int> _RemoveKeys, bool _reversed, double _powerMultiplier)
 	: ControlItem(_joy, _name, _reversed, _powerMultiplier, ac) {
 	m_button = _button;
 	m_goal = _goal;
 	m_target = _target;
+	IdKey = KeyID;
+	RemoveKeys = _RemoveKeys;
 }
 
 double GoalButtonControl::Update(double _dTime){
@@ -31,6 +33,7 @@ double GoalButtonControl::Update(double _dTime){
 	//if the button is not pressed and the state has changed on this iteration of the loop
 	if (!val && abs(m_previous - m_current) > EPSILON_MIN)
 		ValueChanged(new TEventArgs<double, GoalButtonControl*>(m_target, this));
+	/*
 	//if there is a current goal running and this button is the one that set the goal
 	if (m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive && m_goalSet) {
 		m_activeCollection->GetActiveGoal()->Process(0.010);
@@ -39,7 +42,7 @@ double GoalButtonControl::Update(double _dTime){
 	else if (!(m_activeCollection->GetActiveGoal()->GetStatus() == Goal::eActive) && m_goalSet) {
 		m_goalSet = false;
 		m_activeCollection->GetActiveGoal()->Reset();
-	}
+	}*/
 	m_previous = m_current;
 	return m_current;
 }

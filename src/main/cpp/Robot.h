@@ -54,7 +54,7 @@ class Robot : public RobotBase
         void Teleop();
         void Test();
         void Disabled();
-        void LoadConfig();
+        void LoadConfig(bool RobotRunning);
 
         void StartCompetition() override;
         void EndCompetition() override;

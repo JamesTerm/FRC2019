@@ -62,8 +62,18 @@ namespace Configuration
 
 			void DeleteAll();
 
-			void SetActiveGoal(MultitaskGoal* g) {activeGoal = g;}
-			MultitaskGoal* GetActiveGoal() {return activeGoal;}
+			void ResetSuperior_Goal();
+
+			void ProcessSuperior_Goal(double dTime);
+
+			void SetDriverGoal(MultitaskGoal* g) {Driver_Goal = g;}
+			MultitaskGoal* GetDriverGoal() {return Driver_Goal;}
+
+			void SetOperatorGoal(MultitaskGoal* g) {Operator_Goal = g;}
+			MultitaskGoal* GetOperatorGoal() {return Operator_Goal;}
+
+			void SetRobotGoal(MultitaskGoal* g) {Robot_Goal = g;}
+			MultitaskGoal* GetRobotGoal() {return Robot_Goal;}
 
 			void SetOverdrive(bool o) {overdrive = o;}
 			bool GetOverdrive() {return overdrive;}
@@ -80,7 +90,12 @@ namespace Configuration
 			
 	private:
 		vector<NativeComponent*> activeCollection;
-		MultitaskGoal* activeGoal = nullptr;
+		MultitaskGoal* superior_Goal = nullptr;
+
+		MultitaskGoal* Driver_Goal = nullptr;
+		MultitaskGoal* Operator_Goal = nullptr;
+		MultitaskGoal* Robot_Goal = nullptr;
+		
 		bool overdrive;
 		bool AutoOverride = false;
 		string AutoSele;

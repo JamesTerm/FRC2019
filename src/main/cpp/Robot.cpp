@@ -37,9 +37,11 @@ Robot::~Robot()
 	m_activeCollection = nullptr;
 }
 
-void Robot::LoadConfig()
+void Robot::LoadConfig(bool RobotRunning)
 {
-	if(nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("0A-RESET_ROBOT_VALUES", false) && !nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("RUN_ROBOT", false))
+	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", false);
+
+	if(nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("0A-RESET_ROBOT_VALUES", false) && !RobotRunning)
 	{
 		vector<string> KeysNT = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetKeys();
 		for(int i = 0; i < KeysNT.size(); i++)
@@ -48,6 +50,7 @@ void Robot::LoadConfig()
 	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("0A-RESET_ROBOT_VALUES", false);
 	
 	Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
+	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", RobotRunning);
 }
 
 /*
@@ -58,9 +61,8 @@ void Robot::LoadConfig()
 void Robot::RobotInit()
 {
 	FrameworkCommunication::GetInstance();
-	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", false);
 	Log::restartfile();
-	Robot::LoadConfig();
+	Robot::LoadConfig(false);
 	Log::General("Program Version: " + to_string(VERSION) + " Revision: " + REVISION, true);
 	SmartDashboard::init(); //!< Must have this for smartdashboard to work properly
 	m_inst = nt::NetworkTableInstance::GetDefault(); //!< Network tables
@@ -76,8 +78,7 @@ void Robot::RobotInit()
  */
 void Robot::Autonomous()
 {
-	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", true);
-	Robot::LoadConfig();
+	Robot::LoadConfig(true);
 	
 	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Auton);	
 	m_masterGoal = new MultitaskGoal(m_activeCollection, false);
@@ -96,7 +97,7 @@ void Robot::Autonomous()
 	m_masterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection)); //!< This is for FRC 2019 SANDSTORM! Be aware that if Sandstorm is removed, this NEEDS to be removed.
 	//TODO: Make the auto configurable (turn on/turn off) OR add a no auton feature to the dashboard
 	m_masterGoal->Activate();
-	m_activeCollection->SetActiveGoal(m_masterGoal);
+	m_activeCollection->SetRobotGoal(m_masterGoal);
 	double dTime = 0.010;
 	double current_time = 0.0;
 	while (m_masterGoal->GetStatus() == Goal::eActive && _IsAutononomous() && !IsDisabled())
@@ -129,15 +130,13 @@ void Robot::Autonomous()
 //TODO: Potentially make a "test" tag in the config that can toggle this?
 void Robot::Teleop()
 {
-	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", true);
-	Robot::LoadConfig();
+	Robot::LoadConfig(true);
 
 	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Teleop);
-	m_activeCollection->GetActiveGoal()->~MultitaskGoal(); //!< Destroy any pre-existing masterGoal that was not properly disposed of
-	m_teleOpMasterGoal = new MultitaskGoal(m_activeCollection, false);
+	m_activeCollection->ResetSuperior_Goal(); //!< Destroy any pre-existing masterGoal that was not properly disposed of
+	
 	//m_teleOpMasterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
 	//m_teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
-	m_activeCollection->SetActiveGoal(m_teleOpMasterGoal);
 	// m_activeCollection->GetActiveGoal()->AddGoal(new Goal_TimeOut(m_activeCollection, 3000));
 	// m_activeCollection->GetActiveGoal()->Activate();
 	//TODO: Talk to Ian about this
@@ -170,8 +169,7 @@ void Robot::Teleop()
  */
 void Robot::Test()
 {
-	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", true);
-	Robot::LoadConfig();
+	Robot::LoadConfig(true);
 
 	string SELECTED_AUTO = "";
 	if (AutoTable->GetString("Auto Selector", "").length() == 0 && !m_activeCollection->ConfigOverride())
@@ -241,7 +239,7 @@ void Robot::Disabled() {
 	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Disabled);
 	while(IsDisabled())
 		if(nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("0A-RESET_ROBOT_VALUES", false))
-			Robot::LoadConfig();
+			Robot::LoadConfig(false);
  }
 
 #ifndef RUNNING_FRC_TESTS

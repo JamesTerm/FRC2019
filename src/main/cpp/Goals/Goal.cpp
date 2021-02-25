@@ -17,6 +17,9 @@ Email: chrisrweeks@aol.com
 
 using namespace std;
 
+/***************************************************************************************************************/
+/*												Goal														   */
+/***************************************************************************************************************/
 
 void Goal::Setdata(int index, double dataVal)
 {
@@ -34,9 +37,41 @@ void Goal::Setdata(int index, double dataVal)
 	}
 }
 
+void Goal::CopyFrom(vector<double> dataIn, int startIndex)
+{
+	for(int i = startIndex; i < dataIn.size() + startIndex; i++)
+	{
+		Setdata(i, dataIn.at(i - startIndex));
+	}
+}
+
+void Goal::SetStringdata(int index, string dataVal)
+{
+	if(index >= 0 && index < Stringdata.size())
+	{
+		Stringdata.at(index) = dataVal;
+	}
+	else
+	{
+		for(int i = Stringdata.size() - 1; i < index + 1; i++)
+		{
+			Stringdata.push_back("N/A");
+		}
+		Stringdata.at(index) = dataVal;
+	}
+}
+
+void Goal::CopyStringFrom(vector<string> dataIn, int startIndex)
+{
+	for(int i = startIndex; i < dataIn.size() + startIndex; i++)
+	{
+		SetStringdata(i, dataIn.at(i - startIndex));
+	}
+}
+
 
 /***************************************************************************************************************/
-/*												CompositeGoal													*/
+/*												CompositeGoal												   */
 /***************************************************************************************************************/
 
 void CompositeGoal::Activate()
@@ -52,7 +87,7 @@ Goal::Goal_Status CompositeGoal::Process(double dTime)
 		while (!m_SubGoals.empty() && (m_SubGoals.front()->GetStatus() == eCompleted || m_SubGoals.front()->GetStatus() == eFailed))
 		{
 			data = m_SubGoals.front()->data;
-			m_SubGoals.pop_front();
+			m_SubGoals.erase(m_SubGoals.begin());
 		}
 		if (!m_SubGoals.empty())
 		{
@@ -83,12 +118,74 @@ Goal::Goal_Status CompositeGoal::Process(double dTime)
 	}
 }
 
+Goal* CompositeGoal::GetGoal(int IdentityKey)
+{
+	Goal* Selected = nullptr;
+	for(int i = 0; i < m_SubGoals.size(); i++)
+	{
+		if(m_SubGoals.at(i)->IdentityKey == IdentityKey)
+		{
+			Selected = m_SubGoals.at(i);
+			break;
+		}
+	}
+	return Selected;
+}
+
+bool CompositeGoal::HasGoal(int IdentityKey)
+{
+	bool Selected = false;
+	for(int i = 0; i < m_SubGoals.size(); i++)
+	{
+		if(m_SubGoals.at(i)->IdentityKey == IdentityKey)
+		{
+			Selected = true;
+			break;
+		}
+	}
+	return Selected;
+}
+
+bool CompositeGoal::RemoveGoal(int IdentityKey)
+{
+	bool removed = false;
+	for(int i = 0; i < m_SubGoals.size(); i++)
+	{
+		if(m_SubGoals.at(i)->IdentityKey == IdentityKey)
+		{
+			m_SubGoals.at(i)->Terminate();
+			delete m_SubGoals.at(i);
+			m_SubGoals.erase(m_SubGoals.begin() + i);
+			removed = true;
+		}
+	}
+	return removed;
+}
+
+bool CompositeGoal::ReplaceGoal(int IdentityKey, Goal* NewGoal)
+{
+	bool removed = false;
+	for(int i = 0; i < m_SubGoals.size(); i++)
+	{
+		if(m_SubGoals.at(i)->IdentityKey == IdentityKey)
+		{
+			m_SubGoals.at(i)->Terminate();
+			delete m_SubGoals.at(i);
+			m_SubGoals.erase(m_SubGoals.begin() + i);
+			m_SubGoals.insert(m_SubGoals.begin() + i, NewGoal);
+			removed = true;
+		}
+	}
+	return removed;
+}
+
+
 void CompositeGoal::Terminate()
 {
 	m_Status = eInactive;
 }
 /***************************************************************************************************************/
-/*												MultitaskGoal													*/
+/*												MultitaskGoal												   */
 /***************************************************************************************************************/
 
 MultitaskGoal::MultitaskGoal(ActiveCollection *activeCollection, bool WaitAll) : m_WaitAll(WaitAll)
@@ -160,6 +257,67 @@ Goal::Goal_Status MultitaskGoal::Process(double dTime_s)
 		m_Status = status;
 	}
 	return status;
+}
+
+Goal* MultitaskGoal::GetGoal(int IdentityKey)
+{
+	Goal* Selected = nullptr;
+	for(int i = 0; i < m_GoalsToProcess.size(); i++)
+	{
+		if(m_GoalsToProcess.at(i)->IdentityKey == IdentityKey)
+		{
+			Selected = m_GoalsToProcess.at(i);
+			break;
+		}
+	}
+	return Selected;
+}
+
+bool MultitaskGoal::HasGoal(int IdentityKey)
+{
+	bool Selected = false;
+	for(int i = 0; i < m_GoalsToProcess.size(); i++)
+	{
+		if(m_GoalsToProcess.at(i)->IdentityKey == IdentityKey)
+		{
+			Selected = true;
+			break;
+		}
+	}
+	return Selected;
+}
+
+bool MultitaskGoal::RemoveGoal(int IdentityKey)
+{
+	bool removed = false;
+	for(int i = 0; i < m_GoalsToProcess.size(); i++)
+	{
+		if(m_GoalsToProcess.at(i)->IdentityKey == IdentityKey)
+		{
+			m_GoalsToProcess.at(i)->Terminate();
+			delete m_GoalsToProcess.at(i);
+			m_GoalsToProcess.erase(m_GoalsToProcess.begin() + i);
+			removed = true;
+		}
+	}
+	return removed;
+}
+
+bool MultitaskGoal::ReplaceGoal(int IdentityKey, Goal* NewGoal)
+{
+	bool removed = false;
+	for(int i = 0; i < m_GoalsToProcess.size(); i++)
+	{
+		if(m_GoalsToProcess.at(i)->IdentityKey == IdentityKey)
+		{
+			m_GoalsToProcess.at(i)->Terminate();
+			delete m_GoalsToProcess.at(i);
+			m_GoalsToProcess.erase(m_GoalsToProcess.begin() + i);
+			m_GoalsToProcess.insert(m_GoalsToProcess.begin() + i, NewGoal);
+			removed = true;
+		}
+	}
+	return removed;
 }
 
 void MultitaskGoal::Terminate()

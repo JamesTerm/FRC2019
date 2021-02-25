@@ -35,14 +35,14 @@ void backupConfig::SetInfo()
     Log::General("Backup Config Version: " + to_string(Version), true);
 
 	if(useNavX){
-		m_activeCollection->Add(new NavX(true));
+		m_activeCollection->Add(new NavX(Fake));
 		Log::General("NavX detected");
 	}
 	else
 		Log::General("Failed to load the NavX: Disabling NavX by default");
 	if (useLimelight)
 	{
-    	limelight* lime = new limelight();
+    	limelight* lime = new limelight(Fake);
 		m_activeCollection->Add(lime);
 		Log::General("Added Limelight");
 	}
@@ -98,6 +98,7 @@ void backupConfig::SetControls()
 	
 	backupConfig::AddToggleControl("IntakeControl", "IntakePiston", 1, 1, false, false, backupConfig::JoystickControler::Operator);
 
+	backupConfig::AddGoalAxisControl("CoverControl", TeleOpGoal::eMotorPosition, vector<int> {2}, vector<string> {"Cover", "CoverEncoder"}, 1, vector<int> {}, 0, false, true, backupConfig::JoystickControler::Operator);
 }
 
 backupConfig::~backupConfig(){}

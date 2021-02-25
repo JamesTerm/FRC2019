@@ -1043,10 +1043,18 @@ void Config::AllocateDriverControls(xml_node &controls){
 			if(channel){
 				xml_attribute goal = button.attribute("goal");
 				xml_attribute params = button.attribute("params");
-				if(goal && params){
+				xml_attribute ID = button.attribute("ID");
+				xml_attribute OtherKeys = button.attribute("RemoveKeys");
+				if(goal && params && ID && OtherKeys){
 					TeleOpGoal goalToAdd = getTeleOpGoal(goal.as_string());
 					if(goalToAdd != TeleOpGoal::eNone){
-						GoalButtonControl* tmp = new GoalButtonControl(m_driveJoy, name, channel.as_int(), m_activeCollection, goalToAdd, params.as_double());
+						
+						vector<int> RemKeys;
+						vector<string> bind_vector_Key = getBindingStringList(OtherKeys.as_string());
+						for(int i = 0; i < bind_vector_Key.size(); i++)
+							RemKeys.push_back(stoi(bind_vector_Key.at(i)));
+
+						GoalButtonControl* tmp = new GoalButtonControl(m_driveJoy, name, channel.as_int(), m_activeCollection, goalToAdd, params.as_double(), ID.as_int(), RemKeys);
 						m_drive->AddControlDrive(tmp);
 						Log::General("Added GoalButtonControl " + name + ", Button: " + to_string(channel.as_int()) + ", Goal: " + goal.as_string() + ", Params: " + params.as_string());
 						xml_attribute bind_event_xml = button.attribute("bindEvent");
@@ -1292,10 +1300,18 @@ void Config::AllocateOperatorControls(xml_node &controls){
 			if(channel){
 				xml_attribute goal = button.attribute("goal");
 				xml_attribute params = button.attribute("params");
-				if(goal && params){
+				xml_attribute ID = button.attribute("ID");
+				xml_attribute OtherKeys = button.attribute("RemoveKeys");
+				if(goal && params && ID && OtherKeys){
 					TeleOpGoal goalToAdd = getTeleOpGoal(goal.as_string());
 					if(goalToAdd != TeleOpGoal::eNone){
-						GoalButtonControl* tmp = new GoalButtonControl(m_operatorJoy, name, channel.as_int(), m_activeCollection, goalToAdd, params.as_double());
+
+						vector<int> RemKeys;
+						vector<string> bind_vector_Key = getBindingStringList(OtherKeys.as_string());
+						for(int i = 0; i < bind_vector_Key.size(); i++)
+							RemKeys.push_back(stoi(bind_vector_Key.at(i)));
+
+						GoalButtonControl* tmp = new GoalButtonControl(m_operatorJoy, name, channel.as_int(), m_activeCollection, goalToAdd, params.as_double(), ID.as_int(), RemKeys);
 						m_drive->AddControlOperate(tmp);
 						Log::General("Added GoalButtonControl " + name + ", Button: " + to_string(channel.as_int()) + ", Goal: " + goal.as_string() + ", Params: " + params.as_string());
 						xml_attribute bind_event_xml = button.attribute("bindEvent");
