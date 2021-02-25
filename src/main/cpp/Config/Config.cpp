@@ -1082,6 +1082,61 @@ void Config::AllocateDriverControls(xml_node &controls){
 
 	#pragma endregion
 
+	#pragma region GoalAxisControl
+	
+	xml_node GoalAxisControls = drive.child("GoalAxisControls");
+	if(GoalAxisControls){
+		for(xml_node button = GoalAxisControls.first_child(); button; button = button.next_sibling()){
+			string name = button.name();
+				xml_attribute goal = button.attribute("goal");
+				xml_attribute repeat = button.attribute("repeat");
+				xml_attribute ID = button.attribute("ID");
+				xml_attribute IndexStart = button.attribute("StartIndex");
+				xml_attribute OtherKeys = button.attribute("RemoveKeys");
+				xml_attribute AxisNumbers = button.attribute("Axis");
+				xml_attribute StringsData = button.attribute("StringData");
+				xml_attribute DeadZ = button.attribute("DeadZone");
+				xml_attribute Mult = button.attribute("mult");
+				if(goal && repeat && ID && OtherKeys && AxisNumbers && StringsData && DeadZ && Mult){
+					TeleOpGoal goalToAdd = getTeleOpGoal(goal.as_string());
+					if(goalToAdd != TeleOpGoal::eNone){
+
+						vector<int> RemKeys;
+						vector<string> bind_vector_Key = getBindingStringList(OtherKeys.as_string());
+						for(int i = 0; i < bind_vector_Key.size(); i++)
+							RemKeys.push_back(stoi(bind_vector_Key.at(i)));
+
+						vector<int> Axis;
+						vector<string> bind_vector_Axis = getBindingStringList(AxisNumbers.as_string());
+						for(int i = 0; i < bind_vector_Axis.size(); i++)
+							RemKeys.push_back(stoi(bind_vector_Axis.at(i)));
+
+						vector<string> StringDataVector = getBindingStringList(StringsData.as_string());
+
+						GoalAxisControl* tmp = new GoalAxisControl(m_driveJoy, name, Axis, m_activeCollection, goalToAdd, StringDataVector, IndexStart.as_int(), ID.as_int(), RemKeys, repeat.as_bool(), DeadZ.as_double(), Mult.as_double());
+						m_drive->AddControlOperate(tmp);
+						Log::General("Added GoalAxisControl " + name + ", Goal: " + goal.as_string());
+						xml_attribute bind_event_xml = button.attribute("bindEvent");
+						bool bind_event = bind_event_xml.as_bool(); 
+						if(!bind_event_xml || bind_event){
+							m_activeCollection->AddEvent(&(tmp->ValueChanged));
+						}
+					}
+					else {
+						Log::Error("Failed to load GoalAxisControl " + name + ". This may cause a fatal runtime eror!");
+					}
+				}
+				else{
+					Log::Error("Failed to load GoalAxisControl " + name + ". This may cause a fatal runtime eror!");
+				}
+		}
+	}
+	else{
+		Log::Error("GoalAxisControl Driver definitions not found! Skipping...");
+	}
+
+	#pragma endregion
+
 	#pragma region SwerveControl
 
 	xml_node Swerve = drive.child("SwerveControl");
@@ -1335,6 +1390,61 @@ void Config::AllocateOperatorControls(xml_node &controls){
 	}
 	else{
 		Log::Error("Goal Button Control Operator definitions not found! Skipping...");
+	}
+
+	#pragma endregion
+
+	#pragma region GoalAxisControl
+	
+	xml_node GoalAxisControls = _operator.child("GoalAxisControls");
+	if(GoalAxisControls){
+		for(xml_node button = GoalAxisControls.first_child(); button; button = button.next_sibling()){
+			string name = button.name();
+				xml_attribute goal = button.attribute("goal");
+				xml_attribute repeat = button.attribute("repeat");
+				xml_attribute ID = button.attribute("ID");
+				xml_attribute IndexStart = button.attribute("StartIndex");
+				xml_attribute OtherKeys = button.attribute("RemoveKeys");
+				xml_attribute AxisNumbers = button.attribute("Axis");
+				xml_attribute StringsData = button.attribute("StringData");
+				xml_attribute DeadZ = button.attribute("DeadZone");
+				xml_attribute Mult = button.attribute("mult");
+				if(goal && repeat && ID && OtherKeys && AxisNumbers && StringsData && DeadZ && Mult){
+					TeleOpGoal goalToAdd = getTeleOpGoal(goal.as_string());
+					if(goalToAdd != TeleOpGoal::eNone){
+
+						vector<int> RemKeys;
+						vector<string> bind_vector_Key = getBindingStringList(OtherKeys.as_string());
+						for(int i = 0; i < bind_vector_Key.size(); i++)
+							RemKeys.push_back(stoi(bind_vector_Key.at(i)));
+
+						vector<int> Axis;
+						vector<string> bind_vector_Axis = getBindingStringList(AxisNumbers.as_string());
+						for(int i = 0; i < bind_vector_Axis.size(); i++)
+							RemKeys.push_back(stoi(bind_vector_Axis.at(i)));
+
+						vector<string> StringDataVector = getBindingStringList(StringsData.as_string());
+
+						GoalAxisControl* tmp = new GoalAxisControl(m_operatorJoy, name, Axis, m_activeCollection, goalToAdd, StringDataVector, IndexStart.as_int(), ID.as_int(), RemKeys, repeat.as_bool(), DeadZ.as_double(), Mult.as_double());
+						m_drive->AddControlOperate(tmp);
+						Log::General("Added GoalAxisControl " + name + ", Goal: " + goal.as_string());
+						xml_attribute bind_event_xml = button.attribute("bindEvent");
+						bool bind_event = bind_event_xml.as_bool(); 
+						if(!bind_event_xml || bind_event){
+							m_activeCollection->AddEvent(&(tmp->ValueChanged));
+						}
+					}
+					else {
+						Log::Error("Failed to load GoalAxisControl " + name + ". This may cause a fatal runtime eror!");
+					}
+				}
+				else{
+					Log::Error("Failed to load GoalAxisControl " + name + ". This may cause a fatal runtime eror!");
+				}
+		}
+	}
+	else{
+		Log::Error("GoalAxisControl Operator definitions not found! Skipping...");
 	}
 
 	#pragma endregion
