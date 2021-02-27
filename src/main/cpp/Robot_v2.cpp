@@ -68,14 +68,26 @@ private:
     Module::Robot::Simulator_Interface m_simulation;
     bool m_IsConfigLoaded=false;
     #pragma endregion
-    void LoadConfig()
+    void LoadConfig(bool RobotRunning)
     {
+       	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", false);
+
+        if(nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("0A-RESET_ROBOT_VALUES", false) && !RobotRunning)
+        {
+            vector<string> KeysNT = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetKeys();
+            for(int i = 0; i < KeysNT.size(); i++)
+                nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->Delete(KeysNT.at(i));
+        }
+        nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("0A-RESET_ROBOT_VALUES", false);
+
         //This only needs to happen one time!
         if (!m_IsConfigLoaded)
         {
             m_IsConfigLoaded=true;
             Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
         }
+
+        nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", RobotRunning);
     }
     void TimeSlice()
     {
@@ -126,7 +138,7 @@ private:
         FrameworkCommunication::GetInstance();
         nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", false);
         Log::restartfile();
-        Robot::LoadConfig();
+        Robot::LoadConfig(false);
         Log::General("Program Version: " + to_string(VERSION) + " Revision: " + REVISION, true);
         SmartDashboard::init(); //!< Must have this for smartdashboard to work properly
         m_inst = nt::NetworkTableInstance::GetDefault(); //!< Network tables
@@ -145,14 +157,13 @@ private:
     {}
     void TeleopInit() override
     {
-       	Robot::LoadConfig();
-        nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", true);
+        Robot::LoadConfig(true);
+
         Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Teleop);
-        m_activeCollection->GetActiveGoal()->~MultitaskGoal(); //!< Destroy any pre-existing masterGoal that was not properly disposed of
-        m_teleOpMasterGoal = new MultitaskGoal(m_activeCollection, false);
+        m_activeCollection->ResetSuperior_Goal(); //!< Destroy any pre-existing masterGoal that was not properly disposed of
+        
         //m_teleOpMasterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15));
         //m_teleOpMasterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection));
-        m_activeCollection->SetActiveGoal(m_teleOpMasterGoal);
         // m_activeCollection->GetActiveGoal()->AddGoal(new Goal_TimeOut(m_activeCollection, 3000));
         // m_activeCollection->GetActiveGoal()->Activate();
         //TODO: Talk to Ian about this
@@ -162,9 +173,9 @@ private:
         //We can test teleop auton goals here a bit later
         //PotentiometerItem* pot = (PotentiometerItem*)m_activeCollection->Get("pot");
         if (m_activeCollection->Get("LimeLight") != nullptr)
-        limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
+            limelight* lime = (limelight*)(m_activeCollection->Get("LimeLight"));
         if (m_activeCollection->GetNavX() != nullptr)
-        m_activeCollection->GetNavX()->ResetNav();
+            m_activeCollection->GetNavX()->ResetNav();
     }
     void TeleopPeriodic() override
     {
