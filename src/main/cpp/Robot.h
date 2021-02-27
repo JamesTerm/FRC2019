@@ -1,6 +1,6 @@
 #pragma once
 
-//#define __Use_RobotBase_Depreciated__
+#define __Use_RobotBase_Depreciated__
 #ifdef __Use_RobotBase_Depreciated__
 
 /*----------------------------------------------------------------------------*/
