@@ -131,7 +131,7 @@ class Goal_ControllerOverride : public AtomicGoal
 class AutoPath : public CompositeGoal
 {
   public:
-    AutoPath(ActiveCollection* activeCollection, Auto Path, double MaxTime, bool Swerve)
+    AutoPath(ActiveCollection* activeCollection, Auto Path, double MaxTime, bool Swerve = false, double Scale = 1)
     {
       MaxT = MaxTime;
       lenght = Path.Num;
@@ -146,6 +146,7 @@ class AutoPath : public CompositeGoal
         Angle[i] = Path.Waypoints[i]->Angle;
         Actions[i] = Path.Waypoints[i]->Act;
       }
+      this->Scale = Scale;
     }
     virtual void Activate();
     virtual void Terminate();
@@ -156,6 +157,7 @@ class AutoPath : public CompositeGoal
     double MaxT;
     int lenght = 0;
     bool IsSwerve = false;
+    double Scale = 1;
     ActiveCollection* m_activeCollection;
 };
 

@@ -47,7 +47,8 @@ void Robot::LoadConfig(bool RobotRunning)
 	{
 		vector<string> KeysNT = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetKeys();
 		for(int i = 0; i < KeysNT.size(); i++)
-			nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->Delete(KeysNT.at(i));
+			if(KeysNT.at(i).compare("3A_Auto_Selector") != 0)
+				nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->Delete(KeysNT.at(i));
 	}
 	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("0A-RESET_ROBOT_VALUES", false);
 	
@@ -71,6 +72,7 @@ void Robot::RobotInit()
 	m_dashboardTable = m_inst.GetTable("DASHBOARD_TABLE");
 	m_dashboardTable->PutStringArray("AUTON_OPTIONS", m_autonOptions);
 	m_dashboardTable->PutStringArray("POSITION_OPTIONS", m_positionOptions);
+	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutString("3A_Auto_Selector", "????");
 	// Util::FrameworkCommunication::GetInstance().SendData("MESSAGE","yeetus");//? Temporary
 }
 
@@ -174,18 +176,18 @@ void Robot::Test()
 	Robot::LoadConfig(true);
 
 	string SELECTED_AUTO = "";
-	if (AutoTable->GetString("Auto Selector", "").length() == 0 && !m_activeCollection->ConfigOverride())
+	if (AutoTable->GetString("3A_Auto_Selector", "").length() == 0 && !m_activeCollection->ConfigOverride())
 	{
 		SELECTED_AUTO = m_activeCollection->GetAuto();
 	}
 	else
 	{
-		SELECTED_AUTO = AutoTable->GetString("Auto Selector", "") + ".txt";
+		SELECTED_AUTO = AutoTable->GetString("3A_Auto_Selector", "") + ".txt";
 	}
 	
 	Log::General("!--------------- " + SELECTED_AUTO + " AUTO Selected---------------!");
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
-	AutoPath* PathA = new AutoPath(m_activeCollection, Map(SELECTED_AUTO), 10, true);
+	AutoPath* PathA = new AutoPath(m_activeCollection, Map(SELECTED_AUTO), 10, true, 10);
 	PathA->Activate();
 	while(PathA->GetStatus() == Goal::eActive && !IsDisabled())
 	{

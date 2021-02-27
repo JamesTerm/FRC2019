@@ -792,7 +792,7 @@ void AutoPath::Activate()
         }
         else
         {
-            AddSubgoal(new Goal_SwerveCord(m_activeCollection, "SwerveDT", Angle[i], Radius[i]));
+            AddSubgoal(new Goal_SwerveCord(m_activeCollection, "SwerveDT", Angle[i] * Scale, Radius[i] * Scale));
         }
         if(Actions[i] != 0)
         {
@@ -831,7 +831,7 @@ void AutoPath::Activate()
     }
     if (IsSwerve)
     {
-        AddSubgoal(new Goal_SwerveCord(m_activeCollection, "SwerveDT", Angle[lenght - 1], Radius[lenght - 1]));
+        AddSubgoal(new Goal_SwerveCord(m_activeCollection, "SwerveDT", Angle[lenght - 1] * Scale, Radius[lenght - 1] * Scale));
     }
     m_Status = eActive;
 }
