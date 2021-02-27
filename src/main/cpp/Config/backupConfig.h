@@ -26,6 +26,7 @@ Email: irobot9803@gmail.com
 #include "../Controls/AxisControl.h"
 #include "../Controls/ToggleButtonControl.h"
 #include "../Controls/GoalButtonControl.h"
+#include "../Controls/GoalAxisControl.h"
 #include "../Pugi/pugixml.h"
 #include "../Goals/GoalSelector.h"
 #include "../Util/Log.h"
@@ -39,6 +40,7 @@ Email: irobot9803@gmail.com
 using namespace System;
 using namespace pugi;
 using namespace Lime;
+using namespace std;
 namespace Configuration
 {
     class backupConfig {
@@ -51,7 +53,8 @@ private:
     double Version = 0.1;
     bool useNavX = true;
 	bool useLimelight = false;
-	bool Real = false;
+	bool Fake = true;
+	bool Real = !Fake;
 	int DriverSlot = 0;
 	int OperatorSlot = 1;
 
@@ -280,9 +283,9 @@ private:
 		}
 	};
 
-	void AddGoalControl(string name, TeleOpGoal goalToAdd, int channel, double params, bool bind_event, JoystickControler Person)
+	void AddGoalButtonControl(string name, TeleOpGoal goalToAdd, int channel, double params, int KeyID, vector<int> RemoveKeys, bool bind_event, JoystickControler Person)
 	{
-		GoalButtonControl* tmp = new GoalButtonControl((Person == JoystickControler::Driver ? m_driveJoy : m_operatorJoy), name, channel, m_activeCollection, goalToAdd, params);
+		GoalButtonControl* tmp = new GoalButtonControl((Person == JoystickControler::Driver ? m_driveJoy : m_operatorJoy), name, channel, m_activeCollection, goalToAdd, params, KeyID, RemoveKeys);
 		if (Person == JoystickControler::Driver)
 			m_drive->AddControlDrive(tmp);
 		else
@@ -294,6 +297,19 @@ private:
 		}
 	};
 
+	void AddGoalAxisControl(string name, TeleOpGoal goalToAdd, vector<int> Axis, vector<string> StringData, int KeyID, vector<int> RemoveKeys, int startIndex, bool bind_event, bool RepeatWhenFinished, JoystickControler Person)
+	{
+		GoalAxisControl* tmp = new GoalAxisControl((Person == JoystickControler::Driver ? m_driveJoy : m_operatorJoy), name, Axis, m_activeCollection, goalToAdd, StringData, startIndex, KeyID, RemoveKeys, RepeatWhenFinished);
+		if (Person == JoystickControler::Driver)
+			m_drive->AddControlDrive(tmp);
+		else
+			m_drive->AddControlOperate(tmp);
+		Log::General("Added GoalAxisControl " + name + ", Goal: " + to_string(goalToAdd));
+		
+		if(bind_event){
+			m_activeCollection->AddEvent(&(tmp->ValueChanged));
+		}
+	};
 
     vector<string> getBindingStringList(string bindings)
     {

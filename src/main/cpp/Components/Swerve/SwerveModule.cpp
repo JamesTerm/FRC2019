@@ -47,6 +47,7 @@ SwerveModule::SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, doubl
     GetType = SwerveModule::InputType::MotorType;
 
     Swivel->GetPositionProfile()->SetBias(1000);
+    Swivel->GetPositionProfile()->SetMaxChange(1);
 
 /*
     OutputTable->PutNumber("SwivelP", 0);

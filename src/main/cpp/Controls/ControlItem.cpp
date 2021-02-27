@@ -14,6 +14,7 @@ Email:	dylantrwatson@gmail.com
 
 #include "ControlItem.h"
 #include "GoalButtonControl.h"
+#include "GoalAxisControl.h"
 #include "SwerveControl.h"
 #include "../Goals/GoalSelector.h"
 #include "../Goals/FRC2019_Goals.h"
@@ -32,6 +33,38 @@ auto onControllerValueChanged = [&](EventArgs* e) {
 
 			//If the sender is a GoalButtonControl
 			if (dynamic_cast<GoalButtonControl*>(args->GetSender())) {
+
+				MultitaskGoal* Selected = nullptr;
+
+				if(args->GetSender()->Holder == ControlItem::JoystickHolder::DriverController)
+				{
+					Selected = args->GetSender()->m_activeCollection->GetDriverGoal();
+				}
+				else if(args->GetSender()->Holder == ControlItem::JoystickHolder::OperatorController)
+				{
+					Selected = args->GetSender()->m_activeCollection->GetOperatorGoal();
+				}
+				else
+				{
+					Selected = args->GetSender()->m_activeCollection->GetRobotGoal();
+				}
+
+				for(int i = 0; i < ((GoalButtonControl*)(args->GetSender()))->RemoveKeys.size(); i++)
+				{
+					Selected->RemoveGoal(((GoalButtonControl*)(args->GetSender()))->RemoveKeys.at(i));
+				}
+				TeleOpGoal goal = ((GoalButtonControl*)(args->GetSender()))->m_goal;
+				SmartDashboard::PutString("GoalButtonControl Status", "Control Found");
+				Goal* goalToAdd = SelectTeleOpGoal(args->GetSender()->m_activeCollection, goal, args->GetValue());
+				Goal* OverGoal = new Goal_ControllerOverride(args->GetSender()->m_activeCollection, 1);
+				OverGoal->IdentityKey = ((GoalButtonControl*)(args->GetSender()))->IdKey;
+				goalToAdd->IdentityKey = ((GoalButtonControl*)(args->GetSender()))->IdKey;
+				Selected->AddGoal(goalToAdd);
+				goalToAdd->Activate();
+				OverGoal->Activate();
+				SmartDashboard::PutString("GoalButtonControl Status", "GoalActivated");
+
+				/*
 				//Reset the active TeleOpGoal
 				args->GetSender()->m_activeCollection->GetActiveGoal()->Reset();
 				TeleOpGoal goal = ((GoalButtonControl*)(args->GetSender()))->m_goal;
@@ -48,7 +81,7 @@ auto onControllerValueChanged = [&](EventArgs* e) {
 				args->GetSender()->m_activeCollection->SetActiveGoal(teleOpMasterGoal);
 				args->GetSender()->m_activeCollection->GetActiveGoal()->Activate();
 				((GoalButtonControl*)(args->GetSender()))->m_goalSet = true;
-				SmartDashboard::PutString("GoalButtonControl Status", "GoalActivated");
+				SmartDashboard::PutString("GoalButtonControl Status", "GoalActivated");*/
 				return;
 			}
 			args->GetSender()->SetToComponents(args->GetValue());
@@ -63,6 +96,61 @@ auto onControllerValueChanged = [&](EventArgs* e) {
 			DT->GetManager()->Set(SwerveArgs->GetVValue(), SwerveArgs->GetHValue(), SwerveArgs->GetSValue());
 
 			SmartDashboard::PutNumber(SwerveArgs->GetSender()->name, SwerveArgs->GetVValue());
+		}
+		else if (e->Type == 2)
+		{
+			auto args = (LEventArgs<vector<double>, vector<string>, ControlItem*>*)e;
+			Log::General(" EVENT "+args->GetSender()->name);
+
+			//If the sender is a GoalButtonControl
+			if (dynamic_cast<GoalAxisControl*>(args->GetSender()))
+			{
+
+				MultitaskGoal* Selected = nullptr;
+
+				if(args->GetSender()->Holder == ControlItem::JoystickHolder::DriverController)
+				{
+					Selected = args->GetSender()->m_activeCollection->GetDriverGoal();
+				}
+				else if(args->GetSender()->Holder == ControlItem::JoystickHolder::OperatorController)
+				{
+					Selected = args->GetSender()->m_activeCollection->GetOperatorGoal();
+				}
+				else
+				{
+					Selected = args->GetSender()->m_activeCollection->GetRobotGoal();
+				}
+				Goal* ControlGoal = Selected->GetGoal(((GoalAxisControl*)(args->GetSender()))->IdKey);
+				if(ControlGoal == nullptr)
+				{
+					for(int i = 0; i < ((GoalAxisControl*)(args->GetSender()))->RemoveKeys.size(); i++)
+					{
+						Selected->RemoveGoal(((GoalAxisControl*)(args->GetSender()))->RemoveKeys.at(i));
+					}
+					TeleOpGoal goal = ((GoalAxisControl*)(args->GetSender()))->m_goal;
+					SmartDashboard::PutString("GoalAxisControl Status", "Control Found");
+					Goal* goalToAdd = SelectTeleOpGoal(args->GetSender()->m_activeCollection, goal);
+					//Goal* OverGoal = new Goal_ControllerOverride(args->GetSender()->m_activeCollection, 1);
+					//OverGoal->IdentityKey = ((GoalButtonControl*)(args->GetSender()))->IdKey;
+					goalToAdd->IdentityKey = ((GoalAxisControl*)(args->GetSender()))->IdKey;
+					goalToAdd->CopyStringFrom(args->GetStrings(), 0);
+					goalToAdd->CopyFrom(args->GetValues(), ((GoalAxisControl*)(args->GetSender()))->StartIndex);
+					Selected->AddGoal(goalToAdd);
+					goalToAdd->Activate();
+					//OverGoal->Activate();
+				}
+				else
+				{
+					ControlGoal->CopyStringFrom(args->GetStrings(), 0);
+					ControlGoal->CopyFrom(args->GetValues(), ((GoalAxisControl*)(args->GetSender()))->StartIndex);
+					if(ControlGoal->GetStatus() == Goal::Goal_Status::eCompleted && ((GoalAxisControl*)(args->GetSender()))->RepeatWhenFinished)
+						ControlGoal->Activate();
+				}
+				SmartDashboard::PutString("GoalAxisControl Status", "GoalActivated");
+				return;
+			}
+			args->GetSender()->SetToComponents(args->GetValues().at(0));
+			SmartDashboard::PutNumber(args->GetSender()->name, args->GetValues().at(0));
 		}
 		else
 		{
@@ -94,6 +182,7 @@ ControlItem::ControlItem(Joystick *_joy, string _name, bool _reversed, double _p
 	reversed = _reversed;
 	powerMultiplier = _powerMultiplier;
 	ValueChanged += onControllerValueChanged;
+	Holder = joy->GetPort() >= 0 && joy->GetPort() <= 1 ? (joy->GetPort() == 0 ? JoystickHolder::DriverController : JoystickHolder::OperatorController) : JoystickHolder::Other;
 }
 
 void ControlItem::AddComponent(OutputComponent *component)

@@ -48,6 +48,21 @@ public:
     IEventArgs(T1 vertical, T2 horizontal, T3 spin, T4 sender) { this->Type = 1; this->vertical = vertical; this->horizontal = horizontal; this->spin = spin; this->sender = sender; }
 };
 
+template<class T1, class T2, class T3>
+class LEventArgs : public EventArgs
+{
+private:
+    T1 Vals;
+    T2 Strings;
+    T3 sender;
+
+public:
+    T1 GetValues() { return Vals; }
+    T2 GetStrings() { return Strings; }
+    T3 GetSender() { return sender; }
+    LEventArgs(T1 Vals, T2 Strings, T3 sender) { this->Type = 2; this->Vals = Vals; this->Strings = Strings; this->sender = sender; }
+};
+
 template<class T1>
 class SenderEventArgs : public EventArgs
 {

@@ -35,6 +35,7 @@ void Drive::Update(double deltaTime)
 {
 	if (m_activeCollection != nullptr)
 	{
+		m_activeCollection->ProcessSuperior_Goal(deltaTime);
 		if (m_activeCollection->GetPDBManager() != nullptr)
 			m_activeCollection->GetPDBManager()->UpdatePDB();
 	}

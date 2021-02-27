@@ -28,7 +28,7 @@ private:
 
 public:
 	GoalButtonControl();
-	GoalButtonControl(Joystick *_joy, string _name, int _button, ActiveCollection* ac, TeleOpGoal _goal, double _target, bool _reversed = false, double _powerMultiplier = 1.0);
+	GoalButtonControl(Joystick *_joy, string _name, int _button, ActiveCollection* ac, TeleOpGoal _goal, double _target, int KeyID, vector<int> RemoveKeys, bool _reversed = false, double _powerMultiplier = 1.0);
 	virtual ~GoalButtonControl();
 	int getSign(double val);
 	virtual double Update(double _dTime) override;
@@ -36,5 +36,8 @@ public:
 	TeleOpGoal m_goal;
 	double m_target;
 	bool m_goalSet = false;
+	
+	int IdKey = 0;
+	vector<int> RemoveKeys;
 };
 }

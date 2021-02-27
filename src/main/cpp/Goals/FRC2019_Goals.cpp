@@ -226,6 +226,34 @@ void Goal_REVColorSensorV3::Terminate()
     m_Status = eInactive;
 }
 
+/**********************Goal_MotorPosition**************************/
+
+void Goal_MotorPosition::Activate()
+{
+    Subject = (Motor*)m_activeCollection->Get(GetStringData(0));
+    Position = (EncoderItem*)m_activeCollection->GetEncoder(GetStringData(1));
+    TargetPos += GetData(0);
+    m_Status = eActive;
+}
+
+Goal::Goal_Status Goal_MotorPosition::Process(double dTime)
+{
+    if(m_Status == eActive)
+    {
+        TargetPos += GetData(0);
+        Log::General("----------------------------Running to target: " + to_string(TargetPos) + "--------");
+        Subject->SetPosition(TargetPos, Position->Get(), dTime);
+        if(Subject->GetPositionProfile()->Inrange(TargetPos, Position->Get(), 0.01))
+            m_Status = eCompleted;
+    }
+    return m_Status;
+}
+
+void Goal_MotorPosition::Terminate()
+{
+    m_Status = eFailed;
+}
+
 /*************************Goal_Position****************************/
 
 void Position::Activate()
@@ -485,14 +513,12 @@ void Goal_SwerveCord::Savedata()
     {
         Goal_SwerveCord::Setdata(4, Xaxis->GetLastErrorV());
         Goal_SwerveCord::Setdata(5, Xaxis->GetLastResult());
-        
         delete Xaxis;
     }
     if (Yaxis != nullptr)
     {
         Goal_SwerveCord::Setdata(6, Yaxis->GetLastErrorV());
         Goal_SwerveCord::Setdata(7, Yaxis->GetLastResult());
-        
         delete Yaxis;
     }
 

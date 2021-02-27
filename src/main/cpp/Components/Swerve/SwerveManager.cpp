@@ -59,7 +59,8 @@ SwerveManager::SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerv
 
 void SwerveManager::TableSetUp()
 {
-    OutputTable->PutNumber("Wheel", 1.35);
+    OutputTable->PutNumber("1A-Wheel_Size", 1.35);
+    OutputTable->PutNumber("2A-Scale", 1);
     OutputTable->PutNumber("BotX", 0);
     OutputTable->PutNumber("BotY", 0);
     OutputTable->PutNumber("BotZ", 0);
@@ -102,7 +103,7 @@ void SwerveManager::UpdateLoc()
 {
     if (RobotNav != nullptr)
     {
-        SwerveManager::SetWheelDiameter(OutputTable->GetNumber("Wheel", 1));
+        SwerveManager::SetWheelDiameter(OutputTable->GetNumber("1A-Wheel_Size", 1));
 
         double FL_B = sin(SwerveManager::Get(SwerveModule::Location::Front_Left)->GetSwivelTarget() * M_PI / 180) * SwerveManager::Get(SwerveModule::Location::Front_Left)->GetWheelRate();
         double FR_B = sin(SwerveManager::Get(SwerveModule::Location::Front_Right)->GetSwivelTarget() * M_PI / 180) * SwerveManager::Get(SwerveModule::Location::Front_Right)->GetWheelRate();
@@ -150,8 +151,8 @@ void SwerveManager::UpdateLoc()
             Pos->LastX = F;
             Pos->LastY = L;
         }*/
-        Pos->Y += L * 0.00063;
-        Pos->X -= F * 0.00063;
+        Pos->Y += L * OutputTable->GetNumber("2A-Scale", 1);
+        Pos->X -= F * OutputTable->GetNumber("2A-Scale", 1);
     }
     OutputTable->PutNumber("Loc-X", Pos->X);
     OutputTable->PutNumber("Loc-Y", Pos->Y);
@@ -209,10 +210,16 @@ void SwerveManager::Set(double rawV, double rawH, double rawS)
         SBL &&
         SBR) || !WaitSwivel)
     {
+        
+        SwerveManager::Get(SwerveModule::Location::Front_Left)->GetWheelMtr()->SetPower(frontLeftSpeed, Del_Time);
+        SwerveManager::Get(SwerveModule::Location::Front_Right)->GetWheelMtr()->SetPower(frontRightSpeed, Del_Time);
+        SwerveManager::Get(SwerveModule::Location::Back_Left)->GetWheelMtr()->SetPower(backLeftSpeed, Del_Time);
+        SwerveManager::Get(SwerveModule::Location::Back_Right)->GetWheelMtr()->SetPower(backRightSpeed, Del_Time);
+        /*
         SwerveManager::SetWheelAt(SwerveModule::Location::Front_Left, frontLeftSpeed);
         SwerveManager::SetWheelAt(SwerveModule::Location::Front_Right, frontRightSpeed);
         SwerveManager::SetWheelAt(SwerveModule::Location::Back_Left, backLeftSpeed);
-        SwerveManager::SetWheelAt(SwerveModule::Location::Back_Right, backRightSpeed);
+        SwerveManager::SetWheelAt(SwerveModule::Location::Back_Right, backRightSpeed);*/
     }
     else
     {

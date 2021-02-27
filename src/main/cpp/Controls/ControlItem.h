@@ -38,6 +38,16 @@ namespace Controls
 			vector<OutputComponent*> components;
 
 		public:
+
+			enum JoystickHolder
+			{
+				DriverController = 0,
+				OperatorController = 1,
+				Other = 2
+			};
+
+			JoystickHolder Holder;
+
 			ActiveCollection* m_activeCollection;
 			Joystick *joy;
 			ControlItem();

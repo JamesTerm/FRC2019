@@ -19,6 +19,7 @@ enum TeleOpGoal{
     eDriveWithTimer,
     eRelativeElevatorControl,
     eShooter,
+    eMotorPosition,
     eNone
 };
 
@@ -31,7 +32,7 @@ static bool SelectAuton(ActiveCollection *activeCollection, MultitaskGoal *goal,
     return isFound;
 }
 
-static Goal* SelectTeleOpGoal(ActiveCollection* activeCollection, TeleOpGoal goalSelected, double params){
+static Goal* SelectTeleOpGoal(ActiveCollection* activeCollection, TeleOpGoal goalSelected, double params = 0){
 	/*if (goalSelected == TeleOpGoal::eElevatorControl)
 		return new Goal_ElevatorControl(activeCollection, params);
 	else*/ if (goalSelected == TeleOpGoal::eTimer)
@@ -42,5 +43,7 @@ static Goal* SelectTeleOpGoal(ActiveCollection* activeCollection, TeleOpGoal goa
         return new Goal_RelativeElevatorControl(activeCollection, params);*/
     else if(goalSelected == TeleOpGoal::eShooter)
         return new Goal_ShooterBunch(activeCollection, params);
+    else if(goalSelected == TeleOpGoal::eMotorPosition)
+        return new Goal_MotorPosition(activeCollection);
 	return new Goal_TimeOut(activeCollection, params);
 }

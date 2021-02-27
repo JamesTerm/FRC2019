@@ -25,8 +25,39 @@ using namespace Configuration;
 **/
 ActiveCollection::ActiveCollection()
 {
-	activeGoal = new MultitaskGoal(this, false);
+	superior_Goal = new MultitaskGoal(this, true);
+
+	Driver_Goal = new MultitaskGoal(this, true);
+	Operator_Goal = new MultitaskGoal(this, true);
+	Robot_Goal = new MultitaskGoal(this, true);
+	
+	superior_Goal->AddGoal(Driver_Goal);
+	superior_Goal->AddGoal(Operator_Goal);
+	superior_Goal->AddGoal(Robot_Goal);
+
 	overdrive = false;
+}
+
+void ActiveCollection::ResetSuperior_Goal()
+{
+	superior_Goal->~MultitaskGoal();
+
+	superior_Goal = new MultitaskGoal(this, true);
+
+	Driver_Goal = new MultitaskGoal(this, true);
+	Operator_Goal = new MultitaskGoal(this, true);
+	Robot_Goal = new MultitaskGoal(this, true);
+	
+	superior_Goal->AddGoal(Driver_Goal);
+	superior_Goal->AddGoal(Operator_Goal);
+	superior_Goal->AddGoal(Robot_Goal);
+
+	superior_Goal->Activate();
+}
+
+void ActiveCollection::ProcessSuperior_Goal(double dTime)
+{
+	superior_Goal->Process(dTime);
 }
 
 /**

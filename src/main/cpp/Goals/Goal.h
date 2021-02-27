@@ -64,6 +64,16 @@ class Goal
 		bool HasData(int index) { return (index >= 0 && index < data.size()); }
 		void Setdata(int index, double dataVal);
 		double GetData(int index) { return HasData(index) ? data.at(index) : 0; }
+		void CopyFrom(vector<double> dataIn, int startIndex);
+
+		vector<string> Stringdata;
+		bool HasStringData(int index) { return (index >= 0 && index < Stringdata.size()); }
+		void SetStringdata(int index, string dataVal);
+		string GetStringData(int index) { return HasStringData(index) ? Stringdata.at(index) : "N/A"; }
+		void CopyStringFrom(vector<string> dataIn, int startIndex);
+
+		int IdentityKey = 0;
+
 	protected:
 		Goal_Status m_Status;
 		//TODO see if Owner and Type are necessary
@@ -87,9 +97,15 @@ class CompositeGoal : public Goal
 	virtual void Terminate();
 
 	virtual void AddSubgoal(Goal* g) {m_SubGoals.push_back(g);}
-	virtual void AddSubGoalFront(Goal* g) {m_SubGoals.push_front(g);}
+	virtual void AddSubGoalFront(Goal* g) {m_SubGoals.insert(m_SubGoals.begin(), g);}
+	
+	Goal* GetGoal(int IdentityKey);
+	bool HasGoal(int IdentityKey);
+	bool RemoveGoal(int IdentityKey);
+	bool ReplaceGoal(int IdentityKey, Goal* NewGoal);
+
 	private:
-	typedef std::list<Goal*> SubgoalList;
+	typedef std::vector<Goal*> SubgoalList;
 	SubgoalList m_SubGoals;
 };
 
@@ -108,12 +124,18 @@ class  MultitaskGoal : public Goal
 		Goal &AsGoal() {return *this;}
 		virtual Goal_Status Process(double dTime);
 		void Reset();
+
+		Goal* GetGoal(int IdentityKey);
+		bool HasGoal(int IdentityKey);
+		bool RemoveGoal(int IdentityKey);
+		bool ReplaceGoal(int IdentityKey, Goal* NewGoal);
+
 	protected:  //from Goal
 		
 		virtual void Terminate();
 		void RemoveAllGoals();
 	private:
-		typedef std::list<Goal *> GoalList;
+		typedef std::vector<Goal *> GoalList;
 		GoalList m_GoalsToProcess;
 		bool m_WaitAll;
 };
