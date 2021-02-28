@@ -81,7 +81,8 @@ private:
         nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("0A-RESET_ROBOT_VALUES", false);
 
         //This only needs to happen one time!
-        if (!m_IsConfigLoaded)
+        //For real robot I have lifted this condition
+        if ((!m_IsConfigLoaded)||(frc::RobotBase::IsReal()))
         {
             m_IsConfigLoaded=true;
             Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
@@ -89,7 +90,7 @@ private:
 
         nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", RobotRunning);
     }
-    void TimeSlice()
+    void TimeSlice(bool IsAuton=false)
     {
         
         const double CurrentTime = m_Timer.GetFPGATimestamp();
@@ -102,6 +103,8 @@ private:
         //sanity check
         //frc::SmartDashboard::PutNumber("time_delta",DeltaTime);
         m_drive->Update(DeltaTime);
+        if (IsAuton)
+            m_masterGoal->Process(DeltaTime); //!< Process the autonomous goal
     }
     void SimulatorTimeSlice()
     {
@@ -152,9 +155,32 @@ private:
     void RobotPeriodic() override
     {}
     void AutonomousInit() override
-    {}
+    {
+        Robot::LoadConfig(true);
+	
+        Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Auton);	
+        m_masterGoal = new MultitaskGoal(m_activeCollection, false);
+        Log::General("Autonomous Started");
+        //TODO: Make defaults set now and call the active collection
+        m_activeCollection->DoubleSolenoidDefault();
+        #ifndef _Win32
+        string autoSelected = m_dashboardTable->GetString("AUTON_SELECTION", m_driveStraight);
+        string positionSelected = m_dashboardTable->GetString("POSITION_SELECTION", "NONE"); // Default auto is drive striaght 
+        if (!SelectAuton(m_activeCollection, m_masterGoal, autoSelected, positionSelected)) // Selection
+        {
+            m_dashboardTable->PutString("AUTON_FOUND", "UNDEFINED AUTON OR POSITION SELECTED");
+        }
+        #endif
+        m_masterGoal->AddGoal(new Goal_TimeOut(m_activeCollection, 15.0));
+        m_masterGoal->AddGoal(new Goal_ControllerOverride(m_activeCollection)); //!< This is for FRC 2019 SANDSTORM! Be aware that if Sandstorm is removed, this NEEDS to be removed.
+        //TODO: Make the auto configurable (turn on/turn off) OR add a no auton feature to the dashboard
+        m_masterGoal->Activate();
+        m_activeCollection->SetRobotGoal(m_masterGoal);
+    }
     void AutonomousPeriodic() override
-    {}
+    {
+        TimeSlice(true);
+    }
     void TeleopInit() override
     {
         Robot::LoadConfig(true);
@@ -184,16 +210,44 @@ private:
         TimeSlice();
     }
     void DisabledInit() override
-    {}
-    void DisabledPeriodic() override
     {
        	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", false);
         Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Disabled);
     }
+    void DisabledPeriodic() override
+    {
+        if(nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("0A-RESET_ROBOT_VALUES", false))
+			Robot::LoadConfig(false);
+    }
+    private:
+    std::shared_ptr<AutoPath> PathA;
+    public:
     void TestInit() override
-    {}
+    {
+        Robot::LoadConfig(true);
+
+        string SELECTED_AUTO = "";
+        if (AutoTable->GetString("3A_Auto_Selector", "").length() == 0 && !m_activeCollection->ConfigOverride())
+        {
+            SELECTED_AUTO = m_activeCollection->GetAuto();
+        }
+        else
+        {
+            SELECTED_AUTO = AutoTable->GetString("3A_Auto_Selector", "") + ".txt";
+        }
+        
+        Log::General("!--------------- " + SELECTED_AUTO + " AUTO Selected---------------!");
+        if (PathA)
+            PathA.reset();
+        //! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
+        PathA = std::make_shared<AutoPath>(m_activeCollection, Map(SELECTED_AUTO), 10, true, 10);
+        PathA->Activate();
+    }
     void TestPeriodic() override
-    {}
+    {
+        //Note: using synthetic time
+        PathA->Process(0.01);
+    }
     void SimulationInit () override
     {
         m_simulation.SimulationInit();
@@ -202,6 +256,53 @@ private:
     {
         SimulatorTimeSlice();
     }
+    //I've added this for completion but I do not think it is needed
+    #if 0
+    void StartCompetition() override
+    {
+        auto& lw = *frc::LiveWindow::GetInstance();
+
+        RobotInit();
+        // Tell the DS that the robot is ready to be enabled
+        HAL_ObserveUserProgramStarting();
+
+        while (!m_exit) {
+        if (IsDisabled()) {
+            m_ds.InDisabled(true);
+            Disabled();
+            m_ds.InDisabled(false);
+            while (IsDisabled()) m_ds.WaitForData();
+        }
+        else if (IsAutonomous()) {
+            m_ds.InAutonomous(true);
+            Autonomous();
+            m_ds.InAutonomous(false);
+            while (IsAutonomous() && IsEnabled()) m_ds.WaitForData();
+        }
+        else if (IsTest()) {
+            lw.SetEnabled(true);
+            frc::Shuffleboard::EnableActuatorWidgets();
+            m_ds.InTest(true);
+            Test();
+            m_ds.InTest(false);
+            while (IsTest() && IsEnabled()) m_ds.WaitForData();
+            lw.SetEnabled(false);
+            frc::Shuffleboard::DisableActuatorWidgets();
+        }
+        else {
+            m_ds.InOperatorControl(true);
+            Teleop();
+            m_ds.InOperatorControl(false);
+            while (IsOperatorControl() && IsEnabled()) m_ds.WaitForData();
+        }
+  }
+
+    }
+    void EndCompetition() override
+    {
+        m_exit = true;
+    }
+    #endif
 };
 
 #ifndef RUNNING_FRC_TESTS

@@ -148,6 +148,10 @@ class AutoPath : public CompositeGoal
       }
       this->Scale = Scale;
     }
+    ~AutoPath()
+    {
+      Terminate();
+    }
     virtual void Activate();
     virtual void Terminate();
   private:
