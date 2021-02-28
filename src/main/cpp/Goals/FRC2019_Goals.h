@@ -170,8 +170,8 @@ class Goal_SwerveCord : public AtomicGoal
       m_activeCollection = activeCollection;
       X = X_Target;
       Y = Y_Target;
-      Xaxis = new PIDProfile(10, 7, 0, 10);
-      Yaxis = new PIDProfile(10, 7, 0, 10);
+      Xaxis = new PIDProfile(12, 7, 0, 10);
+      Yaxis = new PIDProfile(12, 7, 0, 10);
     }
 
     virtual void Activate();
@@ -186,6 +186,7 @@ class Goal_SwerveCord : public AtomicGoal
     PIDProfile *Yaxis;
     double X = 0;
     double Y = 0;
+    double Thres = 0.5;
     bool done = false;
 };
 

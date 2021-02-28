@@ -48,7 +48,7 @@ void Robot::LoadConfig(bool RobotRunning)
 		vector<string> KeysNT = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetKeys();
 		for(int i = 0; i < KeysNT.size(); i++)
 			if(KeysNT.at(i).compare("3A_Auto_Selector") != 0)
-				nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->Delete(KeysNT.at(i));
+				nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutValue(KeysNT.at(i), 0);
 	}
 	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("0A-RESET_ROBOT_VALUES", false);
 	

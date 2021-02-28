@@ -172,6 +172,13 @@ namespace Util
 		        return (V1 < V2 ? V1 : V2);
 	        };
 
+			double CloserTo(double Val, double Min, double Max)
+			{
+				if(abs(abs(Val) - abs(Min)) < abs(abs(Val) - abs(Max)))
+					return Min;
+				return Max;
+			};
+
 			double RoundTo(double Val, int DecimalPlaces)
 			{
 				int Places = 1;

@@ -181,9 +181,27 @@ void SwerveModule::ProcessMotor(Motor *Subject, double Enc, double Target, doubl
 
 bool SwerveModule::SetTargetSwivel(double Target)
 {
+    PIDProfile* Ref = Swivel->GetPositionProfile();
     CurrentSwivelTarget = Target;
-    SwerveModule::ProcessMotor(Swivel, SwerveModule::GetSwivelEnc(), Target, EncRevTicks);
-    return (Swivel->GetPositionProfile()->ABSValue(Target - (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360) > 45 ? Swivel->GetPositionProfile()->Inrange(Target, (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360, 5) : true);
+
+    Target = fmod(Target, 360);
+    if(Target > 180)
+        Target = Target - 360;
+    if(Ref->Sign(LastSign) != Ref->Sign(Target))
+    {
+        if(Ref->CloserTo(LastSign, 0, 180) == 180 && Ref->CloserTo(Target, 0, 180) == 180)
+        {
+            if(LastSign > Target)
+                Revs++;
+            else
+                Revs--;
+        }
+    }
+    LastSign = Target;
+    SmoothTarget = Target + (360 * Revs);
+
+    SwerveModule::ProcessMotor(Swivel, SwerveModule::GetSwivelEnc(), SmoothTarget, EncRevTicks);
+    return (Swivel->GetPositionProfile()->ABSValue(SmoothTarget - (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360) > 45 ? Swivel->GetPositionProfile()->Inrange(SmoothTarget, (SwerveModule::GetSwivelEnc() / EncRevTicks) * 360, 5) : true);
 }
 
 bool SwerveModule::SetTargetWheel(double Target)

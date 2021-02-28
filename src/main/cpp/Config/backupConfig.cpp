@@ -70,7 +70,7 @@ void backupConfig::SetComponents()
 	backupConfig::AddSwerveModule("BL", "SwivelBL", "WheelBL", 4096, 4096, SwerveModule::Location::Back_Left);
 	backupConfig::AddSwerveModule("BR", "SwivelBR", "WheelBR", 4096, 4096, SwerveModule::Location::Back_Right);
 
-	backupConfig::AddSwerveManager("SwerveDT", true, 0.8, "FL FR BL BR", m_activeCollection->GetNavX(), 3, 3);
+	backupConfig::AddSwerveManager("SwerveDT", false, 0.8, "FL FR BL BR", m_activeCollection->GetNavX(), 3, 3);
 
 	backupConfig::AddVictorSPX("Intake", 11, false);
 	backupConfig::AddVictorSPX("Revolver", 12, false);

@@ -558,7 +558,7 @@ Goal::Goal_Status Goal_SwerveCord::Process(double dTime)
         
         DT->Set(YPower, XPower, 0);
     }
-    if(Xaxis->Inrange(Xpos, XTar, 0.1) && Yaxis->Inrange(Ypos, YTar, 0.1))
+    if(Xaxis->Inrange(Xpos, XTar, Thres) && Yaxis->Inrange(Ypos, YTar, Thres))
     {
         Log::General("---------------------In Range");
         done = true;

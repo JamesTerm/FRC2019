@@ -126,6 +126,11 @@ namespace Components
             double LastSpeed = 0;
             double LastChange = 0;
 
+            double LastSign = 1;
+            double Revs = 0;
+
+            double SmoothTarget = 0;
+
             double D_Time = 0;
             double Dir = 1;
     };
