@@ -72,13 +72,14 @@ private:
     {
        	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", false);
 
-        if(nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("0A-RESET_ROBOT_VALUES", false) && !RobotRunning)
-        {
-            vector<string> KeysNT = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetKeys();
-            for(int i = 0; i < KeysNT.size(); i++)
-                nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->Delete(KeysNT.at(i));
-        }
-        nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("0A-RESET_ROBOT_VALUES", false);
+	if(nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("0A-RESET_ROBOT_VALUES", false) && !RobotRunning)
+	{
+		vector<string> KeysNT = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetKeys();
+		for(int i = 0; i < KeysNT.size(); i++)
+			if(KeysNT.at(i).compare("3A_Auto_Selector") != 0)
+				nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutValue(KeysNT.at(i), 0);
+	}
+	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("0A-RESET_ROBOT_VALUES", false);
 
         //This only needs to happen one time!
         //For real robot I have lifted this condition
@@ -140,6 +141,7 @@ private:
     {
         FrameworkCommunication::GetInstance();
         nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", false);
+        nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutString("3A_Auto_Selector", "????");
         Log::restartfile();
         Robot::LoadConfig(false);
         Log::General("Program Version: " + to_string(VERSION) + " Revision: " + REVISION, true);
@@ -246,7 +248,7 @@ private:
     void TestPeriodic() override
     {
         //Note: using synthetic time
-        PathA->Process(0.01);
+        PathA->Process(0.0001);
     }
     void SimulationInit () override
     {
