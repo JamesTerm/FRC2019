@@ -799,20 +799,17 @@ void Config::AllocateComponents(xml_node &root){
 			{
 				double Ticksperrev = module.attribute("swivelTicks").as_double();
 				double WheelTicksperrev = module.attribute("wheelTicks").as_double();
-					
-				string SwivelEnc = module.attribute("swivelEnc").as_string();
-				string WheelEnc = module.attribute("wheelEnc").as_string();
-				if (m_activeCollection->GetEncoder(SwivelEnc) != nullptr && m_activeCollection->GetEncoder(WheelEnc) != nullptr)
+				xml_attribute Location = module.attribute("location");
+				if(Location)
 				{
-					SwerveModule *tmp = new SwerveModule(name, (Motor*)m_activeCollection->Get(SwivelName), (Motor*)m_activeCollection->Get(WheelName), m_activeCollection->GetEncoder(SwivelEnc), m_activeCollection->GetEncoder(WheelEnc), Ticksperrev, WheelTicksperrev);
+					SwerveModule *tmp = new SwerveModule(name, (Motor*)m_activeCollection->Get(SwivelName), (Motor*)m_activeCollection->Get(WheelName), Ticksperrev, WheelTicksperrev);
+					tmp->SetLocation(GetLocation(Location.as_string()));
 					m_activeCollection->Add(tmp);
 					Log::General("Added Swerve Module :" + name);
 				}
 				else
 				{
-					SwerveModule *tmp = new SwerveModule(name, (Motor*)m_activeCollection->Get(SwivelName), (Motor*)m_activeCollection->Get(WheelName), Ticksperrev, WheelTicksperrev);
-					m_activeCollection->Add(tmp);
-					Log::General("Added Swerve Module :" + name);
+					Log::Error("Swerve Module " + name + " cannot find location specified in the config!");
 				}
 			}
 			else
@@ -833,18 +830,40 @@ void Config::AllocateComponents(xml_node &root){
 		{
 			string name = Man.attribute("name").as_string();
 			bool WaitB = Man.attribute("wait").as_bool();
-			string LeftF = Man.attribute("LF").as_string();
-			string RightF = Man.attribute("RF").as_string();
-			string LeftB = Man.attribute("LB").as_string();
-			string RightB = Man.attribute("RB").as_string();
+			double MaxPower = Man.attribute("Max").as_double();
+			xml_attribute SwerveModules = Man.attribute("modules");
 			
 			double length = Man.attribute("length").as_double();
 			double width = Man.attribute("width").as_double();
-			if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
+			if (SwerveModules)
 			{
-				SwerveManager *Manager = new SwerveManager(name, WaitB, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB), length, width);
-				m_activeCollection->Add(Manager);
-				Log::General("Added Swerve Manager");
+				istringstream ss(SwerveModules.as_string());
+    			string word;
+				vector<SwerveModule*> Parts;
+				bool AllHere = true;
+    			while (ss >> word) 
+    			{
+					if(m_activeCollection->Get(word) != nullptr)
+					{
+						Parts.push_back((SwerveModule*)m_activeCollection->Get(word));
+					}
+					else
+					{
+						AllHere = false;
+					}
+    			}
+
+				if (AllHere)
+				{
+					SwerveManager *Manager = new SwerveManager(name, WaitB, Parts, m_activeCollection->GetNavX(), length, width);
+					Manager->SetMaxPow(MaxPower);
+					m_activeCollection->Add(Manager);
+					Log::General("Added Swerve Manager with location");
+				}
+				else
+				{
+					Log::Error("One or modules not found!");
+				}
 			}
 			else
 			{
@@ -1726,6 +1745,29 @@ TeleOpGoal Config::getTeleOpGoal(string goalString){
 	else{
 		Log::Error("Error registering teleop goal " + goalString + ". Skipping this control...");
 		return TeleOpGoal::eNone;
+	}
+}
+
+SwerveModule::Location GetLocation(string Loc)
+{
+	if(Loc.compare("Front_Left") == 0){
+		return SwerveModule::Location::Front_Left;
+	}
+	else if(Loc.compare("Front_Right") == 0)
+	{
+		return SwerveModule::Location::Front_Right;
+	}
+	else if(Loc.compare("Back_Left") == 0)
+	{
+		return SwerveModule::Location::Back_Left;
+	}
+	else if(Loc.compare("Back_Right") == 0)
+	{
+		return SwerveModule::Location::Back_Right;
+	}
+	else{
+		Log::Error("Defaulting location to SwerveModule::Location::Front_Left");
+		return SwerveModule::Location::Front_Left;
 	}
 }
 

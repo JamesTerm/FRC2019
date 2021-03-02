@@ -120,16 +120,6 @@ private:
 		}
 	};
 
-	void AddSwerveModule(string Name, string SwivelMotor, string WheelMotor, double Ticksperrev, double WheelTicksperrev)
-	{
-		if (m_activeCollection->Get(SwivelMotor) != nullptr && m_activeCollection->Get(WheelMotor) != nullptr)
-		{
-			SwerveModule *tmp = new SwerveModule(Name, (Motor*)m_activeCollection->Get(SwivelMotor), (Motor*)m_activeCollection->Get(WheelMotor), Ticksperrev, WheelTicksperrev);
-			m_activeCollection->Add(tmp);
-			Log::General("Added Swerve Module :" + Name);
-		}
-	};
-
 	void AddSwerveModule(string Name, string SwivelMotor, string WheelMotor, double Ticksperrev, double WheelTicksperrev, SwerveModule::Location Loc)
 	{
 		if (m_activeCollection->Get(SwivelMotor) != nullptr && m_activeCollection->Get(WheelMotor) != nullptr)

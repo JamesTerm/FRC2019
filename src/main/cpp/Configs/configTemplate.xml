@@ -59,10 +59,10 @@
 
         <!--Region for Swerve Modules-->
         <SwerveModules>
-            <!--[Name] [string]swivel [string]wheel [int]swivelTicks [int]wheelTicks [string]swivelEnc [sting]wheelEnc-->
+            <!--[Name] [string]swivel [string]wheel [int]swivelTicks [int]wheelTicks [string]location-->
         </SwerveModules>
 
-        <!--SwerveManager [string]name [bool]wait [string]LF [string]RF [string]LB [string]RB [double]length [double]width-->
+        <!--SwerveManager [string]name [bool]wait [string list]modules [double]Max [double]length [double]width-->
         <SwerveManager/>
 
         <!--Region for PID settings-->
