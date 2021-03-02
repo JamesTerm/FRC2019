@@ -38,6 +38,7 @@ namespace Components
             SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, EncoderItem* SwivelEnc, EncoderItem* WheelEnc, double TicksPerRev, double WheelTicks);
             SwerveModule(string name, Motor *SwivelMtr, Motor *WheelMtr, double TicksPerRev, double WheelTicks);
             void SetLocation(Location Loc) {ModuleLoc = Loc;};
+            void SetLocation(int Loc) {ModuleLoc = (Location)Loc;};
             void Set(double val, double SwivelVal);
             void SetSwivel(double SwivelVal);
             double GetSwivel();

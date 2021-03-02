@@ -803,7 +803,7 @@ void Config::AllocateComponents(xml_node &root){
 				if(Location)
 				{
 					SwerveModule *tmp = new SwerveModule(name, (Motor*)m_activeCollection->Get(SwivelName), (Motor*)m_activeCollection->Get(WheelName), Ticksperrev, WheelTicksperrev);
-					tmp->SetLocation(GetLocation(Location.as_string()));
+					tmp->SetLocation(Config::GetLocation(Location.as_string()));
 					m_activeCollection->Add(tmp);
 					Log::General("Added Swerve Module :" + name);
 				}
@@ -1748,26 +1748,26 @@ TeleOpGoal Config::getTeleOpGoal(string goalString){
 	}
 }
 
-SwerveModule::Location GetLocation(string Loc)
+int Config::GetLocation(string Loc)
 {
 	if(Loc.compare("Front_Left") == 0){
-		return SwerveModule::Location::Front_Left;
+		return 0;
 	}
 	else if(Loc.compare("Front_Right") == 0)
 	{
-		return SwerveModule::Location::Front_Right;
+		return 1;
 	}
 	else if(Loc.compare("Back_Left") == 0)
 	{
-		return SwerveModule::Location::Back_Left;
+		return 2;
 	}
 	else if(Loc.compare("Back_Right") == 0)
 	{
-		return SwerveModule::Location::Back_Right;
+		return 3;
 	}
 	else{
 		Log::Error("Defaulting location to SwerveModule::Location::Front_Left");
-		return SwerveModule::Location::Front_Left;
+		return 0;
 	}
 }
 

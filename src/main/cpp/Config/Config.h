@@ -58,7 +58,7 @@ private:
 	vector<string> getBindingStringList(string bindings);
 	bool setBindingsToControl(vector<string> bindings, ControlItem *control);
 	TeleOpGoal getTeleOpGoal(string goalString);
-	SwerveModule::Location GetLocation(string Loc);
+	int GetLocation(string Loc);
 };
 
 }
