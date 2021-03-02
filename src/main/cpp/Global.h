@@ -12,6 +12,8 @@ Email: irobot9803@gmail.com
 
 #pragma once
 
+//#define __Use_RobotBase_Depreciated__
+
 #include "Util/Log.h"
 #include "Util/Event.h"
 #include "Util/Units/Distances.h"

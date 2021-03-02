@@ -37,7 +37,8 @@ public:
 	//for simulation
 	void sim_SetQuadratureRawPosition(double new_pos);   //in native units
     void sim_SetQuadratureVelocity(double newRate_s); //in seconds
-
+	virtual void ResetData()override{SetQuadraturePosition(0);};
+    virtual double GetData()override{return GetQuadraturePosition();};
 	virtual double Get() override;
 	virtual void Set(double val) override;
 	virtual void Set(DoubleSolenoid::Value value) override;

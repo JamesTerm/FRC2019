@@ -94,7 +94,7 @@ double SwerveModule::GetEnc()
     if (GetType == SwerveModule::InputType::EncoderType)
         return WheelEncoder->Get();
     else
-        return ((SparkMaxItem*)Wheel)->GetEncoderValue();
+        return (Wheel)->GetEncoder()->Get();
 }
 
 double SwerveModule::GetSwivelEnc()
@@ -102,7 +102,7 @@ double SwerveModule::GetSwivelEnc()
     if (GetType == SwerveModule::InputType::EncoderType)
         return SwivelEncoder->Get();
     else
-        return ((TalonSRXItem*)Swivel)->GetQuadraturePosition();
+        return (Swivel)->GetEncoder()->Get();
 }
 
 void SwerveModule::ResetSwivelEnc()
@@ -110,7 +110,7 @@ void SwerveModule::ResetSwivelEnc()
     if (GetType == SwerveModule::InputType::EncoderType)
         SwivelEncoder->Reset();
     else
-        ((TalonSRXItem*)Swivel)->SetQuadraturePosition(0);
+        (Swivel)->GetEncoder()->Reset();
 }
 
 void SwerveModule::ResetWheelEnc()
@@ -118,7 +118,7 @@ void SwerveModule::ResetWheelEnc()
     if (GetType == SwerveModule::InputType::EncoderType)
         WheelEncoder->Reset();
     else
-        ((SparkMaxItem*)Wheel)->Reset();
+        (Wheel)->GetEncoder()->Reset();
 }
 
 void SwerveModule::ResetEncs()
@@ -136,7 +136,7 @@ void SwerveModule::UpdateWheelRate()
     }
     else
     {
-        Pos = ((SparkMaxItem*)Wheel)->GetEncoderValue();
+        Pos = (Wheel)->GetEncoder()->Get();
     }
 
     double LastPos = Pos;

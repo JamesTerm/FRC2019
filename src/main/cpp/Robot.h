@@ -1,6 +1,6 @@
 #pragma once
 
-//#define __Use_RobotBase_Depreciated__
+#include "Global.h"
 #ifdef __Use_RobotBase_Depreciated__
 
 /*----------------------------------------------------------------------------*/
@@ -29,7 +29,7 @@
 #include "Controls/AxisControl.h"
 #include "Autonomi/Autons.h"
 #include "Util/Log.h"
-#include "Goals/FRC2019_Goals.h"
+#include "Goals/FRC_Goals.h"
 #include "Goals/GoalSelector.h"
 #include "Util/VisionTarget.h"
 #include "Limelight/limelight.h"

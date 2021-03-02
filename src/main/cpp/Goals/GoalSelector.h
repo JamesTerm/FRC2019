@@ -11,7 +11,7 @@ Email: chrisrweeks@aol.com
 \********************************************************************/
 #pragma once
 
-#include "FRC2019_Goals.h"
+#include "FRC_Goals.h"
 
 enum TeleOpGoal{
     eElevatorControl,

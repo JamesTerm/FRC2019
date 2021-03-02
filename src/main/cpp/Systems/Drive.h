@@ -18,7 +18,7 @@ Email:	cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com
 #include <frc/WPILib.h>
 #include "../util/LoopChecks.h"
 #include "../Controls/ControlItem.h"
-#include "../Goals/FRC2019_Goals.h"
+#include "../Goals/FRC_Goals.h"
 
 using namespace frc;
 using namespace std;

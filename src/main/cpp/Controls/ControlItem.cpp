@@ -17,7 +17,7 @@ Email:	dylantrwatson@gmail.com
 #include "GoalAxisControl.h"
 #include "SwerveControl.h"
 #include "../Goals/GoalSelector.h"
-#include "../Goals/FRC2019_Goals.h"
+#include "../Goals/FRC_Goals.h"
 
 using namespace std;
 using namespace Controls;

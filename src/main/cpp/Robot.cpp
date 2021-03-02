@@ -77,10 +77,9 @@ void Robot::RobotInit()
 }
 
 /*
- * Method that runs at the beginning of the autonomous mode
- * Uses the SmartDashboard to select the proper Autonomous mode to run
+ * Called when the Test period starts
  */
-void Robot::Autonomous()
+void Robot::Test()
 {
 	Robot::LoadConfig(true);
 	
@@ -169,12 +168,13 @@ void Robot::Teleop()
 }
 
 /*
- * Called when the Test period starts
+ * Method that runs at the beginning of the autonomous mode
+ * Uses the SmartDashboard to select the proper Autonomous mode to run
  */
-void Robot::Test()
+void Robot::Autonomous()
 {
 	Robot::LoadConfig(true);
-
+	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Auton);
 	string SELECTED_AUTO = "";
 	if (AutoTable->GetString("3A_Auto_Selector", "").length() == 0 && AutoTable->GetString("3A_Auto_Selector", "").compare("3A_Auto_Selector") != 0 && !m_activeCollection->ConfigOverride())
 	{

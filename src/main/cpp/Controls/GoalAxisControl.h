@@ -13,7 +13,7 @@ Email:	irobot9803@gmail.com
 #pragma once
 
 #include "ControlItem.h"
-#include "../Goals/FRC2019_Goals.h"
+#include "../Goals/FRC_Goals.h"
 #include "../Goals/GoalSelector.h"
 
 namespace Controls{

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Root of the Config -->
+<Robot>
+    <!-- Set true or false based on if robot is at comp or not -->
+    <Competition AtComp = "false" />
+    <!-- Version of the current config to be printed on the console -->
+    <Version version="1" />
+    <!-- Comment on this particular config to be printed on the console -->
+    <Comment comment="A" />
+    <!-- Sets whether or not to initialize the NavX -->
+    <UseNavX value="true" />
+    <!-- Sets the Auto to run -->
+    <Selected_Auto AutoName = "A1P2.txt" OverrideDS = "false"/>
+    <!-- Sets whether or not to initialize the camera to send back to the driver station -->
+    <limeLight/>
+    <ColorSensor name = "Color"/>
+    <!-- Contains assignments to ports and robot dimensions -->
+    <RobotConfig>
+    
+        <!-- Region for defining VictorSP Items -->
+        <VictorSP>
+            <!--[Name] [int]channel [bool]reversed [int]pdbChannel [int]Group [double]LowerRate [double]RegenRate-->
+        </VictorSP>
+
+        <!-- Region for VictorSPX CAN Items -->
+        <VictorSPX>
+            <!--[Name] [int]channel [bool]reversed [int]pdbChannel [int]Group [double]LowerRate [double]RegenRate-->
+        </VictorSPX>
+
+        <!-- Region for TalonSRX CAN Items -->
+        <TalonSRX>
+            <!--[Name] [int]channel [bool]reversed [bool]enableEncoder [int]pdbChannel [int]Group [double]LowerRate [double]RegenRate-->
+        </TalonSRX>
+
+        <!-- Region for SparkMax CAN Items -->
+		<SparkMax>
+            <!--[Name] [int]channel [bool]reversed [int]pdbChannel [int]Group [double]LowerRate [double]RegenRate-->
+		</SparkMax>
+
+        <!-- Region for Potentiometers -->
+        <Potentiometer>
+            <!--[Name] [int]channel-->
+        </Potentiometer>
+
+        <!-- Region for Encoders -->
+        <Encoder>
+            <!--[Name] [int]aChannel [int]bChannel [bool]reversed-->
+        </Encoder>
+
+        <!-- Region for DoubleSolenoids -->
+        <DoubleSolenoid>
+            <!--[Name] [int]fchannel [int]rChannel [bool]reversed [forward/reverse]default-->
+		</DoubleSolenoid>
+
+        <!-- Region for DigitalInputs -->
+        <DigitalInput>
+            <!--[Name] [int]channel-->
+        </DigitalInput>
+
+        <!--Region for Swerve Modules-->
+        <SwerveModules>
+            <!--[Name] [string]swivel [string]wheel [int]swivelTicks [int]wheelTicks [string]swivelEnc [sting]wheelEnc-->
+        </SwerveModules>
+
+        <!--SwerveManager [string]name [bool]wait [string]LF [string]RF [string]LB [string]RB [double]length [double]width-->
+        <SwerveManager/>
+
+        <!--Region for PID settings-->
+        <Profiles>
+            <!--[Name] [double]P [double]I [double]D [double]Change [double]Bias [double]Min [double]Max [int]Index-->
+        <Profiles/>
+
+        <!--Region for Power PID link settings-->
+        <PowerLinks>
+            <!--[Name] [string]Motor ([string]Profile/[int]ProfileIndex)-->
+        <PowerLinks/>
+
+        <!--Region for Position PID link settings-->
+        <PositionLinks>
+            <!--[Name] [string]Motor ([string]Profile/[int]ProfileIndex)-->
+        <PositionLinks/>
+
+        <!--Region for Encoder-Motor link settings-->
+        <EncoderLinks>
+            <!--[Name] [string]Motor [string]Encoder-->
+        <EncoderLinks/>
+    </RobotConfig>
+
+    <!-- Root of all control definitions -->
+    <Controls>
+        <!-- Driver Controller, slot should always be 0 -->
+        <Driver slot="0">
+
+            <!--Region for Axis control-->
+            <AxisControls>
+                <!--[Name] [int]axis [bool]reversed [bool]useOverdrive [double]deadZone [double]powerMultiplier [bool]isLift [string list]bindings [bool]bindEvent-->
+		    </AxisControls>
+
+            <!--Region for Button control-->
+            <ButtonControls>
+                <!--[Name] [int]button [bool]reversed [bool]actOnRelease [bool]isSolenoid [double]powerMultiplier [bool]isAmpLimited [bool]isRamp [bool]isOverdrive [string list]bindings [bool]bindEvent-->
+            </ButtonControls>
+
+            <!--Region for toggle control-->
+            <ToggleButtonControls>
+                <!--[Name] [int]button [bool]reversed [string list]bindings [bool]bindEvent-->
+            </ToggleButtonControls>
+
+            <!--Region for goal buttons-->
+            <GoalButtonControls>
+                <!--[Name] [int]button [string]goal [double]params [int]ID [int list]RemoveKeys [bool]bindEvent-->
+            </GoalButtonControls>
+
+            <!--Region for goal Axis-->
+            <GoalAxisControls>
+                <!--[Name] [int list]Axis [string]goal [bool]repeat [int]ID [int list]RemoveKeys [int]StartIndex [string list]StringData [double]DeadZone [double]mult [bool]bindEvent-->
+            <GoalAxisControls/>
+
+            <!--Region for SwerveDrive Control-->
+            <!--SwerveControl [string = Field/Robot]driveMode [string]name [int]H-Axis [int]V-Axis [int]S-Axis [double]deadZone [double]powerMultiplier [bool]reversed [string]manager-->
+            <SwerveControl/>
+        </Driver>
+        <!-- Operator Controller, slot should always be 1 -->
+		<Operator slot="1">
+
+			<!--Region for Axis control-->
+            <AxisControls>
+                <!--[Name] [int]axis [bool]reversed [bool]useOverdrive [double]deadZone [double]powerMultiplier [bool]isLift [string list]bindings [bool]bindEvent-->
+		    </AxisControls>
+
+            <!--Region for Button control-->
+            <ButtonControls>
+                <!--[Name] [int]button [bool]reversed [bool]actOnRelease [bool]isSolenoid [double]powerMultiplier [bool]isAmpLimited [bool]isRamp [bool]isOverdrive [string list]bindings [bool]bindEvent-->
+            </ButtonControls>
+
+            <!--Region for toggle control-->
+            <ToggleButtonControls>
+                <!--[Name] [int]button [bool]reversed [string list]bindings [bool]bindEvent-->
+            </ToggleButtonControls>
+
+            <!--Region for goal buttons-->
+            <GoalButtonControls>
+                <!--[Name] [int]button [string]goal [double]params [int]ID [int list]RemoveKeys [bool]bindEvent-->
+            </GoalButtonControls>
+
+            <!--Region for goal Axis-->
+            <GoalAxisControls>
+                <!--[Name] [int list]Axis [string]goal [bool]repeat [int]ID [int list]RemoveKeys [int]StartIndex [string list]StringData [double]DeadZone [double]mult [bool]bindEvent-->
+            <GoalAxisControls/>
+		</Operator>
+    </Controls>
+    <RobotCameraServer enabled="false">
+    </RobotCameraServer>
+    <!--Vision LS="0" US="3" LH="87" UH="126" LV="255" UV="255" MinA="1112" MaxA="82763" MaxO="62" LOWER_BOUND="0" UPPER_BOUND="1000" LEFT_BOUND="0" RIGHT_BOUND="1000"/-->
+</Robot>

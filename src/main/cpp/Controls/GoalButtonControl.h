@@ -15,7 +15,7 @@ Email:	dylantrwatson@gmail.com
 #include "ControlItem.h"
 #include "../Components/VictorSPItem.h"
 #include "../Components/DoubleSolenoidItem.h"
-#include "../Goals/FRC2019_Goals.h"
+#include "../Goals/FRC_Goals.h"
 #include "../Goals/GoalSelector.h"
 
 namespace Controls{

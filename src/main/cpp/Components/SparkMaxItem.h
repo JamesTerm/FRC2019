@@ -33,7 +33,8 @@ public:
 	SparkMaxItem();
 	SparkMaxItem(int _channel, string _name, bool _reversed, bool Real);
 	double GetEncoderValue();
-    
+    virtual void ResetData()override{Reset();};
+    virtual double GetData(){return GetEncoderValue();};
 	virtual double Get() ;
 	int GetPolarity();
 	void Reset();

@@ -1,6 +1,7 @@
-#include "Robot.h"
+#include "Global.h"
 #ifndef __Use_RobotBase_Depreciated__
 
+#include "Robot.h"
 #include <string>
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
@@ -23,7 +24,7 @@
 #include "Controls/AxisControl.h"
 #include "Autonomi/Autons.h"
 #include "Util/Log.h"
-#include "Goals/FRC2019_Goals.h"
+#include "Goals/FRC_Goals.h"
 #include "Goals/GoalSelector.h"
 #include "Util/VisionTarget.h"
 #include "Limelight/limelight.h"
@@ -72,14 +73,14 @@ private:
     {
        	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", false);
 
-	if(nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("0A-RESET_ROBOT_VALUES", false) && !RobotRunning)
-	{
-		vector<string> KeysNT = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetKeys();
-		for(int i = 0; i < KeysNT.size(); i++)
-			if(KeysNT.at(i).compare("3A_Auto_Selector") != 0)
-				nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutValue(KeysNT.at(i), 0);
-	}
-	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("0A-RESET_ROBOT_VALUES", false);
+	    if(nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("0A-RESET_ROBOT_VALUES", false) && !RobotRunning)
+	    {
+	    	vector<string> KeysNT = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetKeys();
+	    	for(int i = 0; i < KeysNT.size(); i++)
+	    		if(KeysNT.at(i).compare("3A_Auto_Selector") != 0)
+	    			nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutValue(KeysNT.at(i), 0);
+	    }
+        nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("0A-RESET_ROBOT_VALUES", false);
 
         //This only needs to happen one time!
         //For real robot I have lifted this condition
@@ -88,7 +89,6 @@ private:
             m_IsConfigLoaded=true;
             Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
         }
-
         nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", RobotRunning);
     }
     void TimeSlice(bool IsAuton=false)
@@ -156,7 +156,7 @@ private:
     }
     void RobotPeriodic() override
     {}
-    void AutonomousInit() override
+    void TestInit() override
     {
         Robot::LoadConfig(true);
 	
@@ -179,7 +179,7 @@ private:
         m_masterGoal->Activate();
         m_activeCollection->SetRobotGoal(m_masterGoal);
     }
-    void AutonomousPeriodic() override
+    void TestPeriodic() override
     {
         TimeSlice(true);
     }
@@ -224,10 +224,10 @@ private:
     private:
     std::shared_ptr<AutoPath> PathA;
     public:
-    void TestInit() override
+    void AutonomousInit() override
     {
         Robot::LoadConfig(true);
-
+        Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Auton);
         string SELECTED_AUTO = "";
         if (AutoTable->GetString("3A_Auto_Selector", "").length() == 0 && AutoTable->GetString("3A_Auto_Selector", "").compare("3A_Auto_Selector") != 0 && !m_activeCollection->ConfigOverride())
         {
@@ -245,10 +245,10 @@ private:
         PathA = std::make_shared<AutoPath>(m_activeCollection, Map(SELECTED_AUTO), 10, true, 10);
         PathA->Activate();
     }
-    void TestPeriodic() override
+    void AutonomousPeriodic() override
     {
         //Note: using synthetic time
-        PathA->Process(0.0001);
+        PathA->Process(0.01);
     }
     void SimulationInit () override
     {

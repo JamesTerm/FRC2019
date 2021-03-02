@@ -12,7 +12,6 @@ Email: dylantrwatson@gmail.com
 \********************************************************************/
 
 #include "EncoderItem.h"
-
 using namespace Components;
 
 EncoderItem::EncoderItem() {}
@@ -30,19 +29,52 @@ EncoderItem::EncoderItem(string _name, int _aChannel, int _bChannel, bool _rever
 		OutputTable->PutNumber(name, 0);
 		OutputTable->PutBoolean(name + "-Reset", true);
 	}
+	Type = InputType::Independent;
 }
 
-void EncoderItem::Reset(){
-	encoder->Reset();
-	OutputTable->PutBoolean(name + "-Reset", true);
+EncoderItem::EncoderItem(string _name, NativeComponent *Connected) : InputComponent(_name)
+{
+	Type = InputType::Data_Driven;
+	LinkedComponent = Connected;
 }
 
-double EncoderItem::Get(){
-	double input = (UseTable ? OutputTable->GetNumber(name, 0) : (double)encoder->Get());
-	return input - Offset;
+void EncoderItem::Reset()
+{
+	if(Type == InputType::Independent)
+	{
+		encoder->Reset();
+		OutputTable->PutBoolean(name + "-Reset", true);
+	}
+	else
+	{
+		if(LinkedComponent != nullptr)
+			LinkedComponent->ResetData();
+		else
+			Log::Error("Encoder " + name + " tracking nullptr!");
+	}
 }
 
-string EncoderItem::GetName(){
+double EncoderItem::Get()
+{
+	if(Type == InputType::Independent)
+	{
+		double input = (UseTable ? OutputTable->GetNumber(name, 0) : (double)encoder->Get());
+		return input - Offset;
+	}
+	else
+	{
+		if(LinkedComponent != nullptr)
+			return LinkedComponent->GetData();
+		else
+		{
+			Log::Error("Encoder " + name + " tracking nullptr!");
+			return 0;
+		}
+	}
+}
+
+string EncoderItem::GetName()
+{
 	return name;
 }
 
@@ -54,7 +86,7 @@ void EncoderItem::DeleteComponent()
 
 void EncoderItem::UpdateComponent()
 {
-	if (!UseTable)
+	if (!UseTable && Type == InputType::Independent)
 	{
 		OutputTable->PutNumber(name, EncoderItem::Get());
 	}

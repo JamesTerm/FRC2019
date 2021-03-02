@@ -1,6 +1,6 @@
 /****************************** Header ******************************\
 Class Name: (multiple classes)
-File Name: FRC2019_Goals.h
+File Name: FRC_Goals.h
 Summary: All implemented Goals go here. Region statements categorize
 types
 Project: BroncBotzFRC2019

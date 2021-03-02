@@ -49,6 +49,7 @@ namespace Configuration
 			virtual ~ActiveCollection(){}
 
 			NativeComponent* Get(string name);
+			Motor* GetMotor(string name);
 			VictorSPItem* GetVictor(string name);
 			TalonSRXItem* GetTalon(string name);
 			EncoderItem* GetEncoder(string name);

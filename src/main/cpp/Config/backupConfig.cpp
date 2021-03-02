@@ -11,6 +11,7 @@ Email: irobot9803@gmail.com
 \********************************************************************/
 
 #include "backupConfig.h"
+#include "../Global.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -55,9 +56,17 @@ void backupConfig::SetInfo()
 
 void backupConfig::SetComponents()
 {
+	#ifdef __Use_RobotBase_Depreciated__
 	backupConfig::AddPIDProfile("SwivelPIDControl", 0.8, 0.01, 0, 1, 1000);
+	backupConfig::AddPIDProfile("CoverPIDControl", 0.8, 0.01, 0, 1, 1000);
 	backupConfig::AddPIDProfile("AutoPositionX", 9, 7, 0, 0.15, 10);
 	backupConfig::AddPIDProfile("AutoPositionY", 9, 7, 0, 0.15, 10);
+	#else
+	backupConfig::AddPIDProfile("SwivelPIDControl", 0.8, 0.01, 0, 1, 1000);
+	backupConfig::AddPIDProfile("CoverPIDControl", 0.8, 0.01, 0, 1, 1000);
+	backupConfig::AddPIDProfile("AutoPositionX", 9, 7, 0, 0.15, 10);
+	backupConfig::AddPIDProfile("AutoPositionY", 9, 7, 0, 0.15, 10);
+	#endif
 
 	backupConfig::AddSparkMax("WheelFL", 3, false);
 	backupConfig::AddSparkMax("WheelFR", 4, false);
@@ -69,10 +78,10 @@ void backupConfig::SetComponents()
 	backupConfig::AddTalonSRX("SwivelBL", 9, false, true);
 	backupConfig::AddTalonSRX("SwivelBR", 10, false, true);
 
-	backupConfig::LinkPositionProfileMotor("SwivelFL", "SwivelPIDControl");
-	backupConfig::LinkPositionProfileMotor("SwivelFR", "SwivelPIDControl");
-	backupConfig::LinkPositionProfileMotor("SwivelBL", "SwivelPIDControl");
-	backupConfig::LinkPositionProfileMotor("SwivelBR", "SwivelPIDControl");
+	backupConfig::Link_Motor_PositionProfile("SwivelFL", "SwivelPIDControl");
+	backupConfig::Link_Motor_PositionProfile("SwivelFR", "SwivelPIDControl");
+	backupConfig::Link_Motor_PositionProfile("SwivelBL", "SwivelPIDControl");
+	backupConfig::Link_Motor_PositionProfile("SwivelBR", "SwivelPIDControl");
 
 	backupConfig::AddSwerveModule("FL", "SwivelFL", "WheelFL", 4096, 4096, SwerveModule::Location::Front_Left);
 	backupConfig::AddSwerveModule("FR", "SwivelFR", "WheelFR", 4096, 4096, SwerveModule::Location::Front_Right);
@@ -92,6 +101,9 @@ void backupConfig::SetComponents()
 	backupConfig::AddEncoder("RevolverEncoder", 1, 2, false);
 	backupConfig::AddEncoder("CoverEncoder", 3, 4, false);
 	backupConfig::AddEncoder("ShooterEncoder", 5, 6, false);
+
+	backupConfig::Link_Motor_Encoder("Cover", "CoverEncoder");
+	backupConfig::Link_Motor_PositionProfile("Cover", "CoverPIDControl");
 
 	backupConfig::AddDoubleSolenoid("IntakePiston", 1, 2, DoubleSolenoid::Value::kReverse, false);
 }

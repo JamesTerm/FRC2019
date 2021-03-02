@@ -10,25 +10,40 @@ All rights reserved.
 Author(s): Dylan Watson
 Email: dylantrwatson@gmail.com
 \********************************************************************/
-
 #ifndef SRC_COMPONENTS_ENCODERITEM_H_
 #define SRC_COMPONENTS_ENCODERITEM_H_
 
 #include "InputComponent.h"
 
+using namespace std;
+using namespace frc;
+using namespace Util;
+
 namespace Components{
 class EncoderItem : public InputComponent{
 private:
+	enum InputType
+	{
+		Independent = 0,
+		Data_Driven = 1
+	};
+
 	int aChannel;
 	int bChannel;
 	bool reversed;
 	int Offset = 0;
-	Encoder *encoder;
+	Encoder *encoder = nullptr;
+	NativeComponent* LinkedComponent = nullptr;
+	
+	InputType Type;
 
 public:
+
 	virtual double Get() override;
 	EncoderItem();
 	EncoderItem(string _name, int _aChannel, int _bChannel, bool _reversed, bool Real);
+	EncoderItem(string _name, NativeComponent *Connected);
+	NativeComponent* GetLinkedComponent(){return LinkedComponent;};
 	virtual string GetName() override;
 	void Reset();
 	virtual void DeleteComponent() override;

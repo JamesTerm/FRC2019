@@ -17,7 +17,7 @@ Email:	dylantrwatson@gmail.com
 #include <frc/WPILib.h>
 #include "ControlItem.h"
 #include "../Components/PotentiometerItem.h"
-#include "../Goals/FRC2019_Goals.h"
+#include "../Goals/FRC_Goals.h"
 
 using namespace frc;
 using namespace std;

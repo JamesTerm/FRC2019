@@ -9,14 +9,12 @@ All rights reserved.
 Author(s): Ian Poll
 Email: irobot9803@gmail.com
 \********************************************************************/
-
 #ifndef SRC_Motor_motor_H_
 #define SRC_Motor_motor_H_
-
 #include "ctre/Phoenix.h"
 #include "OutputComponent.h"
 #include "../Util/PIDProfile.h"
-
+#include "EncoderItem.h"
 
 using namespace std;
 using namespace frc;
@@ -46,12 +44,28 @@ namespace Components
             PIDProfile *PositionProfile = nullptr;
             PIDProfile *PowerProfile = nullptr;
 
+            EncoderItem* ConnectedEncoder = nullptr;
+            EncoderItem* LinkedEncoder = nullptr;
+
         public:
 
             Motor() : OutputComponent(){}
-			Motor(string name) : OutputComponent(name)
-            { 
+
+            Motor(string name) : OutputComponent(name)
+            {
                 Motor::InitProfiles();
+                LinkedEncoder = new EncoderItem(name + "-LinkedEncoder", this);
+                ConnectedEncoder = LinkedEncoder;
+            }
+
+            void SetLinkedEncoder(EncoderItem* Encoder)
+            {
+                LinkedEncoder = Encoder;
+            }
+
+            EncoderItem* GetEncoder()
+            {
+                return LinkedEncoder;
             }
 
             void SetPDBChannel(int val) { PDBPort = val; }
@@ -102,6 +116,10 @@ namespace Components
                 {
                     delete PowerProfile;
                 }
+                if(ConnectedEncoder != nullptr)
+                {
+                    delete ConnectedEncoder;
+                }
             }
 
             PIDProfile* GetPositionProfile(){return PositionProfile;};
@@ -114,14 +132,21 @@ namespace Components
                     CurrentPowerTarget = Power;
                     PowerProfile->Reset();
                 }
-                double Current = Get();
-                Current += -PowerProfile->Calculate(Power, Get(), Time);
-                Set(Current);
+                if(Power != 0)
+                {
+                    double Current = Get();
+                    Current += -PowerProfile->Calculate(Power, Get(), Time);
+                    Set(Current);
+                }
+                else
+                {
+                    Set(0);
+                }
             }
 
             void SetPosition(double Target, double CurrentPosition, double Time)
             {
-                Set(PositionProfile->Calculate(Target, CurrentPosition, Time));
+                Set(-PositionProfile->Calculate(Target, CurrentPosition, Time));
             }
 
             void SetRegenRate(double Rate) {RegenRate = Rate;}

@@ -80,6 +80,27 @@ NativeComponent* ActiveCollection::Get(string name)
 }
 
 /**
+ * Method to return a Motor of a certain name
+**/
+
+Motor* ActiveCollection::GetMotor(string name)
+{
+	Motor *ret = nullptr;
+	try{
+		for(int i=0; i<(int)activeCollection.size();i++){
+			if((*activeCollection[i]).name == (string)name){
+				ret=(Motor*)activeCollection[i];
+			}
+		}
+		if (!ret) throw "AHHH";
+	}
+	catch(...){
+		Log::Error("Cannot find Motor " + name + ", it does not exist in the active collection!");
+	}
+	return ret;
+}
+
+/**
  * Method to return a VictorSP of a certain name
 **/
 VictorSPItem* ActiveCollection::GetVictor(string name)

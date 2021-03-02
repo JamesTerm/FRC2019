@@ -101,6 +101,25 @@ private:
 			    	m_activeCollection->Add(tmp);
 			    	Log::General("Added DigitalInput " + Name + ", Channel: " + to_string(Channel));};
 
+	void Link_Motor_Encoder(string MotorName, string EncoderName)
+	{
+		if (m_activeCollection->GetEncoder(EncoderName) != nullptr)
+		{
+			if(m_activeCollection->Get(MotorName) != nullptr)
+			{
+				((Motor*)m_activeCollection->Get(MotorName))->SetLinkedEncoder(m_activeCollection->GetEncoder(EncoderName));
+			}
+			else
+			{
+				Log::Error(MotorName + " doesnt exist!");
+			}
+		}
+		else
+		{
+			Log::Error(EncoderName + " doesnt exist!");
+		}
+	};
+
 	void AddSwerveModule(string Name, string SwivelMotor, string WheelMotor, double Ticksperrev, double WheelTicksperrev)
 	{
 		if (m_activeCollection->Get(SwivelMotor) != nullptr && m_activeCollection->Get(WheelMotor) != nullptr)
@@ -356,7 +375,7 @@ private:
 		Log::General("Added PIDProfile: " + Name + " at index: " + to_string(IndexAt));
 	}
 
-	void LinkPositionProfileMotor(string NameMotor, string NameProfile)
+	void Link_Motor_PositionProfile(string NameMotor, string NameProfile)
 	{
 		Motor* MotorPtr = (Motor*)m_activeCollection->Get(NameMotor);
 		if(MotorPtr != nullptr)
@@ -370,7 +389,7 @@ private:
 		}
 	}
 
-	void LinkPositionProfileMotor(string NameMotor, int IndexProfile)
+	void Link_Motor_PositionProfile(string NameMotor, int IndexProfile)
 	{
 		Motor* MotorPtr = (Motor*)m_activeCollection->Get(NameMotor);
 		if(MotorPtr != nullptr)
@@ -384,7 +403,7 @@ private:
 		}
 	}
 
-	void LinkPowerProfileMotor(string NameMotor, string NameProfile)
+	void Link_Motor_PowerProfile(string NameMotor, string NameProfile)
 	{
 		Motor* MotorPtr = (Motor*)m_activeCollection->Get(NameMotor);
 		if(MotorPtr != nullptr)
@@ -398,7 +417,7 @@ private:
 		}
 	}
 
-	void LinkPowerProfileMotor(string NameMotor, int IndexProfile)
+	void Link_Motor_PowerProfile(string NameMotor, int IndexProfile)
 	{
 		Motor* MotorPtr = (Motor*)m_activeCollection->Get(NameMotor);
 		if(MotorPtr != nullptr)

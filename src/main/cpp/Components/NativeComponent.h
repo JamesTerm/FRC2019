@@ -35,6 +35,8 @@ namespace Components
 			NativeComponent(){}
 			NativeComponent(string _name){ name = _name; }
 			virtual ~NativeComponent(){}
+			virtual double GetData(){return 0;};
+			virtual void ResetData(){};
 			std::shared_ptr<NetworkTable> OutputTable = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard");
 		protected:
 			bool UseTable = false;

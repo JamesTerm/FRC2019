@@ -12,7 +12,7 @@ Email: chrisrweeks@aol.com
 \********************************************************************/
 
 #define _USE_MATH_DEFINES
-#include "FRC2019_Goals.h"
+#include "FRC_Goals.h"
 
 using namespace std;
 using namespace Util;
@@ -231,8 +231,8 @@ void Goal_REVColorSensorV3::Terminate()
 
 void Goal_MotorPosition::Activate()
 {
-    Subject = (Motor*)m_activeCollection->Get(GetStringData(0));
-    Position = (EncoderItem*)m_activeCollection->GetEncoder(GetStringData(1));
+    Subject = m_activeCollection->GetMotor(GetStringData(0));
+    Position = (m_activeCollection->GetMotor(GetStringData(0)))->GetEncoder();
     TargetPos += GetData(0);
     m_Status = eActive;
 }
@@ -242,7 +242,7 @@ Goal::Goal_Status Goal_MotorPosition::Process(double dTime)
     if(m_Status == eActive)
     {
         TargetPos += GetData(0);
-        Log::General("----------------------------Running to target: " + to_string(TargetPos) + "--------");
+        Log::General("----------------------------Running to target: " + to_string(TargetPos) + " --Current: " + to_string(Position->Get()) + "--------");
         Subject->SetPosition(TargetPos, Position->Get(), dTime);
         if(Subject->GetPositionProfile()->Inrange(TargetPos, Position->Get(), 0.01))
             m_Status = eCompleted;

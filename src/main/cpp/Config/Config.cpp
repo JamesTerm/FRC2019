@@ -693,7 +693,7 @@ void Config::AllocateComponents(xml_node &root){
 		Log::Error("Potentiometer definitions not found in config, skipping...");
 	}
 
-#pragma endregion Potentiometer
+	#pragma endregion Potentiometer
 
 	#pragma region Encoder
 
@@ -719,7 +719,7 @@ void Config::AllocateComponents(xml_node &root){
 		Log::Error("Encoder definitions not found in config, skipping...");
 	}
 
-#pragma endregion Encoder
+	#pragma endregion Encoder
 
 	#pragma region DoubleSolenoid
 
@@ -764,7 +764,7 @@ void Config::AllocateComponents(xml_node &root){
 
 	#pragma region DigitalInput
 
-	xml_node DI = robot.child("DI");
+	xml_node DI = robot.child("DigitalInput");
 	if(DI){
 		for(xml_node di = DI.first_child(); di; di = di.next_sibling()){
 			string name = di.name();
@@ -783,7 +783,7 @@ void Config::AllocateComponents(xml_node &root){
 		Log::Error("DigitalInput definitions not found in config, skipping...");
 	}
 
-#pragma endregion DigitalInput
+	#pragma endregion DigitalInput
 
 	#pragma region SwerveModule
 
@@ -854,6 +854,217 @@ void Config::AllocateComponents(xml_node &root){
 	}
 
 	#pragma endregion SwerveManager
+
+	#pragma region _PID
+
+	xml_node Profiles = robot.child("Profiles");
+	if(Profiles){
+		for(xml_node P = Profiles.first_child(); P; P = P.next_sibling()){
+			string name = P.name();
+			xml_attribute Pval = P.attribute("P");
+			xml_attribute Ival = P.attribute("I");
+			xml_attribute Dval = P.attribute("D");
+			xml_attribute MaxChange = P.attribute("Change");
+			xml_attribute Bias = P.attribute("Bias");
+			xml_attribute Min = P.attribute("Min");
+			xml_attribute Max = P.attribute("Max");
+			xml_attribute Index = P.attribute("Index");
+			if(Pval && Ival && Dval)
+			{
+				if(MaxChange && Bias)
+				{
+					if(Min)
+					{
+						if(Max)
+						{
+							if(Index)
+								m_activeCollection->CreateAndAddProfile(name, Pval.as_double(), Ival.as_double(), Dval.as_double(), MaxChange.as_double(), Bias.as_double(), Min.as_double(), Max.as_double(), Index.as_int());
+							else
+								m_activeCollection->CreateAndAddProfile(name, Pval.as_double(), Ival.as_double(), Dval.as_double(), MaxChange.as_double(), Bias.as_double(), Min.as_double(), Max.as_double());
+						}
+						else
+							m_activeCollection->CreateAndAddProfile(name, Pval.as_double(), Ival.as_double(), Dval.as_double(), MaxChange.as_double(), Bias.as_double(), Min.as_double());
+					}
+					else
+					{
+						m_activeCollection->CreateAndAddProfile(name, Pval.as_double(), Ival.as_double(), Dval.as_double(), MaxChange.as_double(), Bias.as_double());
+					}
+				}
+				else
+				{
+					m_activeCollection->CreateAndAddProfile(name, Pval.as_double(), Ival.as_double(), Dval.as_double());
+				}
+			}
+			else
+			{
+				Log::Error("Profile not complete");
+			}
+		}
+	}
+	else{
+		Log::Error("PID Profiles definitions not found in config, skipping...");
+	}
+
+	#pragma endregion _PID
+
+	#pragma region Link_PID_Power
+
+	xml_node PowerProfiles = robot.child("PowerLinks");
+	if(PowerProfiles){
+		for(xml_node P = PowerProfiles.first_child(); P; P = P.next_sibling()){
+			string name = P.name();
+			xml_attribute MotorName = P.attribute("Motor");
+			xml_attribute ProfileName = P.attribute("Profile");
+			xml_attribute ProfileIndex = P.attribute("ProfileIndex");
+			if(MotorName)
+			{
+				if(ProfileName)
+				{
+					string Name = MotorName.as_string();
+					Motor* MotorPtr = (Motor*)m_activeCollection->Get(Name);
+					if(MotorPtr != nullptr)
+					{
+						MotorPtr->SetPowerProfile(m_activeCollection->GetProfile(ProfileName.as_string()));
+						Log::General("Correctly Set Motor: " + Name + " to PID numbers from: " + Name);
+					}
+					else
+					{
+						Log::Error("Motor " + Name + " does not exist!");
+					}
+				}
+				else if(ProfileIndex)
+				{
+					string Name = MotorName.as_string();
+					Motor* MotorPtr = (Motor*)m_activeCollection->Get(Name);
+					if(MotorPtr != nullptr)
+					{
+						MotorPtr->SetPowerProfile(m_activeCollection->GetProfile(ProfileIndex.as_int()));
+						Log::General("Correctly Set Motor: " + Name + " to PID numbers from index: " + Name);
+					}
+					else
+					{
+						Log::Error("Motor " + Name + " does not exist!");
+					}
+				}
+				else
+				{
+					Log::Error("Link not complete!");
+				}
+			}
+			else
+			{
+				Log::Error("Link not complete!");
+			}
+		}
+	}
+	else{
+		Log::Error("Power Link definitions not found in config, skipping...");
+	}
+
+	#pragma endregion Link_PID_Power
+
+	#pragma region Link_PID_Position
+
+	xml_node PositionProfiles = robot.child("PositionLinks");
+	if(PositionProfiles){
+		for(xml_node P = PositionProfiles.first_child(); P; P = P.next_sibling()){
+			string name = P.name();
+			xml_attribute MotorName = P.attribute("Motor");
+			xml_attribute ProfileName = P.attribute("Profile");
+			xml_attribute ProfileIndex = P.attribute("ProfileIndex");
+			if(MotorName)
+			{
+				if(ProfileName)
+				{
+					string Name = MotorName.as_string();
+					Motor* MotorPtr = (Motor*)m_activeCollection->Get(Name);
+					if(MotorPtr != nullptr)
+					{
+						MotorPtr->SetPositonProfile(m_activeCollection->GetProfile(ProfileName.as_string()));
+						Log::General("Correctly Set Motor: " + Name + " to PID numbers from: " + Name);
+					}
+					else
+					{
+						Log::Error("Motor " + Name + " does not exist!");
+					}
+				}
+				else if(ProfileIndex)
+				{
+					string Name = MotorName.as_string();
+					Motor* MotorPtr = (Motor*)m_activeCollection->Get(Name);
+					if(MotorPtr != nullptr)
+					{
+						MotorPtr->SetPositonProfile(m_activeCollection->GetProfile(ProfileIndex.as_int()));
+						Log::General("Correctly Set Motor: " + Name + " to PID numbers from index: " + Name);
+					}
+					else
+					{
+						Log::Error("Motor " + Name + " does not exist!");
+					}
+				}
+				else
+				{
+					Log::Error("Link not complete!");
+				}
+			}
+			else
+			{
+				Log::Error("Link not complete!");
+			}
+		}
+	}
+	else{
+		Log::Error("Position Link definitions not found in config, skipping...");
+	}
+
+	#pragma endregion Link_PID_Position
+
+	#pragma region Encoder_Links
+
+	xml_node EncoderLinks = robot.child("EncoderLinks");
+	if(EncoderLinks){
+		for(xml_node P = EncoderLinks.first_child(); P; P = P.next_sibling()){
+			string name = P.name();
+			xml_attribute MotorName = P.attribute("Motor");
+			xml_attribute EncoderName = P.attribute("Encoder");
+			if(MotorName)
+			{
+				if(EncoderName)
+				{
+					string MotName = MotorName.as_string();
+					string EncName = EncoderName.as_string();
+					if (m_activeCollection->GetEncoder(EncName) != nullptr)
+					{
+						if(m_activeCollection->Get(MotName) != nullptr)
+						{
+							((Motor*)m_activeCollection->Get(MotName))->SetLinkedEncoder(m_activeCollection->GetEncoder(EncName));
+						}
+						else
+						{
+							Log::Error(MotName + " doesnt exist!");
+						}
+					}
+					else
+					{
+						Log::Error(EncName + " doesnt exist!");
+					}
+				}
+				else
+				{
+					Log::Error("Link not complete!");
+				}
+			}
+			else
+			{
+				Log::Error("Link not complete!");
+			}
+		}
+	}
+	else{
+		Log::Error("Encoder Link definitions not found in config, skipping...");
+	}
+
+	#pragma endregion Encoder_Links
 
 }
 
@@ -1507,6 +1718,10 @@ TeleOpGoal Config::getTeleOpGoal(string goalString){
 	else if(goalString.compare("ShooterGoal") == 0)
 	{
 		return TeleOpGoal::eShooter;
+	}
+	else if(goalString.compare("MotorPosition") == 0)
+	{
+		return TeleOpGoal::eMotorPosition;
 	}
 	else{
 		Log::Error("Error registering teleop goal " + goalString + ". Skipping this control...");
