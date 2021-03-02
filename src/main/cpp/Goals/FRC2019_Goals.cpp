@@ -219,6 +219,7 @@ Goal::Goal_Status Goal_REVColorSensorV3:: Process(double dTime)
         Spinner->Set(0);
         return m_Status = eFailed;
     }
+    return m_Status = eActive;
 }
 
 void Goal_REVColorSensorV3::Terminate()
@@ -924,6 +925,7 @@ Goal::Goal_Status Goal_ShooterYeet::Process(double dTime)
         ShooterMotor2 ->Set(0);
         return eInactive;
     }
+    return eInactive;
 }
 
 void Goal_ShooterYeet::Terminate()

@@ -352,8 +352,8 @@ private:
 
 	void AddPIDProfile(string Name, double P, double I, double D, double MaxChange = 0.1, double Bias = -1, double Min = -1, double Max = 1, int index = -1)
 	{
-		int I = m_activeCollection->CreateAndAddProfile(Name, P, I, D, MaxChange, (Bias <= 0 ? P * 100 : Bias), Min, Max, index);
-		Log::General("Added PIDProfile: " + Name + " at index: " + to_string(I));
+		int IndexAt = m_activeCollection->CreateAndAddProfile(Name, P, I, D, MaxChange, (Bias <= 0 ? P * 100 : Bias), Min, Max, index);
+		Log::General("Added PIDProfile: " + Name + " at index: " + to_string(IndexAt));
 	}
 
 	void LinkPositionProfileMotor(string NameMotor, string NameProfile)
