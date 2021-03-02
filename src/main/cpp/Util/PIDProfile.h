@@ -40,6 +40,17 @@ namespace Util
                 SetBias(Bias);
             };
 
+			PIDProfile(ProfileData* Data)
+            {
+                SetP(Data->Pval);
+                SetI(Data->Ival);
+                SetD(Data->Dval);
+                SetBias(Data->Bias);
+				SetMaxChange(Data->Change);
+				SetMin(Data->Min);
+				SetMax(Data->Max);
+            };
+
             void SetP(double P)
             {
                 Pval = P;
@@ -299,6 +310,30 @@ namespace Util
 
 			bool SpeedReached = false;
     };
+
+	struct ProfileData
+	{
+		ProfileData(double P = 1, double I = 0, double D = 0, double MaxChange = 0.1, double Bias = 100, double Min = -1, double Max = 1, string Name = "Default")
+		{
+			Pval = P;
+			Ival = I;
+			Dval = D;
+			Change = MaxChange;
+			this->Bias = Bias;
+			this->Name = Name;
+			this->Min = Min;
+			this->Max = Max;
+		}
+		double Pval = 0;
+		double Ival = 0;
+		double Dval = 0;
+		double Bias = 1000;
+		double Change = 0.1;
+		double Min = -1;
+		double Max = 1;
+		string Name = "Default";
+	};
+	
 }
 
 #endif

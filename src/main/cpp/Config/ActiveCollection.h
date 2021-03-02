@@ -75,6 +75,11 @@ namespace Configuration
 			void SetRobotGoal(MultitaskGoal* g) {Robot_Goal = g;}
 			MultitaskGoal* GetRobotGoal() {return Robot_Goal;}
 
+			int CreateAndAddProfile(string Name, double P, double I, double D, double MaxChange = 0.1, double Bias = -1, double Min = -1, double Max = 1, int index = -1);
+			int AddProfile(ProfileData* Data, int index = -1);
+			ProfileData* GetProfile(int i);
+			ProfileData* GetProfile(string Name);
+
 			void SetOverdrive(bool o) {overdrive = o;}
 			bool GetOverdrive() {return overdrive;}
 
@@ -95,6 +100,9 @@ namespace Configuration
 		MultitaskGoal* Driver_Goal = nullptr;
 		MultitaskGoal* Operator_Goal = nullptr;
 		MultitaskGoal* Robot_Goal = nullptr;
+
+		vector<ProfileData*> Profiles;
+		ProfileData* DefaultData = new ProfileData();
 		
 		bool overdrive;
 		bool AutoOverride = false;

@@ -49,7 +49,10 @@ namespace Components
         public:
 
             Motor() : OutputComponent(){}
-			Motor(string name) : OutputComponent(name){  }
+			Motor(string name) : OutputComponent(name)
+            { 
+                Motor::InitProfiles();
+            }
 
             void SetPDBChannel(int val) { PDBPort = val; }
             int GetPDBChannel() {return PDBPort;}
@@ -59,6 +62,34 @@ namespace Components
                 PositionProfile = new PIDProfile(Ppos, Ipos, Dpos);
                 PowerProfile = new PIDProfile(Pspe, Ispe, Dspe);
                 PowerProfile->SetMaxChange(0.15);
+            }
+
+            void SetPositonProfile(double Ppos = 0.8, double Ipos = 0.01, double Dpos = 0, double Bias = -1)
+            {
+                if(PositionProfile != nullptr)
+                {
+                    delete PositionProfile;
+                }
+                PositionProfile = new PIDProfile(Ppos, Ipos, Dpos, (Bias < 0 ? Ppos * 100 : Bias));
+            }
+
+            void SetPowerProfile(double Ppos = 0.8, double Ipos = 0.01, double Dpos = 0, double Bias = -1)
+            {
+                if(PowerProfile != nullptr)
+                {
+                    delete PowerProfile;
+                }
+                PowerProfile = new PIDProfile(Ppos, Ipos, Dpos, (Bias < 0 ? Ppos * 100 : Bias));
+            }
+
+            void SetPositonProfile(ProfileData* Data)
+            {
+                Motor::SetPositonProfile(Data->Pval, Data->Ival, Data->Dval, Data->Bias);
+            }
+
+            void SetPowerProfile(ProfileData* Data)
+            {
+                Motor::SetPowerProfile(Data->Pval, Data->Ival, Data->Dval, Data->Bias);
             }
 
             void CleanUpProfiles()

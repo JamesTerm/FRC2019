@@ -28,7 +28,6 @@ TalonSRXItem::TalonSRXItem(int _channel, string _name, bool _reversed, bool enab
 	talon = new WPI_TalonSRX(channel);
 	encoderEnabled = enableEncoder;
 	FromTable(Real);
-	InitProfiles();
 	Offset = OutputTable->GetNumber(name + "-Encoder", 0);
 	if(enableEncoder)
 	{

@@ -176,7 +176,7 @@ void Robot::Test()
 	Robot::LoadConfig(true);
 
 	string SELECTED_AUTO = "";
-	if (AutoTable->GetString("3A_Auto_Selector", "").length() == 0 && !m_activeCollection->ConfigOverride())
+	if (AutoTable->GetString("3A_Auto_Selector", "").length() == 0 && AutoTable->GetString("3A_Auto_Selector", "").compare("3A_Auto_Selector") != 0 && !m_activeCollection->ConfigOverride())
 	{
 		SELECTED_AUTO = m_activeCollection->GetAuto();
 	}

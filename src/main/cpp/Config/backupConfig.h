@@ -50,7 +50,7 @@ public:
 	virtual ~backupConfig();
 private:
     bool AtCompVal = false;
-    double Version = 0.1;
+    double Version = 5.0;
     bool useNavX = true;
 	bool useLimelight = false;
 	bool Fake = true;
@@ -349,6 +349,75 @@ private:
     		Log::Error("One or more bindings failed to allocate for control " + control->name + ". Please check the Config!");
     	return success;
     }
+
+	void AddPIDProfile(string Name, double P, double I, double D, double MaxChange = 0.1, double Bias = -1, double Min = -1, double Max = 1, int index = -1)
+	{
+		int I = m_activeCollection->CreateAndAddProfile(Name, P, I, D, MaxChange, (Bias <= 0 ? P * 100 : Bias), Min, Max, index);
+		Log::General("Added PIDProfile: " + Name + " at index: " + to_string(I));
+	}
+
+	void LinkPositionProfileMotor(string NameMotor, string NameProfile)
+	{
+		Motor* MotorPtr = (Motor*)m_activeCollection->Get(NameMotor);
+		if(MotorPtr != nullptr)
+		{
+			MotorPtr->SetPositonProfile(m_activeCollection->GetProfile(NameProfile));
+			Log::General("Correctly Set Motor: " + NameMotor + " to PID numbers from: " + NameProfile);
+		}
+		else
+		{
+			Log::Error("Motor " + NameMotor + " does not exist!");
+		}
+	}
+
+	void LinkPositionProfileMotor(string NameMotor, int IndexProfile)
+	{
+		Motor* MotorPtr = (Motor*)m_activeCollection->Get(NameMotor);
+		if(MotorPtr != nullptr)
+		{
+			MotorPtr->SetPositonProfile(m_activeCollection->GetProfile(IndexProfile));
+			Log::General("Correctly Set Motor: " + NameMotor + " to PID numbers from index: " + to_string(IndexProfile));
+		}
+		else
+		{
+			Log::Error("Motor " + NameMotor + " does not exist!");
+		}
+	}
+
+	void LinkPowerProfileMotor(string NameMotor, string NameProfile)
+	{
+		Motor* MotorPtr = (Motor*)m_activeCollection->Get(NameMotor);
+		if(MotorPtr != nullptr)
+		{
+			MotorPtr->SetPowerProfile(m_activeCollection->GetProfile(NameProfile));
+			Log::General("Correctly Set Motor: " + NameMotor + " to PID numbers from: " + NameProfile);
+		}
+		else
+		{
+			Log::Error("Motor " + NameMotor + " does not exist!");
+		}
+	}
+
+	void LinkPowerProfileMotor(string NameMotor, int IndexProfile)
+	{
+		Motor* MotorPtr = (Motor*)m_activeCollection->Get(NameMotor);
+		if(MotorPtr != nullptr)
+		{
+			MotorPtr->SetPowerProfile(m_activeCollection->GetProfile(IndexProfile));
+			Log::General("Correctly Set Motor: " + NameMotor + " to PID numbers from index: " + to_string(IndexProfile));
+		}
+		else
+		{
+			Log::Error("Motor " + NameMotor + " does not exist!");
+		}
+	}
+
+	void SetAutoPath(string Name, bool OverrideDS = true)
+	{
+		Log::General("Selected Auto: " + Name + ".txt" + (OverrideDS ? " --Override DS" : " --Not Override DS"));
+		m_activeCollection->SetAuto(Name + ".txt");
+		m_activeCollection->SetAutoOverride(OverrideDS);
+	}
 
 };
 }

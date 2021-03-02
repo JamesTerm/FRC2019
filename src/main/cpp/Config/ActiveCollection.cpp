@@ -211,6 +211,11 @@ void ActiveCollection::DeleteAll()
 		activeCollection[i]->DeleteComponent();
 	}
 	activeCollection.clear();
+	for(int i = 0; i < Profiles.size(); i++)
+	{
+		delete Profiles[i];
+	}
+	Profiles.clear();
 }
 
 void ActiveCollection::UpdateComponents()
@@ -219,4 +224,60 @@ void ActiveCollection::UpdateComponents()
 	{
 		activeCollection[i]->UpdateComponent();
 	}
+}
+
+int ActiveCollection::CreateAndAddProfile(string Name, double P, double I, double D, double MaxChange, double Bias, double Min, double Max, int index)
+{
+	ProfileData* Data = new ProfileData(P, I, D, MaxChange, (Bias <= 0 ? P * 100 : Bias), Min, Max, Name);
+	return ActiveCollection::AddProfile(Data, index);
+}
+
+int ActiveCollection::AddProfile(ProfileData* Data, int index)
+{
+	if(index < 0)
+	{
+		Profiles.push_back(Data);
+		return Profiles.size() - 1;
+	}
+	else
+	{
+		if(index >= Profiles.size())
+		{
+			int sizeDist = (index - Profiles.size()) + 1;
+			for(int i = 0; i < sizeDist; i++)
+			{
+				ProfileData* NewData = new ProfileData();
+				Profiles.push_back(NewData);
+			}
+		}
+		delete Profiles[index];
+		Profiles[index] = Data;
+		return index;
+	}
+}
+
+ProfileData* ActiveCollection::GetProfile(int i)
+{
+	if(i >= Profiles.size())
+	{
+		Log::Error("Cannot find Profile with index: " + to_string(i) + "----Returning Default");
+		return DefaultData;
+	}
+	else
+	{
+		return Profiles[i];
+	}
+}
+
+ProfileData* ActiveCollection::GetProfile(string Name)
+{
+	for(int i = 0; i < Profiles.size(); i++)
+	{
+		if(Profiles[i]->Name.compare(Name) == 0)
+		{
+			return Profiles[i];
+		}
+	}
+	Log::Error("Cannot find Profile with Name: " + Name + "----Returning Default");
+	return DefaultData;
 }

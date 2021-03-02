@@ -27,7 +27,6 @@ SparkMaxItem::SparkMaxItem(int _channel, string _name, bool _reversed, bool Real
 	Max->SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 	Name = _name;
 	Offset = OutputTable->GetNumber(name + "-Encoder", 0);
-	InitProfiles();
 	FromTable(Real);
 	{
 		Log::General("Using Table values");

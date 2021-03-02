@@ -55,6 +55,10 @@ void backupConfig::SetInfo()
 
 void backupConfig::SetComponents()
 {
+	backupConfig::AddPIDProfile("SwivelPIDControl", 0.8, 0.01, 0, 1, 1000);
+	backupConfig::AddPIDProfile("AutoPositionX", 9, 7, 0, 0.15, 10);
+	backupConfig::AddPIDProfile("AutoPositionY", 9, 7, 0, 0.15, 10);
+
 	backupConfig::AddSparkMax("WheelFL", 3, false);
 	backupConfig::AddSparkMax("WheelFR", 4, false);
 	backupConfig::AddSparkMax("WheelBL", 5, false);
@@ -64,6 +68,11 @@ void backupConfig::SetComponents()
 	backupConfig::AddTalonSRX("SwivelFR", 8, false, true);
 	backupConfig::AddTalonSRX("SwivelBL", 9, false, true);
 	backupConfig::AddTalonSRX("SwivelBR", 10, false, true);
+
+	backupConfig::LinkPositionProfileMotor("SwivelFL", "SwivelPIDControl");
+	backupConfig::LinkPositionProfileMotor("SwivelFR", "SwivelPIDControl");
+	backupConfig::LinkPositionProfileMotor("SwivelBL", "SwivelPIDControl");
+	backupConfig::LinkPositionProfileMotor("SwivelBR", "SwivelPIDControl");
 
 	backupConfig::AddSwerveModule("FL", "SwivelFL", "WheelFL", 4096, 4096, SwerveModule::Location::Front_Left);
 	backupConfig::AddSwerveModule("FR", "SwivelFR", "WheelFR", 4096, 4096, SwerveModule::Location::Front_Right);
@@ -99,6 +108,8 @@ void backupConfig::SetControls()
 	backupConfig::AddToggleControl("IntakeControl", "IntakePiston", 1, 1, false, false, backupConfig::JoystickControler::Operator);
 
 	backupConfig::AddGoalAxisControl("CoverControl", TeleOpGoal::eMotorPosition, vector<int> {2}, vector<string> {"Cover", "CoverEncoder"}, 1, vector<int> {}, 0, false, true, backupConfig::JoystickControler::Operator);
+
+	backupConfig::SetAutoPath("Bounce");
 }
 
 backupConfig::~backupConfig(){}

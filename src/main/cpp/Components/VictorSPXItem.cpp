@@ -26,7 +26,6 @@ VictorSPXItem::VictorSPXItem(int _channel, string _name, bool _reversed)
 	reversed = _reversed;
 	victor = new VictorSPX(channel);
 	victor->ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0, 10);
-	InitProfiles();
 }
 
 double VictorSPXItem::Get(){
