@@ -160,7 +160,7 @@ private:
     {
         Robot::LoadConfig(true);
 	
-        Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Auton);	
+        Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Test);	
         m_masterGoal = new MultitaskGoal(m_activeCollection, false);
         Log::General("Autonomous Started");
         //TODO: Make defaults set now and call the active collection

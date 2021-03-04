@@ -85,7 +85,7 @@ void Robot::Test()
 {
 	Robot::LoadConfig(true);
 	
-	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Auton);
+	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Test);
 	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutNumber("Loop", 0);
 	while(!IsDisabled() && IsTest())
 	{
