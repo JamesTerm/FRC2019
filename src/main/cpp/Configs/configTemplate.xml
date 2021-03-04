@@ -7,6 +7,8 @@
     <Version version="1" />
     <!-- Comment on this particular config to be printed on the console -->
     <Comment comment="A" />
+    <!-- Sets time delay for each loop in Robot code-->
+    <Time seconds="0.01"/>
     <!-- Sets whether or not to initialize the NavX -->
     <UseNavX value="true" />
     <!-- Sets the Auto to run -->

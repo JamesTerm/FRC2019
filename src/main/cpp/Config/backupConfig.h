@@ -69,6 +69,8 @@ private:
     void SetComponents();
     void SetControls();
 
+	void SetLoopTime(double Seconds){m_activeCollection->SetLoopTime(Seconds);};
+
     void AddVictor(string Name, int Channel, bool Reversed){VictorSPItem *tmp = new VictorSPItem(Name, Channel, Reversed);
 				    m_activeCollection->Add(tmp);
                     Log::General("Added VictorSP " + Name + ", Channel: " + to_string(Channel) + ", Reversed: " + to_string(Reversed));};

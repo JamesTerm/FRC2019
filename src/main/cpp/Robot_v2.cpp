@@ -1,5 +1,5 @@
 #include "Global.h"
-#ifndef __Use_RobotBase_Depreciated__
+#ifndef __Use_RobotBase__
 
 #include "Robot.h"
 #include <string>

@@ -18,7 +18,7 @@ chrisrweeks@aol.com
 #include "Util/FrameworkCommunication.h"
 using namespace std;
 
-#ifdef __Use_RobotBase_Depreciated__
+#ifdef __Use_RobotBase__
 
 /**
  * Constructor
@@ -52,7 +52,9 @@ void Robot::LoadConfig(bool RobotRunning)
 	}
 	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("0A-RESET_ROBOT_VALUES", false);
 	
-	Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
+	if(m_Config != nullptr)
+		delete m_Config;
+	m_Config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
 	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", RobotRunning);
 }
 
@@ -83,7 +85,17 @@ void Robot::Test()
 {
 	Robot::LoadConfig(true);
 	
-	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Auton);	
+	Util::RobotStatus::GetInstance().NotifyState(Util::RobotState::Auton);
+	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutNumber("Loop", 0);
+	while(!IsDisabled() && IsTest())
+	{
+		double I = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetNumber("Loop", 0) + 1;
+		nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutNumber("Loop", I);
+		Log::General("Running TEST!!!!!!!!!!!!!!!!!!!!!!!!!: " + to_string(I));
+		LoopWait(m_activeCollection->GetWaitTime());
+	}
+
+	/*
 	m_masterGoal = new MultitaskGoal(m_activeCollection, false);
 	Log::General("Autonomous Started");
 	//TODO: Make defaults set now and call the active collection
@@ -103,7 +115,7 @@ void Robot::Test()
 	m_activeCollection->SetRobotGoal(m_masterGoal);
 	double dTime = 0.010;
 	double current_time = 0.0;
-	while (m_masterGoal->GetStatus() == Goal::eActive && _IsAutononomous() && !IsDisabled())
+	while (m_masterGoal->GetStatus() == Goal::eActive && IsTest() && !IsDisabled())
 	{
 		m_drive->Update(dTime); //!< Check for controller input for controller override -> will be removed if sandstorm is removed
 		m_masterGoal->Process(dTime); //!< Process the autonomous goal
@@ -114,8 +126,8 @@ void Robot::Test()
 #endif		
 		Wait(dTime);
 	}
-	/* THIS LOOP WILL HAVE TO BE REMOVED IF SANDSTORM IS REMOVED */
-	while(_IsAutononomous() && !IsDisabled()) //!< Loop to run manual control once the auto function is done in sandstorm
+	/* THIS LOOP WILL HAVE TO BE REMOVED IF SANDSTORM IS REMOVED *
+	while(IsTest() && !IsDisabled()) //!< Loop to run manual control once the auto function is done in sandstorm
 	{
 #ifdef _Win32
 		SmartDashboard::PutString("AUTONOMOUS", "OVERRIDEN!");
@@ -124,6 +136,7 @@ void Robot::Test()
 		Wait(dTime);
 	}
 	m_masterGoal->~MultitaskGoal(); //!< Destroy the masterGoal in order to prevent multiple ControllerOverrides running at once
+	*/
 }
 
 /*
@@ -163,7 +176,7 @@ void Robot::Teleop()
 		LastTime = CurrentTime;
 		if (DeltaTime == 0.0) continue;  //never send 0 time
 		m_drive->Update(DeltaTime);
-		Wait(0.010);
+		LoopWait(m_activeCollection->GetWaitTime());
 	}
 }
 
@@ -189,10 +202,10 @@ void Robot::Autonomous()
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
 	AutoPath* PathA = new AutoPath(m_activeCollection, Map(SELECTED_AUTO), 10, true, 10);
 	PathA->Activate();
-	while(PathA->GetStatus() == Goal::eActive && !IsDisabled())
+	while(PathA->GetStatus() == Goal::eActive && !IsDisabled() && _IsAutononomous())
 	{
 		PathA->Process(0.0001);
-		Wait(0.0001);
+		LoopWait(m_activeCollection->GetWaitTime());
 	}
 	PathA->Terminate();
 }
@@ -245,6 +258,16 @@ void Robot::Disabled() {
 		if(nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("0A-RESET_ROBOT_VALUES", false))
 			Robot::LoadConfig(false);
  }
+
+void Robot::LoopWait(double Time)
+{
+	LastClockRef = m_Time.GetFPGATimestamp();
+	Wait(Time);
+	if(LastClockRef == m_Time.GetFPGATimestamp())
+	{
+		LoopWait(Time);
+	}
+}
 
 #ifndef RUNNING_FRC_TESTS
 int main() { return frc::StartRobot<Robot>(); }  //!< This identifies Robot as the main Robot starting class

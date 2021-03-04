@@ -52,11 +52,13 @@ void backupConfig::SetInfo()
 	}
 	m_driveJoy = new Joystick(DriverSlot);
 	m_operatorJoy = new Joystick(OperatorSlot);
+	
+	backupConfig::SetLoopTime(0.01);
 }
 
 void backupConfig::SetComponents()
 {
-	#ifdef __Use_RobotBase_Depreciated__
+	#ifdef __Use_RobotBase__
 	backupConfig::AddPIDProfile("SwivelPIDControl", 0.8, 0.01, 0, 1, 1000);
 	backupConfig::AddPIDProfile("CoverPIDControl", 0.8, 0.01, 0, 1, 1000);
 	backupConfig::AddPIDProfile("AutoPositionX", 9, 7, 0, 0.15, 10);

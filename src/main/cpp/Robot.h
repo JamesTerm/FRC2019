@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Global.h"
-#ifdef __Use_RobotBase_Depreciated__
+#ifdef __Use_RobotBase__
 
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
@@ -63,6 +63,8 @@ class Robot : public RobotBase
         void StartCompetition() override;
         void EndCompetition() override;
 
+        void LoopWait(double Time);
+
       private:
         Drive *m_drive;
         ActiveCollection *m_activeCollection; //!< Pointer to the only instantiation of the ActiveCollection Class in the program
@@ -75,6 +77,9 @@ class Robot : public RobotBase
         string m_autonOptions[5] = {"DriveStraight","OnePieceAuto","TwoPieceAuto","DEBUG","NONE"};
         string m_positionOptions[5] = {"Level 1 Left", "Level 1 Center", "Level 1 Right", "Level 2 Left", "Level 2 Right"};
         std::atomic<bool> m_exit = false;
+        double LastClockRef = 0;
+        frc::Timer m_Time;
+        Config* m_Config = nullptr;
 };
 
 #endif

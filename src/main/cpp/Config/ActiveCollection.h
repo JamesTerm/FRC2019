@@ -76,6 +76,9 @@ namespace Configuration
 			void SetRobotGoal(MultitaskGoal* g) {Robot_Goal = g;}
 			MultitaskGoal* GetRobotGoal() {return Robot_Goal;}
 
+			void SetLoopTime(double Time){WaitTime = Time;}
+			double GetWaitTime() {return WaitTime;}
+
 			int CreateAndAddProfile(string Name, double P, double I, double D, double MaxChange = 0.1, double Bias = -1, double Min = -1, double Max = 1, int index = -1);
 			int AddProfile(ProfileData* Data, int index = -1);
 			ProfileData* GetProfile(int i);
@@ -109,6 +112,8 @@ namespace Configuration
 		bool AutoOverride = false;
 		string AutoSele;
 		PDBManager* PDP = nullptr;
+
+		double WaitTime = 0.01;
 	};
 }
 

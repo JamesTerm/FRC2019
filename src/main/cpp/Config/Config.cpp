@@ -63,7 +63,7 @@ Config::Config(ActiveCollection *_activeCollection, Drive *_drive) {
 		try
 		{
 			Log::General("xml not found...loading backup config");
-			backupConfig *_backup = new backupConfig(_activeCollection, _drive);
+			backupConfig *_Backup = new backupConfig(_activeCollection, _drive);
 		}
 		catch(...)
 		{
@@ -128,6 +128,19 @@ void Config::LoadValues(xml_document &doc){
 		Log::Error("Comment not found");
 
 	#pragma endregion Comment
+
+	#pragma region TimeLoop
+
+	xml_attribute Loop = root.child("Time").attribute("seconds");
+	if(Loop){
+		double timeL = Loop.as_double();
+		m_activeCollection->SetLoopTime(timeL);
+		Log::General("Loop Time set: " + to_string(timeL), true);
+	}
+	else
+		Log::Error("Comment not found");
+
+	#pragma endregion TimeLoop
 
 	#pragma region NavX
 
