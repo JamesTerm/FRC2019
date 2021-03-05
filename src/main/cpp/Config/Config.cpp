@@ -1416,10 +1416,23 @@ void Config::AllocateDriverControls(xml_node &controls){
 		{
 			Cal = SwerveControl::DriveCalculation::Field_Oriented;
 		}
+		else if (drivemode.compare("Robot") == 0)
+		{
+			Cal = SwerveControl::DriveCalculation::Robot_Oriented;
+		}
+		else if (drivemode.compare("Warthog") == 0)
+		{
+			Cal = SwerveControl::DriveCalculation::Warthog;
+		}
+		else if (drivemode.compare("Field_Warthog") == 0)
+		{
+			Cal = SwerveControl::DriveCalculation::Warthog_Field_Oriented;
+		}
 		else
 		{
 			Cal = SwerveControl::DriveCalculation::Robot_Oriented;
 		}
+
 		if (m_activeCollection->Get(ManagerName) != nullptr)
 		{
 			SwerveControl *Control = new SwerveControl(m_driveJoy, Cal, name, V, H, S, dz, reversed, mult, m_activeCollection, (SwerveManager*)m_activeCollection->Get(ManagerName));

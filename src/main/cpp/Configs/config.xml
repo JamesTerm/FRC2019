@@ -7,96 +7,188 @@
     <Version version="1" />
     <!-- Comment on this particular config to be printed on the console -->
     <Comment comment="A" />
+    <!-- Sets time delay for each loop in Robot code-->
+    <Time seconds="0.01"/>
     <!-- Sets whether or not to initialize the NavX -->
     <UseNavX value="true" />
     <!-- Sets the Auto to run -->
-    <Selected_Auto AutoName = "A1P2.txt" OverrideDS = "false"/>
+    <Selected_Auto AutoName = "????" OverrideDS = "false" Scale = "1" Swerve = "true"/>
     <!-- Sets whether or not to initialize the camera to send back to the driver station -->
     <limeLight/>
     <ColorSensor name = "Color"/>
     <!-- Contains assignments to ports and robot dimensions -->
     <RobotConfig>
+    
         <!-- Region for defining VictorSP Items -->
         <VictorSP>
-            <Intake channel = "0" reversed = "false"/>
+            <!--[Name] [int]channel [bool]reversed [int]pdbChannel [int]Group [double]LowerRate [double]RegenRate-->
         </VictorSP>
+
         <!-- Region for VictorSPX CAN Items -->
         <VictorSPX>
-            <Floor channel="6" reversed="false"/>
-		    <indexer0 channel="7" reversed="true"/>
-            <indexer1 channel="8"/>
-            <winch0 channel="14" reversed="true"/>
-            <winch1 channel="15" reversed="true"/>
+            <!--[Name] [int]channel [bool]reversed [int]pdbChannel [int]Group [double]LowerRate [double]RegenRate-->
+            <Intake channel = "11" reversed = "false" />
+            <Revolver channel = "12" reversed = "false" />
+
+            <Shooter channel = "13" reversed = "false" />
+            <Cover channel = "14" reversed = "false" />
+
+            <PullUp-Left channel = "15" reversed = "false" />
+            <PullUp-Right channel = "16" reversed = "false" />
         </VictorSPX>
+
         <!-- Region for TalonSRX CAN Items -->
         <TalonSRX>
-            <Spinner channel="4" reversed="false" enableEncoder="true"/>
-			<Shooter1 channel="12" reversed="true" enableEncoder="false"/>
-			<Shooter0 channel="13" reversed="false" enableEncoder="true"/>
+            <!--[Name] [int]channel [bool]reversed [bool]enableEncoder [int]pdbChannel [int]Group [double]LowerRate [double]RegenRate-->
+            <SwivelFL channel = "7" reversed = "false" enableEncoder = "true" />
+            <SwivelFR channel = "8" reversed = "false" enableEncoder = "true" />
+            <SwivelBL channel = "9" reversed = "false" enableEncoder = "true" />
+            <SwivelBR channel = "10" reversed = "false" enableEncoder = "true" />
         </TalonSRX>
+
         <!-- Region for SparkMax CAN Items -->
 		<SparkMax>
-			<left0 channel="2" reversed = "false"/>
-			<left1 channel="3" reversed = "false"/>
-			<right0 channel="4" reversed = "false"/>
-			<right1 channel="1" reversed = "false"/>
+            <!--[Name] [int]channel [bool]reversed [int]pdbChannel [int]Group [double]LowerRate [double]RegenRate-->
+            <WheelFL channel = "3" reversed = "false" />
+            <WheelFR channel = "4" reversed = "false" />
+            <WheelBL channel = "5" reversed = "false" />
+            <WheelBR channel = "6" reversed = "false" />
 		</SparkMax>
+
         <!-- Region for Potentiometers -->
         <Potentiometer>
+            <!--[Name] [int]channel-->
         </Potentiometer>
+
         <!-- Region for Encoders -->
         <Encoder>
+            <!--[Name] [int]aChannel [int]bChannel [bool]reversed-->
+            <RevolverEncoder aChannel = "1" bChannel = "2" reversed = "false" />
+            <CoverEncoder aChannel = "3" bChannel = "4" reversed = "false" />
+            <ShooterEncoder aChannel = "5" bChannel = "6" reversed = "false" />
         </Encoder>
+
         <!-- Region for DoubleSolenoids -->
         <DoubleSolenoid>
-            <IntakeDeploy fChannel="0" rChannel="1" default="reverse"/>
-            <ShooterHood fChannel="2" rChannel="3" default="reverse"/>
-            <Valve fChannel="4" rChannel="5" default="reverse"/>
+            <!--[Name] [int]fchannel [int]rChannel [bool]reversed [string = forward/reverse]default-->
+            <IntakePistion fchannel = "1" rChannel = "2" reversed = "false" default = "reverse" />
 		</DoubleSolenoid>
+
         <!-- Region for DigitalInputs -->
         <DigitalInput>
-            <!--limSwitch channel="4"/-->
+            <!--[Name] [int]channel-->
         </DigitalInput>
+
+        <!--Region for Swerve Modules-->
         <SwerveModules>
-        <!--Add stuff-->
+            <!--[Name] [string]swivel [string]wheel [int]swivelTicks [int]wheelTicks [string]location-->
+            <FL swivel = "SwivelFL" wheel = "WheelFL" swivelTicks = "4096" wheelTicks = "4096" location = "Front_Left" />
+            <FR swivel = "SwivelFR" wheel = "WheelFR" swivelTicks = "4096" wheelTicks = "4096" location = "Front_Right" />
+            <BL swivel = "SwivelBL" wheel = "WheelBL" swivelTicks = "4096" wheelTicks = "4096" location = "Back_Left" />
+            <BR swivel = "SwivelBR" wheel = "WheelBR" swivelTicks = "4096" wheelTicks = "4096" location = "Back_Right" />
         </SwerveModules>
-        <SwerveManager/>
+
+        <!--SwerveManager [string]name [bool]wait [string list]modules [double]Max [double]length [double]width [double]WheelDiameter [double]Scale-->
+        <SwerveManager name = "SwerveDT" wait = "false" modules = "FL FR BL BR" Max = "0.8" length = "3" width = "3" WheelDiameter = "0.5" Scale = "1"/>
+
+        <!--Region for PID settings-->
+        <Profiles>
+            <!--[Name] [double]P [double]I [double]D [double]Change [double]Bias [double]Min [double]Max [int]Index-->
+            <SwivelPIDControl P = "0.8" I = "0.01" D = "0" Change = "1" Bias = "1000" />
+            <CoverPIDControl P = "0.8" I = "0.01" D = "0" Change = "1" Bias = "1000" />
+            <AutoPositionX P = "9" I = "7" D = "0" Change = "0.15" Bias = "1000" />
+            <AutoPositionY P = "9" I = "7" D = "0" Change = "0.15" Bias = "1000" />
+        <Profiles/>
+
+        <!--Region for Power PID link settings-->
+        <PowerLinks>
+            <!--[Name] [string]Motor ([string]Profile/[int]ProfileIndex)-->
+        <PowerLinks/>
+
+        <!--Region for Position PID link settings-->
+        <PositionLinks>
+            <!--[Name] [string]Motor ([string]Profile/[int]ProfileIndex)-->
+            <SwivelFLLink Motor = "SwivelFL" Profile = "SwivelPIDControl" />
+            <SwivelFRLink Motor = "SwivelFR" Profile = "SwivelPIDControl" />
+            <SwivelBLLink Motor = "SwivelBL" Profile = "SwivelPIDControl" />
+            <SwivelBRLink Motor = "SwivelBR" Profile = "SwivelPIDControl" />
+
+            <CoverPositionLink Motor = "Cover" Profile = "CoverPIDControl" />
+        <PositionLinks/>
+
+        <!--Region for Encoder-Motor link settings-->
+        <EncoderLinks>
+            <!--[Name] [string]Motor [string]Encoder-->
+            <CoverLink Motor = "Cover" Encoder = "CoverEncoder" />
+        <EncoderLinks/>
     </RobotConfig>
 
     <!-- Root of all control definitions -->
     <Controls>
         <!-- Driver Controller, slot should always be 0 -->
         <Driver slot="0">
+
+            <!--Region for Axis control-->
             <AxisControls>
-                <leftDrive axis="1" deadZone="0.08" reversed="true" powerMultiplier="0.5" bindings="left0,left1" useOverdrive="false"/>
-		        <rightDrive axis="3" deadZone="0.08" reversed="false" powerMultiplier="0.5" bindings="right0,right1" useOverdrive="false"/>
+                <!--[Name] [int]axis [bool]reversed [bool]useOverdrive [double]deadZone [double]powerMultiplier [bool]isLift [string list]bindings [bool]bindEvent-->
 		    </AxisControls>
+
+            <!--Region for Button control-->
             <ButtonControls>
-            </ButtonControls>  
+                <!--[Name] [int]button [bool]reversed [bool]actOnRelease [bool]isSolenoid [double]powerMultiplier [bool]isAmpLimited [bool]isRamp [bool]isOverdrive [string list]bindings [bool]bindEvent-->
+            </ButtonControls>
+
+            <!--Region for toggle control-->
             <ToggleButtonControls>
-                <Finger_control button="1" powerMultiplier="1.0" bindings="Valve"/>
+                <!--[Name] [int]button [bool]reversed [string list]bindings [bool]bindEvent-->
             </ToggleButtonControls>
-        </Driver>
-		<Operator slot="1">
-			<AxisControls>
-                <shooting axis="3" deadZone=".05" reversed="false" powerMultiplier=".68" bindings="Shooter0, Shooter1" useOverdrive="false"/>
-                <Intake_Control axis="1" deadZone=".05" reversed="false" powerMultiplier="0.7" bindings="Intake" useOverdrive="false"/>
-            </AxisControls>
-			<ButtonControls>
-                <IndexControl button="6" powerMultiplier=".6" bindings="indexer0, indexer1" actOnRelease="true"/>
-                <IntakeControl button="5" powerMultiplier="0.85" isRamp = "true" bindings="Intake" actOnRelease="true"/>
-                <!--<movingfloor button="3" powerMultiplier=".4" bindings="Floor" actOnRelease="true"/>-->
-                <!-- <shooting button = "1" powerMultiplier = "1" isRamp = "true" bindings = "Shooter0, Shooter1" actOnRelease = "true"/> -->
-                <winch button="3" powerMultiplier=".5" bindings="winch0,winch1" actOnRelease="true"/>
-                <movingfloorback button="1" powerMultiplier="-.6" bindings="Floor" actOnRelease="true"/>
-			</ButtonControls>
+
+            <!--Region for goal buttons-->
             <GoalButtonControls>
-                <ShooterGoal-0 button ="2" goal ="ShooterGoal" params ="23000"/>
+                <!--[Name] [int]button [string]goal [double]params [int]ID [int list]RemoveKeys [bool]bindEvent-->
             </GoalButtonControls>
-			<ToggleButtonControls>
-                <Intake_wrist_control button="9" powerMultiplier="1.0" bindings="IntakeDeploy"/>
-                <Shooter_Hood_control button="10" powerMultiplier="1.0" bindings="ShooterHood"/>
-			</ToggleButtonControls>
+
+            <!--Region for goal Axis-->
+            <GoalAxisControls>
+                <!--[Name] [int list]Axis [string]goal [bool]repeat [int]ID [int list]RemoveKeys [int]StartIndex [string list]StringData [double]DeadZone [double]mult [bool]bindEvent-->
+            <GoalAxisControls/>
+
+            <!--Region for SwerveDrive Control-->
+            <!--SwerveControl [string = Field/Robot/Warthog/Field_Warthog]driveMode [string]name [int]H-Axis [int]V-Axis [int]S-Axis [double]deadZone [double]powerMultiplier [bool]reversed [string]manager-->
+            <SwerveControl driveMode = "Robot" name = "Robot_SwerveControl" H-Axis = "0" V-Axis = "1" S-Axis= "4" deadZone = "0.08" powerMultiplier = "0.8" reversed = "false" manager = "SwerveDT"/>
+        </Driver>
+        <!-- Operator Controller, slot should always be 1 -->
+		<Operator slot="1">
+
+			<!--Region for Axis control-->
+            <AxisControls>
+                <!--[Name] [int]axis [bool]reversed [bool]useOverdrive [double]deadZone [double]powerMultiplier [bool]isLift [string list]bindings [bool]bindEvent-->
+                <IntakeControl axis = "1" reversed = "false" useOverdrive = "false" deadZone = "0.01" powerMultiplier = "0.8" isLift = "false" bindings = "Intake" bindEvent = "false" />
+                <RevolverControl axis = "0" reversed = "false" useOverdrive = "false" deadZone = "0.01" powerMultiplier = "0.8" isLift = "false" bindings = "Revolver" bindEvent = "false" />
+                <ShooterControl axis = "2" reversed = "false" useOverdrive = "false" deadZone = "0.01" powerMultiplier = "0.8" isLift = "false" bindings = "PullUp-Left, PullUp-Right" bindEvent = "false" />
+            </AxisControls>
+
+            <!--Region for Button control-->
+            <ButtonControls>
+                <!--[Name] [int]button [bool]reversed [bool]actOnRelease [bool]isSolenoid [double]powerMultiplier [bool]isAmpLimited [bool]isRamp [bool]isOverdrive [string list]bindings [bool]bindEvent-->
+            </ButtonControls>
+
+            <!--Region for toggle control-->
+            <ToggleButtonControls>
+                <!--[Name] [int]button [bool]reversed [string list]bindings [bool]bindEvent-->
+                <IntakePistonControl button = "1" reversed = "false" bindings = "IntakePiston" bindEvent = "false" />
+            </ToggleButtonControls>
+
+            <!--Region for goal buttons-->
+            <GoalButtonControls>
+                <!--[Name] [int]button [string]goal [double]params [int]ID [int list]RemoveKeys [bool]bindEvent-->
+            </GoalButtonControls>
+
+            <!--Region for goal Axis-->
+            <GoalAxisControls>
+                <!--[Name] [int list]Axis [string]goal [bool]repeat [int]ID [int list]RemoveKeys [int]StartIndex [string list]StringData [double]DeadZone [double]mult [bool]bindEvent-->
+                <CoverControl Axis = "2" goal = "MotorPosition" repeat = "true" ID = "1" RemoveKeys = "" StartIndex = "0" StringData = "Cover" DeadZone = "0.01" mult = "1" bindEvent = "false" />
+            <GoalAxisControls/>
 		</Operator>
     </Controls>
     <RobotCameraServer enabled="false">

@@ -119,7 +119,7 @@ void backupConfig::SetControls()
 
 	backupConfig::AddAxisControl("ShooterControl", "PullUp-Left, PullUp-Right", 2, 0.5, false, false, false, false, 0.01, backupConfig::JoystickControler::Operator);
 	
-	backupConfig::AddToggleControl("IntakeControl", "IntakePiston", 1, 1, false, false, backupConfig::JoystickControler::Operator);
+	backupConfig::AddToggleControl("IntakePistonControl", "IntakePiston", 1, 1, false, false, backupConfig::JoystickControler::Operator);
 
 	backupConfig::AddGoalAxisControl("CoverControl", TeleOpGoal::eMotorPosition, vector<int> {2}, vector<string> {"Cover", "CoverEncoder"}, 1, vector<int> {}, 0, false, true, backupConfig::JoystickControler::Operator);
 

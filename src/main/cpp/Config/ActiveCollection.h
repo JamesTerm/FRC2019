@@ -115,7 +115,7 @@ namespace Configuration
 		
 		bool overdrive;
 		bool AutoOverride = false;
-		string AutoSele;
+		string AutoSele = "????";
 		double AutoScale = 1;
 		bool SwerveDrive = false;
 
