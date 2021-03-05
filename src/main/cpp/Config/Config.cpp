@@ -177,24 +177,40 @@ void Config::LoadValues(xml_document &doc){
 
 	#pragma region AutoSelection
 
-	xml_attribute Ato = root.child("Selected_Auto").attribute("AutoName");
-	if(Ato)
+	xml_node AtoE = root.child("Selected_Auto");
+	if(AtoE)
 	{
-		string AtoFile = Ato.as_string();
-		Log::General("Selected Auto: " + AtoFile);
-		m_activeCollection->SetAuto(AtoFile);
+		xml_attribute Ato = AtoE.attribute("OverrideDS");
+		if(Ato)
+		{
+			string AtoFile = Ato.as_string();
+			Log::General("Selected Auto: " + AtoFile);
+			m_activeCollection->SetAuto(AtoFile);
+		}
+
+		xml_attribute AtoOverride = AtoE.attribute("OverrideDS");
+		if(AtoOverride)
+		{
+			bool AtoOver = AtoOverride.as_bool();
+			m_activeCollection->SetAutoOverride(AtoOver);
+		}
+		xml_attribute AtoScale = AtoE.attribute("Scale");
+		if(AtoScale)
+		{
+			double Scale = AtoOverride.as_double();
+			m_activeCollection->SetAutoScale(Scale);
+		}
+		xml_attribute Drive = AtoE.attribute("Swerve");
+		if(Drive)
+		{
+			bool TypeDrive = Drive.as_bool();
+			m_activeCollection->SetIsSwerveDrive(TypeDrive);
+		}
 	}
 	else
 	{
 		Log::Error("Auto not found");
 	}
-	xml_attribute AtoOverride = root.child("Selected_Auto").attribute("OverrideDS");
-	if(AtoOverride)
-	{
-		bool AtoFile = AtoOverride.as_bool();
-		m_activeCollection->SetAutoOverride(AtoFile);
-	}
-	
 
 	#pragma endregion AutoSelection
 
@@ -868,7 +884,7 @@ void Config::AllocateComponents(xml_node &root){
 
 				if (AllHere)
 				{
-					SwerveManager *Manager = new SwerveManager(name, WaitB, Parts, m_activeCollection->GetNavX(), length, width);
+					SwerveManager *Manager = new SwerveManager(name, WaitB, Parts, m_activeCollection->GetNavX(), length, width, (Man.attribute("WheelDiameter") ? Man.attribute("WheelDiameter").as_double() : 1), (Man.attribute("Scale") ? Man.attribute("Scale").as_double() : 1));
 					Manager->SetMaxPow(MaxPower);
 					m_activeCollection->Add(Manager);
 					Log::General("Added Swerve Manager with location");

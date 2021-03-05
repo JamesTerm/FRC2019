@@ -12,7 +12,7 @@
     <!-- Sets whether or not to initialize the NavX -->
     <UseNavX value="true" />
     <!-- Sets the Auto to run -->
-    <Selected_Auto AutoName = "A1P2.txt" OverrideDS = "false"/>
+    <Selected_Auto AutoName = "A1P2.txt" OverrideDS = "false" Scale = "1" Swerve = "true"/>
     <!-- Sets whether or not to initialize the camera to send back to the driver station -->
     <limeLight/>
     <ColorSensor name = "Color"/>
@@ -64,7 +64,7 @@
             <!--[Name] [string]swivel [string]wheel [int]swivelTicks [int]wheelTicks [string]location-->
         </SwerveModules>
 
-        <!--SwerveManager [string]name [bool]wait [string list]modules [double]Max [double]length [double]width-->
+        <!--SwerveManager [string]name [bool]wait [string list]modules [double]Max [double]length [double]width [double]WheelDiameter [double]Scale-->
         <SwerveManager/>
 
         <!--Region for PID settings-->

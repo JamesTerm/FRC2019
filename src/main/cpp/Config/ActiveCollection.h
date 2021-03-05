@@ -91,6 +91,11 @@ namespace Configuration
 			void SetAutoOverride(bool Override) {AutoOverride = Override;}
 			string GetAuto() {return AutoSele;}
 			bool ConfigOverride() {return AutoOverride;}
+			void SetAutoScale(double Scale) {AutoScale = Scale;}
+			double GetAutoScale() {return AutoScale;}
+
+			void SetIsSwerveDrive(bool Yes) {SwerveDrive = Yes;}
+			bool IsSwerveDrive() {return SwerveDrive;}
 
 			void SetPDP(double TimeOut, double CurrentThres, double Lower, bool run) {PDP = new PDBManager(TimeOut, CurrentThres, Lower, run);}
 			PDBManager* GetPDBManager() {return PDP;}
@@ -111,6 +116,9 @@ namespace Configuration
 		bool overdrive;
 		bool AutoOverride = false;
 		string AutoSele;
+		double AutoScale = 1;
+		bool SwerveDrive = false;
+
 		PDBManager* PDP = nullptr;
 
 		double WaitTime = 0.01;

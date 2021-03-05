@@ -27,9 +27,9 @@ namespace Components
     {
         public:
 
-            SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, double _Length, double _Width);
-            SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, NavX *Nav, double _Length, double _Width);
-            SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerve_Modules, NavX *Nav, double _Length, double _Width);
+            SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, double _Length, double _Width, double WheelSize = 1, double RobotScale = 1);
+            SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, NavX *Nav, double _Length, double _Width, double WheelSize = 1, double RobotScale = 1);
+            SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerve_Modules, NavX *Nav, double _Length, double _Width, double WheelSize = 1, double RobotScale = 1);
 
             void TableSetUp();
 
@@ -48,6 +48,7 @@ namespace Components
 
             void SetL(double L) {Length = L;};
             void SetW(double W) {Width = W;};
+            void SetRobotScale(double Scale);
 
             void SetDelta(double D_Time);
             void ResetPID();
@@ -112,6 +113,8 @@ namespace Components
             double Del_Time = 0;
             double MaxValParam = 1;
             bool WaitSwivel = false;
+
+            double WheelSize = 1;
     };
 }
 

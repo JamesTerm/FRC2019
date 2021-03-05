@@ -69,7 +69,9 @@ private:
     void SetComponents();
     void SetControls();
 
-	void SetLoopTime(double Seconds){m_activeCollection->SetLoopTime(Seconds);};
+	void SetLoopTime(double Seconds, double Scale = 1, bool isSwerve = true){m_activeCollection->SetLoopTime(Seconds);
+					m_activeCollection->SetAutoScale(Scale);
+					m_activeCollection->SetIsSwerveDrive(isSwerve);};
 
     void AddVictor(string Name, int Channel, bool Reversed){VictorSPItem *tmp = new VictorSPItem(Name, Channel, Reversed);
 				    m_activeCollection->Add(tmp);
@@ -151,39 +153,39 @@ private:
 		}
 	};
 
-	void AddSwerveManager(string name, bool Wait, string LeftF, string RightF, string LeftB, string RightB, double _Length, double _Width)
+	void AddSwerveManager(string name, bool Wait, string LeftF, string RightF, string LeftB, string RightB, double _Length, double _Width, double WheelSize = 1, double RobotScale = 1)
 	{
 		if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
 		{
-			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB), _Length, _Width);
+			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB), _Length, _Width, WheelSize, RobotScale);
 			m_activeCollection->Add(Manager);
 			Log::General("Added Swerve Manager");
 		}
 	};
 
-	void AddSwerveManager(string name, bool Wait, double Max, string LeftF, string RightF, string LeftB, string RightB, double _Length, double _Width)
+	void AddSwerveManager(string name, bool Wait, double Max, string LeftF, string RightF, string LeftB, string RightB, double _Length, double _Width, double WheelSize = 1, double RobotScale = 1)
 	{
 		if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
 		{
-			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB), _Length, _Width);
+			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB), _Length, _Width, WheelSize, RobotScale);
 			Manager->SetMaxPow(Max);
 			m_activeCollection->Add(Manager);
 			Log::General("Added Swerve Manager with a max speed of: " + to_string(Max));
 		}
 	};
 
-	void AddSwerveManager(string name, bool Wait, double Max, string LeftF, string RightF, string LeftB, string RightB, NavX *Nav, double _Length, double _Width)
+	void AddSwerveManager(string name, bool Wait, double Max, string LeftF, string RightF, string LeftB, string RightB, NavX *Nav, double _Length, double _Width, double WheelSize = 1, double RobotScale = 1)
 	{
 		if (m_activeCollection->Get(LeftF) != nullptr && m_activeCollection->Get(RightF) != nullptr && m_activeCollection->Get(LeftB) != nullptr && m_activeCollection->Get(RightB) != nullptr)
 		{
-			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB), Nav, _Length, _Width);
+			SwerveManager *Manager = new SwerveManager(name, Wait, (SwerveModule*)m_activeCollection->Get(LeftF), (SwerveModule*)m_activeCollection->Get(RightF), (SwerveModule*)m_activeCollection->Get(LeftB), (SwerveModule*)m_activeCollection->Get(RightB), Nav, _Length, _Width, WheelSize, RobotScale);
 			Manager->SetMaxPow(Max);
 			m_activeCollection->Add(Manager);
 			Log::General("Added Swerve Manager with location");
 		}
 	};
 
-	void AddSwerveManager(string name, bool Wait, double Max, string Modules, NavX *Nav, double _Length, double _Width)
+	void AddSwerveManager(string name, bool Wait, double Max, string Modules, NavX *Nav, double _Length, double _Width, double WheelSize = 1, double RobotScale = 1)
 	{
 		istringstream ss(Modules);
     	string word;
@@ -203,7 +205,7 @@ private:
 
 		if (AllHere)
 		{
-			SwerveManager *Manager = new SwerveManager(name, Wait, Parts, Nav, _Length, _Width);
+			SwerveManager *Manager = new SwerveManager(name, Wait, Parts, Nav, _Length, _Width, WheelSize, RobotScale);
 			Manager->SetMaxPow(Max);
 			m_activeCollection->Add(Manager);
 			Log::General("Added Swerve Manager with location");

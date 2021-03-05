@@ -200,7 +200,7 @@ void Robot::Autonomous()
 	
 	Log::General("!--------------- " + SELECTED_AUTO + " AUTO Selected---------------!");
 	//! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
-	AutoPath* PathA = new AutoPath(m_activeCollection, Map(SELECTED_AUTO), 10, true, 10);
+	AutoPath* PathA = new AutoPath(m_activeCollection, Map(SELECTED_AUTO), 10, m_activeCollection->IsSwerveDrive(), m_activeCollection->GetAutoScale());
 	PathA->Activate();
 	while(PathA->GetStatus() == Goal::eActive && !IsDisabled() && _IsAutononomous())
 	{

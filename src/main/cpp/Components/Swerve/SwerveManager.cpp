@@ -19,7 +19,7 @@ using namespace std;
 using namespace frc;
 using namespace Components;
 
-SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, double _Length, double _Width) : OutputComponent(name)
+SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, double _Length, double _Width, double WheelSize, double RobotScale) : OutputComponent(name)
 {
     Modules.push_back(FrontLeft);
     Modules.push_back(BackLeft);
@@ -30,9 +30,11 @@ SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, Sw
     Pos = new double_Vector2();
     WaitSwivel = Wait;
     SwerveManager::TableSetUp();
+    SwerveManager::SetWheelDiameter(WheelSize);
+    SwerveManager::SetRobotScale(RobotScale);
 }
 
-SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, NavX *Nav, double _Length, double _Width) : OutputComponent(name)
+SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, SwerveModule *FrontRight, SwerveModule *BackLeft, SwerveModule *BackRight, NavX *Nav, double _Length, double _Width, double WheelSize, double RobotScale) : OutputComponent(name)
 {
     Modules.push_back(FrontLeft);
     Modules.push_back(BackLeft);
@@ -44,9 +46,11 @@ SwerveManager::SwerveManager(string name, bool Wait, SwerveModule *FrontLeft, Sw
     RobotNav = Nav;
     WaitSwivel = Wait;
     SwerveManager::TableSetUp();
+    SwerveManager::SetWheelDiameter(WheelSize);
+    SwerveManager::SetRobotScale(RobotScale);
 }
 
-SwerveManager::SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerve_Modules, NavX *Nav, double _Length, double _Width) : OutputComponent(name)
+SwerveManager::SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerve_Modules, NavX *Nav, double _Length, double _Width, double WheelSize, double RobotScale) : OutputComponent(name)
 {
     Modules = Swerve_Modules;
     Pos = new double_Vector2();
@@ -55,16 +59,21 @@ SwerveManager::SwerveManager(string name, bool Wait, vector<SwerveModule*> Swerv
     RobotNav = Nav;
     WaitSwivel = Wait;
     SwerveManager::TableSetUp();
+    SwerveManager::SetWheelDiameter(WheelSize);
+    SwerveManager::SetRobotScale(RobotScale);
 }
 
 void SwerveManager::TableSetUp()
 {
-    OutputTable->PutNumber("1A-Wheel_Size", 1.35);
-    OutputTable->PutNumber("2A-Scale", 1);
     OutputTable->PutNumber("BotX", 0);
     OutputTable->PutNumber("BotY", 0);
     OutputTable->PutNumber("BotZ", 0);
     SimPos = new double_Vector2();
+}
+
+void SwerveManager::SetRobotScale(double Scale)
+{
+    OutputTable->PutNumber("2A-Scale", Scale);
 }
 
 void SwerveManager::DeleteComponent()
@@ -277,6 +286,7 @@ void SwerveManager::SetWheelAt(SwerveModule::Location Loc, double Power)
 
 void SwerveManager::SetWheelDiameter(double Diameter)
 {
+    OutputTable->PutNumber("1A-Wheel_Size", Diameter);
     for(int i = 0; i < Modules.size(); i++)
     {
         Modules.at(i)->SetWheelSize(Diameter);

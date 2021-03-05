@@ -242,7 +242,7 @@ private:
         if (PathA)
             PathA.reset();
         //! DO NOT CALL THE EVENT FOR NOTIFYROBOTSTATE AT THIS TIME!
-        PathA = std::make_shared<AutoPath>(m_activeCollection, Map(SELECTED_AUTO), 10, true, 10);
+        PathA = std::make_shared<AutoPath>(m_activeCollection, Map(SELECTED_AUTO), 10, m_activeCollection->IsSwerveDrive(), m_activeCollection->GetAutoScale());
         PathA->Activate();
     }
     void AutonomousPeriodic() override
