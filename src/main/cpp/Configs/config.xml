@@ -15,6 +15,7 @@
     <Selected_Auto AutoName = "????" OverrideDS = "false" Scale = "1" Swerve = "true"/>
     <!-- Sets whether or not to initialize the camera to send back to the driver station -->
     <limeLight/>
+    <!-- Sets color sensor name -->
     <ColorSensor name = "Color"/>
     <!-- Contains assignments to ports and robot dimensions -->
     <RobotConfig>
