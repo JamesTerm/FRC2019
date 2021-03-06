@@ -71,24 +71,24 @@ private:
     #pragma endregion
     void LoadConfig(bool RobotRunning)
     {
-       	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", false);
+       	//nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", false);
         
         //This only needs to happen one time!
         //For real robot I have lifted this condition
-        if ((!m_IsConfigLoaded)||(frc::RobotBase::IsReal()))
+        if (!m_IsConfigLoaded)
         {
-            m_IsConfigLoaded=true;
+            m_IsConfigLoaded = true;
             Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
         }
 
-	    if(nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("0A-RESET_ROBOT_VALUES", false) && !RobotRunning)
+	    /*if(nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("0A-RESET_ROBOT_VALUES", false) && !RobotRunning)
 	    {
 	    	vector<string> KeysNT = nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetKeys();
 	    	for(int i = 0; i < KeysNT.size(); i++)
 	    		if(KeysNT.at(i).compare("3A_Auto_Selector") != 0)
 	    			nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutValue(KeysNT.at(i), 0);
 	    }
-        nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("0A-RESET_ROBOT_VALUES", false);
+        nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("0A-RESET_ROBOT_VALUES", false);*/
 
         nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", RobotRunning);
     }
