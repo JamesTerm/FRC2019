@@ -750,6 +750,32 @@ void Config::AllocateComponents(xml_node &root){
 
 	#pragma endregion Encoder
 
+	#pragma region Servo
+
+	xml_node Servo = robot.child("Servo");
+	if(Servo){
+		for(xml_node servo = Servo.first_child(); servo; servo = servo.next_sibling()){
+			string name = servo.name();
+			xml_attribute port = servo.attribute("port");
+			xml_attribute angle = servo.attribute("Max");
+			string typeS = servo.attribute("Type").as_string();
+			if(port && angle){
+				ServoItem *tmp = new ServoItem(name, port.as_int(), angle.as_double(), typeS.compare("Limited") == 0 ? ServoItem::ServoType::Limited : ServoItem::ServoType::Continuous, true);
+				m_activeCollection->Add(tmp);
+				string _print = typeS.compare("Limited") == 0 ? "Limited" : "Continuous" ;
+				Log::General("Added Encoder " + name + ", Port: " + to_string(port.as_int()) + ", Max Angle: " + to_string(angle.as_double()) + ", Type: " + _print);
+			}
+			else{
+				Log::General("Failed to load Servo " + name + ". This may cause a fatal runtime error!");
+			}
+		}
+	}
+	else{
+		Log::Error("Servo definitions not found in config, skipping...");
+	}
+
+	#pragma endregion Servo
+
 	#pragma region DoubleSolenoid
 
 	xml_node Solenoid = robot.child("DoubleSolenoid");

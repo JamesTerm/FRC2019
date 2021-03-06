@@ -28,6 +28,7 @@ Email: cooper.ryan@centaurisoftware.co, dylantrwatson@gmail.com, chrisrweeks@aol
 #include "../Components/NavX.h"
 #include "../Components/SparkMaxItem.h"
 #include "../Components/PDBManager.h"
+#include "../Components/ServoItem.h"
 
 
 class MultitaskGoal;
@@ -53,6 +54,7 @@ namespace Configuration
 			VictorSPItem* GetVictor(string name);
 			TalonSRXItem* GetTalon(string name);
 			EncoderItem* GetEncoder(string name);
+			ServoItem* GetServo(string name);
 			void DoubleSolenoidDefault();
 			NavX* GetNavX();
 			int GetSize();

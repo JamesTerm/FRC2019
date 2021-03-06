@@ -97,6 +97,10 @@ private:
 				    m_activeCollection->Add(tmp);
                     Log::General("Added Encoder " + Name + ", A-Channel: " + to_string(ChannelA) + ", B-Channel: " + to_string(ChannelB) + ", Reversed: " + to_string(reversed));};
 
+	void AddServo(string Name, int port, double MaxAngle, ServoItem::ServoType Type){ServoItem* tmp = new ServoItem(Name, port, MaxAngle, Type, Real);
+					m_activeCollection->Add(tmp);
+					Log::General("Added Servo " + Name + ", port: " + to_string(port) + ", with max angle of: " + to_string(MaxAngle));};
+
     void AddDoubleSolenoid(string Name, int fChannel, int rChannel, DoubleSolenoid::Value _def, bool reversed){DoubleSolenoidItem *tmp = new DoubleSolenoidItem(Name , fChannel, rChannel, _def, reversed, Real);
 			    	m_activeCollection->Add(tmp);
 			    	Log::General("Added DoubleSolenoid " + Name + ", F-Channel: " + to_string(fChannel) + ", R-Channel: " + to_string(rChannel) + ", Default: " + to_string(_def) + ", Reversed: " + to_string(reversed));};

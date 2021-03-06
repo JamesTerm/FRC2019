@@ -56,6 +56,11 @@
             <WheelBR channel = "6" reversed = "false" />
 		</SparkMax>
 
+        <!-- Region for Servo PWM Items -->
+		<Servo>
+            <!--[Name] [int]port [double]Max [string = Limited/Continuous]Type-->
+		</Servo>
+
         <!-- Region for Potentiometers -->
         <Potentiometer>
             <!--[Name] [int]channel-->

@@ -179,6 +179,26 @@ EncoderItem* ActiveCollection::GetEncoder(string name)
 }
 
 /**
+ * Method to return a Servo of a certain name
+**/
+ServoItem* ActiveCollection::GetServo(string name)
+{
+	ServoItem *ret = nullptr;
+	try{
+		for(int i=0; i<(int)activeCollection.size();i++){
+			if((*activeCollection[i]).name == (string)name){
+				ret=(ServoItem*)activeCollection[i];
+			}
+		}
+		if (!ret) throw "AHHH";
+	}
+	catch(...){
+		Log::Error("Cannot find servo " + name + ", it does not exist in the active collection!");
+	}
+	return ret;
+}
+
+/**
  * Method to return the NavX
 **/
 NavX* ActiveCollection::GetNavX()
