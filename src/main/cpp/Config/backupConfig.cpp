@@ -64,7 +64,7 @@ void backupConfig::SetComponents()
 	backupConfig::AddPIDProfile("AutoPositionX", 9, 7, 0, 0.15, 10);
 	backupConfig::AddPIDProfile("AutoPositionY", 9, 7, 0, 0.15, 10);
 	#else
-	backupConfig::AddPIDProfile("SwivelPIDControl", 5, 0, 0, 1, 100);
+	backupConfig::AddPIDProfile("SwivelPIDControl", 5, 0, 0, 1, 500, -0.15, 0.15);
 	backupConfig::AddPIDProfile("CoverPIDControl", 0.8, 0.01, 0, 1, 1000);
 	backupConfig::AddPIDProfile("AutoPositionX", 9, 7, 0, 0.15, 10);
 	backupConfig::AddPIDProfile("AutoPositionY", 9, 7, 0, 0.15, 10);
@@ -90,7 +90,7 @@ void backupConfig::SetComponents()
 	backupConfig::AddSwerveModule("BL", "SwivelBL", "WheelBL", 4096, 4096, SwerveModule::Location::Back_Left);
 	backupConfig::AddSwerveModule("BR", "SwivelBR", "WheelBR", 4096, 4096, SwerveModule::Location::Back_Right);
 
-	backupConfig::AddSwerveManager("SwerveDT", false, 0.8, "FL FR BL BR", m_activeCollection->GetNavX(), 3, 3);
+	backupConfig::AddSwerveManager("SwerveDT", true, 0.8, "FL FR BL BR", m_activeCollection->GetNavX(), 3, 3);
 
 	backupConfig::AddVictorSPX("Intake", 11, false);
 	backupConfig::AddVictorSPX("Revolver", 12, false);

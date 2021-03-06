@@ -34,6 +34,27 @@ class ProfileData
 			this->Min = Min;
 			this->Max = Max;
 		}
+		ProfileData(double P, double I = 0, double D = 0, double MaxChange = 0.1, double Bias = 100, double InnerMin = 0, double InnerMax = 0, double Min = -1, double Max = 1, string Name = "Default")
+		{
+			Pval = P;
+			Ival = I;
+			Dval = D;
+			Change = MaxChange;
+			this->Bias = Bias;
+			this->Name = Name;
+			this->Min = Min;
+			this->Max = Max;
+			SetInnerMax(InnerMax);
+			SetInnerMax(InnerMin);
+		}
+		void SetInnerMin(double Min = -0.15)
+		{
+			InnerMin = Min;
+		}
+		void SetInnerMax(double Max = 0.15)
+		{
+			InnerMax = Max;
+		}
 		double Pval = 0;
 		double Ival = 0;
 		double Dval = 0;
@@ -41,6 +62,8 @@ class ProfileData
 		double Change = 0.1;
 		double Min = -1;
 		double Max = 1;
+		double InnerMin = 0;
+		double InnerMax = 0;
 		string Name = "Default";
 	};
 }

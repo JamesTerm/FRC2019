@@ -50,6 +50,8 @@ namespace Util
 				SetMaxChange(Data->Change);
 				SetMin(Data->Min);
 				SetMax(Data->Max);
+				InnerMax = Data->InnerMax;
+				InnerMin = Data->InnerMin;
             };
 
             void SetP(double P)
@@ -217,6 +219,21 @@ namespace Util
 	        		Log::General("!!!!ERROR:-------------PIDCal went over max change, Change = " + to_string(ABSValue(ABSValue(Result) - ABSValue(LastResult))) + "!!!!");
 	        		Result = LastResult;
 	        	}
+				if(Result < InnerMax && Result > 0)
+				{
+					Log::General("Hitting UpperBound!");
+					Result = InnerMax;
+				}
+				else if(Result > InnerMin && Result < 0)
+				{
+					Log::General("Hitting LowerBound!");
+					Result = InnerMin;
+				}
+				else
+				{
+					Log::General("Result is within bounds");
+				}
+				
         		LastResult = Result;
 		        return Result;
         	};
@@ -305,6 +322,9 @@ namespace Util
             double MinPower = -1;
             double MaxPower = 1;
             double MaxChange = 1.5;
+
+			double InnerMin = 0;
+			double InnerMax = 0;
 
 			double LastWheelEncoderVal = 0;
             double LastResult = 0;
