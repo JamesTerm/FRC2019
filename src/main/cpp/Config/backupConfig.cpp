@@ -64,7 +64,7 @@ void backupConfig::SetComponents()
 	backupConfig::AddPIDProfile("AutoPositionX", 9, 7, 0, 0.15, 10);
 	backupConfig::AddPIDProfile("AutoPositionY", 9, 7, 0, 0.15, 10);
 	#else
-	backupConfig::AddPIDProfile("SwivelPIDControl", 0.8, 0.01, 0, 1, 1000);
+	backupConfig::AddPIDProfile("SwivelPIDControl", 5, 0, 0, 1, 100);
 	backupConfig::AddPIDProfile("CoverPIDControl", 0.8, 0.01, 0, 1, 1000);
 	backupConfig::AddPIDProfile("AutoPositionX", 9, 7, 0, 0.15, 10);
 	backupConfig::AddPIDProfile("AutoPositionY", 9, 7, 0, 0.15, 10);
