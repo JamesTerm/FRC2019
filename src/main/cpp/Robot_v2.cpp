@@ -72,6 +72,14 @@ private:
     void LoadConfig(bool RobotRunning)
     {
        	nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", false);
+        
+        //This only needs to happen one time!
+        //For real robot I have lifted this condition
+        if ((!m_IsConfigLoaded)||(frc::RobotBase::IsReal()))
+        {
+            m_IsConfigLoaded=true;
+            Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
+        }
 
 	    if(nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->GetBoolean("0A-RESET_ROBOT_VALUES", false) && !RobotRunning)
 	    {
@@ -82,13 +90,6 @@ private:
 	    }
         nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("0A-RESET_ROBOT_VALUES", false);
 
-        //This only needs to happen one time!
-        //For real robot I have lifted this condition
-        if ((!m_IsConfigLoaded)||(frc::RobotBase::IsReal()))
-        {
-            m_IsConfigLoaded=true;
-            Config *config = new Config(m_activeCollection, m_drive); //!< Pointer to the configuration file of the robot
-        }
         nt::NetworkTableInstance::GetDefault().GetTable("SmartDashboard")->PutBoolean("RUN_ROBOT", RobotRunning);
     }
     void TimeSlice(bool IsAuton=false)
