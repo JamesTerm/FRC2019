@@ -99,8 +99,8 @@
 
         <!--Region for PID settings-->
         <Profiles>
-            <!--[Name] [double]P [double]I [double]D [double]Change [double]Bias [double]Min [double]Max [int]Index [double]IMin [double]IMax -->
-            <SwivelPIDControl P = "0.8" I = "0.01" D = "0" Change = "1" Bias = "1000" Min = "-1" Max = "1" Index = "0" IMin = "-0.15" IMax = "0.15"/>
+            <!--[Name] [double]P [double]I [double]D [double]Change [double]Bias [double]Min [double]Max [int]Index [double]IMin [double]IMax [double]Threshold-->
+            <SwivelPIDControl P = "0.8" I = "0.01" D = "0" Change = "1" Bias = "1000" Min = "-1" Max = "1" Index = "0" IMin = "-0.15" IMax = "0.15" Threshold = "10"/>
             <CoverPIDControl P = "0.8" I = "0.01" D = "0" Change = "1" Bias = "1000" />
             <AutoPositionX P = "9" I = "7" D = "0" Change = "0.15" Bias = "1000" />
             <AutoPositionY P = "9" I = "7" D = "0" Change = "0.15" Bias = "1000" />

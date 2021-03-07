@@ -81,7 +81,7 @@ namespace Configuration
 			void SetLoopTime(double Time){WaitTime = Time;}
 			double GetWaitTime() {return WaitTime;}
 
-			int CreateAndAddProfile(string Name, double P, double I, double D, double MaxChange = 0.1, double Bias = -1, double InnerMin = 0, double InnerMax = 0, double Min = -1, double Max = 1, int index = -1);
+			int CreateAndAddProfile(string Name, double P, double I, double D, double MaxChange = 0.1, double Bias = -1, double InnerMin = 0, double InnerMax = 0, double Min = -1, double Max = 1, double Thres = 0.01, int index = -1);
 			int AddProfile(ProfileData* Data, int index = -1);
 			ProfileData* GetProfile(int i);
 			ProfileData* GetProfile(string Name);

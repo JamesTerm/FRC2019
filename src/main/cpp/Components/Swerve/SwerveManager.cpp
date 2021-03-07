@@ -209,10 +209,10 @@ void SwerveManager::Set(double rawV, double rawH, double rawS)
         frontLeftSpeed /= MaxVal;
     }
 
-    bool SFL = SwerveManager::SetSwivelTargetAt(SwerveModule::Location::Front_Left, frontLeftAngle);
-    bool SFR = SwerveManager::SetSwivelTargetAt(SwerveModule::Location::Front_Right, frontRightAngle);
-    bool SBL = SwerveManager::SetSwivelTargetAt(SwerveModule::Location::Back_Left, backLeftAngle);
-    bool SBR = SwerveManager::SetSwivelTargetAt(SwerveModule::Location::Back_Right, backRightAngle);
+    bool SFL = SwerveManager::SetSwivelTargetAt(SwerveModule::Location::Front_Left, -frontLeftAngle);
+    bool SFR = SwerveManager::SetSwivelTargetAt(SwerveModule::Location::Front_Right, -frontRightAngle);
+    bool SBL = SwerveManager::SetSwivelTargetAt(SwerveModule::Location::Back_Left, -backLeftAngle);
+    bool SBR = SwerveManager::SetSwivelTargetAt(SwerveModule::Location::Back_Right, -backRightAngle);
 
     if ((SFL &&
         SFR &&

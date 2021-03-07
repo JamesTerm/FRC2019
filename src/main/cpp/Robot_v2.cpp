@@ -153,7 +153,9 @@ private:
         m_dashboardTable->PutStringArray("POSITION_OPTIONS", m_positionOptions);
         // Util::FrameworkCommunication::GetInstance().SendData("MESSAGE","yeetus");//? Temporary
         //Give active collection to simultion to access motors and encoders:
+        #ifdef _Use_Timed_Sim_
         m_simulation.ActiveCollection_Init(m_activeCollection);
+        #endif
     }
     void RobotPeriodic() override
     {}
@@ -253,11 +255,15 @@ private:
     }
     void SimulationInit () override
     {
+        #ifdef _Use_Timed_Sim_
         m_simulation.SimulationInit();
+        #endif
     }
     void SimulationPeriodic () override
     {
+        #ifdef _Use_Timed_Sim_
         SimulatorTimeSlice();
+        #endif
     }
     //I've added this for completion but I do not think it is needed
     #if 0

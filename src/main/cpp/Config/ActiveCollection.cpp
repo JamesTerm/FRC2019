@@ -267,9 +267,9 @@ void ActiveCollection::UpdateComponents()
 	}
 }
 
-int ActiveCollection::CreateAndAddProfile(string Name, double P, double I, double D, double MaxChange, double Bias, double Min, double Max, double InnerMin, double InnerMax, int index)
+int ActiveCollection::CreateAndAddProfile(string Name, double P, double I, double D, double MaxChange, double Bias, double InnerMin, double InnerMax, double Min, double Max, double Thres, int index)
 {
-	ProfileData* Data = new ProfileData(P, I, D, MaxChange, (Bias <= 0 ? P * 100 : Bias), InnerMin, InnerMax, Min, Max, Name);
+	ProfileData* Data = new ProfileData(P, I, D, MaxChange, (Bias <= 0 ? P * 100 : Bias), InnerMin, InnerMax, Min, Max, Thres, Name);
 	return ActiveCollection::AddProfile(Data, index);
 }
 

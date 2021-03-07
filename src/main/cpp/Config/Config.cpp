@@ -944,6 +944,7 @@ void Config::AllocateComponents(xml_node &root){
 			xml_attribute Max = P.attribute("Max");
 			xml_attribute IMin = P.attribute("InnerMin");
 			xml_attribute IMax = P.attribute("InnerMax");
+			xml_attribute Thres = P.attribute("Threshold");
 			xml_attribute Index = P.attribute("Index");
 			if(Pval && Ival && Dval)
 			{
@@ -955,8 +956,8 @@ void Config::AllocateComponents(xml_node &root){
 						{
 							if(Index)
 							{
-								if(IMin && IMax)
-									m_activeCollection->CreateAndAddProfile(name, Pval.as_double(), Ival.as_double(), Dval.as_double(), MaxChange.as_double(), Bias.as_double(), IMin.as_double(), IMax.as_double(), Min.as_double(), Max.as_double(), Index.as_int());
+								if(IMin && IMax && Thres)
+									m_activeCollection->CreateAndAddProfile(name, Pval.as_double(), Ival.as_double(), Dval.as_double(), MaxChange.as_double(), Bias.as_double(), IMin.as_double(), IMax.as_double(), Min.as_double(), Max.as_double(), Thres.as_double(), Index.as_int());
 								else
 									m_activeCollection->CreateAndAddProfile(name, Pval.as_double(), Ival.as_double(), Dval.as_double(), MaxChange.as_double(), Bias.as_double(), Min.as_double(), Max.as_double(), Index.as_int());
 							}

@@ -75,7 +75,7 @@
 
         <!--Region for PID settings-->
         <Profiles>
-            <!--[Name] [double]P [double]I [double]D [double]Change [double]Bias [double]Min [double]Max [int]Index [double]IMin [double]IMax -->
+            <!--[Name] [double]P [double]I [double]D [double]Change [double]Bias [double]Min [double]Max [int]Index [double]IMin [double]IMax [double]Threshold-->
         <Profiles/>
 
         <!--Region for Power PID link settings-->

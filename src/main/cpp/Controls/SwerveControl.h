@@ -51,6 +51,10 @@ namespace Controls
             int VAxis;
             int SAxis;
 
+            bool ReverseH = false;
+            bool ReverseV = false;
+            bool ReverseS = false;
+
             double Mult;
             double DeadZone = 0;
             bool Reversed;

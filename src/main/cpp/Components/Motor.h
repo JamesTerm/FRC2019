@@ -98,12 +98,20 @@ namespace Components
 
             void SetPositonProfile(ProfileData* Data)
             {
-                Motor::SetPositonProfile(Data->Pval, Data->Ival, Data->Dval, Data->Bias);
+                if(PositionProfile != nullptr)
+                {
+                    delete PositionProfile;
+                }
+                PositionProfile = new PIDProfile(Data);
             }
 
             void SetPowerProfile(ProfileData* Data)
             {
-                Motor::SetPowerProfile(Data->Pval, Data->Ival, Data->Dval, Data->Bias);
+                if(PowerProfile != nullptr)
+                {
+                    delete PowerProfile;
+                }
+                PowerProfile = new PIDProfile(Data);
             }
 
             void CleanUpProfiles()

@@ -50,22 +50,27 @@ namespace Util
 				SetMaxChange(Data->Change);
 				SetMin(Data->Min);
 				SetMax(Data->Max);
-				InnerMax = Data->InnerMax;
-				InnerMin = Data->InnerMin;
+				SetInnerMax(Data->InnerMax);
+				SetInnerMin(Data->InnerMin);
+				SetThres(Data->Thres);
+				Name = Data->Name;
             };
 
             void SetP(double P)
             {
                 Pval = P;
             };
+
             void SetI(double I)
             {
                 Ival = I;
             };
+
             void SetD(double D)
             {
                 Dval = D;
             };
+
             void SetBias(double BiasVal)
             {
                 BiasV = BiasVal;
@@ -80,13 +85,30 @@ namespace Util
             {
                 MaxPower = Max;
             };
-            void SetMin(double Min)
+            
+			void SetMin(double Min)
             {
                 MinPower = Min;
             };
+
             void SetChange(double delta)
             {
                 MaxChange = delta;
+            };
+
+			void SetInnerMax(double Max)
+            {
+                InnerMax = Max;
+            };
+
+			void SetInnerMin(double Min)
+            {
+                InnerMin = Min;
+            };
+
+			void SetThres(double Thres)
+            {
+                this->Thres = Thres;
             };
 
             void Reset()
@@ -211,28 +233,18 @@ namespace Util
 
             double PIDCal(double P, double I, double D, double Target, double Current, double& LastResult, double& TotalError, double& PrevError, double& ErrorTo, double ChangeInTime, double MaxPower, double MinPower, double MaxChange, double Bias)
 	        {
+				if(abs(Current - Target) < Thres)
+					return 0;
         		double Result = PIDCalculae(P, I, D, TotalError, (Current - Target), PrevError, ChangeInTime, ErrorTo, Target);
         		PrevError = (Current - Target);
         		Result = Constrain(Scale(Result, 0, (Bias)), MinPower, MaxPower);
-        		if(!BelowMaxRate(Result, LastResult, MaxChange))
+				Result += (Sign(Result) > 0 ? InnerMax : InnerMin);
+				Result = Constrain(Result, MinPower, MaxPower);
+        		if(!BelowMaxRate(Result, LastResult, MaxChange) && Sign(Result) == Sign(LastResult))
 	        	{
 	        		Log::General("!!!!ERROR:-------------PIDCal went over max change, Change = " + to_string(ABSValue(ABSValue(Result) - ABSValue(LastResult))) + "!!!!");
 	        		Result = LastResult;
 	        	}
-				if(Result < InnerMax && Result > 0)
-				{
-					Log::General("Hitting UpperBound!");
-					Result = InnerMax;
-				}
-				else if(Result > InnerMin && Result < 0)
-				{
-					Log::General("Hitting LowerBound!");
-					Result = InnerMin;
-				}
-				else
-				{
-					Log::General("Result is within bounds");
-				}
 				
         		LastResult = Result;
 		        return Result;
@@ -325,11 +337,14 @@ namespace Util
 
 			double InnerMin = 0;
 			double InnerMax = 0;
+			double Thres = 0.01;
 
 			double LastWheelEncoderVal = 0;
             double LastResult = 0;
 
 			bool SpeedReached = false;
+
+			string Name = "PID";
     };
 
 	

@@ -23,9 +23,13 @@ SwerveControl::SwerveControl(Joystick *_joy, DriveCalculation _Cal, string _name
 {
     SwerveDrive = Manager;
     Cal = _Cal;
-    HAxis = _axisH;
-    VAxis = _axisV;
-    SAxis = _axisS;
+    HAxis = abs(_axisH);
+    VAxis = abs(_axisV);
+    SAxis = abs(_axisS);
+
+    ReverseH = _axisH < 0;
+    ReverseV = _axisV < 0;
+    ReverseS = _axisS < 0;
 
     Mult = _powerMultiplier;
     DeadZone = _deadZone;
@@ -38,9 +42,9 @@ double SwerveControl::Update(double _dTime)
 {
     SwerveDrive->UpdateSystem(_dTime);
 
-    double rawH = -CalculateDeadZone((*joy).GetRawAxis(HAxis), DeadZone) * (Mult);
-    double rawV = CalculateDeadZone((*joy).GetRawAxis(VAxis), DeadZone) * (Reversed ? -Mult : Mult);
-    double rawS = -CalculateDeadZone((*joy).GetRawAxis(SAxis), DeadZone) * (Mult);
+    double rawH = -CalculateDeadZone((*joy).GetRawAxis(HAxis), DeadZone) * (ReverseH ? -Mult : Mult);
+    double rawV = CalculateDeadZone((*joy).GetRawAxis(VAxis), DeadZone) * (ReverseV ? -Mult : Mult);
+    double rawS = -CalculateDeadZone((*joy).GetRawAxis(SAxis), DeadZone) * (ReverseS ? -Mult : Mult);
     rawV *= -1;
 
     if (Cal == SwerveControl::DriveCalculation::Field_Oriented)
