@@ -13,7 +13,7 @@ Email: irobot9803@gmail.com
 #pragma once
 
 //#define __Use_RobotBase__
-//#define _Use_Timed_Sim_
+#define _Use_Timed_Sim_
 
 #include "Util/Log.h"
 #include "Util/Event.h"
