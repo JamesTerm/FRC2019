@@ -21,7 +21,7 @@ using namespace Components;
 VictorSPXItem::VictorSPXItem() {}
 
 VictorSPXItem::VictorSPXItem(int _channel, string _name, bool _reversed)
-	: Motor(_name){
+	: Motor(_name, _reversed){
 	channel = _channel;
 	reversed = _reversed;
 	victor = new VictorSPX(channel);

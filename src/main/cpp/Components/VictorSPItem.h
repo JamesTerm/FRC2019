@@ -23,7 +23,7 @@ namespace Components
 		public:
 			VictorSPItem(){}
 			virtual ~VictorSPItem(){}
-			VictorSPItem(string name, int channel, bool reversed) : Motor(name)
+			VictorSPItem(string name, int channel, bool reversed) : Motor(name, reversed)
 			{
 				victor = new VictorSP(channel);
 				Reversed = reversed;

@@ -255,6 +255,7 @@ namespace Util
             double GetD() {return Dval;};
 
             double GetBias() {return BiasV;};
+			double GetThres() {return Thres;};
             
             double GetTotalError() {return _TotalE;};
             double GetLastErrorV() {return _PrevE;};

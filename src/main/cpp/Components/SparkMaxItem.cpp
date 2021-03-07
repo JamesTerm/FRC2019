@@ -20,7 +20,7 @@ using namespace Components;
 
 SparkMaxItem::SparkMaxItem() {}
 
-SparkMaxItem::SparkMaxItem(int _channel, string _name, bool _reversed, bool Real) : Motor(_name){
+SparkMaxItem::SparkMaxItem(int _channel, string _name, bool _reversed, bool Real) : Motor(_name, _reversed){
 	channel = _channel;
 	reversed = _reversed;
 	Max = new CANSparkMax(channel, rev::CANSparkMax::MotorType::kBrushless);

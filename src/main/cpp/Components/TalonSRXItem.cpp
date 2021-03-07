@@ -22,7 +22,7 @@ using namespace Components;
 TalonSRXItem::TalonSRXItem() {}
 
 TalonSRXItem::TalonSRXItem(int _channel, string _name, bool _reversed, bool enableEncoder, bool Real)
-	: Motor(_name){
+	: Motor(_name, _reversed){
 	channel = _channel;
 	reversed = _reversed;
 	talon = new WPI_TalonSRX(channel);

@@ -47,13 +47,16 @@ namespace Components
             EncoderItem* ConnectedEncoder = nullptr;
             EncoderItem* LinkedEncoder = nullptr;
 
+            bool IsReversed = false;
+
         public:
 
             Motor() : OutputComponent(){}
 
-            Motor(string name) : OutputComponent(name)
+            Motor(string name, bool reverse) : OutputComponent(name)
             {
                 Motor::InitProfiles();
+                IsReversed = reverse;
                 LinkedEncoder = new EncoderItem(name + "-LinkedEncoder", this);
                 ConnectedEncoder = LinkedEncoder;
             }
@@ -143,7 +146,7 @@ namespace Components
                 if(Power != 0)
                 {
                     double Current = Get();
-                    Current += -PowerProfile->Calculate(Power, Get(), Time);
+                    Current += -PowerProfile->Calculate(Power, Get(), Time) * (IsReversed ? -1 : 1);
                     Set(Current);
                 }
                 else
@@ -154,7 +157,46 @@ namespace Components
 
             void SetPosition(double Target, double CurrentPosition, double Time)
             {
-                Set(-PositionProfile->Calculate(Target, CurrentPosition, Time));
+                Set(-PositionProfile->Calculate(Target, CurrentPosition, Time) * (IsReversed ? -1 : 1));
+            }
+
+            void SetPosition(double Target, double Time)
+            {
+                Set(-PositionProfile->Calculate(Target, LinkedEncoder->Get(), Time) * (IsReversed ? -1 : 1));
+            }
+
+            bool SetToPosition(double Target, double CurrentPosition, double Time)
+            {
+                SetPosition(Target, CurrentPosition, Time);
+                return PositionProfile->Inrange(Target, CurrentPosition, PositionProfile->GetThres());
+            }
+
+            bool SetToPosition(double Target, double Time)
+            {
+                SetPosition(Target, LinkedEncoder->Get(), Time);
+                return PositionProfile->Inrange(Target, LinkedEncoder->Get(), PositionProfile->GetThres());
+            }
+
+            void SetSpeed(double Rate, double CurrentPosition, double Time)
+            {
+                Set(-PowerProfile->CalSpeed(Rate, Get(), CurrentPosition, Time) * (IsReversed ? -1 : 1));
+            }
+
+            void SetSpeed(double Rate, double Time)
+            {
+                Set(-PowerProfile->CalSpeed(Rate, Get(), LinkedEncoder->Get(), Time) * (IsReversed ? -1 : 1));
+            }
+
+            bool SetToSpeed(double Rate, double CurrentPosition, double Time)
+            {
+                SetSpeed(Rate, CurrentPosition, Time);
+                return PowerProfile->ReachedSpeed();
+            }
+
+            bool SetToSpeed(double Rate, double Time)
+            {
+                SetSpeed(Rate, LinkedEncoder->Get(), Time);
+                return PowerProfile->ReachedSpeed();
             }
 
             void SetRegenRate(double Rate) {RegenRate = Rate;}
