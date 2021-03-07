@@ -619,8 +619,10 @@ private:
 	void UpdateVariables()
 	{
 		using namespace frc;
+        using namespace Framework::Base;
         m_ExtractVelocity.InterpolateVelocities(m_Simulation.GetCurrentVelocities());
-		Vec2D linear_velocity(m_ExtractVelocity.GetLocalVelocityX(),m_ExtractVelocity.GetLocalVelocityY());
+		Vec2D linear_velocity(LocalToGlobal(m_Simulation.GyroMag_GetCurrentHeading(),
+            Vec2D(m_ExtractVelocity.GetLocalVelocityX(),m_ExtractVelocity.GetLocalVelocityY())));
 		Vec2D velocity_normalized=linear_velocity;
 		double magnitude = velocity_normalized.normalize();
 		SmartDashboard::PutNumber("linear_velocity_x", linear_velocity.x());
