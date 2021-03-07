@@ -47,6 +47,13 @@ double SwerveControl::Update(double _dTime)
     double rawS = -CalculateDeadZone((*joy).GetRawAxis(SAxis), DeadZone) * (ReverseS ? -Mult : Mult);
     rawV *= -1;
 
+    if(Reversed)
+    {
+        rawH *= -1;
+        rawV *= -1;
+        rawS *= -1;
+    }
+
     if (Cal == SwerveControl::DriveCalculation::Field_Oriented)
     {
         double gyro = m_Collection->GetNavX()->GetConstAngle() * M_PI / 180;
